@@ -13,6 +13,7 @@ Application Android en Flutter, totalement offline pour commencer. Le développe
 | [GLOSSARY.md](GLOSSARY.md) | Vocabulaire officiel du projet |
 | [docs/adr/](docs/adr/) | Décisions structurantes et leurs raisons |
 | [docs/backlog/](docs/backlog/) | Sujets prévus après la V1, dont le portage iOS |
-| [docs/BRAND.md](docs/BRAND.md) | Nom, domaines et vérifications restantes |
+| [docs/BRAND.md](docs/BRAND.md) | Nom, logo, icônes, domaines et vérifications restantes |
+| [docs/design/DIRECTION.md](docs/design/DIRECTION.md) | Direction visuelle retenue |
 
 Pour avancer d'une étape avec Claude Code : `/next-step`.
