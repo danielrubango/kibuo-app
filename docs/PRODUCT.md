@@ -62,7 +62,7 @@ Certaines marques Android retardent les notifications pour économiser la batter
 
 ### Tableaux de bord
 
-Graphiques simples. L'accueil affiche le total en devise principale, le reste de la période, les prochaines échéances, et les dettes et créances.
+Graphiques simples. L'accueil a pour titre le mois en cours et affiche le total en devise principale, le reste de la période, les prochaines échéances groupées par mois, et le résumé des dettes et créances. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION.md).
 
 ## Navigation et saisie
 

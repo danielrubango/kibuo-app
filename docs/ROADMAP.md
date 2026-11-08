@@ -9,15 +9,15 @@ Avancement de la V1, phase par phase. Une case cochée signifie : réalisé et v
 - [x] Cadrer le produit et les décisions
 - [x] Choisir le nom
 - [x] Créer le dépôt local et la documentation
-- [ ] Valider et commiter les fondations
+- [x] Valider et commiter les fondations
 
 ## Phase 1 : Identité et design
 
 Rien n'est codé avant la fin de cette phase.
 
 - [ ] Vérifier les marques et réserver les domaines (voir [BRAND.md](BRAND.md))
-- [ ] Proposer quatre logos en SVG et en choisir un
-- [ ] Proposer trois directions visuelles sur l'accueil et la saisie rapide, et en choisir une
+- [x] Proposer quatre logos en SVG et en choisir un
+- [x] Proposer trois directions visuelles sur l'accueil et la saisie rapide, et en choisir une
 - [ ] Maquetter le premier lancement
 - [ ] Maquetter l'accueil, avec dettes et créances
 - [ ] Maquetter la saisie rapide depuis le bouton +
