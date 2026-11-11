@@ -1,21 +1,21 @@
 # Direction visuelle
 
-Direction retenue : **Nuit, variante Blocs**, en thème sombre et clair. Les maquettes de référence sont sur la [planche Kibuo](https://claude.ai/artifact/CiWTkb7rvvSx7Vy8nxZwdm) (privée) : variante 1, écran « Dettes et créances » et saisie rapide.
+Direction retenue : **variante Blocs, thème clair**. Le thème sombre viendra plus tard ([backlog](../backlog/theme-sombre.md)). Les maquettes de référence sont sur la [planche Kibuo](https://claude.ai/artifact/CiWTkb7rvvSx7Vy8nxZwdm) (privée).
 
 ## Couleurs
 
-| Rôle | Sombre | Clair |
-|---|---|---|
-| Fond | `#0E1320` | `#EEF1F7` |
-| Surface | `#181F31` | `#FFFFFF` |
-| Barre de navigation | `#232C43` | `#FFFFFF` |
-| Texte | `#EEF1F7` | `#0E1320` |
-| Texte secondaire | `#A4AEC2` | `#525D73` |
-| Accent (texte, jauges) | `#5EEAB5` | `#0A7355` |
-| Piste des jauges | `#2B3550` | `#DDE2EC` |
-| Retard | `#FFB4A2` | `#B3321A` |
+| Rôle | Valeur |
+|---|---|
+| Fond | `#EEF1F7` |
+| Surface et barre de navigation | `#FFFFFF` |
+| Texte | `#0E1320` |
+| Texte secondaire | `#525D73` |
+| Accent (texte, jauges) | `#0A7355` |
+| Piste des jauges | `#DDE2EC` |
+| Budget à 80 % | `#D99A1C` |
+| Retard ou dépassement | `#B3321A` |
 
-Le menthe `#5EEAB5` avec un texte `#0E1320` sert au bloc du total, au bouton + et à l'action principale, dans les deux thèmes.
+Le menthe `#5EEAB5` avec un texte `#0E1320` sert au bloc du total, au bouton + et à l'action principale.
 
 ## Typographie
 
@@ -23,11 +23,41 @@ Space Grotesk pour les titres et les montants, Inter pour le reste.
 
 ## Règles d'écran
 
-- Le mois en cours, avec l'année, est le titre de l'accueil.
+- L'accueil a pour titre « Aujourd'hui », avec la date en dessous (« Mercredi 11 novembre »). Son onglet s'appelle « Accueil ».
 - Le suivi du budget s'intitule « Reste du mois ».
-- Les prochaines échéances sont des cartes affichant seulement le jour. Celles du mois en cours n'ont pas de titre ; les suivantes sont groupées sous le nom de leur mois.
+- Sur l'accueil, « À venir » montre chaque échéance comme une opération prévue de la liste : ligne blanche à pointillés gris, icône grise de l'espace concerné, étiquette « Prévu » suivie du type (Dette, Créance, Récurrence), montant gris, rangée sous sa date (« Dimanche 15 novembre »).
+- Le premier bloc de l'accueil met en avant le disponible (total des comptes moins l'argent réservé aux projets), en grand, avec une flèche › seule, sans cercle, centrée à droite. Sa couleur suit la situation : menthe s'il est positif, blanc à bordure grise s'il est à zéro, rose avec le montant en rouge s'il est négatif. Une bande juste dessous, séparée par un petit espace, sans ombre, de la même teinte en plus clair, donne « Total … » à gauche et « dont projets … › » à droite, ou « + Créer un projet » s'il n'y en a aucun.
+- Le bilan du mois de l'accueil est une carte blanche : « Novembre · ce mois-ci » avec une icône de calendrier et la flèche › sur la même ligne, puis « +612,00 $ restants », une barre grise (colorée seulement en alerte) avec un trait noir qui marque le jour du mois (« 11 nov. » au-dessus), et en dessous « **49 %** dépensés » à gauche, « −588,00 sur +1 200,00 » à droite.
+- Sous le bilan du mois, les dettes et créances sont deux cartes blanches côte à côte : « Je dois › » et « On me doit › », le montant à la couleur de son sens, puis une ligne courte (« 3 dettes · 1 en retard », le retard en rouge). Pas de nom de personne ni de date.
+- « À traiter » sur l'accueil montre au plus les 3 urgences dans une carte blanche, avec « Tout voir · 9 » à droite du titre. La liste complète range tout en trois groupes (Urgent, Cette semaine, Rappels), chacun annoncé par un point de couleur. Une ligne : tuile d'icône teintée selon le cas, titre court « Nom · montant », une ligne de quelques mots (« Dette · 3 j de retard », en rouge si urgent), et une action d'un mot en lien coloré (« Rembourser › », « Réclamer › », « Valider › »).
+- Dans « À traiter », l'icône est celle de l'espace concerné (celle de la page Plus) et sa teinte suit le sens : pêche pour ce que je dois, vert pour ce qu'on me doit, rouge ou ambre pour un budget dépassé ou presque, bleu pour un projet, gris pour les brouillons et les rappels. L'urgence se lit dans la ligne du dessous, en rouge. Le point devant « À traiter » prend la couleur du plus urgent présent : rouge s'il y a une urgence, ambre s'il n'y a que la semaine, aucun point s'il n'y a que des rappels. L'accueil montre les 3 plus urgents, quel que soit leur groupe. « Tout voir · 9 › » finit par une flèche, et n'apparaît que s'il y a plus de lignes que celles déjà affichées.
+- Une action directe s'ouvre en feuille : poignée, titre avec une croix à droite, une synthèse, puis le bouton principal et « Plus tard ». Pour les brouillons, une carte blanche liste chacun avec une case à gauche (cochée d'avance), son libellé, son compte, son montant et une flèche › vers sa fiche ; le bouton dit « Valider les 2 », « Valider le brouillon » ou « Rien à valider ». Avec un seul brouillon, pas de case : « Valider ce brouillon ? » et « Valider ».
+- Les actions qui mènent à une saisie ouvrent l'écran habituel, rempli d'avance, avec une courte consigne en haut (« Vérifiez le montant et le compte, puis enregistrez. »), sans parler de pré-remplissage.
+- Cas « À traiter » : dette en retard, créance à réclamer, budget dépassé, brouillons, échéance proche, budget presque atteint, sauvegarde ancienne, projet en retard sur son objectif, taux de change ancien.
+- Les blocs de l'accueil et de l'aperçu mènent chacun à leur espace (chevron à droite du titre du bloc).
 - L'accueil résume dettes et créances en deux blocs : montant, nombre, puis retard ou prochaine date. Le détail par personne est sur l'écran « Dettes et créances ».
-- Barre de navigation flottante, bouton + carré à coins arrondis qui dépasse au centre.
-- Dans la saisie rapide, les catégories défilent horizontalement, les plus utilisées d'abord, puis un bouton « Toutes ».
+- Barre de navigation flottante, bouton + carré à coins arrondis qui dépasse au centre. Elle a une bordure fine (`#DDE2EC`) et une ombre nette, et le contenu de l'écran s'efface en fondu juste au-dessus d'elle, pour que les cartes blanches ne se confondent pas avec la barre.
+- Dans une carte, la marge visible du bas égale celle du haut, même quand la dernière ligne contient une action de 44 px de haut.
+- Dans la saisie rapide, les catégories défilent horizontalement sur une ligne, les plus utilisées d'abord. Un fondu et une flèche verte (sans cercle) apparaissent du côté où il reste des catégories.
+
+- Sur un écran étroit (moins de 360 px de large), les textes se raccourcissent ; la forme longue reste dès qu'il y a la place. Dates : « Sam. 5 déc. · 26 j » au lieu de « Samedi 5 décembre · dans 26 jours », et l'année de l'année en cours n'est jamais affichée. Rapports : « 80,00 $ / 200,00 $ » au lieu de « remboursés sur ». Choix courts comme les unités de récurrence : initiales (J S M A), avec le nom complet pour les lecteurs d'écran.
+
+- Les champs d'une opération (saisie et détail) ont la même ligne : une tuile d'icône à gauche, le libellé en petit au-dessus de la valeur, l'information d'appoint à droite (devise, heure). L'icône est celle de l'élément choisi s'il en a une (le compte M-Pesa, la catégorie Taxi), sinon l'icône générique du champ. La note et les pièces jointes ont chacune leur carte, libellé à l'intérieur ; les pièces jointes viennent avant la note.
+
+- Les montants prennent la couleur de leur type, partout (totaux, listes, détail) : entrées et revenus en vert (#0A7355), sorties et dépenses en brun pêche (#8A4B12), transferts et résultats en noir avec leur signe.
+- Une liste vide (mois sans opération, filtres sans résultat, recherche sans résultat) montre une carte blanche à bordure en pointillés gris : une icône dans un rond gris, un titre, une ligne d'aide et l'action utile selon le cas (ajouter, revenir au mois en cours, effacer les filtres ou la recherche).
+- Dans une liste, un brouillon reste à sa date : une carte en pointillés, au fond et aux pointillés de la couleur de son type, avec dessous une bande « Brouillon » et les boutons « Ignorer » et « Valider ». Son montant est gris tant qu'il ne compte pas. Un brouillon ignoré devient une ligne blanche à pointillés gris, montant barré, marquée « Ignoré », sans bouton ; la toucher ouvre son détail.
+- Une opération prévue du mois, pas encore arrivée, est une ligne blanche à pointillés gris, marquée « Prévu », montant gris, sans bouton.
+- Une feuille d'affichage (icône à curseurs en haut d'une liste) présente chaque choix sur une ligne : une icône dans une tuile, qui passe en vert quand le choix est actif, le nom, une description courte sur une seule ligne, et la pastille à droite. La page correspondante dans Réglages reprend la même ligne avec la description complète.
+- La recherche ouvre son propre écran : un champ à contour vert avec une croix pour l'effacer, puis « Recherches récentes » et « Chercher par » tant que rien n'est tapé. Dans les résultats, groupés par mois avec leur nombre, le texte trouvé est surligné en vert clair. Les autres mois sont repliés sous une carte en pointillés (« 3 autres résultats · Dans les mois précédents ») ; une fois déroulée, elle laisse une ligne « Mois précédents · 3 » en pointillés, avec « Replier » à droite.
+- Dans les filtres d'une liste, chaque puce (Type, Compte, Catégorie) ouvre juste dessous une petite liste flottante : « Tous » en tête, puis les choix sur une ligne avec leur nombre d'opérations et, à la fin, une coche ou un point ; un choix sans résultat est grisé. La puce ouverte passe au premier plan, contour vert.
+- Pour changer de mois dans une liste, le titre entier (« Novembre 2026 ▾ ») ouvre juste dessous un choix flottant : l'année entre deux flèches et les 12 mois en toutes lettres, en grille ; les mois à venir sont grisés et un toucher à côté annule. Pas de flèches dans l'en-tête ; glisser la liste vers la droite ou la gauche passe au mois d'avant ou d'après. « Ce mois-ci » ramène au mois en cours.
+- Un geste caché (comme ce glissement) est montré à la première visite : une carte au premier plan, le fond assombri et flouté, une petite animation en boucle qui fait l'aller et le retour, et un bouton « Compris ». Les animations s'arrêtent si le téléphone demande moins d'animations. Le contenu d'exemple de ces animations (mois, opérations, montants) est traduit comme le reste de l'interface.
+- Quand un clavier s'ouvre, l'écran remonte pour que le champ en cours de saisie reste visible juste au-dessus du clavier.
+- Dans la saisie, « Enregistrer » est en bas de l'écran. Tant que le clavier est ouvert, il est remplacé par « Terminé », qui range le clavier ; un toucher ailleurs le range aussi.
 
 Logo et icônes : voir [BRAND.md](../BRAND.md).
+
+## Actions d'en-tête
+
+- Une action en haut à droite d'un écran (Modifier, par exemple) est un lien texte vert (#0A7355), sans fond ni bordure, d'au moins 44 px de haut. Les icônes d'action d'en-tête (⋯) suivent la même couleur, sans fond.

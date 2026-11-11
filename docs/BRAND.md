@@ -4,7 +4,7 @@ Nom retenu : **Kibuo**. Nom inventé, inspiré de *kibubu* (tirelire en swahili,
 
 ## Logo
 
-Retenu : [A5, la pièce ambre à mi-chemin](design/logos/a5-piece-mi-chemin.svg). Une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente. Les autres fichiers de `design/logos/` sont les propositions écartées.
+[Logo retenu](design/logos/kibuo-logo.svg) : une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente.
 
 Restent à produire : la version monochrome et l'icône Android.
 
