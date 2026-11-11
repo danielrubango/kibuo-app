@@ -6,16 +6,30 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 - Android, version 8 au minimum. Appareil de référence : Poco M3 (6 Go de RAM), plus émulateurs.
 - Français et anglais ; d'autres langues s'ajouteront progressivement.
+- Thème clair uniquement ; le thème sombre viendra plus tard.
 - Totalement offline, sans compte obligatoire, sans IA, sans publicité.
 - Gratuite. L'usage offline reste gratuit à vie ; les services en ligne pourront être payants.
 - Usage individuel. Un partage en lecture seule viendra plus tard.
 
 ## Modules de la V1
 
+### Verrouillage
+
+- Le clavier du code mélange ses chiffres à chaque ouverture et après chaque essai, pour qu'un regard par-dessus l'épaule ne permette pas de deviner le code. L'option peut être désactivée dans Réglages.
+
 ### Comptes et opérations
 
-- Plusieurs comptes (espèces, banque, mobile money, épargne) et transferts entre eux.
+- Plusieurs comptes et transferts entre eux.
+- Chaque compte a un type. Quatre types sont proposés d'emblée (espèces, banque, mobile money, épargne), et l'utilisateur peut créer les siens en leur attribuant une icône.
 - Dépenses et revenus classés par catégorie. Catégories traduites et modifiables, un seul niveau de sous-catégories.
+- Une opération peut être classée dans une catégorie principale ou dans une de ses sous-catégories, au choix. Une catégorie sans sous-catégorie se choisit directement.
+- Une opération peut porter une note longue (affichée sur 3 lignes, dépliable) et jusqu'à 5 pièces jointes, par exemple la photo d'un reçu. Les pièces jointes s'affichent avec un aperçu ; on peut en cocher une ou plusieurs pour les retirer, ou en voir et remplacer une seule.
+- La recherche porte sur tous les mois : libellé, catégorie, compte, note et montant, sans tenir compte des accents ni des majuscules. Elle propose les recherches récentes et des raccourcis (catégories, comptes, montant). Les résultats du mois affiché viennent d'abord ; ceux des autres mois sont repliés, et s'ouvrent seuls si le mois affiché n'a rien. Pas de total sur les résultats.
+- Une opération peut être dupliquée : la saisie s'ouvre préremplie, à la date du jour.
+- Après l'enregistrement, l'écran Opérations s'ouvre avec la nouvelle opération mise en avant, et une feuille récapitulative propose « Annuler et modifier » ou une nouvelle saisie du même type. Elle se ferme seule après quelques secondes, sauf si l'on touche son contenu ; un toucher à côté la ferme alors.
+- Une opération peut porter des frais (changeur, retrait, envoi, transfert), saisis à la main et toujours dans la devise du compte. Ils restent visibles séparément dans le détail. Pour une dépense, ils s'ajoutent à ce qui sort du compte ; pour un revenu, ils sont déduits de ce qui arrive sur le compte ; pour un transfert, ils sont dans la devise du compte de départ et s'ajoutent à ce qui en sort.
+- La saisie d'un transfert indique le compte de départ et le compte d'arrivée, sans catégorie. La devise suit le compte de départ ; si le compte d'arrivée est dans une autre devise, un taux s'applique et le montant arrivé est conservé.
+- Le décompte d'une opération en autre devise se lit de haut en bas : montant payé, taux pour 1 unité de la devise du compte, montant converti, frais, puis le total retiré du compte. Il est replié sur ce total dans la saisie ; toucher le total le déroule ou le replie. Le taux et les frais se modifient en touchant leur ligne.
 
 ### Devises
 
@@ -25,18 +39,25 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 - Une conversion passée ne change jamais.
 - Les rapports peuvent convertir à une date choisie. Le total du patrimoine utilise les taux du jour.
 - Changer de devise principale ne modifie que l'affichage et les rapports.
+- Chaque devise indique si elle utilise des décimales. Le clavier de saisie affiche alors une virgule, ou sinon une touche « 000 » (par exemple pour le franc congolais).
+- L'écran Comptes propose un interrupteur « Tout afficher en <devise principale> (<code>) », affiché dès qu'au moins un compte est dans une autre devise que la principale, masqué sinon. Sous chaque compte figure le code de sa devise (USD, CDF, EUR…).
 
 ### Budgets
 
 - Un budget par catégorie et par période, en devise principale. Les opérations en autre devise comptent selon leur taux figé.
 - Le jour de début de période est réglable (par exemple le jour de paie).
 - Pas de report du reste d'une période à l'autre.
+- Les budgets s'affichent en tuiles ou en liste, triés selon l'attention requise (les plus consommés d'abord) ou dans l'ordre de l'utilisateur.
 
 ### Récurrences
 
 - Une récurrence crée directement l'opération par défaut. Un réglage global fixe ce comportement, et chaque récurrence peut le remplacer pour rester en brouillon.
 - Si l'application n'a pas été ouverte le jour prévu, les occurrences manquées sont créées à leur date d'origine, avec une notification.
 - Modifier une récurrence ne change que les occurrences futures.
+- Rythme : chaque jour, semaine, mois ou année, avec un intervalle (par exemple toutes les 2 semaines). Fin au choix : jamais, après un nombre de fois, ou à une date.
+- L'affichage de la liste des opérations (aussi dans Réglages, « Récurrences et brouillons ») règle trois choses : valider automatiquement ou toujours demander ; laisser les brouillons à leur date ou grouper en haut ceux en retard et du jour ; montrer à leur date ou masquer les opérations prévues du mois, qui ne sont jamais groupées.
+- Un brouillon se valide ou s'ignore depuis la liste. Un brouillon ignoré ne compte pas ; il reste visible à sa date et ne peut plus être validé que depuis son détail.
+- Une récurrence hebdomadaire peut tomber sur plusieurs jours de la semaine (par exemple le lundi et le jeudi), au moins un.
 
 ### Dettes et créances
 
@@ -44,32 +65,39 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 - Date d'échéance et remboursements partiels.
 - Chaque mouvement peut être lié à un compte. Ce lien reste optionnel pour une dette ancienne.
 - Pas de calcul d'intérêts.
+- La liste se groupe par date d'échéance ou par personne, au choix de l'utilisateur.
+- Les dettes et créances soldées restent par défaut dans leur mois, ou dans « Sans échéance » si elles n'avaient pas de date. L'utilisateur peut choisir de les regrouper en bas ou de les masquer (réglage d'affichage, aussi dans Réglages).
 
 ### Projets
 
-- Chaque versement est un transfert vers un compte d'épargne, qui peut porter plusieurs projets.
+- Chaque projet est rattaché à un compte, quel que soit son type (banque, mobile money, etc.). Un compte peut porter plusieurs projets.
+- L'argent versé pour un projet reste dans le solde du compte, mais il est affiché à part comme réservé.
 
 ### Rappels et alertes
 
 Notifications locales uniquement :
 
-- rappel général de saisie ;
-- calendrier propre à chaque dette, créance et projet ;
-- alertes de budget à 80 % et 100 % ;
+- rappel général de saisie, avec son heure, et alertes de budget à 80 % et 100 %, réglés dans Réglages ;
+- délai par défaut avant une échéance, réglé dans Réglages ;
+- rappel propre à chaque dette, créance, projet et récurrence, réglé dans sa fiche ;
 - pour réclamer un remboursement, un message pré-rempli que l'utilisateur envoie lui-même par SMS ou WhatsApp.
 
 Certaines marques Android retardent les notifications pour économiser la batterie : prévoir un guide de réglage et des tests sur ces appareils.
 
 ### Tableaux de bord
 
-Graphiques simples. L'accueil a pour titre le mois en cours et affiche le total en devise principale, le reste de la période, les prochaines échéances groupées par mois, et le résumé des dettes et créances. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION.md).
+Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION.md).
+
+- L'accueil (onglet « Accueil », titre « Aujourd'hui » suivi de la date) dit ce qui se passe et ce qui arrive, sans être lié à un mois. Dans l'ordre : le disponible (total des comptes moins la part réservée aux projets) ; le bilan du mois en cours, qui ouvre l'aperçu ; dettes et créances en deux cartes (total, nombre, retard) ; « À traiter », seulement s'il y a quelque chose (dette en retard, brouillons, budget presque atteint) ; « À venir » : les échéances des 14 prochains jours (dettes, créances, récurrences), montrées comme des opérations prévues, sous leur date, avec « Tout voir » vers la liste des opérations.- « À traiter » rassemble ce qui demande une action, du plus urgent au moins urgent : dettes en retard, créances à réclamer, budgets dépassés, brouillons, échéances proches, budgets presque atteints, sauvegarde ancienne, projets en retard sur leur objectif, taux de change anciens. L'accueil en montre au plus 3, « Tout voir » ouvre la liste complète. Toucher une ligne ouvre le détail concerné ; toucher son action la fait directement, souvent dans une feuille pré-remplie (remboursement, message de réclamation par SMS ou WhatsApp, versement au projet, nouveau taux, sauvegarde lancée). Une action directe (valider des brouillons, lancer la sauvegarde, réclamer) montre toujours d'abord une synthèse, qu'on confirme ; pour les brouillons, on coche ceux à valider (tous d'avance) et toucher un brouillon ouvre sa fiche pour le modifier ou le valider seul ; la feuille ne modifie rien elle-même. Les autres actions (rembourser, mettre de côté pour un projet, modifier un taux) ouvrent la saisie habituelle, pré-remplie, qu'on enregistre soi-même. Une ligne traitée disparaît. On peut reporter une ligne d'un glissement (« Plus tard ») : elle revient le lendemain. Une créance réclamée reste, marquée « relancée le … », jusqu'au remboursement.
+- L'aperçu montre une période au choix : « Ce mois-ci » (par défaut, selon le jour de début de période), « 30 jours », « 3 mois », « Cette année » ou « Personnalisée » (deux dates, ou un nombre de jours, de semaines ou de mois). La période choisie est gardée. Dans l'ordre : bilan de la période, dépenses par catégorie, comptes et leur évolution, dettes et créances (remboursé et restant, des deux côtés), projets, budgets. Chaque bloc a une ligne de comparaison avec la période précédente et mène à son espace.
 
 ## Navigation et saisie
 
 - Premier lancement : langue, devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés.
-- Barre du bas : Accueil, Opérations, bouton **+** central qui dépasse vers le haut, Budgets, Projets.
-- Réglages et « Plus » via une icône en haut de l'accueil.
-- Dettes et créances : section de l'accueil, et accès depuis le +.
+- Barre du bas : Accueil, Opérations, bouton **+** central qui dépasse vers le haut, Aperçu, Plus.
+- « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), Réglages, Données (sauvegarde et restauration, export CSV), Aide et support, À propos, Noter Kibuo. Le profil viendra plus tard en tête de page.
+- Les projets ont leur espace dans « Plus », et apparaissent aussi sous leur compte dans Comptes, avec la part réservée.
+- Dettes et créances : section de l'accueil, bloc de l'aperçu, espace dans « Plus », et création depuis le +. Un remboursement s'enregistre depuis la fiche de la dette.
 - Le + ouvre une feuille montante sur « Dépense », clavier numérique affiché, avec Revenu, Transfert, Dette et Épargne en un geste. Objectif : moins de 10 secondes pour une dépense.
 
 ## Protection des données

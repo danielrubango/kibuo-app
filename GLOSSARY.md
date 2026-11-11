@@ -7,11 +7,11 @@ Vocabulaire de l'application de gestion de budget personnelle. Le terme anglais 
 ### Argent et comptes
 
 **Compte** (`Account`) :
-Endroit où se trouve de l'argent : espèces, banque, mobile money ou épargne. Il a une seule devise.
+Endroit où se trouve de l'argent. Il a une seule devise et un type.
 _Avoid_ : portefeuille, wallet
 
-**Compte d'épargne** (`SavingsAccount`) :
-Compte qui reçoit l'argent mis de côté et peut porter plusieurs projets.
+**Type de compte** (`AccountType`) :
+Nature d'un compte, avec son icône. Quatre types sont fournis, et l'utilisateur peut en créer d'autres.
 
 **Opération** (`Transaction`) :
 Mouvement d'argent enregistré : dépense, revenu ou transfert.
@@ -89,7 +89,10 @@ But d'épargne : voyage, achat, réserve.
 _Avoid_ : objectif, goal
 
 **Versement** (`Contribution`) :
-Transfert vers un compte d'épargne, rattaché à un projet.
+Montant mis de côté pour un projet sur le compte qui le porte.
+
+**Réservé** (`Reserved`) :
+Part du solde d'un compte attribuée à ses projets. Le reste est disponible.
 
 ### Données et appareils
 

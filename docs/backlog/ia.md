@@ -11,6 +11,8 @@ Moins de saisie et plus de compréhension.
 - Préparer des brouillons à valider à partir d'un SMS, d'une photo de reçu, d'une facture ou d'un relevé.
 - Répondre à des questions naturelles : « Où part mon argent ? », « Combien puis-je mettre de côté ce mois-ci ? », « Comment atteindre mon objectif d'épargne ? »
 
+Place réservée dans l'interface : le champ de recherche des opérations deviendra « Chercher ou demander », en haut de l'accueil et de l'aperçu. Pas d'onglet ni de bouton dédié.
+
 Contraintes connues :
 
 - Google Play réserve la lecture des SMS aux applications SMS par défaut, sauf exception. L'import passera par le partage vers l'application ou le copier-coller.
