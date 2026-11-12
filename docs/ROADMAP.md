@@ -23,7 +23,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Maquetter la saisie rapide depuis le bouton +
 - [x] Maquetter les opérations
 - [x] Maquetter l'aperçu
-- [ ] Maquetter les budgets
+- [x] Maquetter les budgets
 - [ ] Maquetter les projets
 - [x] Maquetter les rappels et les réglages
 - [x] Maquetter la sauvegarde et la restauration

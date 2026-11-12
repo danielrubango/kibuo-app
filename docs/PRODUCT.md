@@ -47,7 +47,9 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 - Un budget par catégorie et par période, en devise principale. Les opérations en autre devise comptent selon leur taux figé.
 - Le jour de début de période est réglable (par exemple le jour de paie).
 - Pas de report du reste d'une période à l'autre.
-- Les budgets s'affichent en tuiles ou en liste, triés selon l'attention requise (les plus consommés d'abord) ou dans l'ordre de l'utilisateur.
+- Les budgets s'affichent en tuiles (par défaut) ou en liste, triés selon l'attention requise (les plus consommés d'abord) ou dans l'ordre de l'utilisateur ; ces deux choix se font dans la feuille d'affichage, pas sur la page.
+- Le détail d'un budget montre son évolution dans le mois (le total, ou au choix l'écart au rythme régulier), les opérations déjà prévues, et ses opérations rangées par jour.
+- À la création, la moyenne dépensée dans la catégorie sur les mois passés est proposée comme repère, et les alertes à 80 % et 100 % sont activées d'avance.
 
 ### Récurrences
 
