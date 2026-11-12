@@ -74,6 +74,8 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 - Chaque projet est rattaché à un compte, quel que soit son type (banque, mobile money, etc.). Un compte peut porter plusieurs projets.
 - L'argent versé pour un projet reste dans le solde du compte, mais il est affiché à part comme réservé.
+- La date d'un projet est facultative. Avec une date, l'application montre où il devrait en être aujourd'hui, son avance ou son retard, et un plan : le reste à mettre divisé en parts égales par semaine, quinzaine ou mois, au choix de l'utilisateur dans le réglage du projet, avec un rappel au même rythme. Sans date, le projet avance à son rythme.
+- Quand l'objectif est atteint, l'utilisateur choisit : enregistrer la dépense (le projet se termine), garder l'argent de côté, ou le rendre disponible sur le compte. Les projets terminés restent consultables.
 
 ### Rappels et alertes
 

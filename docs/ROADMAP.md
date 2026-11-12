@@ -24,7 +24,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Maquetter les opérations
 - [x] Maquetter l'aperçu
 - [x] Maquetter les budgets
-- [ ] Maquetter les projets
+- [x] Maquetter les projets
 - [x] Maquetter les rappels et les réglages
 - [x] Maquetter la sauvegarde et la restauration
 - [ ] Décliner le logo en icône Android
