@@ -40,7 +40,7 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 - Les rapports peuvent convertir à une date choisie. Le total du patrimoine utilise les taux du jour.
 - Changer de devise principale ne modifie que l'affichage et les rapports.
 - Chaque devise indique si elle utilise des décimales. Le clavier de saisie affiche alors une virgule, ou sinon une touche « 000 » (par exemple pour le franc congolais).
-- L'écran Comptes propose un interrupteur « Tout afficher en <devise principale> (<code>) », affiché dès qu'au moins un compte est dans une autre devise que la principale, masqué sinon. Sous chaque compte figure le code de sa devise (USD, CDF, EUR…).
+- Dès qu'au moins un compte est dans une autre devise que la principale, l'écran Comptes montre en haut une icône d'affichage ; elle ouvre une feuille où choisir entre « Devise de chaque compte » et « Tout en <devise principale> (<code>) ». Sans autre devise, l'icône n'apparaît pas. Sous chaque compte figure le code de sa devise (USD, CDF, EUR…) ; un compte dans une autre devise montre en plus son équivalent approximatif en devise principale (« CDF · ≈ 30,00 $ »), un compte en devise principale rien de plus.
 
 ### Budgets
 
