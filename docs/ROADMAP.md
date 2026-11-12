@@ -26,7 +26,7 @@ Rien n'est codé avant la fin de cette phase.
 - [ ] Maquetter les budgets
 - [ ] Maquetter les projets
 - [x] Maquetter les rappels et les réglages
-- [ ] Maquetter la sauvegarde et la restauration
+- [x] Maquetter la sauvegarde et la restauration
 - [ ] Décliner le logo en icône Android
 
 ## Phase 2 : Socle technique
