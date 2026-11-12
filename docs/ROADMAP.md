@@ -18,13 +18,14 @@ Rien n'est codé avant la fin de cette phase.
 - [ ] Vérifier les marques et réserver les domaines (voir [BRAND.md](BRAND.md))
 - [x] Proposer quatre logos en SVG et en choisir un
 - [x] Proposer trois directions visuelles sur l'accueil et la saisie rapide, et en choisir une
-- [ ] Maquetter le premier lancement
-- [ ] Maquetter l'accueil, avec dettes et créances
-- [ ] Maquetter la saisie rapide depuis le bouton +
-- [ ] Maquetter les opérations
+- [x] Maquetter le premier lancement
+- [x] Maquetter l'accueil, avec dettes et créances
+- [x] Maquetter la saisie rapide depuis le bouton +
+- [x] Maquetter les opérations
+- [x] Maquetter l'aperçu
 - [ ] Maquetter les budgets
 - [ ] Maquetter les projets
-- [ ] Maquetter les rappels et les réglages
+- [x] Maquetter les rappels et les réglages
 - [ ] Maquetter la sauvegarde et la restauration
 - [ ] Décliner le logo en icône Android
 
