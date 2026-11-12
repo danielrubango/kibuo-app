@@ -95,7 +95,7 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 
 ## Navigation et saisie
 
-- Premier lancement : langue, devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés.
+- Premier lancement : langue, devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés. Dès le premier écran, « J'ai une sauvegarde » permet de restaurer ; la langue, la devise et les réglages viennent alors de la sauvegarde et les étapes suivantes sont sautées.
 - Barre du bas : Accueil, Opérations, bouton **+** central qui dépasse vers le haut, Aperçu, Plus.
 - « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), puis Réglages et « Sauvegarde et export » (sauvegarde, restauration, export CSV), chacun sur une seule ligne, puis Aide et support, À propos, Noter Kibuo. Une sauvegarde trop ancienne se signale sur sa ligne, sans changer l'ordre de la page. Le profil viendra plus tard en tête de page.
 - Les projets ont leur espace dans « Plus », et apparaissent aussi sous leur compte dans Comptes, avec la part réservée.
@@ -108,7 +108,7 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 - PIN oublié : biométrie si active, sinon code de récupération, sinon effacement et restauration d'une sauvegarde.
 - Sauvegardes automatiques **au choix de l'utilisateur** : hebdomadaires, dans un dossier choisi, avec un rappel si la dernière date trop.
 - Fichier de sauvegarde versionné, chiffrement par mot de passe proposé mais optionnel.
-- Restauration par remplacement complet, après une sauvegarde automatique de l'état actuel.
+- Restauration par remplacement complet, après une sauvegarde automatique de l'état actuel. Elle montre d'abord ce qui sera remplacé (période et nombre d'opérations) et se confirme par un appui long, sauf s'il n'y a rien à remplacer.
 - Export CSV séparé.
 
 ## Après la V1
