@@ -100,7 +100,7 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 - « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), puis Réglages et « Sauvegarde et export » (sauvegarde, restauration, export CSV), chacun sur une seule ligne, puis Aide et support, À propos, Noter Kibuo. Une sauvegarde trop ancienne se signale sur sa ligne, sans changer l'ordre de la page. Le profil viendra plus tard en tête de page.
 - Les projets ont leur espace dans « Plus », et apparaissent aussi sous leur compte dans Comptes, avec la part réservée.
 - Dettes et créances : section de l'accueil, bloc de l'aperçu, espace dans « Plus », et création depuis le +. Un remboursement s'enregistre depuis la fiche de la dette.
-- Le + ouvre une feuille montante sur « Dépense », clavier numérique affiché, avec Revenu, Transfert, Dette et Épargne en un geste. Objectif : moins de 10 secondes pour une dépense.
+- Toucher le + ouvre la feuille « Ajouter » : Dépense en premier et en grand, puis Revenu, Transfert, Dette ou créance, et Projet (mettre de côté), chacun ouvrant sa saisie ; dessous, « Refaire » propose les dernières saisies, qui s'ouvrent pré-remplies. Maintenir le + ouvre un éventail des mêmes choix : on glisse vers l'un d'eux et on lève le doigt. Après quelques ouvertures du menu, une bulle fait découvrir l'appui long, une seule fois. Objectif : moins de 10 secondes pour une dépense.
 
 ## Protection des données
 
