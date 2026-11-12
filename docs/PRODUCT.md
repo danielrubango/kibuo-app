@@ -97,7 +97,7 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 
 - Premier lancement : langue, devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés.
 - Barre du bas : Accueil, Opérations, bouton **+** central qui dépasse vers le haut, Aperçu, Plus.
-- « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), Réglages, Données (sauvegarde et restauration, export CSV), Aide et support, À propos, Noter Kibuo. Le profil viendra plus tard en tête de page.
+- « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), puis Réglages et « Sauvegarde et export » (sauvegarde, restauration, export CSV), chacun sur une seule ligne, puis Aide et support, À propos, Noter Kibuo. Une sauvegarde trop ancienne se signale sur sa ligne, sans changer l'ordre de la page. Le profil viendra plus tard en tête de page.
 - Les projets ont leur espace dans « Plus », et apparaissent aussi sous leur compte dans Comptes, avec la part réservée.
 - Dettes et créances : section de l'accueil, bloc de l'aperçu, espace dans « Plus », et création depuis le +. Un remboursement s'enregistre depuis la fiche de la dette.
 - Le + ouvre une feuille montante sur « Dépense », clavier numérique affiché, avec Revenu, Transfert, Dette et Épargne en un geste. Objectif : moins de 10 secondes pour une dépense.
