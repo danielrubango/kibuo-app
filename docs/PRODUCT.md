@@ -4,7 +4,7 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 ## Cadre de la V1
 
-- Android, version 8 au minimum. Appareil de référence : Poco M3 (6 Go de RAM), plus émulateurs.
+- Android, version 8 au minimum. Appareil de référence : Poco X3 NFC sous Android 15, plus émulateurs, dont un Android 8 pour le minimum.
 - Français et anglais ; d'autres langues s'ajouteront progressivement.
 - Thème clair uniquement ; le thème sombre viendra plus tard.
 - Totalement offline, sans compte obligatoire, sans IA, sans publicité.
@@ -15,6 +15,13 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 ### Verrouillage
 
+- Le PIN compte de 4 à 6 chiffres ; la longueur se choisit à sa création. Le déverrouillage montre autant de points et s'ouvre dès le dernier chiffre.
+- L'empreinte est proposée juste après la création du PIN ; activée, elle est demandée en premier à chaque ouverture, avec « Utiliser le PIN » dessous.
+- L'application se reverrouille après une absence réglable : immédiatement, 1 minute (par défaut) ou 5 minutes.
+- Après 5 PIN faux, une attente s'impose (30 secondes), puis s'allonge à chaque nouvel échec (1 minute, 5 minutes…). Rien n'est jamais effacé automatiquement.
+- Le code de récupération est remis à la création du PIN : 16 caractères en 4 groupes, affichés avec « Copier ». On retape un groupe pour prouver qu'on l'a noté. Un nouveau code s'obtient dans Réglages en donnant son PIN ; l'ancien cesse alors de fonctionner.
+- Réglages › Sécurité tient en trois lignes : Verrouillage (PIN, empreinte, délai, clavier mélangé), Confidentialité, Code de récupération.
+- Confidentialité : masquer Kibuo dans les applications récentes (activé par défaut) et autoriser les captures d'écran (activé par défaut), réglables séparément. Sous Android 8 à 12, qui ne sait pas les séparer, un écran au logo recouvre les soldes au passage en arrière-plan.
 - Le clavier du code mélange ses chiffres à chaque ouverture et après chaque essai, pour qu'un regard par-dessus l'épaule ne permette pas de deviner le code. L'option peut être désactivée dans Réglages.
 
 ### Comptes et opérations
@@ -99,7 +106,7 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 
 ## Navigation et saisie
 
-- Premier lancement : langue, devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés. Dès le premier écran, « J'ai une sauvegarde » permet de restaurer ; la langue, la devise et les réglages viennent alors de la sauvegarde et les étapes suivantes sont sautées.
+- Premier lancement : langue (celle du téléphone, déjà cochée, ou le français si le téléphone n'est ni en français ni en anglais), devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés. Dès le premier écran, « J'ai une sauvegarde » permet de restaurer ; la langue, la devise et les réglages viennent alors de la sauvegarde et les étapes suivantes sont sautées.
 - Barre du bas : Accueil, Opérations, bouton **+** central qui dépasse vers le haut, Aperçu, Plus.
 - « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), puis Réglages et « Sauvegarde et export » (sauvegarde, restauration, export CSV), chacun sur une seule ligne, puis Aide et support, À propos, Noter Kibuo. Une sauvegarde trop ancienne se signale sur sa ligne, sans changer l'ordre de la page. Le profil viendra plus tard en tête de page.
 - Les projets ont leur espace dans « Plus », et apparaissent aussi sous leur compte dans Comptes, avec la part réservée.
