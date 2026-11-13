@@ -34,7 +34,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Installer Flutter, Android Studio et un émulateur
 - [x] Vérifier une application vide sur l'émulateur (l'essai sur téléphone se fait en phase 7)
 - [x] Mettre en place l'analyse et les tests automatiques
-- [ ] Créer le thème issu du design, avec l'icône de l'application
+- [x] Créer le thème issu du design, avec l'icône de l'application
 - [ ] Créer la navigation avec le bouton + central
 - [ ] Mettre en place le français et l'anglais
 - [ ] Créer la base chiffrée, ses migrations et les métadonnées de synchro

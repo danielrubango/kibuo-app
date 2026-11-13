@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/theme_preview.dart';
+
 void main() {
   runApp(const KibuoApp());
 }
 
-/// Placeholder shell; navigation, theme and localization come in later steps.
+/// Navigation and localization come in later steps.
 class KibuoApp extends StatelessWidget {
   const KibuoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Kibuo',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Center(child: Text('Kibuo'))),
+      theme: KibuoTheme.light(),
+      home: const ThemePreview(),
     );
   }
 }
