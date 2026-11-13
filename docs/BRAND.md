@@ -4,9 +4,9 @@ Nom retenu : **Kibuo**. Nom inventé, inspiré de *kibubu* (tirelire en swahili,
 
 ## Logo
 
-[Logo retenu](design/logos/kibuo-logo.svg) : une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente.
+[Logo retenu](design/logos/kibuo-logo.svg) : une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente. Un petit tiret discret, sombre et à demi transparent, marque la pièce. Revu le 13 novembre 2026 face à quatre autres pistes (la fente, un K, un cochon, un pot kibubu) : la tirelire ronde reste.
 
-Restent à produire : la version monochrome et l'icône Android.
+Icône Android adaptative : [fond](design/logos/kibuo-icon-background.svg) nuit plein, [premier plan](design/logos/kibuo-icon-foreground.svg) avec le dessin centré dans la zone sûre, et [version à une couleur](design/logos/kibuo-icon-monochrome.svg) pour les icônes à thème d'Android 13 et plus, où la fente et le bord de la pièce sont évidés. Le téléphone découpe l'icône en rond, en galet ou en carré arrondi ; le dessin reste lisible à 24 px.
 
 ## Icônes
 
