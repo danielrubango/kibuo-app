@@ -36,6 +36,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Mettre en place l'analyse et les tests automatiques
 - [x] Créer le thème issu du design, avec l'icône de l'application
 - [x] Créer la navigation avec le bouton + central
+- [x] Recentrer le logo et créer l'écran de démarrage
 - [ ] Mettre en place le français et l'anglais
 - [ ] Créer la base chiffrée, ses migrations et les métadonnées de synchro
 - [ ] Maquetter puis mettre en place le verrouillage par PIN et biométrie, et la confidentialité

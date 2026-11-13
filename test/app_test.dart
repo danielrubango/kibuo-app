@@ -12,6 +12,7 @@ void main() {
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.theme?.scaffoldBackgroundColor, KibuoColors.background);
     expect(app.theme?.colorScheme.primary, KibuoColors.mint);
+    await tester.pump(const Duration(seconds: 2));
   });
 
   test('titles and amounts use Space Grotesk, running text uses Inter', () {

@@ -106,6 +106,7 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 
 ## Navigation et saisie
 
+- À chaque vrai démarrage de l'application (après un redémarrage du téléphone, ou si Android l'a fermée), le logo et le nom « Kibuo » restent affichés au moins 1,5 s, plus longtemps seulement si l'application n'est pas encore prête ; revenir d'une autre application ne le montre pas, et on ne peut pas le passer d'un toucher.
 - Premier lancement : langue (celle du téléphone, déjà cochée, ou le français si le téléphone n'est ni en français ni en anglais), devise principale, premier compte, puis PIN et sauvegardes proposés sans être imposés. Dès le premier écran, « J'ai une sauvegarde » permet de restaurer ; la langue, la devise et les réglages viennent alors de la sauvegarde et les étapes suivantes sont sautées.
 - Barre du bas : Accueil, Opérations, bouton **+** central qui dépasse vers le haut, Aperçu, Plus.
 - « Plus » regroupe, dans l'ordre : Mes espaces (Comptes, Budgets, Projets, Dettes et créances, Récurrences, Catégories), puis Réglages et « Sauvegarde et export » (sauvegarde, restauration, export CSV), chacun sur une seule ligne, puis Aide et support, À propos, Noter Kibuo. Une sauvegarde trop ancienne se signale sur sa ligne, sans changer l'ordre de la page. Le profil viendra plus tard en tête de page.

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Shown while Flutter starts: the app background colour. -->
+<!-- Android 8 to 11 have no system start screen: show the same logo, at the
+     same place and size as on Android 12 and later. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/kibuo_background" />
+    <item
+        android:drawable="@drawable/splash_icon"
+        android:gravity="center"
+        android:width="288dp"
+        android:height="288dp" />
 </layer-list>

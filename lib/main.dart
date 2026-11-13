@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kibuo/ui/shell/app_shell.dart';
+import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class KibuoApp extends StatelessWidget {
       title: 'Kibuo',
       debugShowCheckedModeBanner: false,
       theme: KibuoTheme.light(),
-      home: const AppShell(),
+      home: const StartGate(child: AppShell()),
     );
   }
 }

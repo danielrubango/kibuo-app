@@ -8,6 +8,8 @@ Future<void> _start(WidgetTester tester) async {
   tester.view.devicePixelRatio = 2.75;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(const KibuoApp());
+  // Past the start screen.
+  await tester.pump(const Duration(seconds: 2));
   await tester.pumpAndSettle();
 }
 

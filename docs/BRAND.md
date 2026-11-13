@@ -4,9 +4,11 @@ Nom retenu : **Kibuo**. Nom inventé, inspiré de *kibubu* (tirelire en swahili,
 
 ## Logo
 
-[Logo retenu](design/logos/kibuo-logo.svg) : une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente. Un petit tiret discret, sombre et à demi transparent, marque la pièce. Revu le 13 novembre 2026 face à quatre autres pistes (la fente, un K, un cochon, un pot kibubu) : la tirelire ronde reste.
+[Logo retenu](design/logos/kibuo-logo.svg) : une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente. Un petit tiret discret, sombre et à demi transparent, marque la pièce. Revu le 13 novembre 2026 face à quatre autres pistes (la fente, un K, un cochon, un pot kibubu) : la tirelire ronde reste. Le 14 novembre 2026, le grand cercle est placé au centre exact du dessin ; la pièce, un peu plus petite, ne dépasse du cercle que d'un tiers.
 
 Icône Android adaptative : [fond](design/logos/kibuo-icon-background.svg) nuit plein, [premier plan](design/logos/kibuo-icon-foreground.svg) avec le dessin centré dans la zone sûre, et [version à une couleur](design/logos/kibuo-icon-monochrome.svg) pour les icônes à thème d'Android 13 et plus, où la fente et le bord de la pièce sont évidés. Le téléphone découpe l'icône en rond, en galet ou en carré arrondi ; le dessin reste lisible à 24 px.
+
+Écrans de démarrage : Android 12 et plus affiche d'abord son propre écran, le [logo agrandi](../android/app/src/main/res/drawable/splash_icon.xml) sur le fond clair de l'application, sans texte ; Android 8 à 11 affiche le même logo à la même place. L'écran Kibuo qui suit reprend le logo exactement au même endroit et à la même taille, puis ajoute le nom « Kibuo » dessous.
 
 ## Icônes
 
