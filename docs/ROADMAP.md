@@ -31,7 +31,7 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Phase 2 : Socle technique
 
-- [ ] Installer Flutter, Android Studio et un émulateur
+- [x] Installer Flutter, Android Studio et un émulateur
 - [ ] Vérifier une application vide sur l'émulateur et le Poco M3
 - [ ] Mettre en place l'analyse et les tests automatiques
 - [ ] Mettre en place le français et l'anglais
