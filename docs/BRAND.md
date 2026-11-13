@@ -10,7 +10,7 @@ Icône Android adaptative : [fond](design/logos/kibuo-icon-background.svg) nuit 
 
 ## Icônes
 
-Phosphor, pour sa version pleine qui marque l'onglet actif. Le paquet Flutter reste à vérifier à l'installation.
+Phosphor, pour sa version pleine qui marque l'onglet actif. Le paquet Flutter n'étant plus maintenu, les polices officielles d'icônes (licence MIT) sont intégrées à l'application.
 
 ## État des vérifications
 

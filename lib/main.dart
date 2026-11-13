@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:kibuo/ui/shell/app_shell.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
-import 'package:kibuo/ui/theme_preview.dart';
 
 void main() {
   runApp(const KibuoApp());
 }
 
-/// Navigation and localization come in later steps.
+/// Localization comes in the next step.
 class KibuoApp extends StatelessWidget {
   const KibuoApp({super.key});
 
@@ -17,7 +17,7 @@ class KibuoApp extends StatelessWidget {
       title: 'Kibuo',
       debugShowCheckedModeBanner: false,
       theme: KibuoTheme.light(),
-      home: const ThemePreview(),
+      home: const AppShell(),
     );
   }
 }
