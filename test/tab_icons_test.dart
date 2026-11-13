@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -8,6 +9,9 @@ Future<void> _start(WidgetTester tester, {bool reduceMotion = false}) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.75;
   addTearDown(tester.view.reset);
+  // A French-speaking phone.
+  tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+  addTearDown(tester.platformDispatcher.clearLocalesTestValue);
   if (reduceMotion) {
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         const FakeAccessibilityFeatures(disableAnimations: true);

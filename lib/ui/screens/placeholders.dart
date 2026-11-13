@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -86,9 +87,9 @@ class EntryPlaceholder extends StatelessWidget {
         leadingWidth: 96,
         leading: TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annuler'),
+          child: Text(AppLocalizations.of(context).cancel),
         ),
-        title: Text(choice.entryTitle),
+        title: Text(choice.entryTitle(AppLocalizations.of(context))),
         centerTitle: true,
       ),
       body: Center(
@@ -108,7 +109,7 @@ class EntryPlaceholder extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Cette saisie arrive à une prochaine étape.',
+                AppLocalizations.of(context).entryComingLater,
                 textAlign: TextAlign.center,
                 style: text.bodyMedium,
               ),

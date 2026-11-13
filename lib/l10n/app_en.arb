@@ -1,0 +1,45 @@
+{
+  "@@locale": "en",
+
+  "tabHome": "Home",
+  "tabOperations": "Transactions",
+  "tabOverview": "Overview",
+  "tabMore": "More",
+
+  "homeTitle": "Today",
+  "homePlaceholder": "Your available money, the current month and what’s coming up will be here.",
+  "operationsPlaceholder": "This month’s transactions will be here.",
+  "overviewPlaceholder": "Charts and the items you follow will be here.",
+  "morePlaceholder": "Your spaces and settings will be here.",
+
+  "plusButton": "Add a transaction",
+  "plusButtonHint": "Hold for quick choices",
+  "addSheetTitle": "Add",
+  "close": "Close",
+  "cancel": "Cancel",
+  "fanHint": "Slide to a choice, or tap it",
+
+  "addExpense": "Expense",
+  "addExpenseHint": "Most frequent",
+  "addExpenseTitle": "New expense",
+
+  "addIncome": "Income",
+  "addIncomeHint": "Salary, sale",
+  "addIncomeTitle": "New income",
+
+  "addTransfer": "Transfer",
+  "addTransferHint": "Move money",
+  "addTransferTitle": "New transfer",
+
+  "addDebt": "Debt",
+  "addDebtHint": "or money owed",
+  "addDebtFan": "Debt or\nmoney owed",
+  "addDebtTitle": "New debt or money owed",
+
+  "addProject": "Savings",
+  "addProjectHint": "Put money aside",
+  "addProjectFan": "Put\naside",
+  "addProjectTitle": "Put money aside",
+
+  "entryComingLater": "This entry comes in a later step."
+}

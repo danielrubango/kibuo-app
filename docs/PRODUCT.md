@@ -5,7 +5,7 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 ## Cadre de la V1
 
 - Android, version 8 au minimum. Appareil de référence : Poco X3 NFC sous Android 15, plus émulateurs, dont un Android 8 pour le minimum.
-- Français et anglais ; d'autres langues s'ajouteront progressivement.
+- Français et anglais ; d'autres langues s'ajouteront progressivement. Kibuo prend la première de ces deux langues dans la liste des langues du téléphone, et le français si le téléphone n'en contient aucune. Sur Android 13 et plus, la langue de Kibuo peut aussi se choisir dans « Langue de l'application » des réglages d'Android.
 - Thème clair uniquement ; le thème sombre viendra plus tard.
 - Totalement offline, sans compte obligatoire, sans IA, sans publicité.
 - Gratuite. L'usage offline reste gratuit à vie ; les services en ligne pourront être payants.

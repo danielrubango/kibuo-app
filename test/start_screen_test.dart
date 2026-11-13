@@ -11,6 +11,9 @@ void _phone(WidgetTester tester) {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.75;
   addTearDown(tester.view.reset);
+  // A French-speaking phone.
+  tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+  addTearDown(tester.platformDispatcher.clearLocalesTestValue);
 }
 
 void main() {

@@ -3,6 +3,7 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/shell/add_sheet.dart';
@@ -57,34 +58,31 @@ class _AppShellState extends State<AppShell> {
                 bottom: false,
                 child: IndexedStack(
                   index: _tab.index,
-                  children: const [
+                  children: [
                     TabPlaceholder(
-                      key: ValueKey('screen-home'),
-                      title: 'Aujourd’hui',
+                      key: const ValueKey('screen-home'),
+                      title: AppLocalizations.of(context).homeTitle,
                       icon: PlaceholderIcons.home,
-                      message:
-                          'Le disponible, le mois en cours et ce qui arrive '
-                          'viendront ici.',
+                      message: AppLocalizations.of(context).homePlaceholder,
                     ),
                     TabPlaceholder(
-                      key: ValueKey('screen-operations'),
-                      title: 'Opérations',
+                      key: const ValueKey('screen-operations'),
+                      title: AppLocalizations.of(context).tabOperations,
                       icon: PlaceholderIcons.operations,
-                      message: 'Les opérations du mois viendront ici.',
+                      message: AppLocalizations.of(context)
+                          .operationsPlaceholder,
                     ),
                     TabPlaceholder(
-                      key: ValueKey('screen-overview'),
-                      title: 'Aperçu',
+                      key: const ValueKey('screen-overview'),
+                      title: AppLocalizations.of(context).tabOverview,
                       icon: PlaceholderIcons.overview,
-                      message:
-                          'Les graphiques et les points suivis '
-                          'viendront ici.',
+                      message: AppLocalizations.of(context).overviewPlaceholder,
                     ),
                     TabPlaceholder(
-                      key: ValueKey('screen-more'),
-                      title: 'Plus',
+                      key: const ValueKey('screen-more'),
+                      title: AppLocalizations.of(context).tabMore,
                       icon: PlaceholderIcons.more,
-                      message: 'Mes espaces et les réglages viendront ici.',
+                      message: AppLocalizations.of(context).morePlaceholder,
                     ),
                   ],
                 ),
@@ -247,8 +245,12 @@ class _BottomBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            tab(_Tab.home, 'Accueil', TabGlyph.home),
-            tab(_Tab.operations, 'Opérations', TabGlyph.operations),
+            tab(_Tab.home, AppLocalizations.of(context).tabHome, TabGlyph.home),
+            tab(
+              _Tab.operations,
+              AppLocalizations.of(context).tabOperations,
+              TabGlyph.operations,
+            ),
             Expanded(
               child: OverflowBox(
                 minWidth: 0,
@@ -266,8 +268,12 @@ class _BottomBar extends StatelessWidget {
                 ),
               ),
             ),
-            tab(_Tab.overview, 'Aperçu', TabGlyph.overview),
-            tab(_Tab.more, 'Plus', TabGlyph.more),
+            tab(
+              _Tab.overview,
+              AppLocalizations.of(context).tabOverview,
+              TabGlyph.overview,
+            ),
+            tab(_Tab.more, AppLocalizations.of(context).tabMore, TabGlyph.more),
           ],
         ),
       ),
@@ -362,8 +368,8 @@ class _PlusButtonState extends State<_PlusButton>
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Ajouter une opération',
-      hint: 'Maintenir pour les choix rapides',
+      label: AppLocalizations.of(context).plusButton,
+      hint: AppLocalizations.of(context).plusButtonHint,
       excludeSemantics: true,
       child: GestureDetector(
         onTap: _tap,

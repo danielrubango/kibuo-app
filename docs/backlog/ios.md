@@ -14,6 +14,7 @@ Le code Flutter reste compilable pour iOS, mais iOS n'est ni testé ni publié a
 
 | Fonction | Élément propre à Android | Équivalent iOS | État |
 |---|---|---|---|
+| Langue de l'application | Liste des langues dans « Langue de l'application » d'Android 13+ (`res/xml/locales_config.xml`) | Langues déclarées dans le projet iOS, pour le choix de langue par appli des Réglages | À faire |
 | Écran de démarrage | Écran d'Android 12+ (`windowSplashScreenAnimatedIcon`) et fond de lancement d'Android 8 à 11 | Écran de lancement iOS (LaunchScreen) avec le même logo, centré à la même taille que l'écran Kibuo | À faire |
 
 ## Différences déjà connues
