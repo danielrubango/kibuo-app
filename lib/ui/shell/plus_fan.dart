@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -78,7 +79,7 @@ class PlusFan extends StatelessWidget {
             right: 0,
             top: plusCenter.dy - 295,
             child: Text(
-              'Glissez vers un choix, ou touchez-le',
+              AppLocalizations.of(context).fanHint,
               textAlign: TextAlign.center,
               style: text.bodyMedium?.copyWith(color: KibuoColors.line),
             ),
@@ -97,7 +98,7 @@ class PlusFan extends StatelessWidget {
             top: plusCenter.dy - 31,
             child: Semantics(
               button: true,
-              label: 'Fermer',
+              label: AppLocalizations.of(context).close,
               child: GestureDetector(
                 onTap: onClose,
                 child: Container(
@@ -145,7 +146,7 @@ class _FanTile extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return Semantics(
       button: true,
-      label: choice.label,
+      label: choice.label(AppLocalizations.of(context)),
       excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -179,7 +180,7 @@ class _FanTile extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              choice.fanLabel,
+              choice.fanLabel(AppLocalizations.of(context)),
               textAlign: TextAlign.center,
               style: text.labelLarge?.copyWith(
                 fontSize: 13,

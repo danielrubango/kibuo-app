@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -33,9 +34,14 @@ class _AddSheet extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(child: Text('Ajouter', style: text.headlineSmall)),
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context).addSheetTitle,
+                    style: text.headlineSmall,
+                  ),
+                ),
                 IconButton(
-                  tooltip: 'Fermer',
+                  tooltip: AppLocalizations.of(context).close,
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(
                     KibuoIcons.x,
@@ -103,9 +109,12 @@ class _ExpenseCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(choice.label, style: text.titleMedium),
                     Text(
-                      choice.hint,
+                      choice.label(AppLocalizations.of(context)),
+                      style: text.titleMedium,
+                    ),
+                    Text(
+                      choice.hint(AppLocalizations.of(context)),
                       style: text.bodyMedium?.copyWith(
                         color: const Color(0xFF1F3A30),
                       ),
@@ -149,13 +158,13 @@ class _ChoiceTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      choice.label,
+                      choice.label(AppLocalizations.of(context)),
                       style: text.titleSmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      choice.hint,
+                      choice.hint(AppLocalizations.of(context)),
                       style: text.bodySmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
