@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- docs/design/logos/kibuo-icon-foreground.svg -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:translateX="6" android:translateY="6">
+        <path android:fillColor="#5EEAB5"
+            android:pathData="M23,52 A25,25 0 1,1 73,52 A25,25 0 1,1 23,52 Z" />
+        <path android:fillColor="#FFC247"
+            android:strokeColor="#0E1320"
+            android:strokeWidth="2.5"
+            android:pathData="M40.45,38 A11,11 0 1,1 55.55,38 Z" />
+        <path android:strokeColor="#0E1320"
+            android:strokeWidth="1.8"
+            android:strokeAlpha="0.45"
+            android:strokeLineCap="round"
+            android:pathData="M45,31.5 H51" />
+        <path android:fillColor="#0E1320"
+            android:pathData="M39.5,38 H56.5 A2.5,2.5 0 0,1 56.5,43 H39.5 A2.5,2.5 0 0,1 39.5,38 Z" />
+    </group>
+</vector>

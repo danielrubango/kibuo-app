@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- docs/design/logos/kibuo-icon-monochrome.svg: the body with the slot and the
+     coin edge cut out (even-odd holes), then the coin itself. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:translateX="6" android:translateY="6">
+        <path android:fillColor="#000000"
+            android:fillType="evenOdd"
+            android:pathData="M23,52 A25,25 0 1,1 73,52 A25,25 0 1,1 23,52 Z
+                M35.752,30.206 A25,25 0 0,1 60.248,30.206 A12.25,12.25 0 0,1 57.28,38 L38.72,38 A12.25,12.25 0 0,1 35.752,30.206 Z
+                M39.5,38 H56.5 A2.5,2.5 0 0,1 56.5,43 H39.5 A2.5,2.5 0 0,1 39.5,38 Z" />
+        <path android:fillColor="#000000"
+            android:pathData="M40.96,36.75 A9.75,9.75 0 1,1 55.04,36.75 Z" />
+    </group>
+</vector>
