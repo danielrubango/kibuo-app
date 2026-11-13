@@ -14,7 +14,7 @@ Le code Flutter reste compilable pour iOS, mais iOS n'est ni testé ni publié a
 
 | Fonction | Élément propre à Android | Équivalent iOS | État |
 |---|---|---|---|
-| | | | |
+| Écran de démarrage | Écran d'Android 12+ (`windowSplashScreenAnimatedIcon`) et fond de lancement d'Android 8 à 11 | Écran de lancement iOS (LaunchScreen) avec le même logo, centré à la même taille que l'écran Kibuo | À faire |
 
 ## Différences déjà connues
 

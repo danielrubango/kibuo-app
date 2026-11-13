@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The logo on the first screen Android shows while Kibuo starts. Android
+     draws it at 288 dp and keeps only the central disc of 192 dp, so the logo
+     is enlarged by 1.1 to fill that disc without the coin being cut.
+     Flutter's start screen (lib/ui/start/start_screen.dart) draws the same
+     logo at the same place and size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:pivotX="54" android:pivotY="54" android:scaleX="1.1" android:scaleY="1.1">
+        <group android:translateX="6" android:translateY="6">
+            <path android:fillColor="#5EEAB5"
+                android:pathData="M23,48 A25,25 0 1,1 73,48 A25,25 0 1,1 23,48 Z" />
+            <path android:fillColor="#FFC247"
+                android:strokeColor="#0E1320"
+                android:strokeWidth="2.5"
+                android:pathData="M42,35 A10,10 0 1,1 54,35 Z" />
+            <path android:strokeColor="#0E1320"
+                android:strokeWidth="1.8"
+                android:strokeAlpha="0.45"
+                android:strokeLineCap="round"
+                android:pathData="M45,28.5 H51" />
+            <path android:fillColor="#0E1320"
+                android:pathData="M39.5,35 H56.5 A2.5,2.5 0 0,1 56.5,40 H39.5 A2.5,2.5 0 0,1 39.5,35 Z" />
+        </group>
+    </group>
+</vector>

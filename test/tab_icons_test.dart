@@ -14,6 +14,8 @@ Future<void> _start(WidgetTester tester, {bool reduceMotion = false}) async {
     addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
   }
   await tester.pumpWidget(const KibuoApp());
+  // Past the start screen.
+  await tester.pump(const Duration(seconds: 2));
   await tester.pumpAndSettle();
 }
 
