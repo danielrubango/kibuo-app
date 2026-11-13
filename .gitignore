@@ -1,2 +1,9 @@
 .DS_Store
 .claude/settings.local.json
+
+# Flutter and Dart
+.dart_tool/
+build/
+.flutter-plugins-dependencies
+*.iml
+.idea/
