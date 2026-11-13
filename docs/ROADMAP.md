@@ -32,14 +32,14 @@ Rien n'est codé avant la fin de cette phase.
 ## Phase 2 : Socle technique
 
 - [x] Installer Flutter, Android Studio et un émulateur
-- [ ] Vérifier une application vide sur l'émulateur et le Poco M3
+- [x] Vérifier une application vide sur l'émulateur (l'essai sur téléphone se fait en phase 7)
 - [ ] Mettre en place l'analyse et les tests automatiques
+- [ ] Créer le thème issu du design, avec l'icône de l'application
+- [ ] Créer la navigation avec le bouton + central
 - [ ] Mettre en place le français et l'anglais
 - [ ] Créer la base chiffrée, ses migrations et les métadonnées de synchro
-- [ ] Mettre en place le verrouillage par PIN et biométrie
+- [ ] Maquetter puis mettre en place le verrouillage par PIN et biométrie, et la confidentialité
 - [ ] Mettre en place le code de récupération
-- [ ] Créer la navigation avec le bouton + central
-- [ ] Créer le thème issu du design
 
 ## Phase 3 : Cœur de l'application
 
@@ -77,7 +77,7 @@ Rien n'est codé avant la fin de cette phase.
 ## Phase 7 : Stabilisation
 
 - [ ] Tableaux de bord
-- [ ] Parcours complets sur le Poco M3 et les émulateurs
+- [ ] Parcours complets sur le Poco X3 NFC et les émulateurs, dont un Android 8
 - [ ] Guide de réglage des notifications selon les marques
 - [ ] APK partagé à 5 à 10 testeurs
 - [ ] Corrections issues des tests

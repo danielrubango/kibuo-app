@@ -34,7 +34,7 @@ Done when both pass with no new warnings, or for design work when every listed s
 
 ## 5. Show
 
-Run the app on the emulator and exercise the step yourself. Hand the owner a short checklist to try on the Poco M3, or the mockups to review.
+Run the app on the emulator and exercise the step yourself. Hand the owner a short checklist to try on their phone (Poco X3 NFC), or the mockups to review.
 
 Done when you have seen it work, and the owner has confirmed it or asked for changes. Requested changes return to step 3.
 
