@@ -21,6 +21,14 @@ Le menthe `#5EEAB5` avec un texte `#0E1320` sert au bloc du total, au bouton + e
 
 Space Grotesk pour les titres et les montants, Inter pour le reste.
 
+## Icônes et animations
+
+- Phosphor pour les icônes courantes (listes, réglages, catégories) et pour la barre du bas : la version en trait au repos, la version pleine pour l'onglet actif.
+- Dessinées pour Kibuo, avec la pièce ambre et la menthe du logo, pour ce qui donne vie à l'application : les 5 choix du + avec la saisie rapide d'abord, puis les moments forts (premier lancement, listes vides, objectif atteint, sauvegarde réussie, données restaurées), chacun avec son écran.
+- Les icônes et petites réactions s'animent dans le code de l'application. Pour une animation sans interaction (une scène du premier lancement, par exemple), Lottie reste possible ; Rive sera réévalué si une scène doit réagir aux gestes.
+- Quand « Supprimer les animations » est actif sur le téléphone, tout change d'état sans bouger.
+- Une vibration discrète quand l'éventail du + s'ouvre, puis à chaque nouveau choix survolé. Aucune sur les onglets.
+
 ## Règles d'écran
 
 - L'accueil a pour titre « Aujourd'hui », avec la date en dessous (« Mercredi 11 novembre »). Son onglet s'appelle « Accueil ».
@@ -62,6 +70,7 @@ Space Grotesk pour les titres et les montants, Inter pour le reste.
 - Les blocs de l'accueil et de l'aperçu mènent chacun à leur espace (chevron à droite du titre du bloc).
 - L'accueil résume dettes et créances en deux blocs : montant, nombre, puis retard ou prochaine date. Le détail par personne est sur l'écran « Dettes et créances ».
 - Barre de navigation flottante, bouton + carré à coins arrondis qui dépasse au centre. Elle a une bordure fine (`#DDE2EC`) et une ombre nette, et le contenu de l'écran s'efface en fondu juste au-dessus d'elle, pour que les cartes blanches ne se confondent pas avec la barre.
+- Les icônes de la barre sont celles de Phosphor : maison, liste, barres, quatre carrés. Au repos, la version en trait, en gris. Active, l'icône passe d'un coup à sa version pleine et sombre, avec un léger zoom sur place (6 % au plus), pendant qu'une pastille menthe s'ouvre derrière elle depuis le centre, seulement à l'horizontale ; le tout dure moins d'un quart de seconde et le nom passe en vert. Toucher le + l'enfonce puis le fait rebondir avant d'ouvrir la feuille. Pas d'onde au toucher : l'icône suffit.
 - Dans une carte, la marge visible du bas égale celle du haut, même quand la dernière ligne contient une action de 44 px de haut.
 - La feuille « Ajouter » du + : titre et croix, puis Dépense sur toute la largeur en menthe (tuile d'icône blanche, « Le plus fréquent »), puis une grille de 2 × 2 tuiles blanches (Revenu en vert, Transfert en gris, Dette en pêche, Projet en bleu, chacune avec une courte précision), puis « Refaire » : des cartes qui défilent avec le libellé, le montant à la couleur de son type et le compte. L'éventail de l'appui long assombrit l'écran, transforme le + en croix sombre et dispose au-dessus cinq tuiles blanches de 56 px avec leur nom : Dépense au centre, Revenu et Transfert de part et d'autre, Dette et Projet plus haut sur les côtés.
 - Dans la saisie rapide, les catégories défilent horizontalement sur une ligne, les plus utilisées d'abord. Un fondu et une flèche verte (sans cercle) apparaissent du côté où il reste des catégories.

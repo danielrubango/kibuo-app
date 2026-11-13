@@ -26,3 +26,12 @@ flutter:
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter.ttf
+    - family: PhosphorRegular
+      fonts:
+        - asset: assets/icons/Phosphor.ttf
+    - family: PhosphorBold
+      fonts:
+        - asset: assets/icons/Phosphor-Bold.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/icons/Phosphor-Fill.ttf
