@@ -28,7 +28,7 @@ Done when every behaviour in the step has a red test, a checklist line or a list
 
 ## 4. Build
 
-Implement the step with the glossary's names, domain logic in pure Dart. Run `flutter analyze` and `flutter test`.
+Implement the step with the glossary's names, domain logic in pure Dart. Run `tool/check.sh`.
 
 Done when both pass with no new warnings, or for design work when every listed state is rendered.
 

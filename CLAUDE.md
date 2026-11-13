@@ -15,6 +15,7 @@ Code, identifiers and commits in English. Product docs, ADRs, glossary and backl
 - Domain logic lives in pure Dart with no Flutter import, so it is portable to iOS and web.
 - Money is stored as integers in the currency's minor unit.
 - Critical logic ships with automated tests written first: balances, conversions, recurrences, backup and restore, database migrations.
+- `tool/check.sh` runs formatting, analysis and tests; the pre-commit hook runs it once `git config core.hooksPath .githooks` is set in the clone.
 - Every Android-only API or plugin gets a line in `docs/backlog/ios.md` in the same change.
 
 ## Git
