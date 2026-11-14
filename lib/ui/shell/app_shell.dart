@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
+import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/shell/add_sheet.dart';
 import 'package:kibuo/ui/shell/plus_fan.dart';
@@ -83,6 +85,7 @@ class _AppShellState extends State<AppShell> {
                       title: AppLocalizations.of(context).tabMore,
                       icon: PlaceholderIcons.more,
                       message: AppLocalizations.of(context).morePlaceholder,
+                      extra: _securityRow(context),
                     ),
                   ],
                 ),
@@ -110,6 +113,22 @@ class _AppShellState extends State<AppShell> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Temporary entry to Réglages › Sécurité until the full Plus page.
+  Widget? _securityRow(BuildContext context) {
+    final lock = KibuoLock.maybeControllerOf(context);
+    if (lock == null) return null;
+    return SettingsCard(
+      children: [
+        SettingsRow(
+          label: AppLocalizations.of(context).securityTitle,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => SecurityScreen(lock: lock)),
+          ),
+        ),
+      ],
     );
   }
 

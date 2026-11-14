@@ -22,10 +22,20 @@ class KibuoData extends InheritedWidget {
 /// Shows [child] once the database is open, or the unreadable-data screen
 /// when its key is gone (ADR 0005).
 class DataGate extends StatefulWidget {
-  const DataGate({super.key, required this.opening, required this.child});
+  const DataGate({
+    super.key,
+    required this.opening,
+    required this.eraseAndStartOver,
+    required this.builder,
+  });
 
   final Future<OpenResult> opening;
-  final Widget child;
+
+  /// Deletes every Kibuo file and key on this phone, then opens anew.
+  final Future<OpenResult> Function() eraseAndStartOver;
+
+  /// Builds the app, given the way to erase everything.
+  final Widget Function(Future<void> Function() eraseAll) builder;
 
   @override
   State<DataGate> createState() => _DataGateState();
@@ -34,6 +44,16 @@ class DataGate extends StatefulWidget {
 class _DataGateState extends State<DataGate> {
   late Future<OpenResult> _opening = widget.opening;
 
+  Future<void> _eraseAll() async {
+    final current = await _opening;
+    if (current is Opened) await current.database.close();
+    final reopening = widget.eraseAndStartOver();
+    setState(() {
+      _opening = reopening;
+    });
+    await reopening;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -41,7 +61,7 @@ class _DataGateState extends State<DataGate> {
       builder: (context, snapshot) => switch (snapshot.data) {
         Opened(:final database) => KibuoData(
           database: database,
-          child: widget.child,
+          child: widget.builder(_eraseAll),
         ),
         final Unreadable unreadable => UnreadableScreen(
           onStartOver: () {

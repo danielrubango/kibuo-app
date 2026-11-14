@@ -27,6 +27,7 @@ Space Grotesk pour les titres et les montants, Inter pour le reste.
 - Dessinées pour Kibuo, avec la pièce ambre et la menthe du logo, pour ce qui donne vie à l'application : les 5 choix du + avec la saisie rapide d'abord, puis les moments forts (premier lancement, listes vides, objectif atteint, sauvegarde réussie, données restaurées), chacun avec son écran.
 - Les icônes et petites réactions s'animent dans le code de l'application. Pour une animation sans interaction (une scène du premier lancement, par exemple), Lottie reste possible ; Rive sera réévalué si une scène doit réagir aux gestes.
 - Quand « Supprimer les animations » est actif sur le téléphone, tout change d'état sans bouger.
+- Écrans du code (créer, déverrouiller, attendre) : le titre et les cases en haut, une case par chiffre (deux cases en pointillés pour les 5ᵉ et 6ᵉ chiffres facultatifs à la création, la case suivante bordée de vert), un point dans chaque case remplie ; le clavier mélangé et « Valider » en bas, sous le pouce. Le déverrouillage montre le logo au-dessus du titre, puis « Utiliser l'empreinte » et « Code oublié ? » sous les cases. Pendant l'attente, cases et clavier sont grisés et le décompte s'affiche en ambre (« Réessayez dans 0:28. »).
 - Écran de démarrage Kibuo : le logo reste exactement à la place et à la taille de l'écran d'Android, la pièce glisse un peu dans la fente, puis « Kibuo » apparaît dessous en Space Grotesk ; l'Accueil arrive en fondu.
 - Une vibration discrète quand l'éventail du + s'ouvre, puis à chaque nouveau choix survolé. Aucune sur les onglets.
 

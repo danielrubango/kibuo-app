@@ -15,10 +15,11 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 ### Verrouillage
 
-- Le PIN compte de 4 à 6 chiffres ; la longueur se choisit à sa création. Le déverrouillage montre autant de points et s'ouvre dès le dernier chiffre.
+- Le PIN compte de 4 à 6 chiffres ; la longueur se choisit à sa création : on tape 4 à 6 chiffres, puis « Valider », et on le retape pour confirmer. Le déverrouillage montre autant de cases et s'ouvre dès le dernier chiffre. Le code est facultatif : « Retirer le code » le supprime, et Kibuo s'ouvre alors directement, ses données restant chiffrées. Modifier ou retirer le code demande le code actuel.
 - L'empreinte est proposée juste après la création du PIN ; activée, elle est demandée en premier à chaque ouverture, avec « Utiliser le PIN » dessous.
-- L'application se reverrouille après une absence réglable : immédiatement, 1 minute (par défaut) ou 5 minutes.
-- Après 5 PIN faux, une attente s'impose (30 secondes), puis s'allonge à chaque nouvel échec (1 minute, 5 minutes…). Rien n'est jamais effacé automatiquement.
+- L'application se reverrouille après une absence réglable : aussitôt, 30 secondes, 1 minute (par défaut), 5 minutes ou 15 minutes. Le choix se fait dans une feuille ouverte depuis la ligne « Verrouiller après » de Réglages › Sécurité › Verrouillage.
+- Après 5 PIN faux, une attente s'impose (30 secondes), puis s'allonge à chaque nouvel échec (1 minute, 5 minutes, 15 minutes, 30 minutes, puis 1 heure au plus). Le compte des essais survit à la fermeture de l'application. Rien n'est jamais effacé automatiquement.
+- « Code oublié ? » ouvre une feuille : utiliser l'empreinte si elle est active, utiliser le code de récupération (à son étape), ou effacer toutes les données de Kibuo sur ce téléphone et repartir de zéro, par un appui long, avant de restaurer éventuellement une sauvegarde.
 - Le code de récupération est remis à la création du PIN : 16 caractères en 4 groupes, affichés avec « Copier ». On retape un groupe pour prouver qu'on l'a noté. Un nouveau code s'obtient dans Réglages en donnant son PIN ; l'ancien cesse alors de fonctionner.
 - Réglages › Sécurité tient en trois lignes : Verrouillage (PIN, empreinte, délai, clavier mélangé), Confidentialité, Code de récupération.
 - Confidentialité : masquer Kibuo dans les applications récentes (activé par défaut) et autoriser les captures d'écran (activé par défaut), réglables séparément. Sous Android 8 à 12, qui ne sait pas les séparer, un écran au logo recouvre les soldes au passage en arrière-plan.

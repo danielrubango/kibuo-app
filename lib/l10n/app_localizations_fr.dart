@@ -119,4 +119,177 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get unreadableStartOver => 'Repartir de zéro';
+
+  @override
+  String get lockCreateTitle => 'Créer votre code';
+
+  @override
+  String get lockChoose => 'Choisissez votre code';
+
+  @override
+  String get lockChooseHint => 'De 4 à 6 chiffres.';
+
+  @override
+  String get lockConfirm => 'Retapez votre code';
+
+  @override
+  String get lockConfirmHint => 'Pour vérifier que vous l’avez bien en tête.';
+
+  @override
+  String get lockMismatch =>
+      'Les deux codes ne correspondent pas. Recommencez.';
+
+  @override
+  String get lockValidate => 'Valider';
+
+  @override
+  String get lockCreatedTitle => 'Code créé';
+
+  @override
+  String get lockCreatedBody => 'Kibuo demandera ce code à chaque ouverture.';
+
+  @override
+  String get continueAction => 'Continuer';
+
+  @override
+  String get lockEnterTitle => 'Entrez votre code';
+
+  @override
+  String get lockCurrentTitle => 'Entrez votre code actuel';
+
+  @override
+  String get lockTooMany => 'Trop d’essais';
+
+  @override
+  String get lockUseFingerprint => 'Utiliser l’empreinte';
+
+  @override
+  String get lockForgot => 'Code oublié ?';
+
+  @override
+  String get keypadDelete => 'Effacer';
+
+  @override
+  String get fingerprintOfferTitle => 'Ouvrir Kibuo avec votre empreinte ?';
+
+  @override
+  String get fingerprintOfferBody =>
+      'Plus rapide que le code, qui reste possible à tout moment.';
+
+  @override
+  String get fingerprintEnable => 'Activer l’empreinte';
+
+  @override
+  String get later => 'Plus tard';
+
+  @override
+  String get fingerprintReason => 'Ouvrir Kibuo';
+
+  @override
+  String get forgotErase => 'Effacer et repartir de zéro';
+
+  @override
+  String get forgotEraseBody =>
+      'Toutes les données de Kibuo sur ce téléphone seront effacées. Vous pourrez ensuite restaurer une sauvegarde, si vous en avez une.';
+
+  @override
+  String get forgotHold => 'Maintenir pour effacer';
+
+  @override
+  String get securityTitle => 'Sécurité';
+
+  @override
+  String get securityLock => 'Verrouillage';
+
+  @override
+  String get securityPrivacy => 'Confidentialité';
+
+  @override
+  String get securityNoCode => 'Aucun code';
+
+  @override
+  String get securityCode => 'Code';
+
+  @override
+  String get securityCodeFingerprint => 'Code · empreinte';
+
+  @override
+  String get securityRecentsHidden => 'Récentes masquées';
+
+  @override
+  String get securityRecentsShown => 'Récentes visibles';
+
+  @override
+  String get securityFooter =>
+      'Vos données sont chiffrées et restent sur ce téléphone.';
+
+  @override
+  String get lockSettingsCreate => 'Créer un code';
+
+  @override
+  String get lockSettingsChange => 'Modifier le code';
+
+  @override
+  String get lockFingerprint => 'Empreinte';
+
+  @override
+  String get lockShuffle => 'Clavier mélangé';
+
+  @override
+  String get lockShuffleHelp =>
+      'Le clavier mélangé change la place des chiffres à chaque fois : un regard par-dessus l’épaule ne suffit pas à deviner le code.';
+
+  @override
+  String get lockAfter => 'Verrouiller après une absence de';
+
+  @override
+  String get delayImmediately => 'Aussitôt';
+
+  @override
+  String get delayOneMinute => '1 minute';
+
+  @override
+  String get delayFiveMinutes => '5 minutes';
+
+  @override
+  String get lockRemove => 'Retirer le code';
+
+  @override
+  String get lockRemoveHelp =>
+      'Sans code, Kibuo s’ouvre directement. Vos données restent chiffrées.';
+
+  @override
+  String get privacyHideRecents =>
+      'Masquer Kibuo dans les applications récentes';
+
+  @override
+  String get privacyScreenshots => 'Autoriser les captures d’écran';
+
+  @override
+  String get privacyHelp =>
+      'Masqué, l’aperçu des applications récentes montre le logo de Kibuo au lieu de vos soldes.';
+
+  @override
+  String lockWrong(int count) {
+    return 'Code incorrect. Essai $count sur 5.';
+  }
+
+  @override
+  String lockRetryIn(String time) {
+    return 'Réessayez dans $time.';
+  }
+
+  @override
+  String lockDigits(int count) {
+    return '$count chiffres';
+  }
+
+  @override
+  String get lockAfterRow => 'Verrouiller après';
+
+  @override
+  String get delayThirtySeconds => '30 secondes';
+
+  @override
+  String get delayFifteenMinutes => '15 minutes';
 }

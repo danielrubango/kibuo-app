@@ -313,6 +313,324 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Repartir de zéro'**
   String get unreadableStartOver;
+
+  /// Title of the screens that create or change the app-lock code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer votre code'**
+  String get lockCreateTitle;
+
+  /// First step of creating the code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez votre code'**
+  String get lockChoose;
+
+  /// Under the title when choosing the code.
+  ///
+  /// In fr, this message translates to:
+  /// **'De 4 à 6 chiffres.'**
+  String get lockChooseHint;
+
+  /// Second step: confirm the code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retapez votre code'**
+  String get lockConfirm;
+
+  /// Under the title when confirming.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour vérifier que vous l’avez bien en tête.'**
+  String get lockConfirmHint;
+
+  /// When the confirmation differs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux codes ne correspondent pas. Recommencez.'**
+  String get lockMismatch;
+
+  /// Button under the keypad once 4 digits are typed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get lockValidate;
+
+  /// After the code is confirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code créé'**
+  String get lockCreatedTitle;
+
+  /// After the code is confirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Kibuo demandera ce code à chaque ouverture.'**
+  String get lockCreatedBody;
+
+  /// Generic button to go on.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get continueAction;
+
+  /// Title of the unlock screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez votre code'**
+  String get lockEnterTitle;
+
+  /// Before changing or removing the code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez votre code actuel'**
+  String get lockCurrentTitle;
+
+  /// Title while the user must wait.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop d’essais'**
+  String get lockTooMany;
+
+  /// Link under the code boxes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser l’empreinte'**
+  String get lockUseFingerprint;
+
+  /// Link under the code boxes, and title of its sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code oublié ?'**
+  String get lockForgot;
+
+  /// Screen-reader label of the keypad’s delete key.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer'**
+  String get keypadDelete;
+
+  /// Offered right after creating the code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir Kibuo avec votre empreinte ?'**
+  String get fingerprintOfferTitle;
+
+  /// Under the fingerprint offer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus rapide que le code, qui reste possible à tout moment.'**
+  String get fingerprintOfferBody;
+
+  /// Accepts the fingerprint offer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer l’empreinte'**
+  String get fingerprintEnable;
+
+  /// Declines an offer for now.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get later;
+
+  /// Shown by Android in the fingerprint prompt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir Kibuo'**
+  String get fingerprintReason;
+
+  /// Option in the forgotten-code sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer et repartir de zéro'**
+  String get forgotErase;
+
+  /// Warning before erasing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les données de Kibuo sur ce téléphone seront effacées. Vous pourrez ensuite restaurer une sauvegarde, si vous en avez une.'**
+  String get forgotEraseBody;
+
+  /// Button that erases after a long press.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maintenir pour effacer'**
+  String get forgotHold;
+
+  /// Settings page title and row on the More tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité'**
+  String get securityTitle;
+
+  /// Row in Security.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouillage'**
+  String get securityLock;
+
+  /// Row in Security.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get securityPrivacy;
+
+  /// Summary when no code is set.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun code'**
+  String get securityNoCode;
+
+  /// Summary when a code is set.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code'**
+  String get securityCode;
+
+  /// Summary when code and fingerprint are on.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code · empreinte'**
+  String get securityCodeFingerprint;
+
+  /// Privacy summary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récentes masquées'**
+  String get securityRecentsHidden;
+
+  /// Privacy summary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récentes visibles'**
+  String get securityRecentsShown;
+
+  /// Under the Security rows.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos données sont chiffrées et restent sur ce téléphone.'**
+  String get securityFooter;
+
+  /// Row when no code is set.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un code'**
+  String get lockSettingsCreate;
+
+  /// Row when a code is set.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le code'**
+  String get lockSettingsChange;
+
+  /// Switch in App lock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Empreinte'**
+  String get lockFingerprint;
+
+  /// Switch in App lock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clavier mélangé'**
+  String get lockShuffle;
+
+  /// Help under the switches.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le clavier mélangé change la place des chiffres à chaque fois : un regard par-dessus l’épaule ne suffit pas à deviner le code.'**
+  String get lockShuffleHelp;
+
+  /// Title above the delay choices.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouiller après une absence de'**
+  String get lockAfter;
+
+  /// Auto-lock delay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aussitôt'**
+  String get delayImmediately;
+
+  /// Auto-lock delay.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 minute'**
+  String get delayOneMinute;
+
+  /// Auto-lock delay.
+  ///
+  /// In fr, this message translates to:
+  /// **'5 minutes'**
+  String get delayFiveMinutes;
+
+  /// Removes the app-lock code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le code'**
+  String get lockRemove;
+
+  /// Help under Remove the code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans code, Kibuo s’ouvre directement. Vos données restent chiffrées.'**
+  String get lockRemoveHelp;
+
+  /// Privacy switch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer Kibuo dans les applications récentes'**
+  String get privacyHideRecents;
+
+  /// Privacy switch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autoriser les captures d’écran'**
+  String get privacyScreenshots;
+
+  /// Help under the privacy switches.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masqué, l’aperçu des applications récentes montre le logo de Kibuo au lieu de vos soldes.'**
+  String get privacyHelp;
+
+  /// After a wrong code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code incorrect. Essai {count} sur 5.'**
+  String lockWrong(int count);
+
+  /// Countdown while waiting, e.g. 0:28.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayez dans {time}.'**
+  String lockRetryIn(String time);
+
+  /// Length of the current code.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} chiffres'**
+  String lockDigits(int count);
+
+  /// Row in App lock; opens the delay sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouiller après'**
+  String get lockAfterRow;
+
+  /// Auto-lock delay.
+  ///
+  /// In fr, this message translates to:
+  /// **'30 secondes'**
+  String get delayThirtySeconds;
+
+  /// Auto-lock delay.
+  ///
+  /// In fr, this message translates to:
+  /// **'15 minutes'**
+  String get delayFifteenMinutes;
 }
 
 class _AppLocalizationsDelegate

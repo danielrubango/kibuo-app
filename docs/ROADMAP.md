@@ -39,7 +39,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Recentrer le logo et créer l'écran de démarrage
 - [x] Mettre en place le français et l'anglais
 - [x] Créer la base chiffrée, ses migrations et les métadonnées de synchro
-- [ ] Maquetter puis mettre en place le verrouillage par PIN et biométrie, et la confidentialité
+- [x] Maquetter puis mettre en place le verrouillage par PIN et biométrie, et la confidentialité
 - [ ] Mettre en place le code de récupération, qui rouvre aussi les données copiées par Android sur un nouveau téléphone (voir l'ADR 0010)
 
 ## Phase 3 : Cœur de l'application

@@ -14,12 +14,16 @@ class TabPlaceholder extends StatelessWidget {
     required this.icon,
     required this.message,
     this.subtitle,
+    this.extra,
   });
 
   final String title;
   final String? subtitle;
   final IconData icon;
   final String message;
+
+  /// Shown under the placeholder card.
+  final Widget? extra;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +70,7 @@ class TabPlaceholder extends StatelessWidget {
             ],
           ),
         ),
+        if (extra != null) ...[const SizedBox(height: 16), extra!],
       ],
     );
   }
