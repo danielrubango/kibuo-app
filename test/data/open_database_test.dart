@@ -14,6 +14,12 @@ class _MemoryVault implements KeyVault {
 
   @override
   Future<void> write(String name, String value) async => values[name] = value;
+
+  @override
+  Future<void> delete(String name) async => values.remove(name);
+
+  @override
+  Future<void> deleteAll() async => values.clear();
 }
 
 void main() {

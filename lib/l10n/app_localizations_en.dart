@@ -119,4 +119,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unreadableStartOver => 'Start over';
+
+  @override
+  String get lockCreateTitle => 'Create your code';
+
+  @override
+  String get lockChoose => 'Choose your code';
+
+  @override
+  String get lockChooseHint => '4 to 6 digits.';
+
+  @override
+  String get lockConfirm => 'Type your code again';
+
+  @override
+  String get lockConfirmHint => 'To check you have it in mind.';
+
+  @override
+  String get lockMismatch => 'The two codes don’t match. Start again.';
+
+  @override
+  String get lockValidate => 'Confirm';
+
+  @override
+  String get lockCreatedTitle => 'Code created';
+
+  @override
+  String get lockCreatedBody =>
+      'Kibuo will ask for this code each time it opens.';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get lockEnterTitle => 'Enter your code';
+
+  @override
+  String get lockCurrentTitle => 'Enter your current code';
+
+  @override
+  String get lockTooMany => 'Too many attempts';
+
+  @override
+  String get lockUseFingerprint => 'Use fingerprint';
+
+  @override
+  String get lockForgot => 'Forgot your code?';
+
+  @override
+  String get keypadDelete => 'Delete';
+
+  @override
+  String get fingerprintOfferTitle => 'Open Kibuo with your fingerprint?';
+
+  @override
+  String get fingerprintOfferBody =>
+      'Faster than the code, which you can still use at any time.';
+
+  @override
+  String get fingerprintEnable => 'Turn on fingerprint';
+
+  @override
+  String get later => 'Not now';
+
+  @override
+  String get fingerprintReason => 'Open Kibuo';
+
+  @override
+  String get forgotErase => 'Erase and start over';
+
+  @override
+  String get forgotEraseBody =>
+      'All of Kibuo’s data on this phone will be erased. You can then restore a backup, if you have one.';
+
+  @override
+  String get forgotHold => 'Hold to erase';
+
+  @override
+  String get securityTitle => 'Security';
+
+  @override
+  String get securityLock => 'App lock';
+
+  @override
+  String get securityPrivacy => 'Privacy';
+
+  @override
+  String get securityNoCode => 'No code';
+
+  @override
+  String get securityCode => 'Code';
+
+  @override
+  String get securityCodeFingerprint => 'Code · fingerprint';
+
+  @override
+  String get securityRecentsHidden => 'Hidden in recents';
+
+  @override
+  String get securityRecentsShown => 'Shown in recents';
+
+  @override
+  String get securityFooter =>
+      'Your data is encrypted and stays on this phone.';
+
+  @override
+  String get lockSettingsCreate => 'Create a code';
+
+  @override
+  String get lockSettingsChange => 'Change the code';
+
+  @override
+  String get lockFingerprint => 'Fingerprint';
+
+  @override
+  String get lockShuffle => 'Shuffled keypad';
+
+  @override
+  String get lockShuffleHelp =>
+      'The shuffled keypad moves the digits around each time, so a glance over your shoulder isn’t enough to guess the code.';
+
+  @override
+  String get lockAfter => 'Lock after being away for';
+
+  @override
+  String get delayImmediately => 'Right away';
+
+  @override
+  String get delayOneMinute => '1 minute';
+
+  @override
+  String get delayFiveMinutes => '5 minutes';
+
+  @override
+  String get lockRemove => 'Remove the code';
+
+  @override
+  String get lockRemoveHelp =>
+      'Without a code, Kibuo opens directly. Your data stays encrypted.';
+
+  @override
+  String get privacyHideRecents => 'Hide Kibuo in recent apps';
+
+  @override
+  String get privacyScreenshots => 'Allow screenshots';
+
+  @override
+  String get privacyHelp =>
+      'When hidden, the recent apps preview shows Kibuo’s logo instead of your balances.';
+
+  @override
+  String lockWrong(int count) {
+    return 'Wrong code. Attempt $count of 5.';
+  }
+
+  @override
+  String lockRetryIn(String time) {
+    return 'Try again in $time.';
+  }
+
+  @override
+  String lockDigits(int count) {
+    return '$count digits';
+  }
+
+  @override
+  String get lockAfterRow => 'Lock after';
+
+  @override
+  String get delayThirtySeconds => '30 seconds';
+
+  @override
+  String get delayFifteenMinutes => '15 minutes';
 }

@@ -15,6 +15,12 @@ class _MemoryVault implements KeyVault {
 
   @override
   Future<void> write(String name, String value) async => values[name] = value;
+
+  @override
+  Future<void> delete(String name) async => values.remove(name);
+
+  @override
+  Future<void> deleteAll() async => values.clear();
 }
 
 void main() {
@@ -37,7 +43,16 @@ void main() {
     tester.platformDispatcher.localesTestValue = const [Locale('fr')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     await tester.runAsync(() => opening);
-    await tester.pumpWidget(KibuoApp(opening: opening));
+    await tester.pumpWidget(
+      KibuoApp(
+        opening: opening,
+        eraseAndStartOver: () => eraseAndStartOver(
+          folder: folder,
+          vault: vault,
+          inBackground: false,
+        ),
+      ),
+    );
     await tester.pump(const Duration(seconds: 2));
     await tester.pumpAndSettle();
   }

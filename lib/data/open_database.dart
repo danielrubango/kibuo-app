@@ -33,6 +33,26 @@ final class Unreadable extends OpenResult {
 
 const _fileName = 'kibuo.db';
 
+/// Deletes the database and every file set aside, and forgets all keys, then
+/// opens an empty database: « Effacer et repartir de zéro ».
+Future<OpenResult> eraseAndStartOver({
+  required Directory folder,
+  KeyVault vault = const SecureKeyVault(),
+  bool inBackground = true,
+}) async {
+  for (final entry in folder.listSync()) {
+    if (entry is File && p.basename(entry.path).startsWith('kibuo')) {
+      entry.deleteSync();
+    }
+  }
+  await vault.deleteAll();
+  return openKibuoDatabase(
+    folder: folder,
+    vault: vault,
+    inBackground: inBackground,
+  );
+}
+
 /// Opens the encrypted database in [folder], creating it and its key on the
 /// first start (ADR 0005, ADR 0010).
 Future<OpenResult> openKibuoDatabase({

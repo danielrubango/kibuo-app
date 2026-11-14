@@ -12,6 +12,10 @@ abstract interface class KeyVault {
 
   Future<String?> read(String name);
   Future<void> write(String name, String value);
+  Future<void> delete(String name);
+
+  /// Forgets everything: used when the user erases all of Kibuo's data.
+  Future<void> deleteAll();
 }
 
 class SecureKeyVault implements KeyVault {
@@ -25,4 +29,10 @@ class SecureKeyVault implements KeyVault {
   @override
   Future<void> write(String name, String value) =>
       _storage.write(key: name, value: value);
+
+  @override
+  Future<void> delete(String name) => _storage.delete(key: name);
+
+  @override
+  Future<void> deleteAll() => _storage.deleteAll();
 }
