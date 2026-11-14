@@ -116,7 +116,9 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 
 ## Protection des données
 
-- Base de données chiffrée, verrouillage par PIN ou biométrie.
+- Base de données chiffrée, toujours, avec une clé qui ne quitte jamais le téléphone ; verrouillage par PIN ou biométrie.
+- Android ne copie pas les données de Kibuo (sauvegarde Google, transfert vers un nouveau téléphone) tant que le code de récupération n'existe pas. Ensuite, la copie devient un réglage, actif par défaut, et le code de récupération rouvre les données sur le nouveau téléphone.
+- Si la clé disparaît du téléphone, Kibuo affiche « Vos données ne peuvent pas être ouvertes », garde le fichier de côté sans l'effacer et propose de repartir de zéro (puis, à leurs étapes, de restaurer une sauvegarde ou d'utiliser le code de récupération).
 - PIN oublié : biométrie si active, sinon code de récupération, sinon effacement et restauration d'une sauvegarde.
 - Sauvegardes automatiques **au choix de l'utilisateur** : hebdomadaires, dans un dossier choisi, avec un rappel si la dernière date trop.
 - Fichier de sauvegarde versionné, chiffrement par mot de passe proposé mais optionnel.

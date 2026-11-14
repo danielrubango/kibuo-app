@@ -1,6 +1,6 @@
 # Base locale chiffrée dès le départ
 
-La base SQLite est chiffrée dès la V1 (SQLCipher), avec une clé conservée dans le stockage sécurisé du système, car chiffrer plus tard des bases existantes serait risqué.
+La base SQLite est chiffrée dès la V1 (SQLCipher, remplacé par SQLite3 Multiple Ciphers : voir l'[ADR 0010](0010-moteur-de-chiffrement.md)), avec une clé conservée dans le stockage sécurisé du système, car chiffrer plus tard des bases existantes serait risqué.
 
 ## Consequences
 

@@ -109,4 +109,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get entryComingLater => 'Cette saisie arrive à une prochaine étape.';
+
+  @override
+  String get unreadableTitle => 'Vos données ne peuvent pas être ouvertes';
+
+  @override
+  String get unreadableBody =>
+      'La clé qui protège vos données n’est plus sur ce téléphone, ou ne correspond plus. Le fichier est gardé de côté sur le téléphone, il n’est pas effacé.';
+
+  @override
+  String get unreadableStartOver => 'Repartir de zéro';
 }

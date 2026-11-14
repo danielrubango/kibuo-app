@@ -109,4 +109,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get entryComingLater => 'This entry comes in a later step.';
+
+  @override
+  String get unreadableTitle => 'Your data can’t be opened';
+
+  @override
+  String get unreadableBody =>
+      'The key that protects your data is no longer on this phone, or no longer matches. The file is kept aside on the phone, not erased.';
+
+  @override
+  String get unreadableStartOver => 'Start over';
 }

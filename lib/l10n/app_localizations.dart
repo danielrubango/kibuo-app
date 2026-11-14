@@ -295,6 +295,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cette saisie arrive à une prochaine étape.'**
   String get entryComingLater;
+
+  /// Title when the encrypted data cannot be opened.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos données ne peuvent pas être ouvertes'**
+  String get unreadableTitle;
+
+  /// Explains why the data cannot be opened and that the file is kept.
+  ///
+  /// In fr, this message translates to:
+  /// **'La clé qui protège vos données n’est plus sur ce téléphone, ou ne correspond plus. Le fichier est gardé de côté sur le téléphone, il n’est pas effacé.'**
+  String get unreadableBody;
+
+  /// Button: set the unreadable data aside and start with empty data.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repartir de zéro'**
+  String get unreadableStartOver;
 }
 
 class _AppLocalizationsDelegate

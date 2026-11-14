@@ -41,5 +41,8 @@
   "addProjectFan": "Put\naside",
   "addProjectTitle": "Put money aside",
 
-  "entryComingLater": "This entry comes in a later step."
+  "entryComingLater": "This entry comes in a later step.",
+  "unreadableTitle": "Your data can’t be opened",
+  "unreadableBody": "The key that protects your data is no longer on this phone, or no longer matches. The file is kept aside on the phone, not erased.",
+  "unreadableStartOver": "Start over"
 }
