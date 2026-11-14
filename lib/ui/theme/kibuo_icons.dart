@@ -30,6 +30,7 @@ abstract final class KibuoIcons {
   static const target = IconData(0xe47c, fontFamily: _regular);
 
   static const caretRight = IconData(0xe13a, fontFamily: _regular);
+  static const lockKey = IconData(0xe2fe, fontFamily: _regular);
   static const x = IconData(0xe4f6, fontFamily: _regular);
   static const xBold = IconData(0xe4f6, fontFamily: _bold);
   static const plusBold = IconData(0xe3d4, fontFamily: _bold);
