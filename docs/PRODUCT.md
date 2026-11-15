@@ -30,6 +30,9 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 - Plusieurs comptes et transferts entre eux.
 - Chaque compte a un type. Quatre types sont proposés d'emblée (espèces, banque, mobile money, épargne), et l'utilisateur peut créer les siens en leur attribuant une icône.
+- Un compte a un nom, un type, une devise et un solde de départ avec sa date : ce qu'il contenait ce jour-là. Les opérations datées d'avant ne changent pas ce solde. La devise, le solde de départ et sa date se fixent à la création, et ne se modifient plus ensuite.
+- « Modifier le compte » reprend « Nouveau compte » sans le solde de départ ni sa date : on y change le type et le nom, et « Archiver le compte » le retire des listes et des totaux, ses opérations restant.
+- L'écran Comptes montre « Total de mes comptes » en devise principale (« Disponible » et « Réservé aux projets » viendront avec les projets). Un compte dans une devise sans taux reste hors du total, avec une ligne qui le dit et mène à Devises ; en « Tout en … », son montant affiche « Pas de taux ».
 - Dépenses et revenus classés par catégorie. Catégories traduites et modifiables, un seul niveau de sous-catégories.
 - Une opération peut être classée dans une catégorie principale ou dans une de ses sous-catégories, au choix. Une catégorie sans sous-catégorie se choisit directement.
 - Une opération peut porter une note longue (affichée sur 3 lignes, dépliable) et jusqu'à 5 pièces jointes, par exemple la photo d'un reçu. Les pièces jointes s'affichent avec un aperçu ; on peut en cocher une ou plusieurs pour les retirer, ou en voir et remplacer une seule.
@@ -42,8 +45,11 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 ### Devises
 
+- Sur l'écran Devises, chaque carte montre le nom et le taux ; la date du taux est dans la feuille de la devise (« Avant : … · date »).
 - L'utilisateur ajoute ses devises, désigne la principale et saisit les taux de conversion, modifiables à tout moment. Toutes les devises en usage dans le monde sont proposées (environ 150), avec une recherche par nom ou par code, en une liste en deux parties : un premier groupe de 4 à 6 devises, par ordre d'importance pour le pays du téléphone (sa devise, le dollar, le franc congolais, l'euro, le franc CFA, et celles de la région), puis toutes les autres par ordre alphabétique.
 - Pour ajouter une devise, celles déjà ajoutées restent dans la liste mais grisées. Pour choisir la devise principale, les devises déjà ajoutées viennent en premier, puis toutes les autres.
+- « Modifier », en haut de l'écran Devises, ouvre le mode retrait : chaque devise affiche « Retirer » en rouge à droite, la devise principale s'estompe et « Ajouter une devise » disparaît. « Retirer » barre la devise (« Garder » la rend) ; « Terminé » confirme et retire les devises barrées ; quitter autrement ne retire rien. Une devise retirée garde ses taux, qui reviennent si on la rajoute. Une devise tenue par un compte, même archivé, affiche « Gardée » en gris et dit quel compte la tient.
+- Ailleurs dans l'appli (un nouveau compte, plus tard une opération), le choix de devise ne montre que les devises de l'utilisateur, puis « Autre devise… » qui ouvre la liste complète ; la devise choisie s'ajoute alors aux siennes.
 - Jusqu'au premier lancement guidé, la devise principale est celle du pays du téléphone (le dollar si le pays est inconnu).
 - Un taux s'affiche dans le sens où il a été tapé (« 1 $ = 0,92 € », « 1 $ = 2 800 FC »). Un nouveau taux se tape « 1 [devise principale] = … », sauf si la principale n'a pas de centimes et l'autre si (franc, yen) : on tape alors « 1 $ = … FC », jamais « 1 FC = 0,000357 $ ». La feuille du taux ne propose pas d'inverser le sens. Un nouveau taux ne remplace pas l'ancien : l'ancien reste, avec sa date, et la feuille du taux affiche « Avant : 2 800 FC · date » et l'écart en montant (« +50 FC »). Sans taux direct entre deux devises, Kibuo le calcule d'après une troisième (« Calculé d'après vos autres taux »).
 - Une conversion s'arrondit à l'unité la plus proche en usage (centime, ou franc pour une devise sans décimales), la moitié vers le haut ; le taux exact reste enregistré.

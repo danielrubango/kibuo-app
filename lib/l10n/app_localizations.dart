@@ -943,6 +943,294 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Inchangé'**
   String get rateUnchanged;
+
+  /// Accounts: accountsTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes'**
+  String get accountsTitle;
+
+  /// Accounts: accountsAll
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get accountsAll;
+
+  /// Accounts: accountsTotal
+  ///
+  /// In fr, this message translates to:
+  /// **'Total de mes comptes'**
+  String get accountsTotal;
+
+  /// Accounts: accountsTotalOf
+  ///
+  /// In fr, this message translates to:
+  /// **'Total {type}'**
+  String accountsTotalOf(String type);
+
+  /// Accounts: accountsAdd
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un compte'**
+  String get accountsAdd;
+
+  /// Accounts: accountsCount
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 compte} other{{count} comptes}}'**
+  String accountsCount(int count);
+
+  /// Accounts: accountTypeCash
+  ///
+  /// In fr, this message translates to:
+  /// **'Espèces'**
+  String get accountTypeCash;
+
+  /// Accounts: accountTypeBank
+  ///
+  /// In fr, this message translates to:
+  /// **'Banque'**
+  String get accountTypeBank;
+
+  /// Accounts: accountTypeMobile
+  ///
+  /// In fr, this message translates to:
+  /// **'Mobile money'**
+  String get accountTypeMobile;
+
+  /// Accounts: accountTypeSavings
+  ///
+  /// In fr, this message translates to:
+  /// **'Épargne'**
+  String get accountTypeSavings;
+
+  /// Accounts: accountNewTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau compte'**
+  String get accountNewTitle;
+
+  /// Accounts: accountEditTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le compte'**
+  String get accountEditTitle;
+
+  /// Accounts: accountTypeLabel
+  ///
+  /// In fr, this message translates to:
+  /// **'Type'**
+  String get accountTypeLabel;
+
+  /// Accounts: accountTypeCreate
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un autre type'**
+  String get accountTypeCreate;
+
+  /// Accounts: accountName
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du compte'**
+  String get accountName;
+
+  /// Accounts: accountNameHint
+  ///
+  /// In fr, this message translates to:
+  /// **'M-Pesa, Rawbank, poche…'**
+  String get accountNameHint;
+
+  /// Accounts: accountOpening
+  ///
+  /// In fr, this message translates to:
+  /// **'Solde de départ'**
+  String get accountOpening;
+
+  /// Accounts: accountCurrencyNote
+  ///
+  /// In fr, this message translates to:
+  /// **'{name}. Touchez {code} pour changer de devise.'**
+  String accountCurrencyNote(String name, String code);
+
+  /// Accounts: accountOpeningDate
+  ///
+  /// In fr, this message translates to:
+  /// **'Date du solde'**
+  String get accountOpeningDate;
+
+  /// Accounts: accountOpeningDateHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que contient le compte ce jour-là. Les opérations d’avant n’y changent rien.'**
+  String get accountOpeningDateHelp;
+
+  /// Accounts: accountToday
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui, {date}'**
+  String accountToday(String date);
+
+  /// Accounts: accountCreate
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le compte'**
+  String get accountCreate;
+
+  /// Accounts: accountSave
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get accountSave;
+
+  /// Accounts: accountArchive
+  ///
+  /// In fr, this message translates to:
+  /// **'Archiver le compte'**
+  String get accountArchive;
+
+  /// Accounts: accountArchiveHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Un compte archivé quitte les listes et les totaux ; ses opérations restent.'**
+  String get accountArchiveHelp;
+
+  /// Accounts: keypadDone
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get keypadDone;
+
+  /// Accounts: typeNewTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau type'**
+  String get typeNewTitle;
+
+  /// Accounts: typeName
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get typeName;
+
+  /// Accounts: typeNameHint
+  ///
+  /// In fr, this message translates to:
+  /// **'Tontine, carte prépayée…'**
+  String get typeNameHint;
+
+  /// Accounts: typeIcon
+  ///
+  /// In fr, this message translates to:
+  /// **'Icône'**
+  String get typeIcon;
+
+  /// Accounts: typeSave
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get typeSave;
+
+  /// Accounts: accountsDisplay
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage des comptes'**
+  String get accountsDisplay;
+
+  /// Accounts: accountsDisplayAmounts
+  ///
+  /// In fr, this message translates to:
+  /// **'Montants'**
+  String get accountsDisplayAmounts;
+
+  /// Accounts: accountsDisplayEach
+  ///
+  /// In fr, this message translates to:
+  /// **'Devise de chaque compte'**
+  String get accountsDisplayEach;
+
+  /// Accounts: accountsDisplayEachHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque compte reste dans sa devise'**
+  String get accountsDisplayEachHelp;
+
+  /// Accounts: accountsDisplayAll
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout en {name} ({code})'**
+  String accountsDisplayAll(String name, String code);
+
+  /// Accounts: accountsDisplayAllHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Converti au dernier taux'**
+  String get accountsDisplayAllHelp;
+
+  /// Accounts: accountsDisplayNote
+  ///
+  /// In fr, this message translates to:
+  /// **'Visible seulement quand vos comptes ont plusieurs devises.'**
+  String get accountsDisplayNote;
+
+  /// Accounts: accountsNoRate
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de taux'**
+  String get accountsNoRate;
+
+  /// Accounts: accountsNoRateNote
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans taux, {codes} ne compte pas dans le total.'**
+  String accountsNoRateNote(String codes);
+
+  /// Accounts: accountsAddRate
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un taux'**
+  String get accountsAddRate;
+
+  /// Error under an empty account name.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donnez un nom au compte.'**
+  String get accountNameMissing;
+
+  /// Currencies: currencyKeptMain
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre devise principale'**
+  String get currencyKeptMain;
+
+  /// Currencies: currencyKeptAccount
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisée par le compte {name}'**
+  String currencyKeptAccount(String name);
+
+  /// Currencies: currencyOther
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre devise…'**
+  String get currencyOther;
+
+  /// Devises in edit mode: currencyRemoveShort
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get currencyRemoveShort;
+
+  /// Devises in edit mode: currencyKept
+  ///
+  /// In fr, this message translates to:
+  /// **'Gardée'**
+  String get currencyKept;
+
+  /// Devises in edit mode: undo a struck currency.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garder'**
+  String get currencyKeep;
 }
 
 class _AppLocalizationsDelegate

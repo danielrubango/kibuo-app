@@ -8,6 +8,7 @@ import 'package:kibuo/data/database.dart';
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
+import 'generated/schema_v3.dart' as v3;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -70,4 +71,38 @@ void main() {
       );
     },
   );
+
+  test('version 2 to 3 keeps currencies and rates, adds accounts', () async {
+    const euro = v2.CurrenciesData(
+      id: 'cur-1',
+      version: 50,
+      deviceId: 'phone-1',
+      deleted: 0,
+      code: 'EUR',
+      usesDecimals: 1,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 2,
+      newVersion: 3,
+      createOld: v2.DatabaseAtV2.new,
+      createNew: v3.DatabaseAtV3.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.currencies, euro),
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.currencies).get(), const [
+          v3.CurrenciesData(
+            id: 'cur-1',
+            version: 50,
+            deviceId: 'phone-1',
+            deleted: 0,
+            code: 'EUR',
+            usesDecimals: 1,
+          ),
+        ]);
+        expect(await newDb.select(newDb.accounts).get(), isEmpty);
+        expect(await newDb.select(newDb.accountTypes).get(), isEmpty);
+      },
+    );
+  });
 }
