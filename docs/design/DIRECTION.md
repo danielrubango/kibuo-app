@@ -17,9 +17,45 @@ Direction retenue : **variante Blocs, thème clair**. Le thème sombre viendra p
 
 Le menthe `#5EEAB5` avec un texte `#0E1320` sert au bloc du total, au bouton + et à l'action principale.
 
-## Typographie
+## Système de design
 
-Space Grotesk pour les titres et les montants, Inter pour le reste.
+Validé le 15 novembre 2026, sur la page « Système de design » de la planche et sur l'écran du même nom de l'appli (Plus, version d'essai seulement). Chaque écran se construit avec ces pièces ; tout écart passe d'abord par une proposition.
+
+**Polices.** Plus Jakarta Sans pour les titres, les montants et les touches du clavier ; Inter pour le reste. Le nom « Kibuo » à côté du logo garde Space Grotesk.
+
+**Une taille par rôle.**
+
+| Rôle | Style |
+|---|---|
+| Titre d'onglet | Plus Jakarta 24 gras |
+| Titre d'écran, avec ‹ | Plus Jakarta 22 gras |
+| Titre de feuille, avec ✕ | Plus Jakarta 20 gras |
+| Grand montant | Plus Jakarta 34 gras |
+| Montant ou code mis en avant | Plus Jakarta 28 gras |
+| Valeur saisie | Plus Jakarta 26 gras |
+| Titre de carte | Plus Jakarta 17 gras |
+| Nom d'élément | Inter 16 demi-gras |
+| Libellé de ligne | Inter 15 moyen |
+| Texte | Inter 14 |
+| Titre de section | Inter 13 demi-gras, gris |
+| Aide | Inter 13, gris |
+| Légende | Inter 12, gris |
+| Bouton | Inter 16 demi-gras (15 pour les secondaires) |
+| Touche du clavier | Plus Jakarta 22 |
+
+**Espaces, coins et hauteurs.** Grille de 4 ; marges d'écran de 16. Coins : 12 pastille, 14 champ texte, 16 champ de montant et touche, 18 carte et bouton principal, 22 carte mise en avant, 26 feuille. Hauteurs : 44 zone tactile, 48 bouton secondaire, 50 touche, 52 champ texte, 54 bouton principal.
+
+**Couleurs.** Celles du tableau ci-dessus, plus le voile derrière une feuille : l'encre à 42 %.
+
+**Boutons.** Principal (menthe, un seul par écran, en bas), secondaire (blanc : Annuler, Plus tard), contour (choix lourd mais sans danger), sombre (Terminé), danger (contour rouge, appui maintenu), créer (pointillés), et l'action texte verte.
+
+**Champs.** Le libellé au-dessus ; au repos, blanc sans bord ; en saisie, bord vert et curseur vert. Une valeur tapée au clavier Kibuo (montant, taux) est à gauche, juste après son préfixe gris (« 1 $ = »), et sa devise est une pastille grise à droite ; la pastille porte ˅ quand on peut changer la devise. Une erreur : bord rouge et une ligne rouge dessous.
+
+**Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.
+
+**Feuilles.** Poignée claire, titre avec ✕, puis le contenu ; le clavier Kibuo est le même partout (1 à 9, virgule, 0, ←).
+
+**Icônes.** Toutes de Phosphor, y compris ‹ pour revenir et ← pour effacer.
 
 ## Icônes et animations
 
