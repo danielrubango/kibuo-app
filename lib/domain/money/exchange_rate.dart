@@ -126,11 +126,9 @@ class ExchangeRate {
     );
   }
 
-  /// Written with 1 unit of the more valuable currency: « 1 $ = 2 800 FC »,
-  /// never « 1 FC = 0,000357 $ ».
-  ExchangeRate forDisplay() => value.isBelowOne
-      ? ExchangeRate(base: quote, quote: base, value: value.inverted())
-      : this;
+  /// The same rate written « 1 [base] = … [quote] ».
+  ExchangeRate toward(String base, String quote) =>
+      ExchangeRate(base: base, quote: quote, value: per(base, quote));
 
   /// Converts [amount] (in either currency of the rate) into [to], rounded
   /// to its smallest unit in use, halves away from zero.
@@ -164,3 +162,13 @@ BigInt _divideRounded(BigInt a, BigInt b) {
   final q = (a.abs() * BigInt.two + b.abs()) ~/ (b.abs() * BigInt.two);
   return negative ? -q : q;
 }
+
+/// Which way a new rate is typed: « 1 [main] = … », except when the main
+/// currency is used without cents and the other with them (franc, yen):
+/// « 1 $ = … FC » rather than « 1 FC = 0,000357 $ ».
+(String, String) rateDirection({
+  required CurrencyInfo main,
+  required CurrencyInfo other,
+}) => !main.usesDecimals && other.usesDecimals
+    ? (other.code, main.code)
+    : (main.code, other.code);

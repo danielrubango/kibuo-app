@@ -872,6 +872,12 @@ abstract class AppLocalizations {
   /// **'Rechercher une devise'**
   String get currencySearch;
 
+  /// The user's own currencies, first when choosing the main one.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos devises'**
+  String get currencyYours;
+
   /// First part of the list.
   ///
   /// In fr, this message translates to:
@@ -896,22 +902,16 @@ abstract class AppLocalizations {
   /// **'Enregistrer le taux'**
   String get rateSave;
 
-  /// Screen-reader label of the swap button.
+  /// Section of Devises with a cents switch per currency.
   ///
   /// In fr, this message translates to:
-  /// **'Inverser le sens du taux'**
-  String get rateSwap;
-
-  /// Switch in the rate sheet.
-  ///
-  /// In fr, this message translates to:
-  /// **'Avec des décimales'**
-  String get currencyDecimals;
+  /// **'Centimes'**
+  String get currenciesCents;
 
   /// Under the decimals switch.
   ///
   /// In fr, this message translates to:
-  /// **'Désactivé, les montants s’affichent et se saisissent sans centimes.'**
+  /// **'Désactivés, les montants s’affichent et se saisissent sans centimes.'**
   String get currencyDecimalsHelp;
 
   /// When a rate was last set.
@@ -920,17 +920,29 @@ abstract class AppLocalizations {
   /// **'Mis à jour le {date}'**
   String currenciesUpdatedOn(String date);
 
-  /// Rate sheet title with the currency name.
+  /// Rate sheet title; ofName carries its French article: « du franc congolais », « de l’euro ».
   ///
   /// In fr, this message translates to:
-  /// **'Taux · {name}'**
-  String rateSheetTitle(String name);
+  /// **'Taux {ofName}'**
+  String rateSheetTitle(String ofName);
 
   /// Previous rate and its date.
   ///
   /// In fr, this message translates to:
   /// **'Avant : {rate} · {date}'**
   String rateBefore(String rate, String date);
+
+  /// Hint of the currency search field.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom ou code'**
+  String get currencySearchHint;
+
+  /// The new rate equals the previous one.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inchangé'**
+  String get rateUnchanged;
 }
 
 class _AppLocalizationsDelegate

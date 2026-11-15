@@ -433,6 +433,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get currencySearch => 'Rechercher une devise';
 
   @override
+  String get currencyYours => 'Vos devises';
+
+  @override
   String get currencyCommon => 'Les plus courantes';
 
   @override
@@ -446,14 +449,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get rateSave => 'Enregistrer le taux';
 
   @override
-  String get rateSwap => 'Inverser le sens du taux';
-
-  @override
-  String get currencyDecimals => 'Avec des décimales';
+  String get currenciesCents => 'Centimes';
 
   @override
   String get currencyDecimalsHelp =>
-      'Désactivé, les montants s’affichent et se saisissent sans centimes.';
+      'Désactivés, les montants s’affichent et se saisissent sans centimes.';
 
   @override
   String currenciesUpdatedOn(String date) {
@@ -461,12 +461,18 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String rateSheetTitle(String name) {
-    return 'Taux · $name';
+  String rateSheetTitle(String ofName) {
+    return 'Taux $ofName';
   }
 
   @override
   String rateBefore(String rate, String date) {
     return 'Avant : $rate · $date';
   }
+
+  @override
+  String get currencySearchHint => 'Nom ou code';
+
+  @override
+  String get rateUnchanged => 'Inchangé';
 }

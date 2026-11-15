@@ -350,11 +350,15 @@ class OperationAmountField extends StatelessWidget {
   }
 }
 
-/// The green caret of a field typed on the Kibuo keypad.
+/// The green caret of a field typed on the Kibuo keypad. It blinks for a few
+/// seconds after the field appears or changes, then stays on; it never
+/// blinks when the phone asks for fewer animations.
 class BlinkingCaret extends StatefulWidget {
   const BlinkingCaret({super.key, this.height = 26});
 
   final double height;
+
+  static const blinkFor = Duration(seconds: 8);
 
   @override
   State<BlinkingCaret> createState() => _BlinkingCaretState();
@@ -365,7 +369,32 @@ class _BlinkingCaretState extends State<BlinkingCaret>
   late final _blink = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1000),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _restart();
+  }
+
+  @override
+  void didUpdateWidget(BlinkingCaret old) {
+    super.didUpdateWidget(old);
+    _restart();
+  }
+
+  void _restart() {
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      _blink.value = 0;
+      return;
+    }
+    final times = BlinkingCaret.blinkFor.inMilliseconds ~/ 1000;
+    _blink
+      ..value = 0
+      ..repeat(count: times).whenCompleteOrCancel(() {
+        if (mounted) _blink.value = 0;
+      });
+  }
 
   @override
   void dispose() {

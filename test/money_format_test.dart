@@ -56,12 +56,20 @@ void main() {
     expect(plain(formatRate(rate, 'en')), r'$1 = FC 2,800');
   });
 
-  test('a precise rate keeps its decimals', () {
+  test('a rate reads the way it was typed', () {
     final rate = ExchangeRate(
       base: 'USD',
       quote: 'EUR',
       value: RateValue.parse('0.92'),
     );
-    expect(plain(formatRate(rate, 'fr')), '1 € = 1,0869565 \$');
+    expect(plain(formatRate(rate, 'fr')), '1 \$ = 0,92 €');
+  });
+
+  test('a long rate shows 4 decimals and 6 digits at most', () {
+    ExchangeRate r(String v) =>
+        ExchangeRate(base: 'EUR', quote: 'USD', value: RateValue.parse(v));
+    expect(plain(formatRate(r('1.0869565'), 'fr')), '1 € = 1,087 \$');
+    expect(plain(formatRate(r('3043.4782608'), 'fr')), '1 € = 3 043,48 \$');
+    expect(plain(formatRate(r('0.000357'), 'fr')), '1 € = 0,0004 \$');
   });
 }

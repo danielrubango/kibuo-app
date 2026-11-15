@@ -4,6 +4,7 @@ import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// « Code oublié ? »: the fingerprint when it is on, or erasing everything
@@ -66,7 +67,11 @@ class _ForgotSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
                 child: ListTile(
                   title: Text(l.lockUseFingerprint),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const Icon(
+                    KibuoIcons.caretRight,
+                    size: 16,
+                    color: KibuoColors.inkMuted,
+                  ),
                   onTap: () async {
                     final ok = await controller.biometrics.authenticate(
                       l.fingerprintReason,
@@ -86,7 +91,11 @@ class _ForgotSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
                 child: ListTile(
                   title: Text(l.recoveryUse),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const Icon(
+                    KibuoIcons.caretRight,
+                    size: 16,
+                    color: KibuoColors.inkMuted,
+                  ),
                   onTap: () => _useRecoveryCode(context),
                 ),
               ),
