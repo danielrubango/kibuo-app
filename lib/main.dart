@@ -3,6 +3,7 @@ import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
 import 'package:kibuo/ui/shell/app_shell.dart';
@@ -11,11 +12,17 @@ import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:path_provider/path_provider.dart';
 
+/// The app's navigator, to show screens from outside a screen's context.
+final navigator = GlobalKey<NavigatorState>();
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   const vault = SecureKeyVault();
   final folder = getApplicationSupportDirectory();
-  final lock = LockController(vault: vault);
+  final lock = LockController(
+    vault: vault,
+    recovery: FileRecovery(folder: folder, vault: vault),
+  );
   // Both happen while the start screen shows.
   final opening = folder.then((f) => openKibuoDatabase(folder: f));
   final lockLoading = lock.load();
@@ -28,6 +35,16 @@ void main() {
         final result = await eraseAndStartOver(folder: await folder);
         await lock.load();
         return result;
+      },
+      // A new phone: the code and settings stayed on the old one.
+      onRecovered: () async {
+        await lock.load();
+        if (lock.hasPin) return;
+        await navigator.currentState?.push<bool>(
+          MaterialPageRoute(
+            builder: (_) => CreatePinScreen(controller: lock, allowLater: true),
+          ),
+        );
       },
     ),
   );
@@ -42,7 +59,11 @@ class KibuoApp extends StatelessWidget {
     this.lock,
     this.ready,
     this.eraseAndStartOver,
+    this.onRecovered,
   });
+
+  /// After data was reopened with the recovery code.
+  final Future<void> Function()? onRecovered;
 
   /// The encrypted database being opened. Left out, with [lock], in widget
   /// tests that do not touch the data.
@@ -64,6 +85,7 @@ class KibuoApp extends StatelessWidget {
     final erase = eraseAndStartOver;
     return MaterialApp(
       title: 'Kibuo',
+      navigatorKey: navigator,
       debugShowCheckedModeBanner: false,
       theme: KibuoTheme.light(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -76,6 +98,7 @@ class KibuoApp extends StatelessWidget {
             : DataGate(
                 opening: opening,
                 eraseAndStartOver: erase,
+                onRecovered: onRecovered,
                 builder: (eraseAll) => lock == null
                     ? const AppShell()
                     : LockGate(

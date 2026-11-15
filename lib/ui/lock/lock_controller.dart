@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/lock_settings.dart';
+import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/data/pin_store.dart';
+import 'package:kibuo/data/recovery_store.dart';
 import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -49,7 +53,39 @@ abstract interface class PrivacyPlatform {
   Future<void> apply({
     required bool allowScreenshots,
     required bool hideInRecents,
+    required bool androidCopy,
   });
+}
+
+/// The recovery code of this phone's data (ADR 0010).
+abstract interface class Recovery {
+  /// When the current code was created; null when there is none.
+  Future<DateTime?> createdAt();
+
+  /// Creates a new code and returns it, to be shown once.
+  Future<String> createCode();
+
+  /// Whether [typed] is the current code.
+  Future<bool> check(String typed);
+}
+
+class FileRecovery implements Recovery {
+  FileRecovery({required this.folder, required this.vault});
+
+  final Future<Directory> folder;
+  final KeyVault vault;
+
+  @override
+  Future<DateTime?> createdAt() async =>
+      RecoveryStore(await folder).createdAt();
+
+  @override
+  Future<String> createCode() async =>
+      createRecoveryCode(folder: await folder, vault: vault);
+
+  @override
+  Future<bool> check(String typed) async =>
+      await RecoveryStore(await folder).unlock(typed) != null;
 }
 
 class AndroidPrivacy implements PrivacyPlatform {
@@ -65,9 +101,11 @@ class AndroidPrivacy implements PrivacyPlatform {
   Future<void> apply({
     required bool allowScreenshots,
     required bool hideInRecents,
+    required bool androidCopy,
   }) async {
     await _channel.invokeMethod<void>('allowScreenshots', allowScreenshots);
     await _channel.invokeMethod<void>('hideInRecents', hideInRecents);
+    await _channel.invokeMethod<void>('androidCopy', androidCopy);
   }
 }
 
@@ -77,6 +115,7 @@ class LockController extends ChangeNotifier {
     required KeyVault vault,
     this.biometrics = const DeviceBiometrics(),
     this.privacy = const AndroidPrivacy(),
+    this.recovery,
     DateTime Function()? now,
   }) : pins = PinStore(vault, now: now),
        _settingsStore = LockSettingsStore(vault),
@@ -85,6 +124,9 @@ class LockController extends ChangeNotifier {
   final PinStore pins;
   final Biometrics biometrics;
   final PrivacyPlatform privacy;
+
+  /// Null in widget tests that do not deal with the recovery code.
+  final Recovery? recovery;
   final LockSettingsStore _settingsStore;
   final DateTime Function() _now;
 
@@ -96,6 +138,7 @@ class LockController extends ChangeNotifier {
   bool _canHidePreview = true;
   LockSettings _settings = const LockSettings();
   DateTime? _leftAt;
+  DateTime? _recoveryCreatedAt;
 
   bool get ready => _ready;
   bool get hasPin => _hasPin;
@@ -103,6 +146,9 @@ class LockController extends ChangeNotifier {
   int get pinLength => _pinLength ?? 4;
   bool get biometricsAvailable => _biometricsAvailable;
   LockSettings get settings => _settings;
+
+  /// When the recovery code was created; null when there is none.
+  DateTime? get recoveryCreatedAt => _recoveryCreatedAt;
 
   /// Fingerprint is offered only when the phone has one and it is turned on.
   bool get fingerprintOn => _settings.fingerprint && _biometricsAvailable;
@@ -116,6 +162,7 @@ class LockController extends ChangeNotifier {
     _pinLength = await pins.pinLength();
     _settings = await _settingsStore.load();
     _biometricsAvailable = await biometrics.available();
+    _recoveryCreatedAt = await recovery?.createdAt();
     try {
       _canHidePreview = await privacy.canHidePreview();
       await _applyPrivacy();
@@ -171,9 +218,24 @@ class LockController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Creates a new recovery code (the old one stops working) and returns it.
+  Future<String> newRecoveryCode() async {
+    final code = await recovery!.createCode();
+    _recoveryCreatedAt = await recovery!.createdAt();
+    try {
+      await _applyPrivacy();
+    } on MissingPluginException {
+      // Widget tests.
+    }
+    notifyListeners();
+    return code;
+  }
+
+  /// Android may copy Kibuo only when the copy can be reopened.
   Future<void> _applyPrivacy() => privacy.apply(
     allowScreenshots: _settings.allowScreenshots,
     hideInRecents: _settings.hideInRecents,
+    androidCopy: _settings.androidCopy && _recoveryCreatedAt != null,
   );
 }
 

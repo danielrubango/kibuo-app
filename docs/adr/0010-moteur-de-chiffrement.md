@@ -15,3 +15,5 @@ Tant que le code de récupération n'existe pas, Android n'a pas le droit de cop
 ## Consequences
 
 Si la clé disparaît du coffre ou ne correspond plus, Kibuo affiche « Vos données ne peuvent pas être ouvertes », garde le fichier de côté sans l'effacer et propose de repartir de zéro ; la restauration d'une sauvegarde s'y ajoutera à son étape, puis la réouverture par le code de récupération. Le code de récupération, court (16 caractères), devra protéger la copie de la clé avec une dérivation lente et résistante aux essais en masse.
+
+Mis en place le 15 novembre 2026 : la clé verrouillée par le code est rangée dans `kibuo-key.json`, à côté de la base (PBKDF2-HMAC-SHA256, 300 000 tours, sel neuf à chaque code ; 32 octets masquent la clé, 32 la signent pour reconnaître un code faux). Un agent de sauvegarde Android ne laisse copier que ces deux fichiers, et seulement quand un code existe et que « Laisser Android copier Kibuo » est actif.

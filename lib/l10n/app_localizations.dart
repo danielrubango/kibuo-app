@@ -305,7 +305,7 @@ abstract class AppLocalizations {
   /// Explains why the data cannot be opened and that the file is kept.
   ///
   /// In fr, this message translates to:
-  /// **'La clé qui protège vos données n’est plus sur ce téléphone, ou ne correspond plus. Le fichier est gardé de côté sur le téléphone, il n’est pas effacé.'**
+  /// **'Elles viennent peut-être d’un autre téléphone, ou la clé qui les protège n’est plus sur celui-ci. Le fichier est gardé de côté, il n’est pas effacé.'**
   String get unreadableBody;
 
   /// Button: set the unreadable data aside and start with empty data.
@@ -631,6 +631,168 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'15 minutes'**
   String get delayFifteenMinutes;
+
+  /// Screen title and Security row.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code de récupération'**
+  String get recoveryTitle;
+
+  /// Title when the new code is shown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notez votre code de récupération'**
+  String get recoveryShowTitle;
+
+  /// Under the new code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il rend l’accès à Kibuo si vous oubliez votre code et que l’empreinte ne marche pas, et il rouvre vos données sur un nouveau téléphone. Notez-le sur papier et gardez-le en lieu sûr.'**
+  String get recoveryShowBody;
+
+  /// Warning under the new code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Kibuo ne le garde pas : il ne pourra plus vous le montrer.'**
+  String get recoveryShowWarning;
+
+  /// Copies the recovery code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le code'**
+  String get recoveryCopy;
+
+  /// After copying.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code copié'**
+  String get recoveryCopied;
+
+  /// Goes on to the proof step.
+  ///
+  /// In fr, this message translates to:
+  /// **'J’ai noté mon code'**
+  String get recoveryNoted;
+
+  /// Under the proof title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour vérifier que vous avez bien noté votre code.'**
+  String get recoveryProofBody;
+
+  /// Wrong group typed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce n’est pas ce groupe. Regardez votre note.'**
+  String get recoveryProofWrong;
+
+  /// Back to the code from the proof step.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revoir le code'**
+  String get recoverySeeAgain;
+
+  /// Title of the entry screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez votre code de récupération'**
+  String get recoveryEnterTitle;
+
+  /// Under the entry title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le code de 16 caractères remis à sa création, en 4 groupes.'**
+  String get recoveryEnterBody;
+
+  /// Under the code boxes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les tirets et les minuscules ne comptent pas.'**
+  String get recoveryEnterHint;
+
+  /// Wrong recovery code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code incorrect. Vérifiez chaque groupe et réessayez.'**
+  String get recoveryWrong;
+
+  /// Checks the recovery code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir Kibuo'**
+  String get recoveryOpen;
+
+  /// In the forgotten-code sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser le code de récupération'**
+  String get recoveryUse;
+
+  /// On the recovery settings page.
+  ///
+  /// In fr, this message translates to:
+  /// **'Kibuo ne le garde pas : vous seul le connaissez.'**
+  String get recoveryNotKept;
+
+  /// Replaces the recovery code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Obtenir un nouveau code'**
+  String get recoveryNew;
+
+  /// Under Get a new code.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’ancien code de récupération cessera de fonctionner.'**
+  String get recoveryNewHelp;
+
+  /// When there is no recovery code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un code de récupération'**
+  String get recoveryCreate;
+
+  /// Why create a recovery code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans code de récupération, un code oublié ou un nouveau téléphone obligent à repartir de zéro, et Android ne copie pas les données de Kibuo.'**
+  String get recoveryCreateHelp;
+
+  /// Switch for Android backup and transfer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Laisser Android copier Kibuo'**
+  String get recoveryAndroidCopy;
+
+  /// Under the Android copy switch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde Google et transfert vers un nouveau téléphone. Les données copiées restent chiffrées et ne s’ouvrent qu’avec ce code.'**
+  String get recoveryAndroidCopyHelp;
+
+  /// On the unreadable-data screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisir le code de récupération'**
+  String get unreadableRecover;
+
+  /// Proof step title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retapez le groupe {group}'**
+  String recoveryProofTitle(int group);
+
+  /// When the code was created.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code noté le {date}'**
+  String recoveryNotedOn(String date);
+
+  /// Security row summary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Noté le {date}'**
+  String securityRecoveryOn(String date);
 }
 
 class _AppLocalizationsDelegate

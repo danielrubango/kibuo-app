@@ -9,6 +9,7 @@ class LockSettings {
     this.delay = AutoLockDelay.standard,
     this.hideInRecents = true,
     this.allowScreenshots = true,
+    this.androidCopy = true,
   });
 
   final bool fingerprint;
@@ -17,18 +18,24 @@ class LockSettings {
   final bool hideInRecents;
   final bool allowScreenshots;
 
+  /// Let Android copy Kibuo (Google backup, new phone); applies only once a
+  /// recovery code exists (ADR 0010).
+  final bool androidCopy;
+
   LockSettings copyWith({
     bool? fingerprint,
     bool? shuffle,
     AutoLockDelay? delay,
     bool? hideInRecents,
     bool? allowScreenshots,
+    bool? androidCopy,
   }) => LockSettings(
     fingerprint: fingerprint ?? this.fingerprint,
     shuffle: shuffle ?? this.shuffle,
     delay: delay ?? this.delay,
     hideInRecents: hideInRecents ?? this.hideInRecents,
     allowScreenshots: allowScreenshots ?? this.allowScreenshots,
+    androidCopy: androidCopy ?? this.androidCopy,
   );
 }
 
@@ -42,6 +49,7 @@ class LockSettingsStore {
   static const _delay = 'lock_delay';
   static const _hideInRecents = 'privacy_hide_recents';
   static const _allowScreenshots = 'privacy_screenshots';
+  static const _androidCopy = 'backup_android_copy';
 
   Future<LockSettings> load() async {
     const fallback = LockSettings();
@@ -64,6 +72,7 @@ class LockSettingsStore {
         _allowScreenshots,
         fallback.allowScreenshots,
       ),
+      androidCopy: await flag(_androidCopy, fallback.androidCopy),
     );
   }
 
@@ -73,5 +82,6 @@ class LockSettingsStore {
     await _vault.write(_delay, s.delay.name);
     await _vault.write(_hideInRecents, '${s.hideInRecents}');
     await _vault.write(_allowScreenshots, '${s.allowScreenshots}');
+    await _vault.write(_androidCopy, '${s.androidCopy}');
   }
 }

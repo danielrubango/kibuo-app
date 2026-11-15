@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
+import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -21,6 +23,27 @@ class _ForgotSheet extends StatelessWidget {
 
   final LockController controller;
   final Future<void> Function() eraseAll;
+
+  /// The right recovery code opens Kibuo; the forgotten PIN is dropped and a
+  /// new one asked for at once, with « Plus tard » (PRODUCT.md).
+  Future<void> _useRecoveryCode(BuildContext context) async {
+    final root = Navigator.of(context, rootNavigator: true);
+    Navigator.of(context).pop();
+    final ok = await root.push<bool>(
+      MaterialPageRoute(
+        builder: (_) => RecoveryEntryScreen(onCode: controller.recovery!.check),
+      ),
+    );
+    if (ok != true) return;
+    await controller.removePin();
+    controller.unlock();
+    await root.push<bool>(
+      MaterialPageRoute(
+        builder: (_) =>
+            CreatePinScreen(controller: controller, allowLater: true),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +76,18 @@ class _ForgotSheet extends StatelessWidget {
                       if (context.mounted) Navigator.of(context).pop();
                     }
                   },
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            if (controller.recoveryCreatedAt != null) ...[
+              Material(
+                color: KibuoColors.surface,
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+                child: ListTile(
+                  title: Text(l.recoveryUse),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _useRecoveryCode(context),
                 ),
               ),
               const SizedBox(height: 12),

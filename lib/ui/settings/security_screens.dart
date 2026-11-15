@@ -3,6 +3,7 @@ import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
+import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -46,6 +47,17 @@ class SecurityScreen extends StatelessWidget {
                     : l.securityRecentsShown,
                 onTap: () => _open(context, PrivacyScreen(lock: lock)),
               ),
+              if (lock.recovery != null)
+                SettingsRow(
+                  label: l.recoveryTitle,
+                  value: lock.recoveryCreatedAt == null
+                      ? l.securityNoCode
+                      : l.securityRecoveryOn(
+                          formatRecoveryDate(context, lock.recoveryCreatedAt!),
+                        ),
+                  onTap: () =>
+                      _open(context, RecoverySettingsScreen(lock: lock)),
+                ),
             ],
           ),
           const SizedBox(height: 10),
