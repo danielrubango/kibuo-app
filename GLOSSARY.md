@@ -35,6 +35,9 @@ Classement d'une opération. Peut avoir un seul niveau de sous-catégories.
 
 ### Devises
 
+**Devise** (`Currency`) :
+Monnaie dans laquelle un compte est tenu ou une opération est payée, désignée par son code international (USD, CDF, EUR). Elle dit si elle utilise des décimales.
+
 **Devise principale** (`PrimaryCurrency`) :
 Devise de suivi et valeur proposée par défaut. Elle ne modifie jamais la devise d'un compte.
 

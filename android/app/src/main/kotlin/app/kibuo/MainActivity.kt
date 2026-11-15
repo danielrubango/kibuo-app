@@ -1,7 +1,9 @@
 package app.kibuo
 
 import android.app.backup.BackupManager
+import android.content.res.Resources
 import android.os.Build
+import android.telephony.TelephonyManager
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -11,6 +13,20 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterFragmentActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // The phone's country, to suggest its currency: the SIM or network
+        // first (a phone in Congo may be set to French from France), then the
+        // system settings, which Kibuo's own language choice does not change.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/device")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "country") return@setMethodCallHandler result.notImplemented()
+                val phone = getSystemService(TELEPHONY_SERVICE) as? TelephonyManager
+                val country = listOfNotNull(
+                    phone?.networkCountryIso,
+                    phone?.simCountryIso,
+                    Resources.getSystem().configuration.locales.get(0).country,
+                ).firstOrNull { it.length == 2 }
+                result.success(country?.uppercase())
+            }
         // Confidentialité: screenshots and the preview in recent apps.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/privacy")
             .setMethodCallHandler { call, result ->

@@ -383,4 +383,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String securityRecoveryOn(String date) {
     return 'Written down $date';
   }
+
+  @override
+  String get currenciesTitle => 'Currencies';
+
+  @override
+  String get currenciesMain => 'Main currency';
+
+  @override
+  String get currenciesChange => 'Change';
+
+  @override
+  String get currenciesRates => 'Exchange rates';
+
+  @override
+  String get currenciesWorkedOut => 'Worked out from your other rates';
+
+  @override
+  String get currenciesNoRate => 'No rate yet';
+
+  @override
+  String get currenciesEdit => 'Edit';
+
+  @override
+  String get currenciesRatesHelp =>
+      'Changing a rate doesn’t change transactions already recorded.';
+
+  @override
+  String get currenciesAdd => 'Add a currency';
+
+  @override
+  String get currencyPickerTitle => 'Choose a currency';
+
+  @override
+  String get mainCurrencyPickerTitle => 'Your main currency';
+
+  @override
+  String get mainCurrencyHelp =>
+      'It’s used for tracking and reports. Each account keeps its own currency.';
+
+  @override
+  String get currencySearch => 'Search for a currency';
+
+  @override
+  String get currencyCommon => 'Most used';
+
+  @override
+  String get currencyOthers => 'All the others';
+
+  @override
+  String get rateKeepsOld => 'Transactions already recorded keep their rate.';
+
+  @override
+  String get rateSave => 'Save the rate';
+
+  @override
+  String get rateSwap => 'Swap the rate’s direction';
+
+  @override
+  String get currencyDecimals => 'Uses decimals';
+
+  @override
+  String get currencyDecimalsHelp =>
+      'When off, amounts are shown and typed without cents.';
+
+  @override
+  String currenciesUpdatedOn(String date) {
+    return 'Updated $date';
+  }
+
+  @override
+  String rateSheetTitle(String name) {
+    return 'Rate · $name';
+  }
+
+  @override
+  String rateBefore(String rate, String date) {
+    return 'Before: $rate · $date';
+  }
 }

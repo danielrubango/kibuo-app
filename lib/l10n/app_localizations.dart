@@ -793,6 +793,144 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Noté le {date}'**
   String securityRecoveryOn(String date);
+
+  /// Settings page and More row.
+  ///
+  /// In fr, this message translates to:
+  /// **'Devises'**
+  String get currenciesTitle;
+
+  /// Card title on Currencies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Devise principale'**
+  String get currenciesMain;
+
+  /// Changes the main currency.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer'**
+  String get currenciesChange;
+
+  /// Section title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux de conversion'**
+  String get currenciesRates;
+
+  /// A rate not typed but derived.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calculé d’après vos autres taux'**
+  String get currenciesWorkedOut;
+
+  /// A currency without a rate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore de taux'**
+  String get currenciesNoRate;
+
+  /// Opens the rate sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get currenciesEdit;
+
+  /// Under the rates.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier un taux ne change pas les opérations déjà enregistrées.'**
+  String get currenciesRatesHelp;
+
+  /// Adds a currency.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une devise'**
+  String get currenciesAdd;
+
+  /// Picker title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une devise'**
+  String get currencyPickerTitle;
+
+  /// Picker title for the main currency.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre devise principale'**
+  String get mainCurrencyPickerTitle;
+
+  /// Under the main currency picker title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle sert au suivi et aux rapports. Chaque compte gardera sa propre devise.'**
+  String get mainCurrencyHelp;
+
+  /// Search field hint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une devise'**
+  String get currencySearch;
+
+  /// First part of the list.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les plus courantes'**
+  String get currencyCommon;
+
+  /// Second part of the list.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les autres'**
+  String get currencyOthers;
+
+  /// In the rate sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les opérations déjà enregistrées gardent leur taux.'**
+  String get rateKeepsOld;
+
+  /// Saves the rate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer le taux'**
+  String get rateSave;
+
+  /// Screen-reader label of the swap button.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inverser le sens du taux'**
+  String get rateSwap;
+
+  /// Switch in the rate sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avec des décimales'**
+  String get currencyDecimals;
+
+  /// Under the decimals switch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactivé, les montants s’affichent et se saisissent sans centimes.'**
+  String get currencyDecimalsHelp;
+
+  /// When a rate was last set.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mis à jour le {date}'**
+  String currenciesUpdatedOn(String date);
+
+  /// Rate sheet title with the currency name.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux · {name}'**
+  String rateSheetTitle(String name);
+
+  /// Previous rate and its date.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avant : {rate} · {date}'**
+  String rateBefore(String rate, String date);
 }
 
 class _AppLocalizationsDelegate

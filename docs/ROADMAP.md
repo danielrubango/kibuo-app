@@ -44,7 +44,7 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Phase 3 : Cœur de l'application
 
-- [ ] Devises, devise principale et taux de conversion
+- [x] Devises, devise principale et taux de conversion
 - [ ] Comptes
 - [ ] Catégories et sous-catégories
 - [ ] Dépenses et revenus
