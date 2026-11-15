@@ -1771,6 +1771,114 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get entryDeleteConfirm;
+
+  /// Attachments: attachTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièces jointes'**
+  String get attachTitle;
+
+  /// Attachments: attachAdd
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get attachAdd;
+
+  /// Attachments: attachEmpty
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une pièce jointe'**
+  String get attachEmpty;
+
+  /// Attachments: attachEmptyHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo d’un reçu ou document, 5 au plus'**
+  String get attachEmptyHelp;
+
+  /// Attachments: attachPhoto
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get attachPhoto;
+
+  /// Attachments: attachGallery
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir dans la galerie'**
+  String get attachGallery;
+
+  /// Attachments: attachFile
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un fichier'**
+  String get attachFile;
+
+  /// Attachments: attachKindPhoto
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo'**
+  String get attachKindPhoto;
+
+  /// Attachments: attachKindPdf
+  ///
+  /// In fr, this message translates to:
+  /// **'PDF'**
+  String get attachKindPdf;
+
+  /// Attachments: attachKindFile
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier'**
+  String get attachKindFile;
+
+  /// Attachments: attachTooBig
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce fichier dépasse 10 Mo : choisissez-en un plus léger.'**
+  String get attachTooBig;
+
+  /// Attachments: attachChosen
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 choisie} other{{count} choisies}}'**
+  String attachChosen(int count);
+
+  /// Attachments: attachRemove
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get attachRemove;
+
+  /// Attachments: opens the one chosen attachment
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir'**
+  String get attachView;
+
+  /// Attachments viewer: hands the file to another app
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir avec…'**
+  String get attachOpenWith;
+
+  /// Attachments viewer: under a PDF's first page
+  ///
+  /// In fr, this message translates to:
+  /// **'Page 1 sur {pages}'**
+  String attachPage(int pages);
+
+  /// Attachments viewer: no app opens the file
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune appli du téléphone n\'ouvre ce fichier.'**
+  String get attachNoApp;
+
+  /// Attachments: attachPhotoName
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo {n}'**
+  String attachPhotoName(int n);
 }
 
 class _AppLocalizationsDelegate

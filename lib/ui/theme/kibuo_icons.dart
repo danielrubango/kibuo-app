@@ -42,6 +42,12 @@ abstract final class KibuoIcons {
   static const bank = IconData(0xe0b4, fontFamily: _regular);
   static const deviceMobile = IconData(0xe1e0, fontFamily: _regular);
   static const piggyBank = IconData(0xea04, fontFamily: _regular);
+  static const camera = IconData(0xe10e, fontFamily: _regular);
+  static const image = IconData(0xe2ca, fontFamily: _regular);
+  static const file = IconData(0xe230, fontFamily: _regular);
+  static const filePdf = IconData(0xe702, fontFamily: _regular);
+  static const paperclip = IconData(0xe39a, fontFamily: _regular);
+  static const checkCircleFill = IconData(0xe184, fontFamily: _fill);
   static const forkKnife = IconData(0xe262, fontFamily: _regular);
   static const basket = IconData(0xe964, fontFamily: _regular);
   static const taxi = IconData(0xe902, fontFamily: _regular);

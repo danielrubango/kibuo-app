@@ -142,6 +142,24 @@ class Transactions extends Table with SyncColumns {
   TextColumn get note => text().nullable()();
 }
 
+/// Files attached to an operation (ADR 0011): the file itself lives
+/// encrypted in `attachments/`, this row describes it.
+@DataClassName('AttachmentRow')
+class Attachments extends Table with SyncColumns {
+  TextColumn get transactionId => text()();
+  TextColumn get name => text()();
+
+  /// « photo », « pdf » or « file ».
+  TextColumn get kind => text()();
+
+  /// Bytes before encryption.
+  IntColumn get size => integer()();
+
+  /// The encrypted file's name in `attachments/`.
+  TextColumn get file => text()();
+  IntColumn get position => integer()();
+}
+
 @DriftDatabase(
   tables: [
     Devices,
@@ -152,6 +170,7 @@ class Transactions extends Table with SyncColumns {
     Accounts,
     Categories,
     Transactions,
+    Attachments,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -162,7 +181,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -182,6 +201,9 @@ class KibuoDatabase extends _$KibuoDatabase {
       },
       from4To5: (m, schema) async {
         await m.createTable(schema.transactions);
+      },
+      from5To6: (m, schema) async {
+        await m.createTable(schema.attachments);
       },
     ),
     beforeOpen: (details) async {

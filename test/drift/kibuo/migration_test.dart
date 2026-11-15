@@ -11,6 +11,7 @@ import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
+import 'generated/schema_v6.dart' as v6;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -163,6 +164,40 @@ void main() {
       validateItems: (newDb) async {
         expect((await newDb.select(newDb.categories).get()).single.key, 'food');
         expect(await newDb.select(newDb.transactions).get(), isEmpty);
+      },
+    );
+  });
+
+  test('version 5 to 6 keeps the operations, adds attachments', () async {
+    const taxi = v5.TransactionsData(
+      id: 'tx-1',
+      version: 80,
+      deviceId: 'phone-1',
+      deleted: 0,
+      kind: 'out',
+      accountId: 'acc-1',
+      categoryId: 'default-taxi',
+      amount: 500,
+      currency: 'USD',
+      rateTyped: 0,
+      converted: 500,
+      fees: 0,
+      date: 1794700000,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 5,
+      newVersion: 6,
+      createOld: v5.DatabaseAtV5.new,
+      createNew: v6.DatabaseAtV6.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.transactions, taxi),
+      validateItems: (newDb) async {
+        expect(
+          (await newDb.select(newDb.transactions).get()).single.amount,
+          500,
+        );
+        expect(await newDb.select(newDb.attachments).get(), isEmpty);
       },
     );
   });
