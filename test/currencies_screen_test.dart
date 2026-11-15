@@ -195,25 +195,45 @@ void main() {
     expect(textPlain('1 \$ ='), findsOneWidget);
   });
 
-  testWidgets('cents are set per currency in the Centimes card', (
+  testWidgets('cents are set in the rate sheet of each currency', (
     tester,
   ) async {
     await repo.ensurePrimaryCurrency('US');
     await repo.addCurrency('EUR');
-    await repo.addCurrency('CDF');
+    await repo.setRate('USD', 'EUR', RateValue.parse('0.92'));
     await start(tester);
 
-    expect(find.text('Centimes'), findsOneWidget);
-    expect(find.text('Avec des décimales'), findsNothing);
-    final euro = find.ancestor(
-      of: find.text('Euro'),
+    expect(find.text('Centimes'), findsNothing, reason: 'not on Devises');
+    await tester.tap(find.text('Modifier'));
+    await tester.pumpAndSettle();
+    final cents = find.ancestor(
+      of: find.text('Centimes'),
       matching: find.byType(SettingsSwitch),
     );
-    await tester.scrollUntilVisible(euro, 200);
-    await tester.tap(find.descendant(of: euro, matching: find.byType(Switch)));
+    await tester.tap(find.descendant(of: cents, matching: find.byType(Switch)));
+    await tester.pump();
+    await type(tester, '0,93');
+    await tester.tap(find.text('Enregistrer le taux'));
     await tester.pumpAndSettle();
 
     expect((await repo.currency('EUR')).usesDecimals, isFalse);
-    expect((await repo.currency('USD')).usesDecimals, isTrue);
+  });
+
+  testWidgets('the main currency’s cents are set where it is changed', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await start(tester);
+
+    await tester.tap(find.text('Changer'));
+    await tester.pumpAndSettle();
+    final cents = find.ancestor(
+      of: find.text('Centimes'),
+      matching: find.byType(SettingsSwitch),
+    );
+    await tester.tap(find.descendant(of: cents, matching: find.byType(Switch)));
+    await tester.pumpAndSettle();
+
+    expect((await repo.currency('USD')).usesDecimals, isFalse);
   });
 }
