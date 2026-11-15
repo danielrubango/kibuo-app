@@ -4,8 +4,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/fields.dart';
-import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/kit/icon_grid.dart';
 
 /// « Nouveau type » (canvas: TypeCompte): a name and an icon among about
 /// twenty. Pops the new type's id.
@@ -55,42 +54,10 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
           ),
           const SizedBox(height: 16),
           FieldLabel(l.typeIcon),
-          // Six per row, filling the width (TypeCompte).
-          GridView.count(
-            crossAxisCount: 6,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              for (final MapEntry(key: name, value: icon)
-                  in customTypeIcons.entries)
-                Semantics(
-                  label: name,
-                  selected: name == _icon,
-                  button: true,
-                  excludeSemantics: true,
-                  child: Material(
-                    color: name == _icon
-                        ? KibuoColors.ink
-                        : KibuoColors.surface,
-                    borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () => setState(() => _icon = name),
-                      child: Center(
-                        child: Icon(
-                          icon,
-                          size: 22,
-                          color: name == _icon
-                              ? KibuoColors.surface
-                              : KibuoColors.ink,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+          IconGrid(
+            icons: customTypeIcons,
+            chosen: _icon,
+            onPick: (name) => setState(() => _icon = name),
           ),
         ],
       ),

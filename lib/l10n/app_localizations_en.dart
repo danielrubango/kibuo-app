@@ -634,4 +634,123 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyKeep => 'Keep';
+
+  @override
+  String categoryName(String key) {
+    String _temp0 = intl.Intl.selectLogic(key, {
+      'food': 'Food',
+      'restaurant': 'Restaurant',
+      'market': 'Market',
+      'transport': 'Transport',
+      'taxi': 'Taxi',
+      'motoTaxi': 'Motorbike taxi',
+      'bus': 'Bus',
+      'fuel': 'Fuel',
+      'toll': 'Toll',
+      'groceries': 'Groceries',
+      'housing': 'Housing',
+      'rent': 'Rent',
+      'electricity': 'Electricity',
+      'water': 'Water',
+      'communication': 'Phone and internet',
+      'airtime': 'Airtime',
+      'internet': 'Internet',
+      'health': 'Health',
+      'pharmacy': 'Pharmacy',
+      'school': 'School',
+      'family': 'Family',
+      'outings': 'Going out',
+      'contributions': 'Contributions',
+      'otherExpense': 'Other',
+      'salary': 'Salary',
+      'business': 'Business',
+      'sale': 'Sales',
+      'service': 'Services',
+      'giftReceived': 'Gift received',
+      'refund': 'Refund',
+      'otherIncome': 'Other',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get categoriesTitle => 'Categories';
+
+  @override
+  String get categoriesExpenses => 'Expenses';
+
+  @override
+  String get categoriesIncome => 'Income';
+
+  @override
+  String categoriesSubCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count subcategories',
+      one: '1 subcategory',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get categoriesAddSub => 'Add a subcategory';
+
+  @override
+  String get categoriesAdd => 'Add a category';
+
+  @override
+  String get categoryNewTitle => 'New category';
+
+  @override
+  String get categoryNewSubTitle => 'New subcategory';
+
+  @override
+  String get categoryEditTitle => 'Edit category';
+
+  @override
+  String get categoryEditSubTitle => 'Edit subcategory';
+
+  @override
+  String get categoryIn => 'In';
+
+  @override
+  String get categoryNameLabel => 'Name';
+
+  @override
+  String get categoryIcon => 'Icon';
+
+  @override
+  String get categoryCreate => 'Create the category';
+
+  @override
+  String get categoryCreateSub => 'Create the subcategory';
+
+  @override
+  String get categorySave => 'Save';
+
+  @override
+  String get categoryRemove => 'Remove the category';
+
+  @override
+  String get categoryRemoveSub => 'Remove the subcategory';
+
+  @override
+  String get categoryRemoveHelp =>
+      'It leaves the choices; its transactions keep it.';
+
+  @override
+  String categoryRemoveSubsToo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Its $count subcategories go with it.',
+      one: 'Its subcategory goes with it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get categoryNameHint => 'Church, Motorbike taxi…';
 }

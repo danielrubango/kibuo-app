@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
+import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -151,6 +153,16 @@ class _AppShellState extends State<AppShell> {
                   accounts: AccountRepository(db),
                   currencies: CurrencyRepository(db),
                 ),
+              ),
+            ),
+          ),
+        if (db != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).categoriesTitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    CategoriesScreen(categories: CategoryRepository(db)),
               ),
             ),
           ),
