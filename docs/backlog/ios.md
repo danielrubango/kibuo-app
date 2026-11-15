@@ -19,6 +19,7 @@ Le code Flutter reste compilable pour iOS, mais iOS n'est ni testé ni publié a
 | Confidentialité | `FLAG_SECURE` contre les captures, `setRecentsScreenshotEnabled` (Android 13+) pour masquer l'aperçu, canal `kibuo/privacy` dans `MainActivity` | Écran de masquage à la sortie de l'appli (iOS ne bloque pas les captures) | À faire |
 | Copie des données | `KibuoBackupAgent` : copie par Android seulement avec un code de récupération et le réglage actif ; `data_extraction_rules.xml` et `backup_rules.xml` limitent la copie à `kibuo.db` et `kibuo-key.json` | Sauvegarde iCloud et transfert d'iPhone limités aux mêmes fichiers, selon le même réglage ; le reste exclu (`isExcludedFromBackup`) | À faire |
 | Coffre de la clé | `flutter_secure_storage` sur le Keystore d'Android | Trousseau iOS sans synchronisation iCloud (option d'accessibilité « cet appareil uniquement ») | À faire |
+| Pays du téléphone | Canal `kibuo/device` : pays du réseau ou de la carte SIM (`TelephonyManager`), sinon des réglages du système | Pays de la région des Réglages (`Locale.current.region`) | À faire |
 | Écran de démarrage | Écran d'Android 12+ (`windowSplashScreenAnimatedIcon`) et fond de lancement d'Android 8 à 11 | Écran de lancement iOS (LaunchScreen) avec le même logo, centré à la même taille que l'écran Kibuo | À faire |
 
 ## Différences déjà connues

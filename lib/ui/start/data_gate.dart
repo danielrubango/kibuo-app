@@ -16,6 +16,10 @@ class KibuoData extends InheritedWidget {
   static KibuoDatabase of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<KibuoData>()!.database;
 
+  /// Null in widget tests without data.
+  static KibuoDatabase? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<KibuoData>()?.database;
+
   @override
   bool updateShouldNotify(KibuoData old) => old.database != database;
 }

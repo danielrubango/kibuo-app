@@ -42,13 +42,16 @@ Kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 
 ### Devises
 
-- L'utilisateur ajoute ses devises, désigne la principale et saisit les taux de conversion, modifiables à tout moment.
+- L'utilisateur ajoute ses devises, désigne la principale et saisit les taux de conversion, modifiables à tout moment. Toutes les devises en usage dans le monde sont proposées (environ 150), en une liste en deux parties : en haut la devise du pays du téléphone puis les plus courantes, en dessous toutes les autres, avec une recherche par nom ou par code.
+- Jusqu'au premier lancement guidé, la devise principale est celle du pays du téléphone (le dollar si le pays est inconnu).
+- Un taux s'écrit toujours avec une unité de la devise qui vaut le plus : « 1 $ = 2 800 FC », jamais « 1 FC = 0,000357 $ ». Un nouveau taux ne remplace pas l'ancien : l'ancien reste, avec sa date, et la feuille du taux affiche « Avant : … · date » et l'écart. Sans taux direct entre deux devises, Kibuo le calcule d'après une troisième (« Calculé d'après vos autres taux »).
+- Une conversion s'arrondit à l'unité la plus proche en usage (centime, ou franc pour une devise sans décimales), la moitié vers le haut ; le taux exact reste enregistré.
 - Chaque compte garde sa devise. La devise principale sert au suivi et de valeur proposée par défaut.
 - Une opération dans une autre devise que celle de son compte est convertie vers la devise du compte. Le montant d'origine et le taux figé sont conservés.
 - Une conversion passée ne change jamais.
 - Les rapports peuvent convertir à une date choisie. Le total du patrimoine utilise les taux du jour.
 - Changer de devise principale ne modifie que l'affichage et les rapports.
-- Chaque devise indique si elle utilise des décimales. Le clavier de saisie affiche alors une virgule, ou sinon une touche « 000 » (par exemple pour le franc congolais).
+- Chaque devise indique si elle utilise des décimales : Kibuo le propose selon la devise (pas pour le franc congolais ni les francs CFA), et l'utilisateur peut le changer dans la feuille du taux. Le clavier de saisie affiche alors une virgule, ou sinon une touche « 000 ». Les montants restent stockés dans la plus petite unité officielle, si bien que ce choix ne modifie jamais un montant enregistré.
 - Dès qu'au moins un compte est dans une autre devise que la principale, l'écran Comptes montre en haut une icône d'affichage ; elle ouvre une feuille où choisir entre « Devise de chaque compte » et « Tout en <devise principale> (<code>) ». Sans autre devise, l'icône n'apparaît pas. Sous chaque compte figure le code de sa devise (USD, CDF, EUR…) ; un compte dans une autre devise montre en plus son équivalent approximatif en devise principale (« CDF · ≈ 30,00 $ »), un compte en devise principale rien de plus.
 
 ### Budgets

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
@@ -24,7 +26,15 @@ void main() {
     recovery: FileRecovery(folder: folder, vault: vault),
   );
   // Both happen while the start screen shows.
-  final opening = folder.then((f) => openKibuoDatabase(folder: f));
+  final opening = folder.then((f) async {
+    final result = await openKibuoDatabase(folder: f);
+    if (result is Opened) {
+      // The phone's country's currency, until the first launch asks.
+      await CurrencyRepository(result.database)
+          .ensurePrimaryCurrency(await deviceCountry());
+    }
+    return result;
+  });
   final lockLoading = lock.load();
   runApp(
     KibuoApp(

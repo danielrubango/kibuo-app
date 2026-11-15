@@ -390,4 +390,83 @@ class AppLocalizationsFr extends AppLocalizations {
   String securityRecoveryOn(String date) {
     return 'Noté le $date';
   }
+
+  @override
+  String get currenciesTitle => 'Devises';
+
+  @override
+  String get currenciesMain => 'Devise principale';
+
+  @override
+  String get currenciesChange => 'Changer';
+
+  @override
+  String get currenciesRates => 'Taux de conversion';
+
+  @override
+  String get currenciesWorkedOut => 'Calculé d’après vos autres taux';
+
+  @override
+  String get currenciesNoRate => 'Pas encore de taux';
+
+  @override
+  String get currenciesEdit => 'Modifier';
+
+  @override
+  String get currenciesRatesHelp =>
+      'Modifier un taux ne change pas les opérations déjà enregistrées.';
+
+  @override
+  String get currenciesAdd => 'Ajouter une devise';
+
+  @override
+  String get currencyPickerTitle => 'Choisir une devise';
+
+  @override
+  String get mainCurrencyPickerTitle => 'Votre devise principale';
+
+  @override
+  String get mainCurrencyHelp =>
+      'Elle sert au suivi et aux rapports. Chaque compte gardera sa propre devise.';
+
+  @override
+  String get currencySearch => 'Rechercher une devise';
+
+  @override
+  String get currencyCommon => 'Les plus courantes';
+
+  @override
+  String get currencyOthers => 'Toutes les autres';
+
+  @override
+  String get rateKeepsOld =>
+      'Les opérations déjà enregistrées gardent leur taux.';
+
+  @override
+  String get rateSave => 'Enregistrer le taux';
+
+  @override
+  String get rateSwap => 'Inverser le sens du taux';
+
+  @override
+  String get currencyDecimals => 'Avec des décimales';
+
+  @override
+  String get currencyDecimalsHelp =>
+      'Désactivé, les montants s’affichent et se saisissent sans centimes.';
+
+  @override
+  String currenciesUpdatedOn(String date) {
+    return 'Mis à jour le $date';
+  }
+
+  @override
+  String rateSheetTitle(String name) {
+    return 'Taux · $name';
+  }
+
+  @override
+  String rateBefore(String rate, String date) {
+    return 'Avant : $rate · $date';
+  }
 }
