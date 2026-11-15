@@ -1,5 +1,6 @@
 package app.kibuo
 
+import android.app.backup.BackupManager
 import android.os.Build
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -30,6 +31,14 @@ class MainActivity : FlutterFragmentActivity() {
                         if (Build.VERSION.SDK_INT >= 33) {
                             setRecentsScreenshotEnabled(!(call.arguments as Boolean))
                         }
+                        result.success(null)
+                    }
+                    "androidCopy" -> {
+                        getSharedPreferences(KibuoBackupAgent.PREFS, MODE_PRIVATE)
+                            .edit()
+                            .putBoolean(KibuoBackupAgent.ALLOW, call.arguments as Boolean)
+                            .apply()
+                        BackupManager(this).dataChanged()
                         result.success(null)
                     }
                     else -> result.notImplemented()

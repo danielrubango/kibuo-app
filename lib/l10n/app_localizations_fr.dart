@@ -115,7 +115,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get unreadableBody =>
-      'La clé qui protège vos données n’est plus sur ce téléphone, ou ne correspond plus. Le fichier est gardé de côté sur le téléphone, il n’est pas effacé.';
+      'Elles viennent peut-être d’un autre téléphone, ou la clé qui les protège n’est plus sur celui-ci. Le fichier est gardé de côté, il n’est pas effacé.';
 
   @override
   String get unreadableStartOver => 'Repartir de zéro';
@@ -292,4 +292,102 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get delayFifteenMinutes => '15 minutes';
+
+  @override
+  String get recoveryTitle => 'Code de récupération';
+
+  @override
+  String get recoveryShowTitle => 'Notez votre code de récupération';
+
+  @override
+  String get recoveryShowBody =>
+      'Il rend l’accès à Kibuo si vous oubliez votre code et que l’empreinte ne marche pas, et il rouvre vos données sur un nouveau téléphone. Notez-le sur papier et gardez-le en lieu sûr.';
+
+  @override
+  String get recoveryShowWarning =>
+      'Kibuo ne le garde pas : il ne pourra plus vous le montrer.';
+
+  @override
+  String get recoveryCopy => 'Copier le code';
+
+  @override
+  String get recoveryCopied => 'Code copié';
+
+  @override
+  String get recoveryNoted => 'J’ai noté mon code';
+
+  @override
+  String get recoveryProofBody =>
+      'Pour vérifier que vous avez bien noté votre code.';
+
+  @override
+  String get recoveryProofWrong =>
+      'Ce n’est pas ce groupe. Regardez votre note.';
+
+  @override
+  String get recoverySeeAgain => 'Revoir le code';
+
+  @override
+  String get recoveryEnterTitle => 'Saisissez votre code de récupération';
+
+  @override
+  String get recoveryEnterBody =>
+      'Le code de 16 caractères remis à sa création, en 4 groupes.';
+
+  @override
+  String get recoveryEnterHint =>
+      'Les tirets et les minuscules ne comptent pas.';
+
+  @override
+  String get recoveryWrong =>
+      'Code incorrect. Vérifiez chaque groupe et réessayez.';
+
+  @override
+  String get recoveryOpen => 'Ouvrir Kibuo';
+
+  @override
+  String get recoveryUse => 'Utiliser le code de récupération';
+
+  @override
+  String get recoveryNotKept =>
+      'Kibuo ne le garde pas : vous seul le connaissez.';
+
+  @override
+  String get recoveryNew => 'Obtenir un nouveau code';
+
+  @override
+  String get recoveryNewHelp =>
+      'L’ancien code de récupération cessera de fonctionner.';
+
+  @override
+  String get recoveryCreate => 'Créer un code de récupération';
+
+  @override
+  String get recoveryCreateHelp =>
+      'Sans code de récupération, un code oublié ou un nouveau téléphone obligent à repartir de zéro, et Android ne copie pas les données de Kibuo.';
+
+  @override
+  String get recoveryAndroidCopy => 'Laisser Android copier Kibuo';
+
+  @override
+  String get recoveryAndroidCopyHelp =>
+      'Sauvegarde Google et transfert vers un nouveau téléphone. Les données copiées restent chiffrées et ne s’ouvrent qu’avec ce code.';
+
+  @override
+  String get unreadableRecover => 'Saisir le code de récupération';
+
+  @override
+  String recoveryProofTitle(int group) {
+    return 'Retapez le groupe $group';
+  }
+
+  @override
+  String recoveryNotedOn(String date) {
+    return 'Code noté le $date';
+  }
+
+  @override
+  String securityRecoveryOn(String date) {
+    return 'Noté le $date';
+  }
 }

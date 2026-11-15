@@ -5,6 +5,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/key_vault.dart';
+import 'package:kibuo/data/recovery_store.dart';
+import 'package:kibuo/domain/lock/recovery_code.dart';
 import 'package:kibuo/domain/sync/hybrid_clock.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -19,16 +21,62 @@ final class Opened extends OpenResult {
   final KibuoDatabase database;
 }
 
-/// The file exists but cannot be read: its key is gone from the phone, or
-/// does not match. The file stays where it is until the user decides.
+/// The file exists but cannot be read: its key is gone from the phone, does
+/// not match, or the data came from another phone. The file stays where it
+/// is until the user decides.
 final class Unreadable extends OpenResult {
-  Unreadable._(this._startOver);
+  Unreadable._(
+    this._folder,
+    this._vault,
+    this._inBackground,
+    this._rounds, {
+    required this.canRecover,
+  });
 
-  final Future<OpenResult> Function() _startOver;
+  final Directory _folder;
+  final KeyVault _vault;
+  final bool _inBackground;
+  final int? _rounds;
 
-  /// Sets the unreadable file aside, without deleting it, and starts with
-  /// an empty database and a new key.
-  Future<OpenResult> startOver() => _startOver();
+  /// A recovery code was created for this data, so it can be reopened.
+  final bool canRecover;
+
+  /// Reopens the data with the recovery code; null when the code is wrong.
+  Future<OpenResult?> recover(String code) async {
+    final key = await RecoveryStore(
+      _folder,
+      iterations: _rounds ?? 300000,
+    ).unlock(code);
+    if (key == null) return null;
+    await _vault.write(KeyVault.databaseKey, key);
+    return openKibuoDatabase(
+      folder: _folder,
+      vault: _vault,
+      inBackground: _inBackground,
+      recoveryRounds: _rounds,
+    );
+  }
+
+  /// Sets the unreadable file (and its locked key) aside, without deleting
+  /// it, and starts with an empty database and a new key.
+  Future<OpenResult> startOver() async {
+    final stamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
+    await File(p.join(_folder.path, _fileName))
+        .rename(p.join(_folder.path, 'kibuo-unreadable-$stamp.db'));
+    final keyFile = File(p.join(_folder.path, RecoveryStore.fileName));
+    if (keyFile.existsSync()) {
+      await keyFile.rename(
+        p.join(_folder.path, 'kibuo-unreadable-$stamp-key.json'),
+      );
+    }
+    await _vault.write(KeyVault.databaseKey, _newKey());
+    return openKibuoDatabase(
+      folder: _folder,
+      vault: _vault,
+      inBackground: _inBackground,
+      recoveryRounds: _rounds,
+    );
+  }
 }
 
 const _fileName = 'kibuo.db';
@@ -59,13 +107,22 @@ Future<OpenResult> openKibuoDatabase({
   required Directory folder,
   KeyVault vault = const SecureKeyVault(),
   bool inBackground = true,
+  int? recoveryRounds,
 }) async {
+  Future<OpenResult> unreadable() async => Unreadable._(
+    folder,
+    vault,
+    inBackground,
+    recoveryRounds,
+    canRecover: await RecoveryStore(folder).exists(),
+  );
+
   final file = File(p.join(folder.path, _fileName));
   final existed = file.existsSync();
 
   var key = await vault.read(KeyVault.databaseKey);
   if (key == null) {
-    if (existed) return _unreadable(folder, vault, inBackground);
+    if (existed) return unreadable();
     key = _newKey();
     await vault.write(KeyVault.databaseKey, key);
   }
@@ -84,7 +141,7 @@ Future<OpenResult> openKibuoDatabase({
     await _registerDevice(database);
   } on Object {
     await database.close();
-    if (existed) return _unreadable(folder, vault, inBackground);
+    if (existed) return unreadable();
     rethrow;
   }
   return Opened(database);
@@ -122,21 +179,20 @@ Future<void> _registerDevice(KibuoDatabase db) async {
       );
 }
 
-Future<OpenResult> _unreadable(
-  Directory folder,
-  KeyVault vault,
-  bool inBackground,
-) async => Unreadable._(() async {
-  final stamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
-  await File(p.join(folder.path, _fileName))
-      .rename(p.join(folder.path, 'kibuo-unreadable-$stamp.db'));
-  await vault.write(KeyVault.databaseKey, _newKey());
-  return openKibuoDatabase(
-    folder: folder,
-    vault: vault,
-    inBackground: inBackground,
-  );
-});
+/// Creates a new recovery code for the data in [folder] and returns it, to
+/// be shown once: Kibuo keeps only the key it locks. Any older code stops
+/// working.
+Future<String> createRecoveryCode({
+  required Directory folder,
+  KeyVault vault = const SecureKeyVault(),
+  int? rounds,
+}) async {
+  final key = await vault.read(KeyVault.databaseKey);
+  if (key == null) throw StateError('No database key on this phone.');
+  final code = newRecoveryCode(Random.secure());
+  await RecoveryStore(folder, iterations: rounds ?? 300000).create(code, key);
+  return code;
+}
 
 String _newKey() {
   final random = Random.secure();

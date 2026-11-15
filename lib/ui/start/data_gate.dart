@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 
@@ -27,7 +28,11 @@ class DataGate extends StatefulWidget {
     required this.opening,
     required this.eraseAndStartOver,
     required this.builder,
+    this.onRecovered,
   });
+
+  /// Called once data was reopened with the recovery code.
+  final Future<void> Function()? onRecovered;
 
   final Future<OpenResult> opening;
 
@@ -64,6 +69,23 @@ class _DataGateState extends State<DataGate> {
           child: widget.builder(_eraseAll),
         ),
         final Unreadable unreadable => UnreadableScreen(
+          onRecover: !unreadable.canRecover
+              ? null
+              : () => Navigator.of(context).push<bool>(
+                  MaterialPageRoute(
+                    builder: (_) => RecoveryEntryScreen(
+                      onCode: (code) async {
+                        final reopened = await unreadable.recover(code);
+                        if (reopened is! Opened) return false;
+                        setState(() {
+                          _opening = Future.value(reopened);
+                        });
+                        await widget.onRecovered?.call();
+                        return true;
+                      },
+                    ),
+                  ),
+                ),
           onStartOver: () {
             final reopening = unreadable.startOver();
             setState(() {
@@ -79,9 +101,16 @@ class _DataGateState extends State<DataGate> {
 }
 
 class UnreadableScreen extends StatelessWidget {
-  const UnreadableScreen({super.key, required this.onStartOver});
+  const UnreadableScreen({
+    super.key,
+    required this.onStartOver,
+    this.onRecover,
+  });
 
   final VoidCallback onStartOver;
+
+  /// Opens the recovery-code entry; null when no code was ever created.
+  final VoidCallback? onRecover;
 
   @override
   Widget build(BuildContext context) {
@@ -111,12 +140,32 @@ class UnreadableScreen extends StatelessWidget {
               const SizedBox(height: 12),
               Text(l.unreadableBody, style: text.bodyLarge),
               const Spacer(),
+              if (onRecover != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: onRecover,
+                    child: Text(l.unreadableRecover),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
               SizedBox(
                 width: double.infinity,
-                child: FilledButton(
-                  onPressed: onStartOver,
-                  child: Text(l.unreadableStartOver),
-                ),
+                child: onRecover == null
+                    ? FilledButton(
+                        onPressed: onStartOver,
+                        child: Text(l.unreadableStartOver),
+                      )
+                    : OutlinedButton(
+                        onPressed: onStartOver,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: KibuoColors.ink,
+                          backgroundColor: KibuoColors.surface,
+                          side: const BorderSide(color: KibuoColors.line),
+                        ),
+                        child: Text(l.unreadableStartOver),
+                      ),
               ),
             ],
           ),

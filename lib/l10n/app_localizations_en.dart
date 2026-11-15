@@ -115,7 +115,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unreadableBody =>
-      'The key that protects your data is no longer on this phone, or no longer matches. The file is kept aside on the phone, not erased.';
+      'It may come from another phone, or the key that protects it is no longer on this one. The file is kept aside, not erased.';
 
   @override
   String get unreadableStartOver => 'Start over';
@@ -291,4 +291,96 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delayFifteenMinutes => '15 minutes';
+
+  @override
+  String get recoveryTitle => 'Recovery code';
+
+  @override
+  String get recoveryShowTitle => 'Write down your recovery code';
+
+  @override
+  String get recoveryShowBody =>
+      'It gets you back into Kibuo if you forget your code and the fingerprint doesn’t work, and it reopens your data on a new phone. Write it on paper and keep it somewhere safe.';
+
+  @override
+  String get recoveryShowWarning =>
+      'Kibuo doesn’t keep it, so it can’t show it to you again.';
+
+  @override
+  String get recoveryCopy => 'Copy the code';
+
+  @override
+  String get recoveryCopied => 'Code copied';
+
+  @override
+  String get recoveryNoted => 'I’ve written it down';
+
+  @override
+  String get recoveryProofBody => 'To check you wrote your code down.';
+
+  @override
+  String get recoveryProofWrong => 'That’s not this group. Look at your note.';
+
+  @override
+  String get recoverySeeAgain => 'See the code again';
+
+  @override
+  String get recoveryEnterTitle => 'Enter your recovery code';
+
+  @override
+  String get recoveryEnterBody =>
+      'The 16-character code you were given, in 4 groups.';
+
+  @override
+  String get recoveryEnterHint => 'Dashes and lowercase don’t matter.';
+
+  @override
+  String get recoveryWrong => 'Wrong code. Check each group and try again.';
+
+  @override
+  String get recoveryOpen => 'Open Kibuo';
+
+  @override
+  String get recoveryUse => 'Use the recovery code';
+
+  @override
+  String get recoveryNotKept => 'Kibuo doesn’t keep it: only you know it.';
+
+  @override
+  String get recoveryNew => 'Get a new code';
+
+  @override
+  String get recoveryNewHelp => 'The old recovery code will stop working.';
+
+  @override
+  String get recoveryCreate => 'Create a recovery code';
+
+  @override
+  String get recoveryCreateHelp =>
+      'Without a recovery code, a forgotten code or a new phone means starting over, and Android doesn’t copy Kibuo’s data.';
+
+  @override
+  String get recoveryAndroidCopy => 'Let Android copy Kibuo';
+
+  @override
+  String get recoveryAndroidCopyHelp =>
+      'Google backup and transfer to a new phone. Copied data stays encrypted and only opens with this code.';
+
+  @override
+  String get unreadableRecover => 'Enter the recovery code';
+
+  @override
+  String recoveryProofTitle(int group) {
+    return 'Type group $group again';
+  }
+
+  @override
+  String recoveryNotedOn(String date) {
+    return 'Written down on $date';
+  }
+
+  @override
+  String securityRecoveryOn(String date) {
+    return 'Written down $date';
+  }
 }

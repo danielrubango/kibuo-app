@@ -3,15 +3,23 @@ import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/pin_pad.dart';
+import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 
 /// Creates (or changes) the code: 4 to 6 digits then « Valider », typed
 /// again to confirm, then the fingerprint is offered when the phone has one.
 /// Pops with true once the code is saved.
 class CreatePinScreen extends StatefulWidget {
-  const CreatePinScreen({super.key, required this.controller});
+  const CreatePinScreen({
+    super.key,
+    required this.controller,
+    this.allowLater = false,
+  });
 
   final LockController controller;
+
+  /// Shows « Plus tard » to carry on without a code (after recovery).
+  final bool allowLater;
 
   @override
   State<CreatePinScreen> createState() => _CreatePinScreenState();
@@ -61,6 +69,13 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
   Future<void> _done() async {
     final lock = widget.controller;
+    // The recovery code is handed over with the first code (PRODUCT.md).
+    if (lock.recovery != null && lock.recoveryCreatedAt == null) {
+      final code = await lock.newRecoveryCode();
+      if (!mounted) return;
+      await handOverRecoveryCode(context, code);
+      if (!mounted) return;
+    }
     if (lock.biometricsAvailable && !lock.settings.fingerprint) {
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
@@ -77,7 +92,16 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     final text = Theme.of(context).textTheme;
     final first = _first;
     return PinLayout(
-      appBar: AppBar(title: Text(l.lockCreateTitle)),
+      appBar: AppBar(
+        title: Text(l.lockCreateTitle),
+        actions: [
+          if (widget.allowLater)
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l.later),
+            ),
+        ],
+      ),
       top: Column(
         children: [
           const SizedBox(height: 16),
