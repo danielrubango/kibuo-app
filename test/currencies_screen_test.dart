@@ -8,6 +8,7 @@ import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -68,12 +69,20 @@ void main() {
     }
   }
 
+  test('a rate sheet title reads well in French', () {
+    expect(frenchOfName('Franc congolais'), 'du franc congolais');
+    expect(frenchOfName('Euro'), 'de l’euro');
+    expect(frenchOfName('Livre sterling'), 'de la livre sterling');
+    expect(frenchOfName('Dollar des États-Unis'), 'du dollar des États-Unis');
+  });
+
   testWidgets('the main currency comes from the phone’s country', (
     tester,
   ) async {
     await start(tester);
 
-    expect(find.text('Dollar des États-Unis · USD'), findsOneWidget);
+    expect(find.text('Devise principale'), findsOneWidget);
+    expect(find.text('USD'), findsOneWidget);
   });
 
   testWidgets('adding a currency, then its rate', (tester) async {
@@ -87,7 +96,7 @@ void main() {
     await tester.tap(find.text('Franc congolais'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Taux · Franc congolais'), findsOneWidget);
+    expect(find.text('Taux du franc congolais'), findsOneWidget);
     await type(tester, '2800');
     await tester.tap(find.text('Enregistrer le taux'));
     await tester.pumpAndSettle();
@@ -107,10 +116,10 @@ void main() {
 
     await tester.tap(find.text('Modifier'));
     await tester.pumpAndSettle();
-    expect(textPlain(r'Avant : 1 $ = 2 800 FC · 3 novembre'), findsOneWidget);
+    expect(textPlain('Avant : 2 800 FC · 3 novembre'), findsOneWidget);
     await type(tester, '2850');
     await tester.pump();
-    expect(textPlain('+1,8 %'), findsOneWidget);
+    expect(textPlain('+50 FC'), findsOneWidget);
     await tester.tap(find.text('Enregistrer le taux'));
     await tester.pumpAndSettle();
 
@@ -131,11 +140,100 @@ void main() {
     await tester.tap(find.text('Franc congolais'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Franc congolais · CDF'), findsOneWidget);
+    expect(find.text('CDF'), findsOneWidget);
     expect(
       textPlain(r'1 $ = 2 800 FC'),
       findsOneWidget,
       reason: 'not 0,000357',
     );
+  });
+
+  testWidgets('adding a currency: those already added are greyed out', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('CDF');
+    await start(tester);
+
+    await tester.tap(find.text('Ajouter une devise'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Franc congolais'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choisir une devise'), findsOneWidget, reason: 'stays');
+    expect(await repo.currencyCodes(), ['USD', 'CDF']);
+  });
+
+  testWidgets('choosing the main currency: yours first, then the others', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('KES');
+    await start(tester);
+
+    await tester.tap(find.text('Changer'));
+    await tester.pumpAndSettle();
+
+    final yours = tester.getTopLeft(find.text('Vos devises')).dy;
+    final common = tester.getTopLeft(find.text('Les plus courantes')).dy;
+    final shilling = tester.getTopLeft(find.text('Shilling kényan')).dy;
+    expect(yours, lessThan(shilling));
+    expect(shilling, lessThan(common));
+  });
+
+  testWidgets('a rate shows the way it was typed: 1 \$ = 0,92 €', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('EUR');
+    await repo.setRate('USD', 'EUR', RateValue.parse('0.92'));
+    await start(tester);
+
+    expect(textPlain('1 \$ = 0,92 €'), findsOneWidget);
+    await tester.tap(find.text('Modifier'));
+    await tester.pumpAndSettle();
+    expect(textPlain('1 \$ ='), findsOneWidget);
+  });
+
+  testWidgets('cents are set in the rate sheet of each currency', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('EUR');
+    await repo.setRate('USD', 'EUR', RateValue.parse('0.92'));
+    await start(tester);
+
+    expect(find.text('Centimes'), findsNothing, reason: 'not on Devises');
+    await tester.tap(find.text('Modifier'));
+    await tester.pumpAndSettle();
+    final cents = find.ancestor(
+      of: find.text('Centimes'),
+      matching: find.byType(SettingsSwitch),
+    );
+    await tester.tap(find.descendant(of: cents, matching: find.byType(Switch)));
+    await tester.pump();
+    await type(tester, '0,93');
+    await tester.tap(find.text('Enregistrer le taux'));
+    await tester.pumpAndSettle();
+
+    expect((await repo.currency('EUR')).usesDecimals, isFalse);
+  });
+
+  testWidgets('the main currency’s cents are set where it is changed', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await start(tester);
+
+    await tester.tap(find.text('Changer'));
+    await tester.pumpAndSettle();
+    final cents = find.ancestor(
+      of: find.text('Centimes'),
+      matching: find.byType(SettingsSwitch),
+    );
+    await tester.tap(find.descendant(of: cents, matching: find.byType(Switch)));
+    await tester.pumpAndSettle();
+
+    expect((await repo.currency('USD')).usesDecimals, isFalse);
   });
 }

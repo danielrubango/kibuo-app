@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// One box per digit. Boxes past [firm] are optional (dashed) until filled;
@@ -134,7 +135,7 @@ class PinKeypad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = _digits();
-    final keys = [...d.take(9), '', d[9], '⌫'];
+    final keys = [...d.take(9), '', d[9], '←'];
     return SizedBox(
       width: 3 * 80 + 2 * 22,
       child: Wrap(
@@ -147,7 +148,7 @@ class PinKeypad extends StatelessWidget {
 
   Widget _key(BuildContext context, String k) {
     if (k.isEmpty) return const SizedBox(width: 80, height: 60);
-    final isDelete = k == '⌫';
+    final isDelete = k == '←';
     return SizedBox(
       width: 80,
       height: 60,
@@ -160,7 +161,7 @@ class PinKeypad extends StatelessWidget {
           child: Center(
             child: isDelete
                 ? Icon(
-                    Icons.backspace_outlined,
+                    KibuoIcons.arrowLeft,
                     semanticLabel: AppLocalizations.of(context).keypadDelete,
                     color: enabled ? KibuoColors.ink : KibuoColors.lineStrong,
                   )

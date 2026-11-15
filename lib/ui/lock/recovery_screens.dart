@@ -9,6 +9,7 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Shows a new [code], then asks to retype one group drawn at random.
@@ -111,7 +112,7 @@ class _CodeCard extends StatelessWidget {
                     .showSnackBar(SnackBar(content: Text(l.recoveryCopied)));
               }
             },
-            icon: const Icon(Icons.copy_rounded, size: 18),
+            icon: const Icon(KibuoIcons.copy, size: 18),
             label: Text(l.recoveryCopy),
           ),
         ],
@@ -421,7 +422,7 @@ class _RecoveryEntryScreenState extends State<RecoveryEntryScreen> {
                   color: KibuoColors.accentTintStrong,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(Icons.key_rounded, color: KibuoColors.accent),
+                child: const Icon(KibuoIcons.key, color: KibuoColors.accent),
               ),
               const SizedBox(height: 12),
               Text(
@@ -552,7 +553,7 @@ class RecoverySettingsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
-                        Icons.key_rounded,
+                        KibuoIcons.key,
                         color: KibuoColors.accent,
                       ),
                     ),
