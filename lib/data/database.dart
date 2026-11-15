@@ -83,6 +83,33 @@ class Accounts extends Table with SyncColumns {
   IntColumn get position => integer()();
 }
 
+/// How operations are classified (GLOSSARY: Catégorie), one level of
+/// subcategories at most.
+@DataClassName('CategoryRow')
+class Categories extends Table with SyncColumns {
+  /// « out » for expenses, « in » for income.
+  TextColumn get kind => text()();
+
+  /// The category this one belongs to, for a subcategory.
+  TextColumn get parentId => text().nullable()();
+
+  /// A provided category's key (« food », « taxi »…), whose name follows
+  /// the app's language until the user renames it.
+  TextColumn get key => text().nullable()();
+
+  /// The user's own name; null for a provided category never renamed.
+  TextColumn get name => text().nullable()();
+
+  /// The Phosphor icon's name.
+  TextColumn get icon => text()();
+
+  /// Order among its siblings.
+  IntColumn get position => integer()();
+
+  /// Out of the choices; its operations keep it.
+  BoolColumn get removed => boolean().withDefault(const Constant(false))();
+}
+
 @DriftDatabase(
   tables: [
     Devices,
@@ -91,6 +118,7 @@ class Accounts extends Table with SyncColumns {
     Preferences,
     AccountTypes,
     Accounts,
+    Categories,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -101,7 +129,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -115,6 +143,9 @@ class KibuoDatabase extends _$KibuoDatabase {
       from2To3: (m, schema) async {
         await m.createTable(schema.accountTypes);
         await m.createTable(schema.accounts);
+      },
+      from3To4: (m, schema) async {
+        await m.createTable(schema.categories);
       },
     ),
     beforeOpen: (details) async {

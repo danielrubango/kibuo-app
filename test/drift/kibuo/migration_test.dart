@@ -9,6 +9,7 @@ import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
+import 'generated/schema_v4.dart' as v4;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -102,6 +103,38 @@ void main() {
         ]);
         expect(await newDb.select(newDb.accounts).get(), isEmpty);
         expect(await newDb.select(newDb.accountTypes).get(), isEmpty);
+      },
+    );
+  });
+
+  test('version 3 to 4 keeps the accounts, adds categories', () async {
+    const account = v3.AccountsData(
+      id: 'acc-1',
+      version: 60,
+      deviceId: 'phone-1',
+      deleted: 0,
+      name: 'M-Pesa',
+      type: 'mobile',
+      currency: 'USD',
+      openingBalance: 12000,
+      openingDate: 1793750400,
+      archived: 0,
+      position: 1,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 3,
+      newVersion: 4,
+      createOld: v3.DatabaseAtV3.new,
+      createNew: v4.DatabaseAtV4.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.accounts, account),
+      validateItems: (newDb) async {
+        expect(
+          (await newDb.select(newDb.accounts).get()).single.name,
+          'M-Pesa',
+        );
+        expect(await newDb.select(newDb.categories).get(), isEmpty);
       },
     );
   });
