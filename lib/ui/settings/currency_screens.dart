@@ -87,7 +87,10 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
       current: _main?.code,
       country: _country,
       yoursFirst: mine,
+      centsOf: _main,
+      onCents: (on) => _repo.setUsesDecimals(_main!.code, on: on),
     );
+    await _load();
     if (code == null) return;
     await _repo.setPrimaryCurrency(code);
     await _load();
@@ -119,35 +122,6 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
       current: row.rate,
     );
     await _load();
-  }
-
-  /// « Centimes »: a switch per currency that has cents, the main one first.
-  List<Widget> _cents(BuildContext context, CurrencyInfo main) {
-    final l = AppLocalizations.of(context);
-    final currencies = [
-      main,
-      for (final r in _rows) r.currency,
-    ].where((c) => c.digits > 0).toList();
-    if (currencies.isEmpty) return const [];
-    return [
-      const SizedBox(height: 16),
-      SectionTitle(l.currenciesCents),
-      SettingsCard(
-        children: [
-          for (final c in currencies)
-            SettingsSwitch(
-              label: currencyName(context, c),
-              value: c.usesDecimals,
-              onChanged: (on) async {
-                await _repo.setUsesDecimals(c.code, on: on);
-                await _load();
-              },
-            ),
-        ],
-      ),
-      const SizedBox(height: 12),
-      HelpText(l.currencyDecimalsHelp),
-    ];
   }
 
   /// A typed rate the way it was typed; a worked-out one the way a new
@@ -205,7 +179,6 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
                   const SizedBox(height: 4),
                   HelpText(l.currenciesRatesHelp),
                 ],
-                ..._cents(context, main),
               ],
             ),
       bottomNavigationBar: main == null
@@ -229,6 +202,8 @@ Future<String?> pickCurrency(
   String? country,
   List<String> yoursFirst = const [],
   Set<String> greyed = const {},
+  CurrencyInfo? centsOf,
+  Future<void> Function(bool on)? onCents,
 }) => Navigator.of(context).push<String>(
   MaterialPageRoute(
     builder: (_) => CurrencyPickerScreen(
@@ -238,6 +213,8 @@ Future<String?> pickCurrency(
       country: country,
       yoursFirst: yoursFirst,
       greyed: greyed,
+      centsOf: centsOf,
+      onCents: onCents,
     ),
   ),
 );
@@ -251,6 +228,8 @@ class CurrencyPickerScreen extends StatefulWidget {
     this.country,
     this.yoursFirst = const [],
     this.greyed = const {},
+    this.centsOf,
+    this.onCents,
   });
 
   final String title;
@@ -266,12 +245,17 @@ class CurrencyPickerScreen extends StatefulWidget {
   /// Currencies shown but not choosable (already added).
   final Set<String> greyed;
 
+  /// The main currency, whose cents are switched on top of the list.
+  final CurrencyInfo? centsOf;
+  final Future<void> Function(bool on)? onCents;
+
   @override
   State<CurrencyPickerScreen> createState() => _CurrencyPickerScreenState();
 }
 
 class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
   String _query = '';
+  late bool _cents = widget.centsOf?.usesDecimals ?? false;
 
   static String _fold(String s) => s
       .toLowerCase()
@@ -323,6 +307,23 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
           if (widget.help != null) ...[
             HelpText(widget.help!),
             const SizedBox(height: 16),
+          ],
+          if (widget.centsOf case final main? when main.digits > 0) ...[
+            SettingsCard(
+              children: [
+                SettingsSwitch(
+                  label: l.currenciesCents,
+                  value: _cents,
+                  onChanged: (on) async {
+                    setState(() => _cents = on);
+                    await widget.onCents?.call(on);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            HelpText(l.currencyDecimalsHelp),
+            const SizedBox(height: 20),
           ],
           KibuoTextField(
             label: l.currencySearch,
@@ -470,6 +471,7 @@ class _RateSheetState extends State<_RateSheet> {
   late String _base;
   late String _quote;
   String _typed = '';
+  late bool _cents = widget.other.usesDecimals;
 
   @override
   void initState() {
@@ -516,6 +518,9 @@ class _RateSheetState extends State<_RateSheet> {
     final value = _value;
     if (value == null) return;
     await widget.repository.setRate(_base, _quote, value);
+    if (_cents != widget.other.usesDecimals) {
+      await widget.repository.setUsesDecimals(widget.other.code, on: _cents);
+    }
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -614,6 +619,18 @@ class _RateSheetState extends State<_RateSheet> {
           onDelete: _delete,
           decimalSeparator: _numbers.symbols.DECIMAL_SEP,
         ),
+        if (widget.other.digits > 0) ...[
+          const SizedBox(height: 12),
+          SettingsCard(
+            children: [
+              SettingsSwitch(
+                label: l.currenciesCents,
+                value: _cents,
+                onChanged: (on) => setState(() => _cents = on),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
