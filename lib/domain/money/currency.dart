@@ -1,4 +1,5 @@
 import 'package:kibuo/domain/money/currency_catalog.dart';
+import 'package:kibuo/domain/money/currency_regions.dart';
 
 /// A currency of the catalogue (ISO 4217), as Kibuo shows it.
 class CurrencyInfo {
@@ -57,18 +58,30 @@ List<String> currencyCatalogCodes() => [
   for (final c in currencyCatalog) c.code,
 ];
 
-/// The choice list: the phone's own currency and the common ones on top,
-/// then every other currency.
+/// The choice list in two parts. First, at most 6 by importance for the
+/// phone's country: its own currency, the dollar, the franc congolais, the
+/// euro, one franc CFA (the country's, else the West African one around
+/// West Africa, else the Central African one), then the region's. Then
+/// every other one, to be sorted by name where it is shown.
 ({List<CurrencyInfo> top, List<CurrencyInfo> rest}) currenciesForChoosing({
   String? countryCode,
 }) {
-  final first = [?countryCurrency[countryCode], ...commonCurrencies];
-  final topCodes = <String>{...first};
+  final cfa =
+      xofCountries.contains(countryCode) ||
+          westAfricaOutsideCfa.contains(countryCode)
+      ? 'XOF'
+      : 'XAF';
+  final top = <String>{
+    ?countryCurrency[countryCode],
+    ...everyoneCurrencies,
+    cfa,
+    ...?regionCurrencies[countryCode],
+  }.take(6).toSet();
   return (
-    top: [for (final code in topCodes) currencyOf(code)],
+    top: [for (final code in top) currencyOf(code)],
     rest: [
       for (final c in currencyCatalog)
-        if (!topCodes.contains(c.code)) c,
+        if (!top.contains(c.code)) c,
     ],
   );
 }

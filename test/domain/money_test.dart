@@ -29,16 +29,47 @@ void main() {
       expect(rwf.digits, 0);
     });
 
-    test('the phone’s country comes first, then the common currencies', () {
-      final order = currenciesForChoosing(countryCode: 'RW');
-      expect(order.top.first.code, 'RWF');
-      expect(order.top.map((c) => c.code), containsAll(['CDF', 'USD', 'EUR']));
-      expect(order.top.where((c) => c.code == 'RWF'), hasLength(1));
-      expect(order.rest.map((c) => c.code), isNot(contains('USD')));
-      expect(
-        order.top.length + order.rest.length,
-        currencyCatalogCodes().length,
-      );
+    List<String> codes(List<CurrencyInfo> l) => [for (final c in l) c.code];
+
+    test('the first group: the dollar, the franc congolais, the euro, '
+        'one franc CFA', () {
+      expect(codes(currenciesForChoosing(countryCode: null).top), [
+        'USD',
+        'CDF',
+        'EUR',
+        'XAF',
+      ]);
+    });
+
+    test('the phone’s own currency comes first, the region’s fill up to 6', () {
+      final cases = {
+        'CD': ['CDF', 'USD', 'EUR', 'XAF', 'ZAR', 'UGX'],
+        'RW': ['RWF', 'USD', 'CDF', 'EUR', 'XAF', 'ZAR'],
+        'KE': ['KES', 'USD', 'CDF', 'EUR', 'XAF', 'ZAR'],
+        'CM': ['XAF', 'USD', 'CDF', 'EUR', 'ZAR', 'UGX'],
+        'SN': ['XOF', 'USD', 'CDF', 'EUR', 'NGN', 'GHS'],
+        'NG': ['NGN', 'USD', 'CDF', 'EUR', 'XOF', 'GHS'],
+        'AE': ['AED', 'USD', 'CDF', 'EUR', 'XAF', 'SAR'],
+        'JP': ['JPY', 'USD', 'CDF', 'EUR', 'XAF', 'CNY'],
+        'FR': ['EUR', 'USD', 'CDF', 'XAF', 'GBP', 'CHF'],
+        'US': ['USD', 'CDF', 'EUR', 'XAF', 'CAD', 'MXN'],
+      };
+      cases.forEach((country, expected) {
+        expect(
+          codes(currenciesForChoosing(countryCode: country).top),
+          expected,
+          reason: country,
+        );
+      });
+    });
+
+    test('every currency is offered exactly once', () {
+      for (final country in [null, 'CD', 'CM', 'AE', 'FR', 'ZZ']) {
+        final order = currenciesForChoosing(countryCode: country);
+        final all = [...codes(order.top), ...codes(order.rest)];
+        expect(all.toSet(), currencyCatalogCodes().toSet(), reason: country);
+        expect(all, hasLength(currencyCatalogCodes().length), reason: country);
+      }
     });
 
     test('the default main currency follows the phone’s country', () {
@@ -73,22 +104,28 @@ void main() {
       expect(() => RateValue.parse('abc'), throwsFormatException);
     });
 
-    test('are written « 1 of the more valuable currency = … »', () {
-      final rate = ExchangeRate(
-        base: 'USD',
-        quote: 'CDF',
-        value: RateValue.parse('2800'),
-      );
-      final shown = rate.forDisplay();
-      expect((shown.base, shown.quote), ('USD', 'CDF'));
+    test('a new rate is typed « 1 main = … », but « 1 \$ = … FC » '
+        'when the main has no cents', () {
+      final usd = currencyOf('USD');
+      final eur = currencyOf('EUR');
+      final cdf = currencyOf('CDF');
+      expect(rateDirection(main: usd, other: eur), ('USD', 'EUR'));
+      expect(rateDirection(main: usd, other: cdf), ('USD', 'CDF'));
+      expect(rateDirection(main: cdf, other: usd), ('USD', 'CDF'));
+      expect(rateDirection(main: cdf, other: currencyOf('XAF')), (
+        'CDF',
+        'XAF',
+      ));
+    });
 
-      final flipped = ExchangeRate(
+    test('a rate is turned around exactly', () {
+      final rate = ExchangeRate(
         base: 'CDF',
         quote: 'USD',
         value: RateValue.parse('0.0005'),
-      ).forDisplay();
-      expect((flipped.base, flipped.quote), ('USD', 'CDF'));
-      expect(flipped.value, RateValue.parse('2000'));
+      ).toward('USD', 'CDF');
+      expect((rate.base, rate.quote), ('USD', 'CDF'));
+      expect(rate.value, RateValue.parse('2000'));
     });
   });
 

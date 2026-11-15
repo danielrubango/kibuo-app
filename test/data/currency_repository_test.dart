@@ -77,7 +77,7 @@ void main() {
 
       final cross = (await repo.latestRate('EUR', 'CDF'))!;
       expect(cross.isWorkedOut, isTrue);
-      expect(cross.rate.forDisplay().value, RateValue.parse('3500'));
+      expect(cross.rate.per('EUR', 'CDF'), RateValue.parse('3500'));
     },
   );
 

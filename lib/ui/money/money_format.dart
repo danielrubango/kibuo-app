@@ -18,17 +18,25 @@ String formatMoney(Money amount, CurrencyInfo currency, String locale) {
   return _withSymbol(sign, number, currency.symbol, locale);
 }
 
-/// « 1 $ = 2 800 FC », with 1 unit of the more valuable currency.
+/// « 1 $ = 2 800 FC », the way the rate is written: at most 4 decimals and
+/// 6 digits, so a worked-out rate stays readable.
 String formatRate(ExchangeRate rate, String locale) {
-  final shown = rate.forDisplay();
-  final base = currencyOf(shown.base);
-  final quote = currencyOf(shown.quote);
-  final value = shown.value.toString().split('.');
-  final whole = NumberFormat.decimalPattern(locale).format(int.parse(value[0]));
+  final base = currencyOf(rate.base);
+  final quote = currencyOf(rate.quote);
+  final value = double.parse(rate.value.toString());
+  final whole = value.abs().truncate().toString().length;
+  final number = NumberFormat.decimalPatternDigits(
+    locale: locale,
+    decimalDigits: (6 - whole).clamp(0, 4),
+  ).format(value);
   final decimal = NumberFormat.decimalPattern(locale).symbols.DECIMAL_SEP;
-  final number = value.length == 2 ? '$whole$decimal${value[1]}' : whole;
+  final trimmed = number.contains(decimal)
+      ? number
+            .replaceFirst(RegExp('0*\$'), '')
+            .replaceFirst(RegExp('${RegExp.escape(decimal)}\$'), '')
+      : number;
   return '${_withSymbol('', '1', base.symbol, locale)} = '
-      '${_withSymbol('', number, quote.symbol, locale)}';
+      '${_withSymbol('', trimmed, quote.symbol, locale)}';
 }
 
 String _withSymbol(String sign, String number, String symbol, String locale) {

@@ -138,14 +138,18 @@
   "mainCurrencyPickerTitle": "Your main currency",
   "mainCurrencyHelp": "It’s used for tracking and reports. Each account keeps its own currency.",
   "currencySearch": "Search for a currency",
+  "currencyYours": "Your currencies",
   "currencyCommon": "Most used",
   "currencyOthers": "All the others",
   "rateKeepsOld": "Transactions already recorded keep their rate.",
   "rateSave": "Save the rate",
-  "rateSwap": "Swap the rate’s direction",
-  "currencyDecimals": "Uses decimals",
+  "currenciesCents": "Cents",
   "currencyDecimalsHelp": "When off, amounts are shown and typed without cents.",
   "currenciesUpdatedOn": "Updated {date}",
-  "rateSheetTitle": "Rate · {name}",
-  "rateBefore": "Before: {rate} · {date}"
+  "rateSheetTitle": "{ofName} rate",
+  "rateBefore": "Before: {rate} · {date}",
+  "currencySearchHint": "Name or code",
+  "@currencySearchHint": {"description": ""},
+  "rateUnchanged": "Unchanged",
+  "@rateUnchanged": {"description": ""}
 }
