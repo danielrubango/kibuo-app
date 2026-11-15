@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/key_vault.dart';
@@ -20,6 +21,7 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -299,5 +301,22 @@ void main() {
       await tester.pump();
     }
     await snap(tester, 'CompteNouveau', settle: false);
+  });
+
+  testWidgets('Catégories', (tester) async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+    addTearDown(db.close);
+    final repo = CategoryRepository(db);
+    await show(tester, CategoriesScreen(categories: repo));
+    await tester.tap(find.bySemanticsLabel('Transport · 5 sous-catégories'));
+    await snap(tester, 'Categories');
+    await tester.tap(find.text('Ajouter une sous-catégorie'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Train');
+    await snap(tester, 'CatNouvelle');
+    await tester.tap(find.text('Annuler'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Repas'));
+    await snap(tester, 'CatModif');
   });
 }

@@ -11,6 +11,7 @@ import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
+import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -214,7 +215,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _TopBar(
+            FormTopBar(
               title: _editing ? l.accountEditTitle : l.accountNewTitle,
               cancel: l.cancel,
             ),
@@ -335,47 +336,6 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// « Annuler » on the left, the title in the middle: the top of a creation
-/// screen (DIRECTION).
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.title, required this.cancel});
-
-  final String title;
-  final String cancel;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 96,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: TextAction(
-                label: cancel,
-                color: KibuoColors.inkSecondary,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: KibuoType.button,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 96),
-        ],
       ),
     );
   }
