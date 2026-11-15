@@ -7,3 +7,6 @@ build/
 .flutter-plugins-dependencies
 *.iml
 .idea/
+
+# Screen captures for design reviews (tool/capture_screens_test.dart).
+tool/screens_out/

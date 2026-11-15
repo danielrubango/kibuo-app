@@ -144,7 +144,7 @@ class _StartScreenState extends State<StartScreen>
                         'Kibuo',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: KibuoTheme.displayFont,
+                          fontFamily: KibuoTheme.brandFont,
                           fontVariations: [FontVariation.weight(700)],
                           fontSize: 40,
                           letterSpacing: -0.5,
