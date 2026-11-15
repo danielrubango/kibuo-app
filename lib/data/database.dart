@@ -110,6 +110,38 @@ class Categories extends Table with SyncColumns {
   BoolColumn get removed => boolean().withDefault(const Constant(false))();
 }
 
+/// Expenses and income (GLOSSARY: Opération). Amounts are positive, in
+/// the smallest unit; the kind gives the direction.
+@DataClassName('TransactionRow')
+class Transactions extends Table with SyncColumns {
+  /// « out » for an expense, « in » for an income.
+  TextColumn get kind => text()();
+  TextColumn get accountId => text()();
+  TextColumn get categoryId => text()();
+
+  /// What was paid or received, in [currency].
+  IntColumn get amount => integer()();
+  TextColumn get currency => text()();
+
+  /// The rate used when [currency] is not the account's, frozen: « 1
+  /// [rateBase] = [rateValue] [rateQuote] ».
+  TextColumn get rateBase => text().nullable()();
+  TextColumn get rateQuote => text().nullable()();
+  TextColumn get rateValue => text().nullable()();
+
+  /// Typed for this operation (the changer's), not taken from Devises.
+  BoolColumn get rateTyped => boolean().withDefault(const Constant(false))();
+
+  /// [amount] in the account's currency, rounded once and kept.
+  IntColumn get converted => integer()();
+
+  /// In the account's currency.
+  IntColumn get fees => integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get date => dateTime()();
+  TextColumn get note => text().nullable()();
+}
+
 @DriftDatabase(
   tables: [
     Devices,
@@ -119,6 +151,7 @@ class Categories extends Table with SyncColumns {
     AccountTypes,
     Accounts,
     Categories,
+    Transactions,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -129,7 +162,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -146,6 +179,9 @@ class KibuoDatabase extends _$KibuoDatabase {
       },
       from3To4: (m, schema) async {
         await m.createTable(schema.categories);
+      },
+      from4To5: (m, schema) async {
+        await m.createTable(schema.transactions);
       },
     ),
     beforeOpen: (details) async {

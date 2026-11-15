@@ -3387,6 +3387,957 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   }
 }
 
+class $TransactionsTable extends Transactions
+    with TableInfo<$TransactionsTable, TransactionRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TransactionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rateBaseMeta = const VerificationMeta(
+    'rateBase',
+  );
+  @override
+  late final GeneratedColumn<String> rateBase = GeneratedColumn<String>(
+    'rate_base',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rateQuoteMeta = const VerificationMeta(
+    'rateQuote',
+  );
+  @override
+  late final GeneratedColumn<String> rateQuote = GeneratedColumn<String>(
+    'rate_quote',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rateValueMeta = const VerificationMeta(
+    'rateValue',
+  );
+  @override
+  late final GeneratedColumn<String> rateValue = GeneratedColumn<String>(
+    'rate_value',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rateTypedMeta = const VerificationMeta(
+    'rateTyped',
+  );
+  @override
+  late final GeneratedColumn<bool> rateTyped = GeneratedColumn<bool>(
+    'rate_typed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("rate_typed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _convertedMeta = const VerificationMeta(
+    'converted',
+  );
+  @override
+  late final GeneratedColumn<int> converted = GeneratedColumn<int>(
+    'converted',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _feesMeta = const VerificationMeta('fees');
+  @override
+  late final GeneratedColumn<int> fees = GeneratedColumn<int>(
+    'fees',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    kind,
+    accountId,
+    categoryId,
+    amount,
+    currency,
+    rateBase,
+    rateQuote,
+    rateValue,
+    rateTyped,
+    converted,
+    fees,
+    date,
+    note,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'transactions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TransactionRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('rate_base')) {
+      context.handle(
+        _rateBaseMeta,
+        rateBase.isAcceptableOrUnknown(data['rate_base']!, _rateBaseMeta),
+      );
+    }
+    if (data.containsKey('rate_quote')) {
+      context.handle(
+        _rateQuoteMeta,
+        rateQuote.isAcceptableOrUnknown(data['rate_quote']!, _rateQuoteMeta),
+      );
+    }
+    if (data.containsKey('rate_value')) {
+      context.handle(
+        _rateValueMeta,
+        rateValue.isAcceptableOrUnknown(data['rate_value']!, _rateValueMeta),
+      );
+    }
+    if (data.containsKey('rate_typed')) {
+      context.handle(
+        _rateTypedMeta,
+        rateTyped.isAcceptableOrUnknown(data['rate_typed']!, _rateTypedMeta),
+      );
+    }
+    if (data.containsKey('converted')) {
+      context.handle(
+        _convertedMeta,
+        converted.isAcceptableOrUnknown(data['converted']!, _convertedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_convertedMeta);
+    }
+    if (data.containsKey('fees')) {
+      context.handle(
+        _feesMeta,
+        fees.isAcceptableOrUnknown(data['fees']!, _feesMeta),
+      );
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TransactionRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TransactionRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      rateBase: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rate_base'],
+      ),
+      rateQuote: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rate_quote'],
+      ),
+      rateValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rate_value'],
+      ),
+      rateTyped: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}rate_typed'],
+      )!,
+      converted: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}converted'],
+      )!,
+      fees: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}fees'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+    );
+  }
+
+  @override
+  $TransactionsTable createAlias(String alias) {
+    return $TransactionsTable(attachedDatabase, alias);
+  }
+}
+
+class TransactionRow extends DataClass implements Insertable<TransactionRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+
+  /// « out » for an expense, « in » for an income.
+  final String kind;
+  final String accountId;
+  final String categoryId;
+
+  /// What was paid or received, in [currency].
+  final int amount;
+  final String currency;
+
+  /// The rate used when [currency] is not the account's, frozen: « 1
+  /// [rateBase] = [rateValue] [rateQuote] ».
+  final String? rateBase;
+  final String? rateQuote;
+  final String? rateValue;
+
+  /// Typed for this operation (the changer's), not taken from Devises.
+  final bool rateTyped;
+
+  /// [amount] in the account's currency, rounded once and kept.
+  final int converted;
+
+  /// In the account's currency.
+  final int fees;
+  final DateTime date;
+  final String? note;
+  const TransactionRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.kind,
+    required this.accountId,
+    required this.categoryId,
+    required this.amount,
+    required this.currency,
+    this.rateBase,
+    this.rateQuote,
+    this.rateValue,
+    required this.rateTyped,
+    required this.converted,
+    required this.fees,
+    required this.date,
+    this.note,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['kind'] = Variable<String>(kind);
+    map['account_id'] = Variable<String>(accountId);
+    map['category_id'] = Variable<String>(categoryId);
+    map['amount'] = Variable<int>(amount);
+    map['currency'] = Variable<String>(currency);
+    if (!nullToAbsent || rateBase != null) {
+      map['rate_base'] = Variable<String>(rateBase);
+    }
+    if (!nullToAbsent || rateQuote != null) {
+      map['rate_quote'] = Variable<String>(rateQuote);
+    }
+    if (!nullToAbsent || rateValue != null) {
+      map['rate_value'] = Variable<String>(rateValue);
+    }
+    map['rate_typed'] = Variable<bool>(rateTyped);
+    map['converted'] = Variable<int>(converted);
+    map['fees'] = Variable<int>(fees);
+    map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    return map;
+  }
+
+  TransactionsCompanion toCompanion(bool nullToAbsent) {
+    return TransactionsCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      kind: Value(kind),
+      accountId: Value(accountId),
+      categoryId: Value(categoryId),
+      amount: Value(amount),
+      currency: Value(currency),
+      rateBase: rateBase == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rateBase),
+      rateQuote: rateQuote == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rateQuote),
+      rateValue: rateValue == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rateValue),
+      rateTyped: Value(rateTyped),
+      converted: Value(converted),
+      fees: Value(fees),
+      date: Value(date),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+    );
+  }
+
+  factory TransactionRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TransactionRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      kind: serializer.fromJson<String>(json['kind']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      categoryId: serializer.fromJson<String>(json['categoryId']),
+      amount: serializer.fromJson<int>(json['amount']),
+      currency: serializer.fromJson<String>(json['currency']),
+      rateBase: serializer.fromJson<String?>(json['rateBase']),
+      rateQuote: serializer.fromJson<String?>(json['rateQuote']),
+      rateValue: serializer.fromJson<String?>(json['rateValue']),
+      rateTyped: serializer.fromJson<bool>(json['rateTyped']),
+      converted: serializer.fromJson<int>(json['converted']),
+      fees: serializer.fromJson<int>(json['fees']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      note: serializer.fromJson<String?>(json['note']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'kind': serializer.toJson<String>(kind),
+      'accountId': serializer.toJson<String>(accountId),
+      'categoryId': serializer.toJson<String>(categoryId),
+      'amount': serializer.toJson<int>(amount),
+      'currency': serializer.toJson<String>(currency),
+      'rateBase': serializer.toJson<String?>(rateBase),
+      'rateQuote': serializer.toJson<String?>(rateQuote),
+      'rateValue': serializer.toJson<String?>(rateValue),
+      'rateTyped': serializer.toJson<bool>(rateTyped),
+      'converted': serializer.toJson<int>(converted),
+      'fees': serializer.toJson<int>(fees),
+      'date': serializer.toJson<DateTime>(date),
+      'note': serializer.toJson<String?>(note),
+    };
+  }
+
+  TransactionRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? kind,
+    String? accountId,
+    String? categoryId,
+    int? amount,
+    String? currency,
+    Value<String?> rateBase = const Value.absent(),
+    Value<String?> rateQuote = const Value.absent(),
+    Value<String?> rateValue = const Value.absent(),
+    bool? rateTyped,
+    int? converted,
+    int? fees,
+    DateTime? date,
+    Value<String?> note = const Value.absent(),
+  }) => TransactionRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    kind: kind ?? this.kind,
+    accountId: accountId ?? this.accountId,
+    categoryId: categoryId ?? this.categoryId,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+    rateBase: rateBase.present ? rateBase.value : this.rateBase,
+    rateQuote: rateQuote.present ? rateQuote.value : this.rateQuote,
+    rateValue: rateValue.present ? rateValue.value : this.rateValue,
+    rateTyped: rateTyped ?? this.rateTyped,
+    converted: converted ?? this.converted,
+    fees: fees ?? this.fees,
+    date: date ?? this.date,
+    note: note.present ? note.value : this.note,
+  );
+  TransactionRow copyWithCompanion(TransactionsCompanion data) {
+    return TransactionRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      rateBase: data.rateBase.present ? data.rateBase.value : this.rateBase,
+      rateQuote: data.rateQuote.present ? data.rateQuote.value : this.rateQuote,
+      rateValue: data.rateValue.present ? data.rateValue.value : this.rateValue,
+      rateTyped: data.rateTyped.present ? data.rateTyped.value : this.rateTyped,
+      converted: data.converted.present ? data.converted.value : this.converted,
+      fees: data.fees.present ? data.fees.value : this.fees,
+      date: data.date.present ? data.date.value : this.date,
+      note: data.note.present ? data.note.value : this.note,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('kind: $kind, ')
+          ..write('accountId: $accountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('rateBase: $rateBase, ')
+          ..write('rateQuote: $rateQuote, ')
+          ..write('rateValue: $rateValue, ')
+          ..write('rateTyped: $rateTyped, ')
+          ..write('converted: $converted, ')
+          ..write('fees: $fees, ')
+          ..write('date: $date, ')
+          ..write('note: $note')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    deviceId,
+    deleted,
+    kind,
+    accountId,
+    categoryId,
+    amount,
+    currency,
+    rateBase,
+    rateQuote,
+    rateValue,
+    rateTyped,
+    converted,
+    fees,
+    date,
+    note,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TransactionRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.kind == this.kind &&
+          other.accountId == this.accountId &&
+          other.categoryId == this.categoryId &&
+          other.amount == this.amount &&
+          other.currency == this.currency &&
+          other.rateBase == this.rateBase &&
+          other.rateQuote == this.rateQuote &&
+          other.rateValue == this.rateValue &&
+          other.rateTyped == this.rateTyped &&
+          other.converted == this.converted &&
+          other.fees == this.fees &&
+          other.date == this.date &&
+          other.note == this.note);
+}
+
+class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> kind;
+  final Value<String> accountId;
+  final Value<String> categoryId;
+  final Value<int> amount;
+  final Value<String> currency;
+  final Value<String?> rateBase;
+  final Value<String?> rateQuote;
+  final Value<String?> rateValue;
+  final Value<bool> rateTyped;
+  final Value<int> converted;
+  final Value<int> fees;
+  final Value<DateTime> date;
+  final Value<String?> note;
+  final Value<int> rowid;
+  const TransactionsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.rateBase = const Value.absent(),
+    this.rateQuote = const Value.absent(),
+    this.rateValue = const Value.absent(),
+    this.rateTyped = const Value.absent(),
+    this.converted = const Value.absent(),
+    this.fees = const Value.absent(),
+    this.date = const Value.absent(),
+    this.note = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TransactionsCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String kind,
+    required String accountId,
+    required String categoryId,
+    required int amount,
+    required String currency,
+    this.rateBase = const Value.absent(),
+    this.rateQuote = const Value.absent(),
+    this.rateValue = const Value.absent(),
+    this.rateTyped = const Value.absent(),
+    required int converted,
+    this.fees = const Value.absent(),
+    required DateTime date,
+    this.note = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       kind = Value(kind),
+       accountId = Value(accountId),
+       categoryId = Value(categoryId),
+       amount = Value(amount),
+       currency = Value(currency),
+       converted = Value(converted),
+       date = Value(date);
+  static Insertable<TransactionRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? kind,
+    Expression<String>? accountId,
+    Expression<String>? categoryId,
+    Expression<int>? amount,
+    Expression<String>? currency,
+    Expression<String>? rateBase,
+    Expression<String>? rateQuote,
+    Expression<String>? rateValue,
+    Expression<bool>? rateTyped,
+    Expression<int>? converted,
+    Expression<int>? fees,
+    Expression<DateTime>? date,
+    Expression<String>? note,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (kind != null) 'kind': kind,
+      if (accountId != null) 'account_id': accountId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (amount != null) 'amount': amount,
+      if (currency != null) 'currency': currency,
+      if (rateBase != null) 'rate_base': rateBase,
+      if (rateQuote != null) 'rate_quote': rateQuote,
+      if (rateValue != null) 'rate_value': rateValue,
+      if (rateTyped != null) 'rate_typed': rateTyped,
+      if (converted != null) 'converted': converted,
+      if (fees != null) 'fees': fees,
+      if (date != null) 'date': date,
+      if (note != null) 'note': note,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TransactionsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? kind,
+    Value<String>? accountId,
+    Value<String>? categoryId,
+    Value<int>? amount,
+    Value<String>? currency,
+    Value<String?>? rateBase,
+    Value<String?>? rateQuote,
+    Value<String?>? rateValue,
+    Value<bool>? rateTyped,
+    Value<int>? converted,
+    Value<int>? fees,
+    Value<DateTime>? date,
+    Value<String?>? note,
+    Value<int>? rowid,
+  }) {
+    return TransactionsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      kind: kind ?? this.kind,
+      accountId: accountId ?? this.accountId,
+      categoryId: categoryId ?? this.categoryId,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      rateBase: rateBase ?? this.rateBase,
+      rateQuote: rateQuote ?? this.rateQuote,
+      rateValue: rateValue ?? this.rateValue,
+      rateTyped: rateTyped ?? this.rateTyped,
+      converted: converted ?? this.converted,
+      fees: fees ?? this.fees,
+      date: date ?? this.date,
+      note: note ?? this.note,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (rateBase.present) {
+      map['rate_base'] = Variable<String>(rateBase.value);
+    }
+    if (rateQuote.present) {
+      map['rate_quote'] = Variable<String>(rateQuote.value);
+    }
+    if (rateValue.present) {
+      map['rate_value'] = Variable<String>(rateValue.value);
+    }
+    if (rateTyped.present) {
+      map['rate_typed'] = Variable<bool>(rateTyped.value);
+    }
+    if (converted.present) {
+      map['converted'] = Variable<int>(converted.value);
+    }
+    if (fees.present) {
+      map['fees'] = Variable<int>(fees.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('kind: $kind, ')
+          ..write('accountId: $accountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('rateBase: $rateBase, ')
+          ..write('rateQuote: $rateQuote, ')
+          ..write('rateValue: $rateValue, ')
+          ..write('rateTyped: $rateTyped, ')
+          ..write('converted: $converted, ')
+          ..write('fees: $fees, ')
+          ..write('date: $date, ')
+          ..write('note: $note, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$KibuoDatabase extends GeneratedDatabase {
   _$KibuoDatabase(QueryExecutor e) : super(e);
   $KibuoDatabaseManager get managers => $KibuoDatabaseManager(this);
@@ -3397,6 +4348,7 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
   late final $AccountTypesTable accountTypes = $AccountTypesTable(this);
   late final $AccountsTable accounts = $AccountsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
+  late final $TransactionsTable transactions = $TransactionsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3409,6 +4361,7 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
     accountTypes,
     accounts,
     categories,
+    transactions,
   ];
 }
 
@@ -5190,6 +6143,445 @@ typedef $$CategoriesTableProcessedTableManager =
       CategoryRow,
       PrefetchHooks Function()
     >;
+typedef $$TransactionsTableCreateCompanionBuilder =
+    TransactionsCompanion Function({
+      required String id,
+      required int version,
+      required String deviceId,
+      Value<bool> deleted,
+      required String kind,
+      required String accountId,
+      required String categoryId,
+      required int amount,
+      required String currency,
+      Value<String?> rateBase,
+      Value<String?> rateQuote,
+      Value<String?> rateValue,
+      Value<bool> rateTyped,
+      required int converted,
+      Value<int> fees,
+      required DateTime date,
+      Value<String?> note,
+      Value<int> rowid,
+    });
+typedef $$TransactionsTableUpdateCompanionBuilder =
+    TransactionsCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<String> deviceId,
+      Value<bool> deleted,
+      Value<String> kind,
+      Value<String> accountId,
+      Value<String> categoryId,
+      Value<int> amount,
+      Value<String> currency,
+      Value<String?> rateBase,
+      Value<String?> rateQuote,
+      Value<String?> rateValue,
+      Value<bool> rateTyped,
+      Value<int> converted,
+      Value<int> fees,
+      Value<DateTime> date,
+      Value<String?> note,
+      Value<int> rowid,
+    });
+
+class $$TransactionsTableFilterComposer
+    extends Composer<_$KibuoDatabase, $TransactionsTable> {
+  $$TransactionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rateBase => $composableBuilder(
+    column: $table.rateBase,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rateQuote => $composableBuilder(
+    column: $table.rateQuote,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rateValue => $composableBuilder(
+    column: $table.rateValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get rateTyped => $composableBuilder(
+    column: $table.rateTyped,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get converted => $composableBuilder(
+    column: $table.converted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fees => $composableBuilder(
+    column: $table.fees,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TransactionsTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $TransactionsTable> {
+  $$TransactionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rateBase => $composableBuilder(
+    column: $table.rateBase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rateQuote => $composableBuilder(
+    column: $table.rateQuote,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rateValue => $composableBuilder(
+    column: $table.rateValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get rateTyped => $composableBuilder(
+    column: $table.rateTyped,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get converted => $composableBuilder(
+    column: $table.converted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fees => $composableBuilder(
+    column: $table.fees,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TransactionsTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $TransactionsTable> {
+  $$TransactionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<String> get rateBase =>
+      $composableBuilder(column: $table.rateBase, builder: (column) => column);
+
+  GeneratedColumn<String> get rateQuote =>
+      $composableBuilder(column: $table.rateQuote, builder: (column) => column);
+
+  GeneratedColumn<String> get rateValue =>
+      $composableBuilder(column: $table.rateValue, builder: (column) => column);
+
+  GeneratedColumn<bool> get rateTyped =>
+      $composableBuilder(column: $table.rateTyped, builder: (column) => column);
+
+  GeneratedColumn<int> get converted =>
+      $composableBuilder(column: $table.converted, builder: (column) => column);
+
+  GeneratedColumn<int> get fees =>
+      $composableBuilder(column: $table.fees, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+}
+
+class $$TransactionsTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $TransactionsTable,
+          TransactionRow,
+          $$TransactionsTableFilterComposer,
+          $$TransactionsTableOrderingComposer,
+          $$TransactionsTableAnnotationComposer,
+          $$TransactionsTableCreateCompanionBuilder,
+          $$TransactionsTableUpdateCompanionBuilder,
+          (
+            TransactionRow,
+            BaseReferences<_$KibuoDatabase, $TransactionsTable, TransactionRow>,
+          ),
+          TransactionRow,
+          PrefetchHooks Function()
+        > {
+  $$TransactionsTableTableManager(_$KibuoDatabase db, $TransactionsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TransactionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TransactionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TransactionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<String> categoryId = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<String?> rateBase = const Value.absent(),
+                Value<String?> rateQuote = const Value.absent(),
+                Value<String?> rateValue = const Value.absent(),
+                Value<bool> rateTyped = const Value.absent(),
+                Value<int> converted = const Value.absent(),
+                Value<int> fees = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TransactionsCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                kind: kind,
+                accountId: accountId,
+                categoryId: categoryId,
+                amount: amount,
+                currency: currency,
+                rateBase: rateBase,
+                rateQuote: rateQuote,
+                rateValue: rateValue,
+                rateTyped: rateTyped,
+                converted: converted,
+                fees: fees,
+                date: date,
+                note: note,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String kind,
+                required String accountId,
+                required String categoryId,
+                required int amount,
+                required String currency,
+                Value<String?> rateBase = const Value.absent(),
+                Value<String?> rateQuote = const Value.absent(),
+                Value<String?> rateValue = const Value.absent(),
+                Value<bool> rateTyped = const Value.absent(),
+                required int converted,
+                Value<int> fees = const Value.absent(),
+                required DateTime date,
+                Value<String?> note = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TransactionsCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                kind: kind,
+                accountId: accountId,
+                categoryId: categoryId,
+                amount: amount,
+                currency: currency,
+                rateBase: rateBase,
+                rateQuote: rateQuote,
+                rateValue: rateValue,
+                rateTyped: rateTyped,
+                converted: converted,
+                fees: fees,
+                date: date,
+                note: note,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TransactionsTable, TransactionRow>(table),
+                  BaseReferences<
+                    _$KibuoDatabase,
+                    $TransactionsTable,
+                    TransactionRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TransactionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $TransactionsTable,
+      TransactionRow,
+      $$TransactionsTableFilterComposer,
+      $$TransactionsTableOrderingComposer,
+      $$TransactionsTableAnnotationComposer,
+      $$TransactionsTableCreateCompanionBuilder,
+      $$TransactionsTableUpdateCompanionBuilder,
+      (
+        TransactionRow,
+        BaseReferences<_$KibuoDatabase, $TransactionsTable, TransactionRow>,
+      ),
+      TransactionRow,
+      PrefetchHooks Function()
+    >;
 
 class $KibuoDatabaseManager {
   final _$KibuoDatabase _db;
@@ -5208,4 +6600,6 @@ class $KibuoDatabaseManager {
       $$AccountsTableTableManager(_db, _db.accounts);
   $$CategoriesTableTableManager get categories =>
       $$CategoriesTableTableManager(_db, _db.categories);
+  $$TransactionsTableTableManager get transactions =>
+      $$TransactionsTableTableManager(_db, _db.transactions);
 }

@@ -10,6 +10,7 @@ import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
+import 'generated/schema_v5.dart' as v5;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -135,6 +136,33 @@ void main() {
           'M-Pesa',
         );
         expect(await newDb.select(newDb.categories).get(), isEmpty);
+      },
+    );
+  });
+
+  test('version 4 to 5 keeps the categories, adds transactions', () async {
+    const food = v4.CategoriesData(
+      id: 'default-food',
+      version: 70,
+      deviceId: 'phone-1',
+      deleted: 0,
+      kind: 'out',
+      key: 'food',
+      icon: 'forkKnife',
+      position: 1,
+      removed: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 4,
+      newVersion: 5,
+      createOld: v4.DatabaseAtV4.new,
+      createNew: v5.DatabaseAtV5.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.categories, food),
+      validateItems: (newDb) async {
+        expect((await newDb.select(newDb.categories).get()).single.key, 'food');
+        expect(await newDb.select(newDb.transactions).get(), isEmpty);
       },
     );
   });

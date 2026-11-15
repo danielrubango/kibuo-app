@@ -89,16 +89,8 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   void _key(String k) => setState(() {
     final c = _currency;
     if (c == null) return;
-    if (k == ',') {
-      if (c.usesDecimals && !_typed.contains(',')) {
-        _typed = _typed.isEmpty ? '0,' : '$_typed,';
-      }
-      return;
-    }
-    final parts = _typed.split(',');
-    if (parts.length == 2 && parts[1].length >= c.digits) return;
-    if (parts[0].length >= 12) return;
-    _typed = _typed == '0' ? k : '$_typed$k';
+    // The keypad shows « , » with cents, « 000 » without (PRODUCT).
+    _typed = typeKey(_typed, k, decimals: c.usesDecimals ? c.digits : 0);
   });
 
   void _delete() => setState(() {
@@ -282,58 +274,27 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.fromLTRB(16, _keypad ? 10 : 8, 16, 16),
-              // Open, the keypad sits on a panel like a sheet's (Lancement3).
-              decoration: _keypad
-                  ? const BoxDecoration(
-                      color: KibuoColors.background,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(KibuoTheme.radiusSheet),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0x2E0E1320),
-                          blurRadius: 30,
-                          offset: Offset(0, -10),
-                        ),
-                      ],
-                    )
-                  : null,
-              child: _keypad
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 4,
-                          margin: const EdgeInsets.only(bottom: 14),
-                          decoration: BoxDecoration(
-                            color: KibuoColors.line,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        KibuoKeypad(
-                          onKey: _key,
-                          onDelete: _delete,
-                          allowDecimal: currency?.usesDecimals ?? false,
-                          decimalSeparator: NumberFormat.decimalPattern(_lang)
-                              .symbols
-                              .DECIMAL_SEP,
-                        ),
-                        const SizedBox(height: 8),
-                        KibuoButton(
-                          label: l.keypadDone,
-                          kind: ButtonKind.dark,
-                          onPressed: () => setState(() => _keypad = false),
-                        ),
-                      ],
-                    )
-                  : KibuoButton(
-                      label: _editing ? l.accountSave : l.accountCreate,
-                      onPressed: currency == null ? null : _save,
-                    ),
-            ),
+            if (_keypad)
+              KeypadPanel(
+                keypad: KibuoKeypad(
+                  onKey: _key,
+                  onDelete: _delete,
+                  allowDecimal: currency?.usesDecimals ?? false,
+                  decimalSeparator: NumberFormat.decimalPattern(_lang)
+                      .symbols
+                      .DECIMAL_SEP,
+                ),
+                done: l.keypadDone,
+                onDone: () => setState(() => _keypad = false),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: KibuoButton(
+                  label: _editing ? l.accountSave : l.accountCreate,
+                  onPressed: currency == null ? null : _save,
+                ),
+              ),
           ],
         ),
       ),

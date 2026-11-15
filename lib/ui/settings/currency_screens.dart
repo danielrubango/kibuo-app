@@ -168,6 +168,7 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
             switch (kept) {
               KeptAsMain() => l.currencyKeptMain,
               KeptForAccount(:final account) => l.currencyKeptAccount(account),
+              KeptForTransaction() => l.currencyKeptTransaction,
             },
         ],
         struck: leaving,

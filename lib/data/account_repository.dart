@@ -129,6 +129,7 @@ class AccountRepository {
               ..where((a) => a.deleted.not() & a.archived.equals(archived))
               ..orderBy([(a) => OrderingTerm.asc(a.position)]))
             .get();
+    final changes = await _balanceChanges();
     return [
       for (final r in rows)
         AccountInfo(
@@ -137,10 +138,28 @@ class AccountRepository {
           type: AccountType.fromKey(r.type),
           opening: Money(r.openingBalance, r.currency),
           openingDate: r.openingDate.toUtc(),
-          balance: Money(r.openingBalance, r.currency),
+          balance: Money(r.openingBalance + (changes[r.id] ?? 0), r.currency),
           archived: r.archived,
         ),
     ];
+  }
+
+  /// What the operations dated from each account's starting date changed,
+  /// by account: income less fees, expenses plus fees.
+  Future<Map<String, int>> _balanceChanges() async {
+    final rows = await _db
+        .customSelect(
+          'SELECT t.account_id AS account, SUM(CASE WHEN t.kind = \'in\' '
+          'THEN t.converted - t.fees ELSE -(t.converted + t.fees) END) AS change '
+          'FROM transactions t JOIN accounts a ON a.id = t.account_id '
+          'WHERE t.deleted = 0 AND t.date >= a.opening_date '
+          'GROUP BY t.account_id',
+          readsFrom: {_db.transactions, _db.accounts},
+        )
+        .get();
+    return {
+      for (final r in rows) r.read<String>('account'): r.read<int>('change'),
+    };
   }
 
   static const _allInMain = 'accounts_all_in_main';
