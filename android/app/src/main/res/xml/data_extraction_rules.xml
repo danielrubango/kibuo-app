@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 12+: only the encrypted database and its key locked by the
-     recovery code are copied, and only when KibuoBackupAgent allows it
+<!-- Android 12+: only the encrypted database, its key locked by the
+     recovery code and the encrypted attachments (ADR 0011) are copied, and only when KibuoBackupAgent allows it
      (a recovery code exists and « Laisser Android copier Kibuo » is on).
      The phone's keys, PIN and settings stay behind (ADR 0010). -->
 <data-extraction-rules>
     <cloud-backup>
         <include domain="file" path="kibuo.db" />
         <include domain="file" path="kibuo-key.json" />
+        <include domain="file" path="attachments/" />
     </cloud-backup>
     <device-transfer>
         <include domain="file" path="kibuo.db" />
         <include domain="file" path="kibuo-key.json" />
+        <include domain="file" path="attachments/" />
     </device-transfer>
 </data-extraction-rules>

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -27,6 +28,7 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum _Tab { home, operations, overview, more }
 
@@ -64,6 +66,10 @@ class _AppShellState extends State<AppShell> {
       categories: CategoryRepository(db),
       currencies: CurrencyRepository(db),
       transactions: TransactionRepository(db),
+      attachments: AttachmentRepository.lazy(
+        db,
+        getApplicationSupportDirectory,
+      ),
     );
   }
 

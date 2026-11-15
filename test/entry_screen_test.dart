@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
@@ -12,6 +15,8 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/attachment_viewer.dart';
+import 'package:kibuo/ui/transactions/attachments_card.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
@@ -23,20 +28,50 @@ Finder textPlain(String wanted) => find.byWidgetPredicate(
       w is Text && plain(w.data ?? w.textSpan?.toPlainText() ?? '') == wanted,
 );
 
+class _FakeOpener implements AttachmentOpener {
+  final opened = <String>[];
+
+  @override
+  Future<PdfFirstPage?> firstPage(Uint8List pdf) async => null;
+
+  @override
+  Future<bool> openWith(Uint8List bytes, String name) async {
+    opened.add(name);
+    return true;
+  }
+}
+
+class _FakePicker implements AttachmentPicker {
+  @override
+  Future<PickedAttachment?> pick(AttachmentSource source) async =>
+      PickedAttachment(
+        bytes: Uint8List.fromList(List.filled(2048, 7)),
+        name: source == AttachmentSource.file ? 'Facture.pdf' : null,
+        kind: source == AttachmentSource.file
+            ? AttachmentKind.pdf
+            : AttachmentKind.file,
+      );
+}
+
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   late KibuoDatabase db;
   late EntryData data;
+  late _FakeOpener opener;
   String? saved;
   final now = DateTime(2026, 11, 15, 15, 45);
 
   setUp(() async {
     db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'phone-1');
+    opener = _FakeOpener();
     data = EntryData(
       accounts: AccountRepository(db),
       categories: CategoryRepository(db),
       currencies: CurrencyRepository(db),
       transactions: TransactionRepository(db),
+      attachments: AttachmentRepository.withFiles(db, MemoryFiles()),
+      picker: _FakePicker(),
+      opener: opener,
     );
     await data.currencies.ensurePrimaryCurrency('US');
     await data.accounts.create(
@@ -447,5 +482,95 @@ void main() {
 
     expect(await data.transactions.all(), hasLength(1));
     expect(find.text('Modifier la dépense'), findsOneWidget);
+  });
+
+  testWidgets('attachments wait for « Enregistrer », then belong to it', (
+    tester,
+  ) async {
+    await start(tester);
+    await type(tester, '5');
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+    await chooseTaxi(tester);
+    await tester.scrollUntilVisible(
+      find.text('Ajouter une pièce jointe'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Ajouter une pièce jointe'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Choisir un fichier'));
+    await tester.pumpAndSettle();
+    expect(find.text('Facture.pdf'), findsOneWidget);
+    expect(find.text('1/5'), findsOneWidget);
+
+    // Its preview opens it, without choosing it.
+    await tester.tap(find.bySemanticsLabel('Voir'));
+    await tester.pumpAndSettle();
+    expect(find.text('Ouvrir avec…'), findsOneWidget);
+    Navigator.of(tester.element(find.text('Ouvrir avec…'))).pop();
+    await tester.pumpAndSettle();
+    expect(find.text('1 choisie'), findsNothing);
+
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+    final t = (await data.transactions.all()).single;
+    expect((await data.attachments.list(t.id)).single.name, 'Facture.pdf');
+  });
+
+  testWidgets('chosen attachments are removed with the bar', (tester) async {
+    await start(tester);
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Ajouter une pièce jointe'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Ajouter une pièce jointe'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Prendre une photo'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Photo 1'));
+    await tester.pumpAndSettle();
+    expect(find.text('1 choisie'), findsOneWidget);
+    expect(find.text('Voir'), findsOneWidget);
+    await tester.tap(find.text('Retirer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Photo 1'), findsNothing);
+    expect(find.text('Ajouter une pièce jointe'), findsOneWidget);
+  });
+
+  testWidgets('in the detail, attachments are only shown', (tester) async {
+    final empty = await taxi();
+    await openDetail(tester, empty);
+    expect(find.text('Pièces jointes'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+
+    final id = await taxi();
+    await data.attachments.add(
+      transactionId: id,
+      bytes: Uint8List.fromList(List.filled(100, 1)),
+      name: 'Reçu',
+      kind: AttachmentKind.file,
+    );
+    await openDetail(tester, id);
+    await tester.scrollUntilVisible(
+      find.text('Reçu'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Ajouter'), findsNothing);
+    await tester.tap(find.text('Reçu'));
+    await tester.pumpAndSettle();
+    expect(find.text('1 choisie'), findsNothing);
+
+    // The viewer: nothing to change, only « Ouvrir avec… ».
+    expect(find.text('Retirer'), findsNothing);
+    await tester.tap(find.text('Ouvrir avec…'));
+    await tester.pumpAndSettle();
+    expect(opener.opened, ['Reçu']);
+    expect((await data.attachments.list(id)).single.name, 'Reçu');
   });
 }

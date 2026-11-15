@@ -984,4 +984,71 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get entryDeleteConfirm => 'Supprimer';
+
+  @override
+  String get attachTitle => 'Pièces jointes';
+
+  @override
+  String get attachAdd => 'Ajouter';
+
+  @override
+  String get attachEmpty => 'Ajouter une pièce jointe';
+
+  @override
+  String get attachEmptyHelp => 'Photo d’un reçu ou document, 5 au plus';
+
+  @override
+  String get attachPhoto => 'Prendre une photo';
+
+  @override
+  String get attachGallery => 'Choisir dans la galerie';
+
+  @override
+  String get attachFile => 'Choisir un fichier';
+
+  @override
+  String get attachKindPhoto => 'Photo';
+
+  @override
+  String get attachKindPdf => 'PDF';
+
+  @override
+  String get attachKindFile => 'Fichier';
+
+  @override
+  String get attachTooBig =>
+      'Ce fichier dépasse 10 Mo : choisissez-en un plus léger.';
+
+  @override
+  String attachChosen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count choisies',
+      one: '1 choisie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attachRemove => 'Retirer';
+
+  @override
+  String get attachView => 'Voir';
+
+  @override
+  String get attachOpenWith => 'Ouvrir avec…';
+
+  @override
+  String attachPage(int pages) {
+    return 'Page 1 sur $pages';
+  }
+
+  @override
+  String get attachNoApp => 'Aucune appli du téléphone n\'ouvre ce fichier.';
+
+  @override
+  String attachPhotoName(int n) {
+    return 'Photo $n';
+  }
 }
