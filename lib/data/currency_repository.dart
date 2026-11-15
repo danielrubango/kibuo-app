@@ -52,6 +52,17 @@ class KeptForAccount extends KeptReason {
   int get hashCode => account.hashCode;
 }
 
+/// An operation was paid in it.
+class KeptForTransaction extends KeptReason {
+  const KeptForTransaction();
+
+  @override
+  bool operator ==(Object other) => other is KeptForTransaction;
+
+  @override
+  int get hashCode => 1;
+}
+
 /// The user's currencies, main currency and exchange rates (ADR 0004).
 /// Every write carries the sync metadata of ADR 0003.
 class CurrencyRepository {
@@ -163,7 +174,13 @@ class CurrencyRepository {
               ..where((a) => a.currency.equals(code) & a.deleted.not())
               ..limit(1))
             .getSingleOrNull();
-    return account == null ? null : KeptForAccount(account.name);
+    if (account != null) return KeptForAccount(account.name);
+    final paid =
+        await (_db.select(_db.transactions)
+              ..where((t) => t.currency.equals(code) & t.deleted.not())
+              ..limit(1))
+            .getSingleOrNull();
+    return paid == null ? null : const KeptForTransaction();
   }
 
   /// Takes [code] out of the user's currencies. Its rates stay, and come

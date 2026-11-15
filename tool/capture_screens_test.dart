@@ -16,6 +16,7 @@ import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/key_vault.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -31,6 +32,8 @@ import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/operation_screens.dart';
 
 class _Vault implements KeyVault {
   final values = <String, String>{};
@@ -318,5 +321,71 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Repas'));
     await snap(tester, 'CatModif');
+  });
+
+  testWidgets('Saisie', (tester) async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+    addTearDown(db.close);
+    final data = EntryData(
+      accounts: AccountRepository(db),
+      categories: CategoryRepository(db),
+      currencies: CurrencyRepository(db),
+      transactions: TransactionRepository(db),
+    );
+    await data.currencies.ensurePrimaryCurrency('US');
+    await data.currencies.addCurrency('CDF');
+    await data.currencies.setRate('USD', 'CDF', RateValue.parse('2800'));
+    final mpesa = await data.accounts.create(
+      name: 'M-Pesa',
+      type: AccountType.mobile,
+      opening: const Money(20000, 'USD'),
+      openingDate: DateTime.utc(2026, 11, 1),
+    );
+    final id = await data.transactions.create(
+      kind: EntryKind.expense,
+      accountId: mpesa,
+      categoryId: 'default-taxi',
+      paid: const Money(1400000, 'CDF'),
+      rate: ExchangeRate(
+        base: 'USD',
+        quote: 'CDF',
+        value: RateValue.parse('2850'),
+      ),
+      rateTyped: true,
+      fees: 20,
+      date: DateTime.now().subtract(const Duration(minutes: 5)),
+      note: 'Vers le marché de Gambela avec maman pour les courses.',
+    );
+    await data.transactions.create(
+      kind: EntryKind.income,
+      accountId: mpesa,
+      categoryId: 'default-salary',
+      paid: const Money(90000, 'USD'),
+      fees: 0,
+      date: DateTime.now().subtract(const Duration(days: 1)),
+    );
+    await show(
+      tester,
+      Scaffold(
+        body: SafeArea(child: OperationsScreen(data: data)),
+      ),
+    );
+    await snap(tester, 'Operations');
+    await show(tester, OperationDetailScreen(data: data, id: id));
+    await snap(tester, 'OperationDetail');
+    await show(
+      tester,
+      EntryScreen(
+        data: data,
+        kind: EntryKind.expense,
+        initial: await data.transactions.get(id),
+        editing: true,
+      ),
+    );
+    await tester.tap(find.text('Retiré du compte'));
+    await snap(tester, 'SaisieDecompte', settle: false);
+    await show(tester, EntryScreen(data: data, kind: EntryKind.expense));
+    await tester.tap(find.text('7').last);
+    await snap(tester, 'SaisieNouvelle', settle: false);
   });
 }

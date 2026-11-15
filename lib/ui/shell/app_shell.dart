@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
@@ -23,6 +24,9 @@ import 'package:kibuo/ui/shell/tab_icons.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/transactions/entry_flow.dart';
+import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/operation_screens.dart';
 
 enum _Tab { home, operations, overview, more }
 
@@ -42,6 +46,26 @@ class _AppShellState extends State<AppShell> {
   bool _fanOpen = false;
   AddChoice? _hovered;
   final _plusKey = GlobalKey();
+
+  /// Tells the Opérations tab to reload after a save.
+  final _saved = ValueNotifier<int>(0);
+
+  @override
+  void dispose() {
+    _saved.dispose();
+    super.dispose();
+  }
+
+  EntryData? _entryData(BuildContext context) {
+    final db = KibuoData.maybeOf(context);
+    if (db == null) return null;
+    return EntryData(
+      accounts: AccountRepository(db),
+      categories: CategoryRepository(db),
+      currencies: CurrencyRepository(db),
+      transactions: TransactionRepository(db),
+    );
+  }
 
   Offset get _plusCenter {
     final box = _plusKey.currentContext!.findRenderObject()! as RenderBox;
@@ -77,13 +101,20 @@ class _AppShellState extends State<AppShell> {
                       icon: PlaceholderIcons.home,
                       message: AppLocalizations.of(context).homePlaceholder,
                     ),
-                    TabPlaceholder(
-                      key: const ValueKey('screen-operations'),
-                      title: AppLocalizations.of(context).tabOperations,
-                      icon: PlaceholderIcons.operations,
-                      message: AppLocalizations.of(context)
-                          .operationsPlaceholder,
-                    ),
+                    if (_entryData(context) case final data?)
+                      OperationsScreen(
+                        key: const ValueKey('screen-operations'),
+                        data: data,
+                        refresh: _saved,
+                      )
+                    else
+                      TabPlaceholder(
+                        key: const ValueKey('screen-operations'),
+                        title: AppLocalizations.of(context).tabOperations,
+                        icon: PlaceholderIcons.operations,
+                        message: AppLocalizations.of(context)
+                            .operationsPlaceholder,
+                      ),
                     TabPlaceholder(
                       key: const ValueKey('screen-overview'),
                       title: AppLocalizations.of(context).tabOverview,
@@ -233,6 +264,24 @@ class _AppShellState extends State<AppShell> {
   }
 
   Future<void> _openEntry(AddChoice choice) {
+    final data = _entryData(context);
+    final kind = switch (choice) {
+      AddChoice.expense => EntryKind.expense,
+      AddChoice.income => EntryKind.income,
+      _ => null,
+    };
+    if (data != null && kind != null) {
+      return runEntry(
+        context,
+        data,
+        kind: kind,
+        onSaved: () {
+          // The list opens on the new operation (PRODUCT).
+          setState(() => _tab = _Tab.operations);
+          _saved.value++;
+        },
+      );
+    }
     return Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => EntryPlaceholder(choice: choice),

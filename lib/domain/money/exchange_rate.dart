@@ -19,6 +19,15 @@ class RateValue {
     return value;
   }
 
+  /// [RateValue.parse], or null for a typed text that is not a rate yet.
+  static RateValue? tryParse(String typed) {
+    try {
+      return RateValue.parse(typed);
+    } on FormatException {
+      return null;
+    }
+  }
+
   final BigInt units;
   final int scale;
 

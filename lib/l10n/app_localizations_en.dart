@@ -753,4 +753,226 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryNameHint => 'Church, Motorbike taxi…';
+
+  @override
+  String get currencyKeptTransaction => 'Used by a transaction';
+
+  @override
+  String get entryNewExpense => 'New expense';
+
+  @override
+  String get entryNewIncome => 'New income';
+
+  @override
+  String get entryEditExpense => 'Edit expense';
+
+  @override
+  String get entryEditIncome => 'Edit income';
+
+  @override
+  String get entryExpense => 'Expense';
+
+  @override
+  String get entryIncome => 'Income';
+
+  @override
+  String get entryTakenFrom => 'Taken from the account';
+
+  @override
+  String get entryAddedTo => 'Added to the account';
+
+  @override
+  String get entryAccount => 'Account';
+
+  @override
+  String get entryCategory => 'Category';
+
+  @override
+  String get entryDate => 'Date';
+
+  @override
+  String get entryFees => 'Fees';
+
+  @override
+  String get entryNone => 'None';
+
+  @override
+  String get entryChoose => 'Choose';
+
+  @override
+  String get entryNote => 'Note';
+
+  @override
+  String get entryNoteHint => 'Add a note';
+
+  @override
+  String get entryToday => 'Today';
+
+  @override
+  String get entryYesterday => 'Yesterday';
+
+  @override
+  String get entrySave => 'Save';
+
+  @override
+  String get entrySaveChanges => 'Save the changes';
+
+  @override
+  String get entryPaidCurrency => 'Currency paid';
+
+  @override
+  String get entryReceivedCurrency => 'Currency received';
+
+  @override
+  String entryCurrencyHelp(String account, String currency) {
+    return 'The account $account is in $currency.';
+  }
+
+  @override
+  String get entryAccountCurrency => 'The account’s currency, no conversion';
+
+  @override
+  String get entryConverted => 'Converted at the chosen rate';
+
+  @override
+  String get entryRateTitle => 'Exchange rate';
+
+  @override
+  String get entryPaid => 'Paid';
+
+  @override
+  String get entryReceived => 'Received';
+
+  @override
+  String get entryRateToday => 'Today’s rate';
+
+  @override
+  String get entryRateTodayHelp => 'Your current rate, in Currencies';
+
+  @override
+  String get entryRateTodayMissing => 'No rate in Currencies yet';
+
+  @override
+  String get entryRateOther => 'Another rate';
+
+  @override
+  String get entryRateOtherHelp => 'Type the changer’s rate';
+
+  @override
+  String entryRateFor(String symbol) {
+    return 'Rate for 1 $symbol';
+  }
+
+  @override
+  String get entryRateTodayTag => 'Today';
+
+  @override
+  String get entryRateTypedTag => 'Custom';
+
+  @override
+  String get entrySo => 'That is';
+
+  @override
+  String get entryFeesTitle => 'Extra fees';
+
+  @override
+  String get entrySavedExpense => 'Expense saved';
+
+  @override
+  String get entrySavedIncome => 'Income saved';
+
+  @override
+  String get entryUndoEdit => 'Undo and edit';
+
+  @override
+  String get entryClosesSoon => 'Closes by itself in a moment';
+
+  @override
+  String entryRateFrozen(String symbol) {
+    return 'Rate frozen for 1 $symbol';
+  }
+
+  @override
+  String get entryDuplicate => 'Duplicate';
+
+  @override
+  String entryPaidChip(String amount, String rate) {
+    return '$amount paid · $rate';
+  }
+
+  @override
+  String entryReceivedChip(String amount, String rate) {
+    return '$amount received · $rate';
+  }
+
+  @override
+  String get entryReadNote => 'Read the whole note';
+
+  @override
+  String get entryNoAccount => 'Add an account first.';
+
+  @override
+  String get categorySearch => 'Search for a category';
+
+  @override
+  String get operationsTitle => 'Transactions';
+
+  @override
+  String get operationsEmpty => 'No transactions yet. The + adds one.';
+
+  @override
+  String get entryFirstAccountTitle => 'First, an account';
+
+  @override
+  String get entryFirstAccountExpense =>
+      'Every expense leaves an account, and every income lands in one: your pocket, your mobile money, your bank. Create the first one, then note your expense.';
+
+  @override
+  String get entryFirstAccountIncome =>
+      'Every expense leaves an account, and every income lands in one: your pocket, your mobile money, your bank. Create the first one, then note your income.';
+
+  @override
+  String get entryFirstAccountAction => 'Create my first account';
+
+  @override
+  String get entryFirstCategoryTitle => 'First, a category';
+
+  @override
+  String get entryFirstCategoryExpense =>
+      'Every expense goes in a category: food, transport, rent… Create one, then note your expense.';
+
+  @override
+  String get entryFirstCategoryIncome =>
+      'Every income goes in a category: salary, sales… Create one, then note your income.';
+
+  @override
+  String get entryFirstCategoryAction => 'Create a category';
+
+  @override
+  String get entryLater => 'Later';
+
+  @override
+  String get entryDeleteExpense => 'Delete the expense';
+
+  @override
+  String get entryDeleteIncome => 'Delete the income';
+
+  @override
+  String get entryDeleteExpenseTitle => 'Delete this expense?';
+
+  @override
+  String get entryDeleteIncomeTitle => 'Delete this income?';
+
+  @override
+  String entryDeleteExpenseHelp(String account, String amount) {
+    return 'It leaves the list and $account gets $amount back.';
+  }
+
+  @override
+  String entryDeleteIncomeHelp(String account, String amount) {
+    return 'It leaves the list and $account loses $amount.';
+  }
+
+  @override
+  String get entryDeleteConfirm => 'Delete';
 }
