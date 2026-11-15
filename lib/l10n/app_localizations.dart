@@ -1363,6 +1363,414 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Église, Moto-taxi…'**
   String get categoryNameHint;
+
+  /// Devises in edit mode: why a currency stays.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisée par une opération'**
+  String get currencyKeptTransaction;
+
+  /// Entry: entryNewExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle dépense'**
+  String get entryNewExpense;
+
+  /// Entry: entryNewIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau revenu'**
+  String get entryNewIncome;
+
+  /// Entry: entryEditExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la dépense'**
+  String get entryEditExpense;
+
+  /// Entry: entryEditIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le revenu'**
+  String get entryEditIncome;
+
+  /// Entry: entryExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépense'**
+  String get entryExpense;
+
+  /// Entry: entryIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenu'**
+  String get entryIncome;
+
+  /// Entry: entryTakenFrom
+  ///
+  /// In fr, this message translates to:
+  /// **'Retiré du compte'**
+  String get entryTakenFrom;
+
+  /// Entry: entryAddedTo
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouté au compte'**
+  String get entryAddedTo;
+
+  /// Entry: entryAccount
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get entryAccount;
+
+  /// Entry: entryCategory
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get entryCategory;
+
+  /// Entry: entryDate
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get entryDate;
+
+  /// Entry: entryFees
+  ///
+  /// In fr, this message translates to:
+  /// **'Frais'**
+  String get entryFees;
+
+  /// Entry: entryNone
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun'**
+  String get entryNone;
+
+  /// Entry: entryChoose
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir'**
+  String get entryChoose;
+
+  /// Entry: entryNote
+  ///
+  /// In fr, this message translates to:
+  /// **'Note'**
+  String get entryNote;
+
+  /// Entry: entryNoteHint
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une note'**
+  String get entryNoteHint;
+
+  /// Entry: entryToday
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui'**
+  String get entryToday;
+
+  /// Entry: entryYesterday
+  ///
+  /// In fr, this message translates to:
+  /// **'Hier'**
+  String get entryYesterday;
+
+  /// Entry: entrySave
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get entrySave;
+
+  /// Entry: entrySaveChanges
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer les modifications'**
+  String get entrySaveChanges;
+
+  /// Entry: entryPaidCurrency
+  ///
+  /// In fr, this message translates to:
+  /// **'Devise payée'**
+  String get entryPaidCurrency;
+
+  /// Entry: entryReceivedCurrency
+  ///
+  /// In fr, this message translates to:
+  /// **'Devise reçue'**
+  String get entryReceivedCurrency;
+
+  /// Entry: entryCurrencyHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Le compte {account} est en {currency}.'**
+  String entryCurrencyHelp(String account, String currency);
+
+  /// Entry: entryAccountCurrency
+  ///
+  /// In fr, this message translates to:
+  /// **'La devise du compte, pas de conversion'**
+  String get entryAccountCurrency;
+
+  /// Entry: entryConverted
+  ///
+  /// In fr, this message translates to:
+  /// **'Converti au taux choisi'**
+  String get entryConverted;
+
+  /// Entry: entryRateTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux de conversion'**
+  String get entryRateTitle;
+
+  /// Entry: entryPaid
+  ///
+  /// In fr, this message translates to:
+  /// **'Payé'**
+  String get entryPaid;
+
+  /// Entry: entryReceived
+  ///
+  /// In fr, this message translates to:
+  /// **'Reçu'**
+  String get entryReceived;
+
+  /// Entry: entryRateToday
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux du jour'**
+  String get entryRateToday;
+
+  /// Entry: entryRateTodayHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre taux en cours, dans Devises'**
+  String get entryRateTodayHelp;
+
+  /// Entry: entryRateTodayMissing
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore de taux dans Devises'**
+  String get entryRateTodayMissing;
+
+  /// Entry: entryRateOther
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre taux'**
+  String get entryRateOther;
+
+  /// Entry: entryRateOtherHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Tapez le taux du changeur'**
+  String get entryRateOtherHelp;
+
+  /// Entry: entryRateFor
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux pour 1 {symbol}'**
+  String entryRateFor(String symbol);
+
+  /// Entry: entryRateTodayTag
+  ///
+  /// In fr, this message translates to:
+  /// **'Du jour'**
+  String get entryRateTodayTag;
+
+  /// Entry: entryRateTypedTag
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalisé'**
+  String get entryRateTypedTag;
+
+  /// Entry: entrySo
+  ///
+  /// In fr, this message translates to:
+  /// **'Soit'**
+  String get entrySo;
+
+  /// Entry: entryFeesTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Frais supplémentaires'**
+  String get entryFeesTitle;
+
+  /// Entry: entrySavedExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépense enregistrée'**
+  String get entrySavedExpense;
+
+  /// Entry: entrySavedIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenu enregistré'**
+  String get entrySavedIncome;
+
+  /// Entry: entryUndoEdit
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler et modifier'**
+  String get entryUndoEdit;
+
+  /// Entry: entryClosesSoon
+  ///
+  /// In fr, this message translates to:
+  /// **'Se ferme seule dans un instant'**
+  String get entryClosesSoon;
+
+  /// Entry: entryRateFrozen
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux figé pour 1 {symbol}'**
+  String entryRateFrozen(String symbol);
+
+  /// Entry: entryDuplicate
+  ///
+  /// In fr, this message translates to:
+  /// **'Dupliquer'**
+  String get entryDuplicate;
+
+  /// Entry: entryPaidChip
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} payés · {rate}'**
+  String entryPaidChip(String amount, String rate);
+
+  /// Entry: entryReceivedChip
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} reçus · {rate}'**
+  String entryReceivedChip(String amount, String rate);
+
+  /// Entry: entryReadNote
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire toute la note'**
+  String get entryReadNote;
+
+  /// Entry: entryNoAccount
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez d’abord un compte.'**
+  String get entryNoAccount;
+
+  /// Entry: categorySearch
+  ///
+  /// In fr, this message translates to:
+  /// **'Chercher une catégorie'**
+  String get categorySearch;
+
+  /// Entry: operationsTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Opérations'**
+  String get operationsTitle;
+
+  /// Entry: operationsEmpty
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune opération pour l’instant. Le + en ajoute une.'**
+  String get operationsEmpty;
+
+  /// Entry: entryFirstAccountTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'D’abord, un compte'**
+  String get entryFirstAccountTitle;
+
+  /// Entry: entryFirstAccountExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque dépense sort d’un compte, et chaque revenu y arrive : votre poche, votre mobile money, votre banque. Créez le premier, puis notez votre dépense.'**
+  String get entryFirstAccountExpense;
+
+  /// Entry: entryFirstAccountIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque dépense sort d’un compte, et chaque revenu y arrive : votre poche, votre mobile money, votre banque. Créez le premier, puis notez votre revenu.'**
+  String get entryFirstAccountIncome;
+
+  /// Entry: entryFirstAccountAction
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer mon premier compte'**
+  String get entryFirstAccountAction;
+
+  /// Entry: entryFirstCategoryTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'D’abord, une catégorie'**
+  String get entryFirstCategoryTitle;
+
+  /// Entry: entryFirstCategoryExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque dépense se range dans une catégorie : repas, transport, loyer… Créez-en une, puis notez votre dépense.'**
+  String get entryFirstCategoryExpense;
+
+  /// Entry: entryFirstCategoryIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque revenu se range dans une catégorie : salaire, ventes… Créez-en une, puis notez votre revenu.'**
+  String get entryFirstCategoryIncome;
+
+  /// Entry: entryFirstCategoryAction
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une catégorie'**
+  String get entryFirstCategoryAction;
+
+  /// Entry: entryLater
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get entryLater;
+
+  /// Entry: entryDeleteExpense
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la dépense'**
+  String get entryDeleteExpense;
+
+  /// Entry: entryDeleteIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le revenu'**
+  String get entryDeleteIncome;
+
+  /// Entry: entryDeleteExpenseTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette dépense ?'**
+  String get entryDeleteExpenseTitle;
+
+  /// Entry: entryDeleteIncomeTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce revenu ?'**
+  String get entryDeleteIncomeTitle;
+
+  /// Entry: entryDeleteExpenseHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle disparaît de la liste et le solde de {account} reprend {amount}.'**
+  String entryDeleteExpenseHelp(String account, String amount);
+
+  /// Entry: entryDeleteIncomeHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Il disparaît de la liste et le solde de {account} perd {amount}.'**
+  String entryDeleteIncomeHelp(String account, String amount);
+
+  /// Entry: entryDeleteConfirm
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get entryDeleteConfirm;
 }
 
 class _AppLocalizationsDelegate
