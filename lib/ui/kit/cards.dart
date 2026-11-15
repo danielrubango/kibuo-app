@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -121,6 +122,9 @@ class ItemCard extends StatelessWidget {
     this.lines = const [],
     this.action,
     this.onTap,
+    this.actionColor = KibuoColors.accent,
+    this.onAction,
+    this.struck = false,
   });
 
   final String title;
@@ -129,9 +133,17 @@ class ItemCard extends StatelessWidget {
   final List<String> lines;
   final String? action;
   final VoidCallback? onTap;
+  final Color actionColor;
+
+  /// Makes the action its own target, apart from [onTap].
+  final VoidCallback? onAction;
+
+  /// Title and lines struck through: about to go.
+  final bool struck;
 
   @override
   Widget build(BuildContext context) {
+    final line = struck ? TextDecoration.lineThrough : null;
     return KibuoCard(
       onTap: onTap,
       child: Row(
@@ -140,26 +152,38 @@ class ItemCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: KibuoType.itemName),
+                Text(
+                  title,
+                  style: KibuoType.itemName.copyWith(decoration: line),
+                ),
                 for (var i = 0; i < lines.length; i++)
                   Text(
                     lines[i],
-                    style: i == 0
-                        ? KibuoType.body
-                        : KibuoType.help.copyWith(height: 1.4),
+                    style:
+                        (i == 0
+                                ? KibuoType.body
+                                : KibuoType.help.copyWith(height: 1.4))
+                            .copyWith(decoration: line),
                   ),
               ],
             ),
           ),
           if (action != null) ...[
             const SizedBox(width: 12),
-            Text(
-              action!,
-              style: KibuoType.buttonSmall.copyWith(
-                fontSize: 14,
-                color: KibuoColors.accent,
+            if (onAction == null)
+              Text(
+                action!,
+                style: KibuoType.buttonSmall.copyWith(
+                  fontSize: 14,
+                  color: actionColor,
+                ),
+              )
+            else
+              TextAction(
+                label: action!,
+                color: actionColor,
+                onPressed: onAction,
               ),
-            ),
           ],
         ],
       ),
@@ -209,7 +233,9 @@ class SettingsRow extends StatelessWidget {
 
   final String label;
   final String? value;
-  final VoidCallback onTap;
+
+  /// Null greys the row out.
+  final VoidCallback? onTap;
   final bool danger;
 
   @override
@@ -226,7 +252,11 @@ class SettingsRow extends StatelessWidget {
                 child: Text(
                   label,
                   style: KibuoType.rowLabel.copyWith(
-                    color: danger ? KibuoColors.danger : null,
+                    color: onTap == null
+                        ? KibuoColors.inkMuted
+                        : danger
+                        ? KibuoColors.danger
+                        : null,
                   ),
                 ),
               ),

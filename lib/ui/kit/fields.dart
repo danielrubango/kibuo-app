@@ -197,14 +197,16 @@ class ValueField extends StatelessWidget {
         ? KibuoColors.accent
         : KibuoColors.surface;
     final empty = value.isEmpty;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (label != null) FieldLabel(label!),
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
+    // The label is part of the field: touching it opens the keypad too.
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (label != null) FieldLabel(label!),
+          Container(
             constraints: const BoxConstraints(minHeight: 60),
             padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
             decoration: BoxDecoration(
@@ -252,15 +254,15 @@ class ValueField extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        if (error != null)
-          _ErrorLine(error!)
-        else if (note != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
-            child: Text(note!, style: KibuoType.caption),
-          ),
-      ],
+          if (error != null)
+            _ErrorLine(error!)
+          else if (note != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+              child: Text(note!, style: KibuoType.caption),
+            ),
+        ],
+      ),
     );
   }
 }

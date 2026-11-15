@@ -1,8 +1,10 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
+import 'package:kibuo/domain/money/money.dart';
 
 void main() {
   late KibuoDatabase db;
@@ -104,5 +106,49 @@ void main() {
       ...currencies.map((c) => c.version),
     ];
     expect(versions.toSet(), hasLength(versions.length));
+  });
+
+  test('a currency is removed, and comes back with its rate', () async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('EUR');
+    await repo.setRate('USD', 'EUR', RateValue.parse('0.92'));
+
+    expect(await repo.whyKept('EUR'), isNull);
+    await repo.removeCurrency('EUR');
+    expect(await repo.currencyCodes(), ['USD']);
+
+    await repo.addCurrency('EUR');
+    expect(await repo.currencyCodes(), ['USD', 'EUR']);
+    final rate = await repo.latestRate('USD', 'EUR');
+    expect(rate!.rate.value, RateValue.parse('0.92'));
+  });
+
+  test('the main currency and a used one cannot be removed', () async {
+    await repo.ensurePrimaryCurrency('US');
+    await AccountRepository(db).create(
+      name: 'Airtel',
+      type: AccountType.mobile,
+      opening: const Money(100, 'CDF'),
+      openingDate: now,
+    );
+
+    expect(await repo.whyKept('USD'), const KeptAsMain());
+    expect(await repo.whyKept('CDF'), const KeptForAccount('Airtel'));
+    await expectLater(repo.removeCurrency('CDF'), throwsStateError);
+    expect(await repo.currencyCodes(), containsAll(['USD', 'CDF']));
+  });
+
+  test('an archived account still keeps its currency', () async {
+    await repo.ensurePrimaryCurrency('US');
+    final accounts = AccountRepository(db);
+    final id = await accounts.create(
+      name: 'Ancien',
+      type: AccountType.bank,
+      opening: const Money(100, 'EUR'),
+      openingDate: now,
+    );
+    await accounts.archive(id);
+
+    expect(await repo.whyKept('EUR'), const KeptForAccount('Ancien'));
   });
 }
