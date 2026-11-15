@@ -11,11 +11,14 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
+import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
@@ -251,5 +254,50 @@ void main() {
     await snap(tester, 'RecupSaisie');
     await show(tester, UnreadableScreen(onStartOver: () {}, onRecover: () {}));
     await snap(tester, 'RecupIllisible');
+  });
+
+  testWidgets('Comptes', (tester) async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+    addTearDown(db.close);
+    final currencies = CurrencyRepository(
+      db,
+      now: () => DateTime.utc(2026, 11, 3),
+    );
+    await currencies.ensurePrimaryCurrency('US');
+    await currencies.addCurrency('CDF');
+    await currencies.setRate('USD', 'CDF', RateValue.parse('2800'));
+    final accounts = AccountRepository(db);
+    final day = DateTime.utc(2026, 11, 3);
+    for (final (name, type, money) in [
+      ('M-Pesa dollars', AccountType.mobile, const Money(20000, 'USD')),
+      ('Airtel Money', AccountType.mobile, const Money(8400000, 'CDF')),
+      ('Rawbank', AccountType.bank, const Money(93000, 'USD')),
+      ('Poche', AccountType.cash, const Money(1850, 'USD')),
+    ]) {
+      await accounts.create(
+        name: name,
+        type: type,
+        opening: money,
+        openingDate: day,
+      );
+    }
+    await show(
+      tester,
+      AccountsScreen(accounts: accounts, currencies: currencies),
+    );
+    await snap(tester, 'Comptes');
+    await tester.tap(find.text('Rawbank'));
+    await snap(tester, 'CompteModif');
+    await tester.tap(find.text('Annuler'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ajouter un compte'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Solde de départ'));
+    await tester.pump();
+    for (final d in '120'.split('')) {
+      await tester.tap(find.text(d).last);
+      await tester.pump();
+    }
+    await snap(tester, 'CompteNouveau', settle: false);
   });
 }

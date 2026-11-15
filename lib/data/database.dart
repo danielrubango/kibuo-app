@@ -49,7 +49,50 @@ class Preferences extends Table with SyncColumns {
   TextColumn get value => text()();
 }
 
-@DriftDatabase(tables: [Devices, Currencies, ExchangeRates, Preferences])
+/// Account types the user created (GLOSSARY: Type de compte). The four
+/// provided ones (cash, bank, mobile money, savings) are not rows.
+@DataClassName('AccountTypeRow')
+class AccountTypes extends Table with SyncColumns {
+  TextColumn get name => text()();
+
+  /// The Phosphor icon's name: « users », « house »…
+  TextColumn get icon => text()();
+}
+
+/// The places where the user's money is (GLOSSARY: Compte).
+@DataClassName('AccountRow')
+class Accounts extends Table with SyncColumns {
+  TextColumn get name => text()();
+
+  /// A provided type (« cash », « bank », « mobile », « savings ») or the id
+  /// of an [AccountTypes] row.
+  TextColumn get type => text()();
+
+  /// ISO 4217 code; fixed once the account has a transaction.
+  TextColumn get currency => text()();
+
+  /// What the account held on [openingDate], in the currency's smallest
+  /// unit.
+  IntColumn get openingBalance => integer()();
+  DateTimeColumn get openingDate => dateTime()();
+
+  /// Out of lists and totals; its transactions stay.
+  BoolColumn get archived => boolean().withDefault(const Constant(false))();
+
+  /// Order in the lists: one more than the last account at creation.
+  IntColumn get position => integer()();
+}
+
+@DriftDatabase(
+  tables: [
+    Devices,
+    Currencies,
+    ExchangeRates,
+    Preferences,
+    AccountTypes,
+    Accounts,
+  ],
+)
 class KibuoDatabase extends _$KibuoDatabase {
   KibuoDatabase(super.executor, {required this.deviceId});
 
@@ -58,7 +101,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -68,6 +111,10 @@ class KibuoDatabase extends _$KibuoDatabase {
         await m.createTable(schema.currencies);
         await m.createTable(schema.exchangeRates);
         await m.createTable(schema.preferences);
+      },
+      from2To3: (m, schema) async {
+        await m.createTable(schema.accountTypes);
+        await m.createTable(schema.accounts);
       },
     ),
     beforeOpen: (details) async {

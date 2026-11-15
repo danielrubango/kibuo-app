@@ -467,4 +467,171 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rateUnchanged => 'Unchanged';
+
+  @override
+  String get accountsTitle => 'Accounts';
+
+  @override
+  String get accountsAll => 'All';
+
+  @override
+  String get accountsTotal => 'Total of my accounts';
+
+  @override
+  String accountsTotalOf(String type) {
+    return 'Total $type';
+  }
+
+  @override
+  String get accountsAdd => 'Add an account';
+
+  @override
+  String accountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts',
+      one: '1 account',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get accountTypeCash => 'Cash';
+
+  @override
+  String get accountTypeBank => 'Bank';
+
+  @override
+  String get accountTypeMobile => 'Mobile money';
+
+  @override
+  String get accountTypeSavings => 'Savings';
+
+  @override
+  String get accountNewTitle => 'New account';
+
+  @override
+  String get accountEditTitle => 'Edit account';
+
+  @override
+  String get accountTypeLabel => 'Type';
+
+  @override
+  String get accountTypeCreate => 'Create another type';
+
+  @override
+  String get accountName => 'Account name';
+
+  @override
+  String get accountNameHint => 'M-Pesa, my bank, pocket…';
+
+  @override
+  String get accountOpening => 'Starting balance';
+
+  @override
+  String accountCurrencyNote(String name, String code) {
+    return '$name. Tap $code to change the currency.';
+  }
+
+  @override
+  String get accountOpeningDate => 'Balance date';
+
+  @override
+  String get accountOpeningDateHelp =>
+      'What the account held that day. Earlier transactions don’t change it.';
+
+  @override
+  String accountToday(String date) {
+    return 'Today, $date';
+  }
+
+  @override
+  String get accountCreate => 'Create the account';
+
+  @override
+  String get accountSave => 'Save';
+
+  @override
+  String get accountArchive => 'Archive the account';
+
+  @override
+  String get accountArchiveHelp =>
+      'An archived account leaves lists and totals; its transactions stay.';
+
+  @override
+  String get keypadDone => 'Done';
+
+  @override
+  String get typeNewTitle => 'New type';
+
+  @override
+  String get typeName => 'Name';
+
+  @override
+  String get typeNameHint => 'Savings group, prepaid card…';
+
+  @override
+  String get typeIcon => 'Icon';
+
+  @override
+  String get typeSave => 'Save';
+
+  @override
+  String get accountsDisplay => 'Account display';
+
+  @override
+  String get accountsDisplayAmounts => 'Amounts';
+
+  @override
+  String get accountsDisplayEach => 'Each account’s currency';
+
+  @override
+  String get accountsDisplayEachHelp => 'Each account stays in its currency';
+
+  @override
+  String accountsDisplayAll(String name, String code) {
+    return 'All in $name ($code)';
+  }
+
+  @override
+  String get accountsDisplayAllHelp => 'Converted at the latest rate';
+
+  @override
+  String get accountsDisplayNote =>
+      'Shown only when your accounts use several currencies.';
+
+  @override
+  String get accountsNoRate => 'No rate';
+
+  @override
+  String accountsNoRateNote(String codes) {
+    return 'Without a rate, $codes is left out of the total.';
+  }
+
+  @override
+  String get accountsAddRate => 'Add a rate';
+
+  @override
+  String get accountNameMissing => 'Give the account a name.';
+
+  @override
+  String get currencyKeptMain => 'Your main currency';
+
+  @override
+  String currencyKeptAccount(String name) {
+    return 'Used by the account $name';
+  }
+
+  @override
+  String get currencyOther => 'Other currency…';
+
+  @override
+  String get currencyRemoveShort => 'Remove';
+
+  @override
+  String get currencyKept => 'Kept';
+
+  @override
+  String get currencyKeep => 'Keep';
 }

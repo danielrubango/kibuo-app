@@ -25,10 +25,13 @@ String _day(BuildContext context, DateTime date) =>
 
 /// One of the user's currencies, with its rate against the main currency.
 class _Row {
-  const _Row(this.currency, this.rate);
+  const _Row(this.currency, this.rate, this.kept);
 
   final CurrencyInfo currency;
   final RateInfo? rate;
+
+  /// Why it cannot be removed, or null.
+  final KeptReason? kept;
 }
 
 class CurrenciesScreen extends StatefulWidget {
@@ -44,6 +47,11 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
   CurrencyInfo? _main;
   String? _country;
   List<_Row> _rows = const [];
+
+  /// « Modifier »: each currency can be removed (canvas: EditDevC).
+  /// « Retirer » strikes it; « Terminé » confirms; leaving forgets.
+  bool _editing = false;
+  final _leaving = <String>{};
 
   CurrencyRepository get _repo => widget.repository;
 
@@ -65,6 +73,7 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
         _Row(
           await _repo.currency(code),
           await _repo.latestRate(mainCode, code),
+          await _repo.whyKept(code),
         ),
       );
     }
@@ -124,6 +133,15 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
     await _load();
   }
 
+  Future<void> _finishEditing() async {
+    for (final code in _leaving) {
+      await _repo.removeCurrency(code);
+    }
+    _leaving.clear();
+    await _load();
+    if (mounted) setState(() => _editing = false);
+  }
+
   /// A typed rate the way it was typed; a worked-out one the way a new
   /// rate would be typed.
   ExchangeRate _shownRate(_Row row, CurrencyInfo main) {
@@ -133,55 +151,111 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
     return info.rate.toward(base, quote);
   }
 
+  Widget _editCard(AppLocalizations l, _Row row, CurrencyInfo main) {
+    final kept = row.kept;
+    final code = row.currency.code;
+    final leaving = _leaving.contains(code);
+    return Opacity(
+      opacity: kept == null && !leaving ? 1 : 0.6,
+      child: ItemCard(
+        title: '${currencyName(context, row.currency)}, ${row.currency.code}',
+        lines: [
+          if (row.rate == null)
+            l.currenciesNoRate
+          else
+            formatRate(_shownRate(row, main), _lang(context)),
+          if (kept != null)
+            switch (kept) {
+              KeptAsMain() => l.currencyKeptMain,
+              KeptForAccount(:final account) => l.currencyKeptAccount(account),
+            },
+        ],
+        struck: leaving,
+        action: kept != null
+            ? l.currencyKept
+            : leaving
+            ? l.currencyKeep
+            : l.currencyRemoveShort,
+        actionColor: kept != null
+            ? KibuoColors.inkMuted
+            : leaving
+            ? KibuoColors.accent
+            : KibuoColors.danger,
+        onAction: kept != null
+            ? null
+            : () => setState(
+                () => leaving ? _leaving.remove(code) : _leaving.add(code),
+              ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final main = _main;
     return Scaffold(
-      appBar: AppBar(title: Text(l.currenciesTitle)),
+      appBar: AppBar(
+        title: Text(l.currenciesTitle),
+        actions: [
+          if (_rows.isNotEmpty)
+            TextAction(
+              label: _editing ? l.keypadDone : l.currenciesEdit,
+              onPressed: _editing
+                  ? _finishEditing
+                  : () => setState(() => _editing = true),
+            ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: main == null
           ? const SizedBox.shrink()
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               children: [
-                FeaturedCard(
-                  label: l.currenciesMain,
-                  value: main.code,
-                  action: l.currenciesChange,
-                  onTap: _changeMain,
+                // The main currency stays: dimmed while editing.
+                Opacity(
+                  opacity: _editing ? 0.55 : 1,
+                  child: FeaturedCard(
+                    label: l.currenciesMain,
+                    value: main.code,
+                    action: _editing ? null : l.currenciesChange,
+                    onTap: _editing ? null : _changeMain,
+                  ),
                 ),
                 if (_rows.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   SectionTitle(l.currenciesRates),
                   for (final row in _rows) ...[
-                    ItemCard(
-                      title:
-                          '${currencyName(context, row.currency)}, '
-                          '${row.currency.code}',
-                      lines: [
-                        if (row.rate == null)
-                          l.currenciesNoRate
-                        else ...[
-                          formatRate(_shownRate(row, main), _lang(context)),
-                          if (row.rate!.isWorkedOut)
-                            l.currenciesWorkedOut
-                          else
-                            l.currenciesUpdatedOn(
-                              _day(context, row.rate!.setOn),
-                            ),
+                    if (_editing)
+                      _editCard(l, row, main)
+                    else
+                      ItemCard(
+                        title:
+                            '${currencyName(context, row.currency)}, '
+                            '${row.currency.code}',
+                        lines: [
+                          if (row.rate == null)
+                            l.currenciesNoRate
+                          else ...[
+                            formatRate(_shownRate(row, main), _lang(context)),
+                            // The rate's date is in its sheet (« Avant : … »).
+                            if (row.rate!.isWorkedOut) l.currenciesWorkedOut,
+                          ],
                         ],
-                      ],
-                      action: l.currenciesEdit,
-                      onTap: () => _editRate(row),
-                    ),
+                        action: l.currenciesEdit,
+                        onTap: () => _editRate(row),
+                      ),
                     const SizedBox(height: 8),
                   ],
-                  const SizedBox(height: 4),
-                  HelpText(l.currenciesRatesHelp),
+                  if (!_editing) ...[
+                    const SizedBox(height: 4),
+                    HelpText(l.currenciesRatesHelp),
+                  ],
                 ],
               ],
             ),
-      bottomNavigationBar: main == null
+      bottomNavigationBar: main == null || _editing
           ? null
           : SafeArea(
               minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -204,6 +278,7 @@ Future<String?> pickCurrency(
   Set<String> greyed = const {},
   CurrencyInfo? centsOf,
   Future<void> Function(bool on)? onCents,
+  bool onlyYours = false,
 }) => Navigator.of(context).push<String>(
   MaterialPageRoute(
     builder: (_) => CurrencyPickerScreen(
@@ -215,6 +290,7 @@ Future<String?> pickCurrency(
       greyed: greyed,
       centsOf: centsOf,
       onCents: onCents,
+      onlyYours: onlyYours,
     ),
   ),
 );
@@ -230,6 +306,7 @@ class CurrencyPickerScreen extends StatefulWidget {
     this.greyed = const {},
     this.centsOf,
     this.onCents,
+    this.onlyYours = false,
   });
 
   final String title;
@@ -249,12 +326,16 @@ class CurrencyPickerScreen extends StatefulWidget {
   final CurrencyInfo? centsOf;
   final Future<void> Function(bool on)? onCents;
 
+  /// Only [yoursFirst], then « Autre devise… » opening the whole list.
+  final bool onlyYours;
+
   @override
   State<CurrencyPickerScreen> createState() => _CurrencyPickerScreenState();
 }
 
 class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
   String _query = '';
+  late bool _showAll = !widget.onlyYours;
   late bool _cents = widget.centsOf?.usesDecimals ?? false;
 
   static String _fold(String s) => s
@@ -325,13 +406,14 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
             HelpText(l.currencyDecimalsHelp),
             const SizedBox(height: 20),
           ],
-          KibuoTextField(
-            label: l.currencySearch,
-            hint: l.currencySearchHint,
-            textCapitalization: TextCapitalization.none,
-            onChanged: (v) => setState(() => _query = v.trim()),
-          ),
-          for (final (title, currencies) in groups)
+          if (_showAll)
+            KibuoTextField(
+              label: l.currencySearch,
+              hint: l.currencySearchHint,
+              textCapitalization: TextCapitalization.none,
+              onChanged: (v) => setState(() => _query = v.trim()),
+            ),
+          for (final (title, currencies) in _showAll ? groups : groups.take(1))
             if (currencies.isNotEmpty) ...[
               const SizedBox(height: 20),
               SectionTitle(title),
@@ -347,6 +429,14 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
                 const SizedBox(height: 8),
               ],
             ],
+          if (!_showAll) ...[
+            const SizedBox(height: 4),
+            KibuoButton(
+              label: l.currencyOther,
+              kind: ButtonKind.create,
+              onPressed: () => setState(() => _showAll = true),
+            ),
+          ],
         ],
       ),
     );
@@ -472,7 +562,6 @@ class _RateSheetState extends State<_RateSheet> {
   late String _quote;
   String _typed = '';
   late bool _cents = widget.other.usesDecimals;
-
   @override
   void initState() {
     super.initState();
