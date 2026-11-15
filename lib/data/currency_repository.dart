@@ -22,6 +22,36 @@ class RateInfo {
   final bool isWorkedOut;
 }
 
+/// Why a currency cannot be removed.
+sealed class KeptReason {
+  const KeptReason();
+}
+
+/// It is the main currency.
+class KeptAsMain extends KeptReason {
+  const KeptAsMain();
+
+  @override
+  bool operator ==(Object other) => other is KeptAsMain;
+
+  @override
+  int get hashCode => 0;
+}
+
+/// An account (archived or not) is kept in it.
+class KeptForAccount extends KeptReason {
+  const KeptForAccount(this.account);
+
+  final String account;
+
+  @override
+  bool operator ==(Object other) =>
+      other is KeptForAccount && other.account == account;
+
+  @override
+  int get hashCode => account.hashCode;
+}
+
 /// The user's currencies, main currency and exchange rates (ADR 0004).
 /// Every write carries the sync metadata of ADR 0003.
 class CurrencyRepository {
@@ -122,6 +152,35 @@ class CurrencyRepository {
             usesDecimals: info.usesDecimals,
           ),
         );
+  }
+
+  /// Why [code] must stay among the user's currencies, or null when it can
+  /// be removed.
+  Future<KeptReason?> whyKept(String code) async {
+    if (await primaryCurrency() == code) return const KeptAsMain();
+    final account =
+        await (_db.select(_db.accounts)
+              ..where((a) => a.currency.equals(code) & a.deleted.not())
+              ..limit(1))
+            .getSingleOrNull();
+    return account == null ? null : KeptForAccount(account.name);
+  }
+
+  /// Takes [code] out of the user's currencies. Its rates stay, and come
+  /// back if it is added again.
+  Future<void> removeCurrency(String code) async {
+    if (await whyKept(code) != null) {
+      throw StateError('$code is still in use');
+    }
+    await (_db.update(
+      _db.currencies,
+    )..where((c) => c.code.equals(code) & c.deleted.not())).write(
+      CurrenciesCompanion(
+        deleted: const Value(true),
+        version: Value(await _nextVersion()),
+        deviceId: Value(_db.deviceId),
+      ),
+    );
   }
 
   Future<void> setUsesDecimals(String code, {required bool on}) async {

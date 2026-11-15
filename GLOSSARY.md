@@ -10,6 +10,12 @@ Vocabulaire de l'application de gestion de budget personnelle. Le terme anglais 
 Endroit où se trouve de l'argent. Il a une seule devise et un type.
 _Avoid_ : portefeuille, wallet
 
+**Solde de départ** (`opening balance`) :
+Ce que contenait un compte à une date choisie à sa création. Les opérations qui suivent cette date le font évoluer.
+
+**Compte archivé** (`archived account`) :
+Compte retiré des listes et des totaux, dont les opérations restent.
+
 **Type de compte** (`AccountType`) :
 Nature d'un compte, avec son icône. Quatre types sont fournis, et l'utilisateur peut en créer d'autres.
 

@@ -3,9 +3,11 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
+import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/cards.dart';
@@ -102,7 +104,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(textPlain(r'1 $ = 2 800 FC'), findsOneWidget);
-    expect(find.text('Mis à jour le 3 novembre'), findsOneWidget);
+    expect(find.text('Mis à jour le 3 novembre'), findsNothing);
   });
 
   testWidgets('a new rate shows the previous one and the change', (
@@ -114,7 +116,12 @@ void main() {
     now = DateTime.utc(2026, 11, 15, 9);
     await start(tester);
 
-    await tester.tap(find.text('Modifier'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(ItemCard),
+        matching: find.text('Modifier'),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(textPlain('Avant : 2 800 FC · 3 novembre'), findsOneWidget);
     await type(tester, '2850');
@@ -124,7 +131,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(textPlain(r'1 $ = 2 850 FC'), findsOneWidget);
-    expect(find.text('Mis à jour le 15 novembre'), findsOneWidget);
+    expect(find.text('Mis à jour le 15 novembre'), findsNothing);
   });
 
   testWidgets('changing the main currency keeps rates readable', (
@@ -190,7 +197,12 @@ void main() {
     await start(tester);
 
     expect(textPlain('1 \$ = 0,92 €'), findsOneWidget);
-    await tester.tap(find.text('Modifier'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(ItemCard),
+        matching: find.text('Modifier'),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(textPlain('1 \$ ='), findsOneWidget);
   });
@@ -204,7 +216,12 @@ void main() {
     await start(tester);
 
     expect(find.text('Centimes'), findsNothing, reason: 'not on Devises');
-    await tester.tap(find.text('Modifier'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(ItemCard),
+        matching: find.text('Modifier'),
+      ),
+    );
     await tester.pumpAndSettle();
     final cents = find.ancestor(
       of: find.text('Centimes'),
@@ -235,5 +252,68 @@ void main() {
     await tester.pumpAndSettle();
 
     expect((await repo.currency('USD')).usesDecimals, isFalse);
+  });
+
+  testWidgets('« Modifier » lets a currency be removed', (tester) async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('EUR');
+    await repo.setRate('USD', 'EUR', RateValue.parse('0.92'));
+    await start(tester);
+
+    await tester.tap(
+      find.descendant(of: find.byType(AppBar), matching: find.text('Modifier')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Terminé'), findsOneWidget);
+    expect(find.text('Ajouter une devise'), findsNothing);
+    await tester.tap(find.text('Retirer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Garder'), findsOneWidget, reason: 'struck, not gone');
+    expect(await repo.currencyCodes(), ['USD', 'EUR']);
+    await tester.tap(find.text('Garder'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Retirer'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Euro, EUR'), findsNothing);
+    expect(await repo.currencyCodes(), ['USD']);
+    expect(find.text('Ajouter une devise'), findsOneWidget);
+  });
+
+  testWidgets('a currency used by an account stays, and says why', (
+    tester,
+  ) async {
+    await repo.ensurePrimaryCurrency('US');
+    await AccountRepository(db).create(
+      name: 'Airtel',
+      type: AccountType.mobile,
+      opening: const Money(100, 'CDF'),
+      openingDate: now,
+    );
+    await repo.setRate('USD', 'CDF', RateValue.parse('2800'));
+    await start(tester);
+
+    await tester.tap(
+      find.descendant(of: find.byType(AppBar), matching: find.text('Modifier')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Gardée'), findsOneWidget);
+    expect(find.text('Retirer'), findsNothing);
+    expect(find.text('Utilisée par le compte Airtel'), findsOneWidget);
+  });
+
+  testWidgets('the rate sheet no longer removes the currency', (tester) async {
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('EUR');
+    await start(tester);
+
+    await tester.tap(find.text('Euro, EUR'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Retirer cette devise'), findsNothing);
   });
 }

@@ -3,9 +3,11 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -122,8 +124,8 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  /// Temporary entries to Réglages › Devises and › Sécurité until the
-  /// full Plus page.
+  /// Temporary entries to Comptes, Réglages › Devises and › Sécurité until
+  /// the full Plus page.
   Widget? _securityRow(BuildContext context) {
     final lock = KibuoLock.maybeControllerOf(context);
     final db = KibuoData.maybeOf(context);
@@ -137,6 +139,18 @@ class _AppShellState extends State<AppShell> {
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => const DesignSystemScreen(),
+              ),
+            ),
+          ),
+        if (db != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).accountsTitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => AccountsScreen(
+                  accounts: AccountRepository(db),
+                  currencies: CurrencyRepository(db),
+                ),
               ),
             ),
           ),
