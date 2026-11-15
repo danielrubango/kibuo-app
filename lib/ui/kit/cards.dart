@@ -1,0 +1,334 @@
+import 'package:flutter/material.dart';
+import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
+
+/// « Taux de conversion »: the small grey title above a card.
+class SectionTitle extends StatelessWidget {
+  const SectionTitle(this.text, {super.key});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(text, style: KibuoType.sectionTitle),
+    );
+  }
+}
+
+/// The grey explanation under a card.
+class HelpText extends StatelessWidget {
+  const HelpText(this.text, {super.key, this.color});
+
+  final String text;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(text, style: KibuoType.help.copyWith(color: color)),
+    );
+  }
+}
+
+/// A white card with the card corners.
+class KibuoCard extends StatelessWidget {
+  const KibuoCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    this.onTap,
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(padding: padding, child: child),
+      ),
+    );
+  }
+}
+
+/// The mint card that puts one value forward: « Devise principale · USD ».
+class FeaturedCard extends StatelessWidget {
+  const FeaturedCard({
+    super.key,
+    required this.label,
+    required this.value,
+    this.action,
+    this.onTap,
+  });
+
+  final String label;
+  final String value;
+  final String? action;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KibuoColors.mint,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: KibuoType.body.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontVariations: const [FontVariation.weight(500)],
+                      ),
+                    ),
+                    Text(value, style: KibuoType.highlight),
+                  ],
+                ),
+              ),
+              if (action != null) Text(action!, style: KibuoType.buttonSmall),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// One card per thing the user manages (a currency, an account): its name in
+/// bold, a line or two under it, and an action on the right.
+class ItemCard extends StatelessWidget {
+  const ItemCard({
+    super.key,
+    required this.title,
+    this.lines = const [],
+    this.action,
+    this.onTap,
+  });
+
+  final String title;
+
+  /// The first line in the body style, the next ones in grey.
+  final List<String> lines;
+  final String? action;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return KibuoCard(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: KibuoType.itemName),
+                for (var i = 0; i < lines.length; i++)
+                  Text(
+                    lines[i],
+                    style: i == 0
+                        ? KibuoType.body
+                        : KibuoType.help.copyWith(height: 1.4),
+                  ),
+              ],
+            ),
+          ),
+          if (action != null) ...[
+            const SizedBox(width: 12),
+            Text(
+              action!,
+              style: KibuoType.buttonSmall.copyWith(
+                fontSize: 14,
+                color: KibuoColors.accent,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A white card of settings rows, separated by thin lines.
+class SettingsCard extends StatelessWidget {
+  const SettingsCard({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0)
+              const Divider(
+                height: 1,
+                indent: 14,
+                endIndent: 14,
+                color: KibuoColors.track,
+              ),
+            children[i],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A settings row: label, its current value in grey, and ›.
+class SettingsRow extends StatelessWidget {
+  const SettingsRow({
+    super.key,
+    required this.label,
+    required this.onTap,
+    this.value,
+    this.danger = false,
+  });
+
+  final String label;
+  final String? value;
+  final VoidCallback onTap;
+  final bool danger;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: KibuoType.rowLabel.copyWith(
+                    color: danger ? KibuoColors.danger : null,
+                  ),
+                ),
+              ),
+              if (value != null) ...[
+                const SizedBox(width: 12),
+                Text(value!, style: KibuoType.caption.copyWith(fontSize: 13)),
+              ],
+              if (!danger)
+                const Padding(
+                  padding: EdgeInsets.only(left: 6),
+                  child: Icon(
+                    KibuoIcons.caretRight,
+                    size: 16,
+                    color: KibuoColors.inkMuted,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A settings row with a switch.
+class SettingsSwitch extends StatelessWidget {
+  const SettingsSwitch({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 4, 8, 4),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: KibuoType.rowLabel)),
+          Switch(value: value, onChanged: onChanged),
+        ],
+      ),
+    );
+  }
+}
+
+/// A row with a tinted icon on the left: the Plus page.
+class IconRow extends StatelessWidget {
+  const IconRow({
+    super.key,
+    required this.icon,
+    required this.tint,
+    required this.iconColor,
+    required this.label,
+    required this.onTap,
+    this.value,
+  });
+
+  final IconData icon;
+  final Color tint;
+  final Color iconColor;
+  final String label;
+  final String? value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: tint,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 18, color: iconColor),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(label, style: KibuoType.rowLabel)),
+            if (value != null)
+              Text(value!, style: KibuoType.caption.copyWith(fontSize: 13)),
+            const Padding(
+              padding: EdgeInsets.only(left: 6),
+              child: Icon(
+                KibuoIcons.caretRight,
+                size: 16,
+                color: KibuoColors.inkMuted,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

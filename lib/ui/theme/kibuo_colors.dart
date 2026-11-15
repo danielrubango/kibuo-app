@@ -42,4 +42,7 @@ abstract final class KibuoColors {
 
   // Meaning: late or over budget.
   static const danger = Color(0xFFB3321A);
+
+  // The veil behind a sheet: ink at 42 %, the page below stays readable.
+  static const scrim = Color(0x6B0E1320);
 }

@@ -1,10 +1,13 @@
 import 'dart:ui' show lerpDouble;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:kibuo/data/currency_repository.dart';
+
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -124,9 +127,19 @@ class _AppShellState extends State<AppShell> {
   Widget? _securityRow(BuildContext context) {
     final lock = KibuoLock.maybeControllerOf(context);
     final db = KibuoData.maybeOf(context);
-    if (lock == null && db == null) return null;
+    if (lock == null && db == null && !kDebugMode) return null;
     return SettingsCard(
       children: [
+        // Debug builds only: the design system, to review on a phone.
+        if (kDebugMode)
+          SettingsRow(
+            label: 'Système de design',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const DesignSystemScreen(),
+              ),
+            ),
+          ),
         if (db != null)
           SettingsRow(
             label: AppLocalizations.of(context).currenciesTitle,

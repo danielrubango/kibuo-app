@@ -15,7 +15,7 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
   });
 
-  test('titles and amounts use Space Grotesk, running text uses Inter', () {
+  test('titles and amounts use Plus Jakarta Sans, running text uses Inter', () {
     final text = KibuoTheme.textTheme();
 
     expect(text.displayLarge?.fontFamily, KibuoTheme.displayFont);

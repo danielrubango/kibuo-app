@@ -101,7 +101,7 @@ class _Cover extends StatelessWidget {
                   Text(
                     'Kibuo',
                     style: TextStyle(
-                      fontFamily: KibuoTheme.displayFont,
+                      fontFamily: KibuoTheme.brandFont,
                       fontVariations: [FontVariation.weight(700)],
                       fontSize: 28,
                       color: KibuoColors.ink,
