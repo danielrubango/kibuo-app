@@ -133,6 +133,7 @@ class CategoryRepository {
 
   /// One category, removed or not (old operations keep showing it).
   Future<CategoryInfo?> category(String id) async {
+    await _ensureProvided();
     final row = await (_db.select(
       _db.categories,
     )..where((c) => c.id.equals(id))).getSingleOrNull();

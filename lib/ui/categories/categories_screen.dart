@@ -4,6 +4,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/segmented_tabs.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -57,9 +58,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          _Tabs(
-            labels: (l.categoriesExpenses, l.categoriesIncome),
-            kind: _kind,
+          SegmentedTabs(
+            items: [
+              (CategoryKind.out, l.categoriesExpenses),
+              (CategoryKind.into, l.categoriesIncome),
+            ],
+            value: _kind,
             onPick: (kind) {
               setState(() {
                 _kind = kind;
@@ -139,62 +143,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         child: KibuoButton(label: l.categoriesAdd, onPressed: () => _form()),
-      ),
-    );
-  }
-}
-
-class _Tabs extends StatelessWidget {
-  const _Tabs({required this.labels, required this.kind, required this.onPick});
-
-  final (String, String) labels;
-  final CategoryKind kind;
-  final ValueChanged<CategoryKind> onPick;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget tab(String label, CategoryKind k) {
-      final on = kind == k;
-      return Expanded(
-        child: Semantics(
-          selected: on,
-          button: true,
-          child: Material(
-            color: on ? KibuoColors.ink : Colors.transparent,
-            borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-              onTap: () => onPick(k),
-              child: SizedBox(
-                height: KibuoTheme.heightTouch,
-                child: Center(
-                  child: Text(
-                    label,
-                    style: KibuoType.buttonSmall.copyWith(
-                      fontSize: 14,
-                      color: on ? KibuoColors.surface : KibuoColors.ink,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: KibuoColors.surface,
-        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-      ),
-      child: Row(
-        children: [
-          tab(labels.$1, CategoryKind.out),
-          const SizedBox(width: 4),
-          tab(labels.$2, CategoryKind.into),
-        ],
       ),
     );
   }

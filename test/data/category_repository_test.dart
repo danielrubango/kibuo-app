@@ -108,4 +108,8 @@ void main() {
     expect(await repo.categories(CategoryKind.into), isEmpty);
     expect(await repo.categories(CategoryKind.into), isEmpty);
   });
+
+  test('a provided category can be read before the lists are', () async {
+    expect((await repo.category('default-taxi'))!.key, 'taxi');
+  });
 }

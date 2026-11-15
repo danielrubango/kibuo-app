@@ -1,0 +1,1002 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
+import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/money/currency.dart';
+import 'package:kibuo/domain/money/exchange_rate.dart';
+import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/account_types.dart';
+import 'package:kibuo/ui/categories/category_labels.dart';
+import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/fields.dart';
+import 'package:kibuo/ui/kit/form_top_bar.dart';
+import 'package:kibuo/ui/kit/keypad.dart';
+import 'package:kibuo/ui/kit/segmented_tabs.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_flow.dart';
+import 'package:kibuo/ui/transactions/entry_sheets.dart';
+
+/// The repositories an entry needs.
+class EntryData {
+  const EntryData({
+    required this.accounts,
+    required this.categories,
+    required this.currencies,
+    required this.transactions,
+  });
+
+  final AccountRepository accounts;
+  final CategoryRepository categories;
+  final CurrencyRepository currencies;
+  final TransactionRepository transactions;
+}
+
+/// « Nouvelle dépense » / « Nouveau revenu » (canvas: ParcoursUSD to
+/// RevenuDecompte): the amount and the currency paid, the account, the
+/// category, the date, the fees and a note. With [editing], « Modifier la
+/// dépense »; with [initial] only, a copy to save as new. Pops the saved
+/// operation's id.
+class EntryScreen extends StatefulWidget {
+  const EntryScreen({
+    super.key,
+    required this.data,
+    required this.kind,
+    this.initial,
+    this.editing = false,
+    this.now,
+    this.accountId,
+  });
+
+  /// The account to start on (the one just created).
+  final String? accountId;
+
+  final EntryData data;
+  final EntryKind kind;
+  final TransactionInfo? initial;
+  final bool editing;
+  final DateTime Function()? now;
+
+  @override
+  State<EntryScreen> createState() => _EntryScreenState();
+}
+
+class _EntryScreenState extends State<EntryScreen> {
+  late EntryKind _kind = widget.initial?.kind ?? widget.kind;
+  List<AccountInfo> _accounts = const [];
+  List<CustomAccountType> _types = const [];
+  List<CategoryInfo> _categories = const [];
+  AccountInfo? _account;
+  CurrencyInfo? _accountCurrency;
+  CurrencyInfo? _paidCurrency;
+  CategoryInfo? _category;
+  ExchangeRate? _today;
+  String _typed = '';
+  String _fees = '';
+  bool _rateTyped = false;
+  String _rateText = '';
+  late DateTime _date;
+  final _note = TextEditingController();
+  bool _keypad = true;
+  bool _open = false;
+
+  DateTime _now() => (widget.now ?? DateTime.now)();
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initial;
+    _date = widget.editing && initial != null ? initial.date.toLocal() : _now();
+    _note.text = initial?.note ?? '';
+    _keypad = initial == null;
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    final data = widget.data;
+    final accounts = await data.accounts.accounts();
+    final types = await data.accounts.types();
+    final initial = widget.initial;
+    final account =
+        accounts
+            .where((a) => a.id == (initial?.accountId ?? widget.accountId))
+            .firstOrNull ??
+        (accounts.isEmpty ? null : accounts.first);
+    final categories = await data.categories.categories(_kind.category);
+    CategoryInfo? category;
+    if (initial != null) {
+      for (final c in categories) {
+        if (c.id == initial.categoryId) category = c;
+        for (final s in c.subs) {
+          if (s.id == initial.categoryId) category = s;
+        }
+      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _accounts = accounts;
+      _types = types;
+      _categories = categories;
+      _category = category;
+    });
+    await _setAccount(account, paid: initial?.paid.currency);
+    if (initial != null && mounted) {
+      final paid = await data.currencies.currency(initial.paid.currency);
+      setState(() {
+        _typed = typedFrom(initial.paid, paid);
+        _fees = initial.total.fees.minor == 0
+            ? ''
+            : typedFrom(initial.total.fees, _accountCurrency!);
+        _rateTyped = initial.rateTyped;
+        _rateText = initial.rateTyped
+            ? initial.rate!.value.toString().replaceAll('.', ',')
+            : '';
+      });
+    }
+  }
+
+  Future<void> _setAccount(AccountInfo? account, {String? paid}) async {
+    if (account == null) return;
+    final currencies = widget.data.currencies;
+    final accountCurrency = await currencies.currency(account.currency);
+    final paidCurrency = await currencies.currency(paid ?? account.currency);
+    if (!mounted) return;
+    setState(() {
+      _account = account;
+      _accountCurrency = accountCurrency;
+      _paidCurrency = paidCurrency;
+      _fees = '';
+    });
+    await _loadToday();
+  }
+
+  Future<void> _loadToday() async {
+    final account = _accountCurrency;
+    final paid = _paidCurrency;
+    if (account == null || paid == null || account.code == paid.code) {
+      setState(() => _today = null);
+      return;
+    }
+    final info = await widget.data.currencies.latestRate(
+      account.code,
+      paid.code,
+    );
+    final (base, quote) = rateDirection(main: account, other: paid);
+    if (mounted) {
+      setState(() {
+        _today = info?.rate.toward(base, quote);
+        if (_today == null) _rateTyped = true;
+      });
+    }
+  }
+
+  String get _lang => Localizations.localeOf(context).languageCode;
+
+  bool get _converts =>
+      _paidCurrency != null &&
+      _accountCurrency != null &&
+      _paidCurrency!.code != _accountCurrency!.code;
+
+  (String, String) get _direction =>
+      rateDirection(main: _accountCurrency!, other: _paidCurrency!);
+
+  ExchangeRate? get _rate {
+    if (!_converts) return null;
+    if (!_rateTyped) return _today;
+    final value = RateValue.tryParse(_rateText);
+    if (value == null) return null;
+    final (base, quote) = _direction;
+    return ExchangeRate(base: base, quote: quote, value: value);
+  }
+
+  Money? get _paid {
+    final c = _paidCurrency;
+    if (c == null) return null;
+    return typedMoney(_typed, c);
+  }
+
+  EntryTotal? get _total {
+    final paid = _paid;
+    final account = _accountCurrency;
+    if (paid == null || account == null) return null;
+    if (_converts && _rate == null) return null;
+    return entryTotal(
+      kind: _kind,
+      paid: paid,
+      account: account,
+      rate: _rate,
+      fees: _fees.isEmpty ? 0 : typedMoney(_fees, account).minor,
+    );
+  }
+
+  bool get _canSave =>
+      (_paid?.minor ?? 0) > 0 &&
+      _account != null &&
+      _category != null &&
+      _total != null;
+
+  String _money(Money m) => formatMoney(
+    m,
+    m.currency == _accountCurrency?.code
+        ? _accountCurrency!
+        : m.currency == _paidCurrency?.code
+        ? _paidCurrency!
+        : currencyOf(m.currency),
+    _lang,
+  );
+
+  Future<void> _switchKind(EntryKind kind) async {
+    if (kind == _kind) return;
+    final categories = await widget.data.categories.categories(kind.category);
+    if (!mounted) return;
+    setState(() {
+      _kind = kind;
+      _categories = categories;
+      _category = null;
+    });
+  }
+
+  Future<void> _chooseAccount() async {
+    final picked = await pickAccount(
+      context,
+      accounts: _accounts,
+      current: _account?.id,
+    );
+    if (picked != null) await _setAccount(picked);
+  }
+
+  Future<void> _choosePaidCurrency() async {
+    final account = _account;
+    final accountCurrency = _accountCurrency;
+    if (account == null || accountCurrency == null) return;
+    final mine = await widget.data.currencies.currencyCodes();
+    if (!mounted) return;
+    final code = await pickPaidCurrency(
+      context,
+      income: _kind == EntryKind.income,
+      accountName: account.name,
+      account: accountCurrency,
+      others: [
+        for (final c in mine)
+          if (c != accountCurrency.code) c,
+      ],
+      current: _paidCurrency?.code ?? accountCurrency.code,
+    );
+    if (code == null || code == _paidCurrency?.code) return;
+    final paid = await widget.data.currencies.currency(code);
+    setState(() {
+      _paidCurrency = paid;
+      _typed = '';
+      _rateTyped = false;
+      _rateText = '';
+    });
+    await _loadToday();
+  }
+
+  Future<void> _chooseCategory() async {
+    final picked = await pickCategory(
+      context,
+      categories: _categories,
+      current: _category?.id,
+    );
+    if (picked != null) setState(() => _category = picked);
+  }
+
+  Future<void> _chooseRate() async {
+    final paid = _paid;
+    if (paid == null) return;
+    final (base, quote) = _direction;
+    final choice = await pickEntryRate(
+      context,
+      income: _kind == EntryKind.income,
+      paid: _money(paid),
+      base: base,
+      quote: quote,
+      today: _today,
+      current: RateChoice(typed: _rateTyped, value: _rateText),
+    );
+    if (choice != null) {
+      setState(() {
+        _rateTyped = choice.typed;
+        _rateText = choice.value ?? '';
+      });
+    }
+  }
+
+  Future<void> _chooseFees() async {
+    final account = _accountCurrency;
+    if (account == null) return;
+    final fees = await pickFees(context, account: account, current: _fees);
+    if (fees != null) setState(() => _fees = fees == '0' ? '' : fees);
+  }
+
+  Future<void> _chooseDate() async {
+    final now = _now();
+    final day = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(2000),
+      lastDate: now,
+    );
+    if (day == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_date),
+    );
+    var picked = DateTime(
+      day.year,
+      day.month,
+      day.day,
+      time?.hour ?? _date.hour,
+      time?.minute ?? _date.minute,
+    );
+    // No operation in the future (PRODUCT: planned ones come later).
+    if (picked.isAfter(now)) picked = now;
+    setState(() => _date = picked);
+  }
+
+  Future<void> _save() async {
+    final paid = _paid!;
+    final repo = widget.data.transactions;
+    final fees = _fees.isEmpty ? 0 : typedMoney(_fees, _accountCurrency!).minor;
+    final initial = widget.initial;
+    final String id;
+    if (widget.editing && initial != null) {
+      id = initial.id;
+      await repo.update(
+        id,
+        kind: _kind,
+        accountId: _account!.id,
+        categoryId: _category!.id,
+        paid: paid,
+        rate: _rate,
+        rateTyped: _rateTyped,
+        fees: fees,
+        date: _date,
+        note: _note.text,
+      );
+    } else {
+      id = await repo.create(
+        kind: _kind,
+        accountId: _account!.id,
+        categoryId: _category!.id,
+        paid: paid,
+        rate: _rate,
+        rateTyped: _rateTyped,
+        fees: fees,
+        date: _date,
+        note: _note.text,
+      );
+    }
+    if (mounted) Navigator.of(context).pop(id);
+  }
+
+  /// « Supprimer cette dépense ? » (canvas DelConfirm): the operation as
+  /// saved, what deleting does to its account, then « Supprimer ».
+  Future<void> _confirmDelete() async {
+    final saved = widget.initial!;
+    final l = AppLocalizations.of(context);
+    final expense = saved.kind == EntryKind.expense;
+    final labels = await OperationLabels.of(context, widget.data, saved);
+    if (!mounted) return;
+    final amount = formatMoney(
+      saved.total.total,
+      currencyOf(saved.total.total.currency),
+      _lang,
+    );
+    final sure = await showKibuoSheet<bool>(
+      context,
+      title: expense ? l.entryDeleteExpenseTitle : l.entryDeleteIncomeTitle,
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: KibuoColors.surface,
+              borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+            ),
+            child: Row(
+              children: [
+                if (labels.category != null)
+                  CategoryTile(category: labels.category!, size: 32),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labels.categoryPath.split(' › ').last,
+                        style: KibuoType.rowLabel.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontVariations: const [FontVariation.weight(600)],
+                        ),
+                      ),
+                      Text(
+                        '${labels.account} · '
+                        '${operationWhen(context, saved.date, _now())}',
+                        style: KibuoType.caption,
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  signedTotal(context, saved),
+                  style: KibuoType.itemName.copyWith(
+                    color: expense ? KibuoColors.debtInk : KibuoColors.accent,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            expense
+                ? l.entryDeleteExpenseHelp(labels.account, amount)
+                : l.entryDeleteIncomeHelp(labels.account, amount),
+            style: KibuoType.help,
+          ),
+          const SizedBox(height: 16),
+          KibuoButton(
+            label: l.entryDeleteConfirm,
+            kind: ButtonKind.danger,
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+          const SizedBox(height: 8),
+          KibuoButton(
+            label: l.cancel,
+            kind: ButtonKind.secondary,
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+        ],
+      ),
+    );
+    if (!(sure ?? false)) return;
+    await widget.data.transactions.delete(saved.id);
+    // An empty id tells the caller the operation is gone.
+    if (mounted) Navigator.of(context).pop('');
+  }
+
+  String _dateText(AppLocalizations l) {
+    final now = _now();
+    final today = DateTime(now.year, now.month, now.day);
+    final day = DateTime(_date.year, _date.month, _date.day);
+    if (day == today) return l.entryToday;
+    if (day == today.subtract(const Duration(days: 1))) {
+      return l.entryYesterday;
+    }
+    final text = DateFormat.MMMMEEEEd(_lang).format(_date);
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final expense = _kind == EntryKind.expense;
+    final title = widget.editing
+        ? (expense ? l.entryEditExpense : l.entryEditIncome)
+        : (expense ? l.entryNewExpense : l.entryNewIncome);
+    final account = _account;
+    final total = _total;
+    final categoryText = _category == null
+        ? null
+        : _category!.parentId == null
+        ? categoryName(l, _category!)
+        : '${categoryName(l, _categories.firstWhere((c) => c.id == _category!.parentId))} › '
+              '${categoryName(l, _category!)}';
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            FormTopBar(title: title, cancel: l.cancel),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                children: [
+                  SegmentedTabs(
+                    items: [
+                      (EntryKind.expense, l.entryExpense),
+                      (EntryKind.income, l.entryIncome),
+                    ],
+                    value: _kind,
+                    onPick: _switchKind,
+                  ),
+                  const SizedBox(height: 12),
+                  _AmountCard(
+                    income: !expense,
+                    value: shownTyped(context, _typed),
+                    unit: _paidCurrency?.symbol ?? '',
+                    focused: _keypad,
+                    onTap: () => setState(() => _keypad = true),
+                    onUnitTap: _choosePaidCurrency,
+                    footLabel: expense ? l.entryTakenFrom : l.entryAddedTo,
+                    footValue: total == null ? '' : _money(total.total),
+                    open: _open,
+                    onToggle: () => setState(() => _open = !_open),
+                    lines: [
+                      if (_converts && _paid != null) ...[
+                        (
+                          expense ? l.entryPaid : l.entryReceived,
+                          _money(_paid!),
+                          null,
+                          null,
+                        ),
+                        (
+                          l.entryRateFor(currencyOf(_direction.$1).symbol),
+                          _rate == null
+                              ? l.entryChoose
+                              : formatRate(_rate!, _lang).split(' = ').last,
+                          _rateTyped
+                              ? l.entryRateTypedTag
+                              : l.entryRateTodayTag,
+                          _chooseRate,
+                        ),
+                        if (total != null)
+                          (l.entrySo, _money(total.converted), null, null),
+                      ],
+                      (
+                        l.entryFees,
+                        total == null || total.fees.minor == 0
+                            ? l.entryNone
+                            : '${expense ? '+' : '−'} ${_money(total.fees)}',
+                        null,
+                        _chooseFees,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _FieldsCard(
+                    children: [
+                      EntryField(
+                        icon: account == null
+                            ? KibuoIcons.wallet
+                            : AccountTypeLabels(l, _types).icon(account.type),
+                        label: l.entryAccount,
+                        value: account?.name,
+                        placeholder: l.entryChoose,
+                        trailing: account?.currency,
+                        onTap: _chooseAccount,
+                      ),
+                      EntryField(
+                        leading: _category == null
+                            ? null
+                            : CategoryTile(category: _category!, size: 32),
+                        icon: KibuoIcons.tag,
+                        label: l.entryCategory,
+                        value: categoryText,
+                        placeholder: l.entryChoose,
+                        onTap: _chooseCategory,
+                      ),
+                      EntryField(
+                        icon: KibuoIcons.calendarBlank,
+                        label: l.entryDate,
+                        value: _dateText(l),
+                        trailing: DateFormat.Hm(_lang).format(_date),
+                        onTap: _chooseDate,
+                      ),
+                      EntryField(
+                        icon: KibuoIcons.receipt,
+                        label: l.entryFees,
+                        value: total == null || total.fees.minor == 0
+                            ? null
+                            : _money(total.fees),
+                        placeholder: l.entryNone,
+                        onTap: _chooseFees,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _NoteCard(
+                    label: l.entryNote,
+                    hint: l.entryNoteHint,
+                    controller: _note,
+                    onFocus: () => setState(() => _keypad = false),
+                  ),
+                  if (widget.editing && widget.initial != null) ...[
+                    const SizedBox(height: 20),
+                    KibuoButton(
+                      label: widget.initial!.kind == EntryKind.expense
+                          ? l.entryDeleteExpense
+                          : l.entryDeleteIncome,
+                      kind: ButtonKind.danger,
+                      onPressed: _confirmDelete,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (_keypad)
+              KeypadPanel(
+                keypad: KibuoKeypad(
+                  onKey: (k) => setState(() {
+                    final c = _paidCurrency;
+                    if (c == null) return;
+                    _typed = typeKey(
+                      _typed,
+                      k,
+                      decimals: c.usesDecimals ? c.digits : 0,
+                    );
+                  }),
+                  onDelete: () => setState(() {
+                    if (_typed.isNotEmpty) {
+                      _typed = _typed.substring(0, _typed.length - 1);
+                    }
+                  }),
+                  allowDecimal: _paidCurrency?.usesDecimals ?? true,
+                  decimalSeparator: NumberFormat.decimalPattern(_lang)
+                      .symbols
+                      .DECIMAL_SEP,
+                ),
+                done: l.keypadDone,
+                onDone: () => setState(() => _keypad = false),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: KibuoButton(
+                  label: widget.editing ? l.entrySaveChanges : l.entrySave,
+                  onPressed: _canSave ? _save : null,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+extension on EntryKind {
+  CategoryKind get category =>
+      this == EntryKind.expense ? CategoryKind.out : CategoryKind.into;
+}
+
+/// The big amount, tinted by its meaning, and what it does to the account;
+/// touching that line unrolls the details (paid, rate, converted, fees).
+class _AmountCard extends StatelessWidget {
+  const _AmountCard({
+    required this.income,
+    required this.value,
+    required this.unit,
+    required this.focused,
+    required this.onTap,
+    required this.onUnitTap,
+    required this.footLabel,
+    required this.footValue,
+    required this.open,
+    required this.onToggle,
+    required this.lines,
+  });
+
+  final bool income;
+  final String value;
+  final String unit;
+  final bool focused;
+  final VoidCallback onTap;
+  final VoidCallback onUnitTap;
+  final String footLabel;
+  final String footValue;
+  final bool open;
+  final VoidCallback onToggle;
+
+  /// Label, value, tag, and what touching the line does.
+  final List<(String, String, String?, VoidCallback?)> lines;
+
+  @override
+  Widget build(BuildContext context) {
+    final tint = income ? KibuoColors.accentTint : KibuoColors.debtTint;
+    final edge = income
+        ? KibuoColors.accentTintStrong
+        : const Color(0xFFF2CFB3);
+    final ink = income ? KibuoColors.accent : KibuoColors.debtInk;
+    final sign = income ? '+' : '−';
+    return Container(
+      decoration: BoxDecoration(
+        color: tint,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+        border: Border.all(color: edge, width: 1.5),
+      ),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 12, 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '$sign${value.isEmpty ? '0' : value}',
+                              style: KibuoType.bigAmount.copyWith(
+                                color: value.isEmpty
+                                    ? KibuoColors.inkMuted
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (focused) const BlinkingCaret(height: 30),
+                      ],
+                    ),
+                  ),
+                  CurrencyPill(
+                    text: unit,
+                    onTap: onUnitTap,
+                    background: edge,
+                    foreground: ink,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Divider(height: 1, color: edge, indent: 14, endIndent: 14),
+          if (open)
+            for (final (label, text, tag, onLine) in lines)
+              _Line(label: label, value: text, tag: tag, onTap: onLine),
+          InkWell(
+            onTap: onToggle,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 12, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      footLabel,
+                      style: KibuoType.body.copyWith(
+                        fontWeight: open ? FontWeight.w700 : null,
+                        fontVariations: open
+                            ? const [FontVariation.weight(700)]
+                            : null,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    footValue,
+                    style: KibuoType.buttonSmall.copyWith(fontSize: 14),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    open ? KibuoIcons.caretUp : KibuoIcons.caretDown,
+                    size: 14,
+                    color: ink,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Line extends StatelessWidget {
+  const _Line({required this.label, required this.value, this.tag, this.onTap});
+
+  final String label;
+  final String value;
+  final String? tag;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 8, 12, 8),
+        child: Row(
+          children: [
+            Expanded(child: Text(label, style: KibuoType.body)),
+            if (tag != null) ...[
+              Text(
+                tag!,
+                style: KibuoType.caption.copyWith(
+                  color: KibuoColors.accent,
+                  fontWeight: FontWeight.w600,
+                  fontVariations: const [FontVariation.weight(600)],
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              value,
+              style: KibuoType.body.copyWith(
+                fontWeight: FontWeight.w600,
+                fontVariations: const [FontVariation.weight(600)],
+              ),
+            ),
+            if (onTap != null) ...[
+              const SizedBox(width: 4),
+              const Icon(KibuoIcons.caretRight, size: 14),
+            ] else
+              const SizedBox(width: 18),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FieldsCard extends StatelessWidget {
+  const _FieldsCard({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (final (i, child) in children.indexed) ...[
+            if (i > 0)
+              const Divider(
+                height: 1,
+                indent: 56,
+                endIndent: 14,
+                color: KibuoColors.background,
+              ),
+            child,
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A field of an operation (DIRECTION): an icon tile, the label in small
+/// above the value, the extra information on the right.
+class EntryField extends StatelessWidget {
+  const EntryField({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.value,
+    this.placeholder,
+    this.trailing,
+    this.leading,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final Widget? leading;
+  final String label;
+  final String? value;
+  final String? placeholder;
+  final String? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 9, 12, 9),
+        child: Row(
+          children: [
+            leading ??
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: KibuoColors.background,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, size: 18, color: KibuoColors.inkSecondary),
+                ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: KibuoType.caption),
+                  Text(
+                    value ?? placeholder ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: KibuoType.rowLabel.copyWith(
+                      fontWeight: value == null ? null : FontWeight.w600,
+                      fontVariations: value == null
+                          ? null
+                          : const [FontVariation.weight(600)],
+                      color: value == null ? KibuoColors.inkMuted : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (trailing != null)
+              Text(trailing!, style: KibuoType.caption.copyWith(fontSize: 13)),
+            if (onTap != null)
+              const Padding(
+                padding: EdgeInsets.only(left: 6),
+                child: Icon(
+                  KibuoIcons.caretRight,
+                  size: 16,
+                  color: KibuoColors.inkMuted,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NoteCard extends StatelessWidget {
+  const _NoteCard({
+    required this.label,
+    required this.hint,
+    required this.controller,
+    required this.onFocus,
+  });
+
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final VoidCallback onFocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 4),
+      decoration: BoxDecoration(
+        color: KibuoColors.surface,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                KibuoIcons.list,
+                size: 14,
+                color: KibuoColors.inkSecondary,
+              ),
+              const SizedBox(width: 6),
+              Text(label, style: KibuoType.caption),
+            ],
+          ),
+          TextField(
+            controller: controller,
+            onTap: onFocus,
+            minLines: 1,
+            maxLines: 5,
+            style: KibuoType.body.copyWith(fontSize: 15),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: KibuoType.body.copyWith(
+                fontSize: 15,
+                color: KibuoColors.inkMuted,
+              ),
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
