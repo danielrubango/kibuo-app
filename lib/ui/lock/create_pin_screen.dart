@@ -5,6 +5,7 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/pin_pad.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 
 /// Creates (or changes) the code: 4 to 6 digits then « Valider », typed
 /// again to confirm, then the fingerprint is offered when the phone has one.
@@ -179,7 +180,7 @@ class FingerprintOfferScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: const Icon(
-                  Icons.fingerprint,
+                  KibuoIcons.fingerprint,
                   size: 36,
                   color: KibuoColors.accent,
                 ),

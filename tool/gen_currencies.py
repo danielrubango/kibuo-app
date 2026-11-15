@@ -18,7 +18,6 @@ codes = sorted(c for c in current if c not in skip and fr.currencies.get(c) and 
 symbols = {'CDF':'FC','USD':'$','EUR':'€','XAF':'FCFA','XOF':'F CFA','RWF':'FRw','BIF':'FBu','UGX':'USh','KES':'Ksh','TZS':'TSh','ZMW':'K','AOA':'Kz','ZAR':'R','NGN':'₦','GHS':'GH₵','GBP':'£','CAD':'CA$','CHF':'CHF','CNY':'¥','JPY':'¥','AED':'AED','INR':'₹','MAD':'DH','EGP':'E£','ETB':'Br','MZN':'MT','MWK':'MK','SSP':'SSP','SDG':'SDG','XPF':'F CFP','HTG':'G','BRL':'R$','MGA':'Ar','DZD':'DA','TND':'DT'}
 # Fractional units not used in practice.
 no_decimals = {'CDF','XAF','XOF','TZS','MGA','XPF'}
-common = ['CDF','USD','EUR','XAF','XOF','RWF','BIF','UGX','KES','TZS','ZMW','AOA','ZAR','NGN','GHS','GBP','CAD','CHF','CNY','AED']
 def esc(s): return s.replace("\\","\\\\").replace("'","\\'").replace('$','\\$')
 def cap(s): return s[:1].upper()+s[1:]
 lines = []
@@ -44,12 +43,9 @@ const currencyCatalog = <CurrencyInfo>[
 %s
 ];
 
-/// The currencies most Kibuo users meet, shown first when choosing one.
-const commonCurrencies = <String>[%s];
-
 /// The main currency of each country (ISO 3166 code), to suggest the
 /// phone's own currency first.
 const countryCurrency = <String, String>{%s};
-''' % (__import__('babel').__version__, '\n'.join(lines), ', '.join("'%s'" % c for c in common), tl)
+''' % (__import__('babel').__version__, '\n'.join(lines), tl)
 open(out,'w').write(dart)
 print(len(codes), 'currencies,', len(terr), 'countries')

@@ -7,6 +7,7 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 
 /// Réglages › Sécurité: Verrouillage and Confidentialité. The recovery code
 /// row joins at its own step.
@@ -275,7 +276,10 @@ Future<AutoLockDelay?> showDelaySheet(
                             ),
                           ),
                           if (delay == current)
-                            const Icon(Icons.check, color: KibuoColors.accent),
+                            const Icon(
+                              KibuoIcons.check,
+                              color: KibuoColors.accent,
+                            ),
                         ],
                       ),
                     ),

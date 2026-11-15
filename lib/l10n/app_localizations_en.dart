@@ -426,6 +426,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencySearch => 'Search for a currency';
 
   @override
+  String get currencyYours => 'Your currencies';
+
+  @override
   String get currencyCommon => 'Most used';
 
   @override
@@ -438,10 +441,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rateSave => 'Save the rate';
 
   @override
-  String get rateSwap => 'Swap the rate’s direction';
-
-  @override
-  String get currencyDecimals => 'Uses decimals';
+  String get currenciesCents => 'Cents';
 
   @override
   String get currencyDecimalsHelp =>
@@ -453,12 +453,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String rateSheetTitle(String name) {
-    return 'Rate · $name';
+  String rateSheetTitle(String ofName) {
+    return '$ofName rate';
   }
 
   @override
   String rateBefore(String rate, String date) {
     return 'Before: $rate · $date';
   }
+
+  @override
+  String get currencySearchHint => 'Name or code';
+
+  @override
+  String get rateUnchanged => 'Unchanged';
 }

@@ -1231,30 +1231,6 @@ const currencyCatalog = <CurrencyInfo>[
   ),
 ];
 
-/// The currencies most Kibuo users meet, shown first when choosing one.
-const commonCurrencies = <String>[
-  'CDF',
-  'USD',
-  'EUR',
-  'XAF',
-  'XOF',
-  'RWF',
-  'BIF',
-  'UGX',
-  'KES',
-  'TZS',
-  'ZMW',
-  'AOA',
-  'ZAR',
-  'NGN',
-  'GHS',
-  'GBP',
-  'CAD',
-  'CHF',
-  'CNY',
-  'AED',
-];
-
 /// The main currency of each country (ISO 3166 code), to suggest the
 /// phone's own currency first.
 const countryCurrency = <String, String>{
