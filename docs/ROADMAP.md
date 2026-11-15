@@ -46,7 +46,7 @@ Rien n'est codé avant la fin de cette phase.
 
 - [x] Devises, devise principale et taux de conversion
 - [x] Comptes
-- [ ] Catégories et sous-catégories
+- [x] Catégories et sous-catégories
 - [ ] Dépenses et revenus
 - [ ] Transferts entre comptes, y compris entre devises
 - [ ] Saisie rapide, dont la bulle qui fait découvrir l'appui long sur le +

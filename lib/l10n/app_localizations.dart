@@ -1231,6 +1231,138 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Garder'**
   String get currencyKeep;
+
+  /// Categories: categoryName
+  ///
+  /// In fr, this message translates to:
+  /// **'{key, select, food{Repas} restaurant{Restaurant} market{Marché} transport{Transport} taxi{Taxi} motoTaxi{Moto-taxi} bus{Bus} fuel{Carburant} toll{Péage} groceries{Courses} housing{Logement} rent{Loyer} electricity{Électricité} water{Eau} communication{Communication} airtime{Crédit} internet{Internet} health{Santé} pharmacy{Pharmacie} school{École} family{Famille} outings{Sorties} contributions{Cotisations} otherExpense{Autres} salary{Salaire} business{Activité} sale{Vente} service{Prestation} giftReceived{Cadeau reçu} refund{Remboursement} otherIncome{Autres} other{}}'**
+  String categoryName(String key);
+
+  /// Categories: categoriesTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégories'**
+  String get categoriesTitle;
+
+  /// Categories: categoriesExpenses
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépenses'**
+  String get categoriesExpenses;
+
+  /// Categories: categoriesIncome
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenus'**
+  String get categoriesIncome;
+
+  /// Categories: categoriesSubCount
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 sous-catégorie} other{{count} sous-catégories}}'**
+  String categoriesSubCount(int count);
+
+  /// Categories: categoriesAddSub
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une sous-catégorie'**
+  String get categoriesAddSub;
+
+  /// Categories: categoriesAdd
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une catégorie'**
+  String get categoriesAdd;
+
+  /// Categories: categoryNewTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle catégorie'**
+  String get categoryNewTitle;
+
+  /// Categories: categoryNewSubTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle sous-catégorie'**
+  String get categoryNewSubTitle;
+
+  /// Categories: categoryEditTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la catégorie'**
+  String get categoryEditTitle;
+
+  /// Categories: categoryEditSubTitle
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la sous-catégorie'**
+  String get categoryEditSubTitle;
+
+  /// Categories: categoryIn
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans'**
+  String get categoryIn;
+
+  /// Categories: categoryNameLabel
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get categoryNameLabel;
+
+  /// Categories: categoryIcon
+  ///
+  /// In fr, this message translates to:
+  /// **'Icône'**
+  String get categoryIcon;
+
+  /// Categories: categoryCreate
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer la catégorie'**
+  String get categoryCreate;
+
+  /// Categories: categoryCreateSub
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer la sous-catégorie'**
+  String get categoryCreateSub;
+
+  /// Categories: categorySave
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get categorySave;
+
+  /// Categories: categoryRemove
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la catégorie'**
+  String get categoryRemove;
+
+  /// Categories: categoryRemoveSub
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la sous-catégorie'**
+  String get categoryRemoveSub;
+
+  /// Categories: categoryRemoveHelp
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle disparaît des choix ; ses opérations la gardent.'**
+  String get categoryRemoveHelp;
+
+  /// Categories: categoryRemoveSubsToo
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Sa sous-catégorie est retirée avec elle.} other{Ses {count} sous-catégories sont retirées avec elle.}}'**
+  String categoryRemoveSubsToo(int count);
+
+  /// Categories: categoryNameHint
+  ///
+  /// In fr, this message translates to:
+  /// **'Église, Moto-taxi…'**
+  String get categoryNameHint;
 }
 
 class _AppLocalizationsDelegate
