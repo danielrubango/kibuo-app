@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
@@ -331,6 +332,7 @@ void main() {
       categories: CategoryRepository(db),
       currencies: CurrencyRepository(db),
       transactions: TransactionRepository(db),
+      attachments: AttachmentRepository.withFiles(db, MemoryFiles()),
     );
     await data.currencies.ensurePrimaryCurrency('US');
     await data.currencies.addCurrency('CDF');
@@ -371,8 +373,28 @@ void main() {
       ),
     );
     await snap(tester, 'Operations');
+    for (final (name, kind) in [
+      ('Reçu taxi.pdf', AttachmentKind.pdf),
+      ('Facture.docx', AttachmentKind.file),
+    ]) {
+      await tester.runAsync(
+        () => data.attachments.add(
+          transactionId: id,
+          bytes: Uint8List(27000),
+          name: name,
+          kind: kind,
+        ),
+      );
+    }
     await show(tester, OperationDetailScreen(data: data, id: id));
     await snap(tester, 'OperationDetail');
+    await tester.scrollUntilVisible(find.text('Facture.docx'), 200);
+    await snap(tester, 'OperationDetailAttachments');
+    await tester.tap(find.text('Reçu taxi.pdf'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'AttachmentViewer');
+    tester.state<NavigatorState>(find.byType(Navigator).last).pop();
+    await tester.pumpAndSettle();
     await show(
       tester,
       EntryScreen(

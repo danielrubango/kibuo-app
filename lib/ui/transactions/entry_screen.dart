@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -20,8 +21,11 @@ import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/attachment_viewer.dart';
+import 'package:kibuo/ui/transactions/attachments_card.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
+import 'package:uuid/uuid.dart';
 
 /// The repositories an entry needs.
 class EntryData {
@@ -30,13 +34,34 @@ class EntryData {
     required this.categories,
     required this.currencies,
     required this.transactions,
+    required this.attachments,
+    this.picker = const DeviceAttachmentPicker(),
+    this.opener = const DeviceAttachmentOpener(),
   });
 
   final AccountRepository accounts;
   final CategoryRepository categories;
   final CurrencyRepository currencies;
   final TransactionRepository transactions;
+  final AttachmentRepository attachments;
+  final AttachmentPicker picker;
+  final AttachmentOpener opener;
 }
+
+/// Opens [item] in the viewer.
+Future<void> viewAttachment(
+  BuildContext context,
+  EntryData data,
+  AttachmentInfo item,
+) => Navigator.of(context).push(
+  MaterialPageRoute<void>(
+    builder: (_) => AttachmentViewer(
+      item: item,
+      read: data.attachments.read,
+      opener: data.opener,
+    ),
+  ),
+);
 
 /// « Nouvelle dépense » / « Nouveau revenu » (canvas: ParcoursUSD to
 /// RevenuDecompte): the amount and the currency paid, the account, the
@@ -86,6 +111,15 @@ class _EntryScreenState extends State<EntryScreen> {
   bool _keypad = true;
   bool _open = false;
 
+  // Attachments: added under a draft id until « Enregistrer » (PRODUCT);
+  // those of an edited operation are taken away only then too.
+  final _draft = 'draft-${const Uuid().v7()}';
+  List<AttachmentInfo> _attachments = const [];
+  final _drafts = <String>{};
+  final _leaving = <String>{};
+  final _chosen = <String>{};
+  String? _attachError;
+
   DateTime _now() => (widget.now ?? DateTime.now)();
 
   @override
@@ -131,6 +165,7 @@ class _EntryScreenState extends State<EntryScreen> {
       _categories = categories;
       _category = category;
     });
+    await _loadAttachments();
     await _setAccount(account, paid: initial?.paid.currency);
     if (initial != null && mounted) {
       final paid = await data.currencies.currency(initial.paid.currency);
@@ -145,6 +180,59 @@ class _EntryScreenState extends State<EntryScreen> {
             : '';
       });
     }
+  }
+
+  Future<void> _loadAttachments() async {
+    final repo = widget.data.attachments;
+    final initial = widget.initial;
+    final own = widget.editing && initial != null
+        ? await repo.list(initial.id)
+        : <AttachmentInfo>[];
+    final drafts = await repo.list(_draft);
+    if (!mounted) return;
+    setState(() {
+      _attachments = [
+        for (final a in own)
+          if (!_leaving.contains(a.id)) a,
+        ...drafts,
+      ];
+    });
+  }
+
+  Future<void> _addAttachment() async {
+    final l = AppLocalizations.of(context);
+    final source = await pickAttachmentSource(context);
+    if (source == null) return;
+    final picked = await widget.data.picker.pick(source);
+    if (picked == null || !mounted) return;
+    if (picked.bytes.length > AttachmentRepository.maxBytes) {
+      setState(() => _attachError = l.attachTooBig);
+      return;
+    }
+    final photos = _attachments
+        .where((a) => a.kind == AttachmentKind.photo)
+        .length;
+    final id = await widget.data.attachments.add(
+      transactionId: _draft,
+      bytes: picked.bytes,
+      name: picked.name ?? l.attachPhotoName(photos + 1),
+      kind: picked.kind,
+    );
+    _drafts.add(id);
+    setState(() => _attachError = null);
+    await _loadAttachments();
+  }
+
+  Future<void> _removeChosen() async {
+    for (final id in _chosen) {
+      if (_drafts.remove(id)) {
+        await widget.data.attachments.remove(id);
+      } else {
+        _leaving.add(id);
+      }
+    }
+    _chosen.clear();
+    await _loadAttachments();
   }
 
   Future<void> _setAccount(AccountInfo? account, {String? paid}) async {
@@ -380,6 +468,12 @@ class _EntryScreenState extends State<EntryScreen> {
         note: _note.text,
       );
     }
+    final attachments = widget.data.attachments;
+    final drafts = (await attachments.list(_draft)).map((a) => a.id).toList();
+    await attachments.attach(drafts, id);
+    for (final leaving in _leaving) {
+      await attachments.remove(leaving);
+    }
     if (mounted) Navigator.of(context).pop(id);
   }
 
@@ -598,6 +692,20 @@ class _EntryScreenState extends State<EntryScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
+                  AttachmentsCard(
+                    items: _attachments,
+                    preview: widget.data.attachments.read,
+                    selected: _chosen,
+                    onToggle: (id) => setState(
+                      () => _chosen.contains(id)
+                          ? _chosen.remove(id)
+                          : _chosen.add(id),
+                    ),
+                    onAdd: _addAttachment,
+                    onOpen: (a) => viewAttachment(context, widget.data, a),
+                    error: _attachError,
+                  ),
+                  const SizedBox(height: 12),
                   _NoteCard(
                     label: l.entryNote,
                     hint: l.entryNoteHint,
@@ -617,7 +725,21 @@ class _EntryScreenState extends State<EntryScreen> {
                 ],
               ),
             ),
-            if (_keypad)
+            if (_chosen.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: AttachmentSelectionBar(
+                  count: _chosen.length,
+                  onClear: () => setState(_chosen.clear),
+                  onRemove: _removeChosen,
+                  onView: () => viewAttachment(
+                    context,
+                    widget.data,
+                    _attachments.firstWhere((a) => a.id == _chosen.single),
+                  ),
+                ),
+              )
+            else if (_keypad)
               KeypadPanel(
                 keypad: KibuoKeypad(
                   onKey: (k) => setState(() {

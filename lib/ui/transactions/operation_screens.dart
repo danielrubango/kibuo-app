@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -9,6 +10,7 @@ import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/attachments_card.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 
@@ -187,6 +189,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
   TransactionInfo? _t;
   OperationLabels? _labels;
   bool _noteOpen = false;
+  List<AttachmentInfo> _attachments = const [];
 
   @override
   void initState() {
@@ -203,10 +206,12 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
       return;
     }
     final labels = await OperationLabels.of(context, widget.data, t);
+    final attachments = await widget.data.attachments.list(t.id);
     if (mounted) {
       setState(() {
         _t = t;
         _labels = labels;
+        _attachments = attachments;
       });
     }
   }
@@ -367,6 +372,16 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
               ],
             ),
           ),
+          // Only looked at here; added and removed from « Modifier »
+          // (owner, 15 November 2026).
+          if (_attachments.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            AttachmentsCard(
+              items: _attachments,
+              preview: widget.data.attachments.read,
+              onOpen: (a) => viewAttachment(context, widget.data, a),
+            ),
+          ],
           if (t.note != null) ...[
             const SizedBox(height: 12),
             Container(
