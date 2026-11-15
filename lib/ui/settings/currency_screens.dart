@@ -5,8 +5,8 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/device_country.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/money/money_format.dart';
-import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -128,8 +128,9 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
                 _Section(l.currenciesMain),
                 SettingsCard(
                   children: [
-                    ConstrainedBox(
+                    Container(
                       constraints: const BoxConstraints(minHeight: 56),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Row(
                         children: [
                           Expanded(
@@ -156,7 +157,10 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
                         InkWell(
                           onTap: () => _editRate(row),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                             child: Row(
                               children: [
                                 Expanded(
@@ -206,7 +210,7 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  SettingsHelp(l.currenciesRatesHelp),
+                  HelpText(l.currenciesRatesHelp),
                 ],
                 const SizedBox(height: 20),
                 OutlinedButton.icon(
@@ -572,10 +576,10 @@ class _RateSheetState extends State<_RateSheet> {
                 value: _decimals,
                 onChanged: (on) => setState(() => _decimals = on),
               ),
-              SettingsHelp(l.currencyDecimalsHelp),
+              HelpText(l.currencyDecimalsHelp),
             ],
             const SizedBox(height: 8),
-            SettingsHelp(l.rateKeepsOld),
+            HelpText(l.rateKeepsOld),
             const SizedBox(height: 12),
             FilledButton(
               onPressed: _value == null ? null : _save,

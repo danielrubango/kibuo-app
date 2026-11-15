@@ -30,6 +30,18 @@ abstract final class KibuoIcons {
   static const target = IconData(0xe47c, fontFamily: _regular);
 
   static const caretRight = IconData(0xe13a, fontFamily: _regular);
+  static const caretLeft = IconData(0xe138, fontFamily: _regular);
+  static const caretDown = IconData(0xe136, fontFamily: _regular);
+  static const arrowLeft = IconData(0xe058, fontFamily: _regular);
+  static const check = IconData(0xe182, fontFamily: _regular);
+  static const copy = IconData(0xe1ca, fontFamily: _regular);
+  static const key = IconData(0xe2d6, fontFamily: _regular);
+  static const fingerprint = IconData(0xe23e, fontFamily: _regular);
+  static const magnifyingGlass = IconData(0xe30c, fontFamily: _regular);
+  static const wallet = IconData(0xe68a, fontFamily: _regular);
+  static const bank = IconData(0xe0b4, fontFamily: _regular);
+  static const deviceMobile = IconData(0xe1e0, fontFamily: _regular);
+  static const piggyBank = IconData(0xea04, fontFamily: _regular);
   static const lockKey = IconData(0xe2fe, fontFamily: _regular);
   static const x = IconData(0xe4f6, fontFamily: _regular);
   static const xBold = IconData(0xe4f6, fontFamily: _bold);

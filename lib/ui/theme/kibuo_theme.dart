@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 
-/// Builds the app theme from the validated design direction.
+/// Builds the app theme from the design system (canvas page « Système de
+/// design »).
 abstract final class KibuoTheme {
-  static const displayFont = 'SpaceGrotesk';
+  /// Titles, amounts and keypad digits.
+  static const displayFont = 'PlusJakartaSans';
+
+  /// Everything else.
   static const textFont = 'Inter';
 
-  /// Corner radii used across the mockups.
-  static const radiusCard = 18.0;
+  /// Only the name « Kibuo » next to the logo.
+  static const brandFont = 'SpaceGrotesk';
+
+  // Corner radii, each with its role.
+  static const radiusPill = 12.0;
   static const radiusTile = 14.0;
-  static const radiusSheet = 24.0;
+  static const radiusField = 16.0;
+  static const radiusCard = 18.0;
+  static const radiusFeatured = 22.0;
+  static const radiusSheet = 26.0;
+
+  // Heights.
+  static const heightTouch = 44.0;
+  static const heightSecondary = 48.0;
+  static const heightKey = 50.0;
+  static const heightField = 52.0;
+  static const heightPrimary = 54.0;
+
+  /// Side margins of every screen.
+  static const screenMargin = 16.0;
 
   static ThemeData light() {
     const scheme = ColorScheme(
@@ -31,15 +52,13 @@ abstract final class KibuoTheme {
       surfaceContainerHighest: KibuoColors.fill,
     );
 
-    final text = textTheme();
-
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: KibuoColors.background,
       canvasColor: KibuoColors.background,
       fontFamily: textFont,
-      textTheme: text,
+      textTheme: textTheme(),
       splashFactory: InkSparkle.splashFactory,
       appBarTheme: AppBarTheme(
         backgroundColor: KibuoColors.background,
@@ -47,7 +66,12 @@ abstract final class KibuoTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        titleTextStyle: text.headlineSmall,
+        titleSpacing: 4,
+        titleTextStyle: KibuoType.screenTitle,
+      ),
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (_) => const Icon(KibuoIcons.caretLeft),
+        closeButtonIconBuilder: (_) => const Icon(KibuoIcons.x),
       ),
       cardTheme: const CardThemeData(
         color: KibuoColors.surface,
@@ -64,24 +88,26 @@ abstract final class KibuoTheme {
           foregroundColor: KibuoColors.ink,
           disabledBackgroundColor: KibuoColors.fill,
           disabledForegroundColor: KibuoColors.inkMuted,
-          minimumSize: const Size.fromHeight(52),
-          textStyle: text.labelLarge,
+          minimumSize: const Size.fromHeight(heightPrimary),
+          textStyle: KibuoType.button,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(radiusTile)),
+            borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
           ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: KibuoColors.accent,
-          textStyle: text.labelLarge,
+          textStyle: KibuoType.buttonSmall,
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: KibuoColors.background,
         surfaceTintColor: Colors.transparent,
+        modalBarrierColor: KibuoColors.scrim,
         showDragHandle: true,
-        dragHandleColor: KibuoColors.lineStrong,
+        dragHandleColor: KibuoColors.line,
+        dragHandleSize: Size(40, 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(radiusSheet),
@@ -97,6 +123,11 @@ abstract final class KibuoTheme {
         ),
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: KibuoColors.accent,
+        selectionColor: KibuoColors.accentTintStrong,
+        selectionHandleColor: KibuoColors.accent,
+      ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: KibuoColors.accent,
         linearTrackColor: KibuoColors.track,
@@ -109,66 +140,78 @@ abstract final class KibuoTheme {
     );
   }
 
-  /// Space Grotesk for titles and amounts, Inter for everything else.
+  /// Material's text roles, mapped onto the design system's.
   static TextTheme textTheme() {
     return TextTheme(
-      // Big amounts (available money, budget left).
-      displayLarge: _display(34, height: 42 / 34),
-      displayMedium: _display(30),
-      // Screen titles.
-      headlineLarge: _display(24),
-      headlineMedium: _display(22),
-      headlineSmall: _display(20),
-      // Card titles and amounts in lists.
-      titleLarge: _display(17),
-      titleMedium: _text(16, FontWeight.w600),
-      titleSmall: _text(15, FontWeight.w600),
-      // Running text.
-      bodyLarge: _text(15, FontWeight.w500),
-      bodyMedium: _text(13, FontWeight.w400, color: KibuoColors.inkSecondary),
-      bodySmall: _text(12, FontWeight.w400, color: KibuoColors.inkSecondary),
-      // Buttons, chips, small labels.
-      labelLarge: _text(15, FontWeight.w600),
-      labelMedium: _text(12, FontWeight.w600),
-      labelSmall: _text(
-        11,
-        FontWeight.w600,
-        color: KibuoColors.inkSecondary,
-        letterSpacing: 0.4,
-      ),
+      displayLarge: KibuoType.bigAmount,
+      displayMedium: KibuoType.highlight,
+      displaySmall: KibuoType.enteredValue,
+      headlineLarge: KibuoType.tabTitle,
+      headlineMedium: KibuoType.screenTitle,
+      headlineSmall: KibuoType.sheetTitle,
+      titleLarge: KibuoType.cardTitle,
+      titleMedium: KibuoType.itemName,
+      titleSmall: KibuoType.rowLabel,
+      bodyLarge: KibuoType.rowLabel,
+      bodyMedium: KibuoType.body,
+      bodySmall: KibuoType.caption,
+      labelLarge: KibuoType.buttonSmall,
+      labelMedium: KibuoType.sectionTitle,
+      labelSmall: KibuoType.caption,
     );
   }
+}
 
-  static TextStyle _display(double size, {double? height}) => _style(
-    displayFont,
-    size,
-    FontWeight.w700,
-    KibuoColors.ink,
-    height: height,
+/// One text style per role of the design system, and no other.
+abstract final class KibuoType {
+  static final tabTitle = _display(24);
+  static final screenTitle = _display(22);
+  static final sheetTitle = _display(20);
+  static final bigAmount = _display(34);
+  static final highlight = _display(28);
+  static final enteredValue = _display(26);
+  static final cardTitle = _display(17);
+  static final key = _display(22, weight: 500);
+
+  static final itemName = _text(16, 600);
+  static final rowLabel = _text(15, 500);
+  static final body = _text(14, 400);
+  static final sectionTitle = _text(13, 600, color: KibuoColors.inkSecondary);
+  static final help = _text(
+    13,
+    400,
+    color: KibuoColors.inkSecondary,
+    height: 18 / 13,
+  );
+  static final caption = _text(12, 400, color: KibuoColors.inkSecondary);
+  static final button = _text(16, 600);
+  static final buttonSmall = _text(15, 600);
+
+  // Both fonts are variable: the weight axis is set explicitly.
+  static TextStyle _display(double size, {int weight = 700}) => TextStyle(
+    fontFamily: KibuoTheme.displayFont,
+    fontSize: size,
+    fontWeight: FontWeight.values[weight ~/ 100 - 1],
+    fontVariations: [FontVariation.weight(weight.toDouble())],
+    color: KibuoColors.ink,
   );
 
+  // Inter also gets its optical size, as browsers give it, so its spacing
+  // matches the mock-ups.
   static TextStyle _text(
     double size,
-    FontWeight weight, {
+    int weight, {
     Color color = KibuoColors.ink,
-    double? letterSpacing,
-  }) => _style(textFont, size, weight, color, letterSpacing: letterSpacing);
-
-  // Both fonts are variable: the weight axis must be set explicitly.
-  static TextStyle _style(
-    String family,
-    double size,
-    FontWeight weight,
-    Color color, {
     double? height,
-    double? letterSpacing,
   }) => TextStyle(
-    fontFamily: family,
+    fontFamily: KibuoTheme.textFont,
     fontSize: size,
-    fontWeight: weight,
-    fontVariations: [FontVariation.weight(weight.value.toDouble())],
+    fontWeight: FontWeight.values[weight ~/ 100 - 1],
+    fontVariations: [
+      FontVariation.weight(weight.toDouble()),
+      FontVariation('opsz', size.clamp(14, 32).toDouble()),
+    ],
     color: color,
     height: height,
-    letterSpacing: letterSpacing,
   );
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Réglages › Sécurité: Verrouillage and Confidentialité. The recovery code
 /// row joins at its own step.
@@ -61,7 +61,7 @@ class SecurityScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          SettingsHelp(l.securityFooter),
+          HelpText(l.securityFooter),
         ],
       ),
     );
@@ -159,7 +159,7 @@ class LockSettingsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          SettingsHelp(l.lockShuffleHelp),
+          HelpText(l.lockShuffleHelp),
           if (lock.hasPin) ...[
             const SizedBox(height: 20),
             SettingsCard(
@@ -176,7 +176,7 @@ class LockSettingsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            SettingsHelp(l.lockRemoveHelp),
+            HelpText(l.lockRemoveHelp),
           ],
         ],
       ),
@@ -221,7 +221,7 @@ class PrivacyScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          SettingsHelp(l.privacyHelp),
+          HelpText(l.privacyHelp),
         ],
       ),
     );
@@ -287,126 +287,4 @@ Future<AutoLockDelay?> showDelaySheet(
       ),
     ),
   );
-}
-
-/// A white card of settings rows, as on the Réglages mock-ups.
-class SettingsCard extends StatelessWidget {
-  const SettingsCard({super.key, required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      decoration: BoxDecoration(
-        color: KibuoColors.surface,
-        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-      ),
-      child: Column(
-        children: [
-          for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) const Divider(height: 1, color: KibuoColors.background),
-            children[i],
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class SettingsRow extends StatelessWidget {
-  const SettingsRow({
-    super.key,
-    required this.label,
-    required this.onTap,
-    this.value,
-    this.danger = false,
-  });
-
-  final String label;
-  final String? value;
-  final VoidCallback onTap;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    return InkWell(
-      onTap: onTap,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 56),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: text.bodyLarge?.copyWith(
-                  color: danger ? KibuoColors.danger : KibuoColors.ink,
-                ),
-              ),
-            ),
-            if (value != null)
-              Text(
-                value!,
-                style: text.bodyMedium?.copyWith(
-                  color: KibuoColors.inkSecondary,
-                ),
-              ),
-            if (!danger)
-              const Padding(
-                padding: EdgeInsets.only(left: 6),
-                child: Icon(Icons.chevron_right, color: KibuoColors.inkMuted),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsSwitch extends StatelessWidget {
-  const SettingsSwitch({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 56),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
-          ),
-          Switch(value: value, onChanged: onChanged),
-        ],
-      ),
-    );
-  }
-}
-
-class SettingsHelp extends StatelessWidget {
-  const SettingsHelp(this.text, {super.key});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodySmall
-            ?.copyWith(color: KibuoColors.inkSecondary),
-      ),
-    );
-  }
 }

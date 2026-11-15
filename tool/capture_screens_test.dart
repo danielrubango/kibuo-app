@@ -1,0 +1,255 @@
+// Draws the built screens at 390 × 844, with the real fonts, to compare them
+// with the validated mock-ups of the design canvas. Not part of the checks.
+//
+//   flutter test --update-goldens tool/capture_screens_test.dart
+//
+// Images land in tool/screens_out/ (ignored by git).
+import 'dart:io';
+
+import 'package:drift/drift.dart' show driftRuntimeOptions;
+import 'package:drift/native.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/key_vault.dart';
+import 'package:kibuo/domain/money/exchange_rate.dart';
+import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/kit/design_system_screen.dart';
+import 'package:kibuo/ui/lock/create_pin_screen.dart';
+import 'package:kibuo/ui/lock/lock_controller.dart';
+import 'package:kibuo/ui/lock/recovery_screens.dart';
+import 'package:kibuo/ui/lock/unlock_screen.dart';
+import 'package:kibuo/ui/settings/currency_screens.dart';
+import 'package:kibuo/ui/settings/security_screens.dart';
+import 'package:kibuo/ui/start/data_gate.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
+
+class _Vault implements KeyVault {
+  final values = <String, String>{};
+  @override
+  Future<String?> read(String name) async => values[name];
+  @override
+  Future<void> write(String name, String value) async => values[name] = value;
+  @override
+  Future<void> delete(String name) async => values.remove(name);
+  @override
+  Future<void> deleteAll() async => values.clear();
+}
+
+class _Bio implements Biometrics {
+  @override
+  Future<bool> available() async => true;
+  @override
+  Future<bool> authenticate(String reason) async => false;
+}
+
+class _Privacy implements PrivacyPlatform {
+  @override
+  Future<bool> canHidePreview() async => true;
+  @override
+  Future<void> apply({
+    required bool allowScreenshots,
+    required bool hideInRecents,
+    required bool androidCopy,
+  }) async {}
+}
+
+class _Recovery implements Recovery {
+  @override
+  Future<DateTime?> createdAt() async => DateTime(2026, 11, 15);
+  @override
+  Future<String> createCode() async => 'KB7Q4M2X9TPAH3WD';
+  @override
+  Future<bool> check(String typed) async => false;
+}
+
+Future<void> _loadFonts() async {
+  Future<void> load(String family, List<String> files) async {
+    final loader = FontLoader(family);
+    for (final f in files) {
+      loader.addFont(
+        File(f).readAsBytes().then((b) => ByteData.view(b.buffer)),
+      );
+    }
+    await loader.load();
+  }
+
+  await load('Inter', ['assets/fonts/Inter.ttf']);
+  await load('PlusJakartaSans', ['assets/fonts/PlusJakartaSans.ttf']);
+  await load('SpaceGrotesk', ['assets/fonts/SpaceGrotesk.ttf']);
+  await load('PhosphorRegular', ['assets/icons/Phosphor.ttf']);
+  await load('PhosphorBold', ['assets/icons/Phosphor-Bold.ttf']);
+  await load('PhosphorFill', ['assets/icons/Phosphor-Fill.ttf']);
+  final sdk = File(Platform.resolvedExecutable).parent.parent.parent.parent;
+  await load('MaterialIcons', [
+    '${sdk.path}/artifacts/material_fonts/MaterialIcons-Regular.otf',
+  ]);
+}
+
+void main() {
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+  setUpAll(_loadFonts);
+
+  Future<void> show(WidgetTester tester, Widget home) async {
+    tester.view.physicalSize = const Size(780, 1688);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    tester.platformDispatcher.localesTestValue = const [Locale('fr', 'US')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('kibuo/device'),
+      (call) async => 'US',
+    );
+    // A new key per screen, so no sheet or route is left over from the last.
+    await tester.pumpWidget(
+      MaterialApp(
+        key: UniqueKey(),
+        debugShowCheckedModeBanner: false,
+        theme: KibuoTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: appLanguages,
+        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+        home: home,
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  // The green caret blinks forever: past a field, wait instead of settling.
+  Future<void> snap(
+    WidgetTester tester,
+    String name, {
+    bool settle = true,
+  }) async {
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('screens_out/$name.png'),
+    );
+  }
+
+  Future<LockController> lock({bool pin = true}) async {
+    final c = LockController(
+      vault: _Vault(),
+      biometrics: _Bio(),
+      privacy: _Privacy(),
+      recovery: _Recovery(),
+    );
+    if (pin) await c.pins.setPin('2468');
+    await c.load();
+    await c.updateSettings(c.settings.copyWith(fingerprint: true));
+    return c;
+  }
+
+  Future<void> type(WidgetTester tester, String digits) async {
+    for (final d in digits.split('')) {
+      await tester.tap(find.text(d).last);
+      await tester.pump();
+    }
+  }
+
+  testWidgets('Design system', (tester) async {
+    await show(tester, const DesignSystemScreen());
+    await snap(tester, 'DesignSystem1');
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -2400));
+    await snap(tester, 'DesignSystem2', settle: false);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -1400));
+    await snap(tester, 'DesignSystem3', settle: false);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -1200));
+    await snap(tester, 'DesignSystem4', settle: false);
+  });
+
+  testWidgets('Devises, then the rate sheet', (tester) async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+    addTearDown(db.close);
+    var now = DateTime.utc(2026, 11, 3, 9);
+    final repo = CurrencyRepository(db, now: () => now);
+    await repo.ensurePrimaryCurrency('US');
+    await repo.addCurrency('CDF');
+    await repo.setRate('USD', 'CDF', RateValue.parse('2800'));
+    await repo.addCurrency('EUR');
+    await repo.setRate('USD', 'EUR', RateValue.parse('0.92'));
+    now = DateTime.utc(2026, 11, 15, 9);
+    await show(tester, CurrenciesScreen(repository: repo));
+    await snap(tester, 'Devises');
+
+    await tester.tap(find.text('Franc congolais, CDF'));
+    await tester.pumpAndSettle();
+    await type(tester, '2850');
+    await snap(tester, 'TauxReglages');
+  });
+
+  testWidgets('Currency picker', (tester) async {
+    await show(
+      tester,
+      const CurrencyPickerScreen(
+        title: 'Votre devise principale',
+        help:
+            'Elle sert au suivi et aux rapports. Chaque compte gardera sa '
+            'propre devise.',
+        country: 'CD',
+      ),
+    );
+    await snap(tester, 'Lancement2');
+  });
+
+  testWidgets('Security screens', (tester) async {
+    final c = await lock();
+    await show(tester, SecurityScreen(lock: c));
+    await snap(tester, 'Securite');
+    await show(tester, LockSettingsScreen(lock: c));
+    await snap(tester, 'DelaiB');
+    await tester.tap(find.text('Verrouiller après'));
+    await snap(tester, 'DelaiB-feuille');
+    await show(tester, PrivacyScreen(lock: c));
+    await snap(tester, 'SecuConfid');
+    await show(tester, RecoverySettingsScreen(lock: c));
+    await snap(tester, 'RecupReglage');
+  });
+
+  testWidgets('Code screens', (tester) async {
+    final c = await lock();
+    await show(
+      tester,
+      KibuoLock(
+        controller: c,
+        eraseAll: () async {},
+        child: UnlockScreen(controller: c, onUnlocked: () {}),
+      ),
+    );
+    await type(tester, '2');
+    await snap(tester, 'VerrouC2');
+    await tester.tap(find.text('Code oublié ?'));
+    await snap(tester, 'CodeOublie');
+
+    final fresh = await lock(pin: false);
+    await show(tester, CreatePinScreen(controller: fresh));
+    await type(tester, '1357');
+    await snap(tester, 'PinCreaC2');
+    await show(tester, FingerprintOfferScreen(controller: fresh));
+    await snap(tester, 'PinEmpreinte');
+  });
+
+  testWidgets('Recovery screens', (tester) async {
+    await show(tester, const RecoveryShowScreen(code: 'KB7Q4M2X9TPAH3WD'));
+    await snap(tester, 'CodeRecup');
+    await show(
+      tester,
+      const RecoveryProofScreen(code: 'KB7Q4M2X9TPAH3WD', group: 3),
+    );
+    await tester.enterText(find.byType(TextField), '9TP');
+    await snap(tester, 'RecupPreuve');
+    await show(tester, RecoveryEntryScreen(onCode: (_) async => false));
+    await tester.enterText(find.byType(TextField).first, 'KB7Q4M2X9TPAH3W');
+    await snap(tester, 'RecupSaisie');
+    await show(tester, UnreadableScreen(onStartOver: () {}, onRecover: () {}));
+    await snap(tester, 'RecupIllisible');
+  });
+}

@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/domain/lock/recovery_code.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
-import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -529,7 +529,7 @@ class RecoverySettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             if (created == null) ...[
-              SettingsHelp(l.recoveryCreateHelp),
+              HelpText(l.recoveryCreateHelp),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => _newCode(context),
@@ -585,7 +585,7 @@ class RecoverySettingsScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              SettingsHelp(l.recoveryNewHelp),
+              HelpText(l.recoveryNewHelp),
               const SizedBox(height: 20),
               SettingsCard(
                 children: [
@@ -598,7 +598,7 @@ class RecoverySettingsScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              SettingsHelp(l.recoveryAndroidCopyHelp),
+              HelpText(l.recoveryAndroidCopyHelp),
             ],
           ],
         ),
