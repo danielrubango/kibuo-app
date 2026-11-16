@@ -184,14 +184,19 @@ class _AppShellState extends State<AppShell> {
         if (db != null)
           SettingsRow(
             label: AppLocalizations.of(context).accountsTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => AccountsScreen(
-                  accounts: AccountRepository(db),
-                  currencies: CurrencyRepository(db),
-                ),
-              ),
-            ),
+            // A corrected balance adds an operation: the list follows.
+            onTap: () => Navigator.of(context)
+                .push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => AccountsScreen(
+                      accounts: AccountRepository(db),
+                      currencies: CurrencyRepository(db),
+                      categories: CategoryRepository(db),
+                      transactions: TransactionRepository(db),
+                    ),
+                  ),
+                )
+                .then((_) => _saved.value++),
           ),
         if (db != null)
           SettingsRow(

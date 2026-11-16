@@ -682,6 +682,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'giftReceived': 'Cadeau reçu',
       'refund': 'Remboursement',
       'otherIncome': 'Autres',
+      'adjustExpense': 'Régularisation',
+      'adjustIncome': 'Régularisation',
       'other': '',
     });
     return '$_temp0';
@@ -1177,4 +1179,35 @@ class AppLocalizationsFr extends AppLocalizations {
   String overdraftWouldGo(String account, String amount) {
     return '$account passerait à $amount';
   }
+
+  @override
+  String get accountCurrentBalance => 'Solde actuel';
+
+  @override
+  String accountCurrentHelp(String balance) {
+    return 'Dans Kibuo aujourd’hui : $balance. Tapez ce que contient vraiment le compte.';
+  }
+
+  @override
+  String adjustTitle(String account) {
+    return 'Corriger le solde de $account ?';
+  }
+
+  @override
+  String get adjustInKibuo => 'Dans Kibuo';
+
+  @override
+  String get adjustReal => 'Solde réel';
+
+  @override
+  String get adjustHelp =>
+      'La différence est ajoutée comme une opération, que vous pourrez modifier ensuite.';
+
+  @override
+  String adjustNote(String before, String after) {
+    return 'Solde corrigé : $before → $after';
+  }
+
+  @override
+  String get adjustAdd => 'Ajouter la régularisation';
 }

@@ -390,6 +390,8 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
               accounts: widget.data.accounts,
               currencies: widget.data.currencies,
               account: refusal!.account,
+              categories: widget.data.categories,
+              transactions: widget.data.transactions,
             ),
           ),
         );

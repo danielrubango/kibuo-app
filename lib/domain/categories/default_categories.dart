@@ -62,3 +62,12 @@ const defaultIncome = [
   DefaultCategory('refund', 'arrowCounterClockwise'),
   DefaultCategory('otherIncome', 'dotsThreeCircle'),
 ];
+
+/// « Régularisation », last of each list (validated 16 November 2026): the
+/// difference when the user types an account's real balance.
+const adjustmentExpense = DefaultCategory('adjustExpense', 'arrowsDownUp');
+const adjustmentIncome = DefaultCategory('adjustIncome', 'arrowsDownUp');
+
+/// Its fixed id, like every provided category's.
+String adjustmentCategoryId(CategoryKind kind) =>
+    'default-${(kind == CategoryKind.out ? adjustmentExpense : adjustmentIncome).key}';
