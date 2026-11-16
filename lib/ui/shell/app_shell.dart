@@ -274,6 +274,7 @@ class _AppShellState extends State<AppShell> {
     final kind = switch (choice) {
       AddChoice.expense => EntryKind.expense,
       AddChoice.income => EntryKind.income,
+      AddChoice.transfer => EntryKind.transfer,
       _ => null,
     };
     if (data != null && kind != null) {
