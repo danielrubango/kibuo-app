@@ -12,6 +12,7 @@ import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
+import 'generated/schema_v7.dart' as v7;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -201,4 +202,59 @@ void main() {
       },
     );
   });
+
+  test(
+    'version 6 to 7 keeps the operations, makes room for transfers',
+    () async {
+      const taxi = v6.TransactionsData(
+        id: 'tx-1',
+        version: 80,
+        deviceId: 'phone-1',
+        deleted: 0,
+        kind: 'out',
+        accountId: 'acc-1',
+        categoryId: 'default-taxi',
+        amount: 500,
+        currency: 'USD',
+        rateTyped: 0,
+        converted: 500,
+        fees: 0,
+        date: 1794700000,
+      );
+
+      await verifier.testWithDataIntegrity(
+        oldVersion: 6,
+        newVersion: 7,
+        createOld: v6.DatabaseAtV6.new,
+        createNew: v7.DatabaseAtV7.new,
+        openTestedDatabase: _open,
+        createItems: (batch, oldDb) => batch.insert(oldDb.transactions, taxi),
+        validateItems: (newDb) async {
+          final kept = (await newDb.select(newDb.transactions).get()).single;
+          expect(kept.categoryId, 'default-taxi');
+          expect(kept.toAccountId, equals(null));
+          // A transfer has no category and a receiving account.
+          await newDb
+              .into(newDb.transactions)
+              .insert(
+                const v7.TransactionsData(
+                  id: 'tx-2',
+                  version: 81,
+                  deviceId: 'phone-1',
+                  deleted: 0,
+                  kind: 'move',
+                  accountId: 'acc-1',
+                  toAccountId: 'acc-2',
+                  amount: 5000,
+                  currency: 'USD',
+                  rateTyped: 0,
+                  converted: 5000,
+                  fees: 0,
+                  date: 1794700000,
+                ),
+              );
+        },
+      );
+    },
+  );
 }

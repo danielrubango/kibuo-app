@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('fr'),
   ];
 
+  /// Transfer: its title, after the receiving account
+  ///
+  /// In fr, this message translates to:
+  /// **'Vers {account}'**
+  String transferTitle(String account);
+
   /// Bottom bar tab: the home screen.
   ///
   /// In fr, this message translates to:
@@ -1873,6 +1879,137 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Photo {n}'**
   String attachPhotoName(int n);
+
+  /// Entry: the transfer tab
+  ///
+  /// In fr, this message translates to:
+  /// **'Transfert'**
+  String get entryTransfer;
+
+  /// Entry: title
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau transfert'**
+  String get entryNewTransfer;
+
+  /// Entry: title
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le transfert'**
+  String get entryEditTransfer;
+
+  /// Transfer: the sending account
+  ///
+  /// In fr, this message translates to:
+  /// **'De'**
+  String get transferFrom;
+
+  /// Transfer: the receiving account
+  ///
+  /// In fr, this message translates to:
+  /// **'Vers'**
+  String get transferTo;
+
+  /// Transfer: account sheet help
+  ///
+  /// In fr, this message translates to:
+  /// **'Vers quel compte ?'**
+  String get transferToQuestion;
+
+  /// Transfer: amount sent
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyé'**
+  String get transferSent;
+
+  /// Transfer: what reaches the account
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrive sur {account}'**
+  String transferArrives(String account);
+
+  /// Transfer: total taken from the sender
+  ///
+  /// In fr, this message translates to:
+  /// **'Retiré de {account}'**
+  String transferTakenFrom(String account);
+
+  /// Transfer: saved sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'Transfert enregistré'**
+  String get transferSaved;
+
+  /// Transfer: saved sheet line
+  ///
+  /// In fr, this message translates to:
+  /// **'{from} vers {to} · {when}'**
+  String transferSavedSub(String from, String to, String when);
+
+  /// Transfer: saved sheet action
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau transfert'**
+  String get transferAnother;
+
+  /// Transfer: under its title in the detail
+  ///
+  /// In fr, this message translates to:
+  /// **'Transfert'**
+  String get transferKind;
+
+  /// Transfer detail: sending account label
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis'**
+  String get transferDepuis;
+
+  /// Transfer detail: chip when converted
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} arrivés · {rate}'**
+  String transferArrivedChip(String amount, String rate);
+
+  /// Transfer: no account yet
+  ///
+  /// In fr, this message translates to:
+  /// **'Un transfert déplace de l’argent entre deux de vos comptes : votre poche, votre mobile money, votre banque. Créez le premier, puis un deuxième.'**
+  String get transferFirstAccountText;
+
+  /// Transfer: one account only
+  ///
+  /// In fr, this message translates to:
+  /// **'D’abord, un deuxième compte'**
+  String get transferSecondTitle;
+
+  /// Transfer: one account only
+  ///
+  /// In fr, this message translates to:
+  /// **'Un transfert déplace de l’argent entre deux de vos comptes. Créez-en un deuxième, puis notez votre transfert.'**
+  String get transferSecondText;
+
+  /// Transfer: one account only
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get transferSecondAction;
+
+  /// Delete sheet title
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce transfert ?'**
+  String get entryDeleteTransferTitle;
+
+  /// Delete sheet help
+  ///
+  /// In fr, this message translates to:
+  /// **'Il disparaît de la liste : {from} reprend {withdrawn} et {to} perd {arrived}.'**
+  String entryDeleteTransferHelp(
+    String from,
+    String withdrawn,
+    String to,
+    String arrived,
+  );
 }
 
 class _AppLocalizationsDelegate

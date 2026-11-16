@@ -323,7 +323,10 @@ void main() {
     expect(find.text('Dupliquer'), findsOneWidget);
   });
 
-  Future<void> host(WidgetTester tester) async {
+  Future<void> host(
+    WidgetTester tester, {
+    EntryKind kind = EntryKind.expense,
+  }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.reset);
@@ -339,8 +342,7 @@ void main() {
           builder: (context) => Scaffold(
             body: Center(
               child: TextButton(
-                onPressed: () =>
-                    runEntry(context, data, kind: EntryKind.expense),
+                onPressed: () => runEntry(context, data, kind: kind),
                 child: const Text('ouvrir'),
               ),
             ),
@@ -600,5 +602,140 @@ void main() {
     await tester.pumpAndSettle();
     expect(opener.opened, ['Reçu']);
     expect((await data.attachments.list(id)).single.name, 'Reçu');
+  });
+
+  group('transfers', () {
+    Future<Map<String, Money>> balances() async => {
+      for (final a in await data.accounts.accounts()) a.name: a.balance,
+    };
+
+    Future<void> addAccount(String name, String currency) async {
+      await data.currencies.addCurrency(currency);
+      await data.accounts.create(
+        name: name,
+        type: AccountType.savings,
+        opening: Money(0, currency),
+        openingDate: DateTime.utc(2026, 11, 1),
+      );
+    }
+
+    testWidgets('with one account only, a sheet asks for a second', (
+      tester,
+    ) async {
+      await host(tester, kind: EntryKind.transfer);
+
+      expect(find.text('D’abord, un deuxième compte'), findsOneWidget);
+      expect(find.text('Nouveau transfert'), findsNothing);
+      await tester.tap(find.text('Créer un compte'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'Épargne');
+      await tester.tap(find.text('Créer le compte'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Nouveau transfert'), findsOneWidget);
+    });
+
+    testWidgets('between two accounts in dollars', (tester) async {
+      await addAccount('Épargne', 'USD');
+      await start(tester, kind: EntryKind.transfer);
+      expect(find.text('Nouveau transfert'), findsOneWidget);
+      expect(find.text('Catégorie'), findsNothing, reason: 'no category');
+
+      await type(tester, '5 0');
+      await tester.tap(find.text('Terminé'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+      expect(
+        await data.transactions.all(),
+        isEmpty,
+        reason: '« Vers » is not chosen for you',
+      );
+
+      await tester.tap(find.text('Vers'));
+      await tester.pumpAndSettle();
+      expect(find.text('Vers quel compte ?'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(BottomSheet),
+          matching: find.text('M-Pesa'),
+        ),
+        findsNothing,
+        reason: 'not to the account it leaves',
+      );
+      await tester.tap(find.text('Épargne'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+
+      final b = await balances();
+      expect(b['M-Pesa'], const Money(7000, 'USD'));
+      expect(b['Épargne'], const Money(5000, 'USD'));
+      expect((await data.transactions.all()).single.kind, EntryKind.transfer);
+    });
+
+    testWidgets('to francs, at today’s rate, with fees', (tester) async {
+      await addAccount('Portefeuille', 'CDF');
+      await data.currencies.setRate('USD', 'CDF', RateValue.parse('2800'));
+      await start(tester, kind: EntryKind.transfer);
+
+      await type(tester, '5 0');
+      await tester.tap(find.text('Terminé'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Vers'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Portefeuille'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.textContaining('Retiré de M-Pesa'));
+      await tester.pumpAndSettle();
+      expect(find.text('Arrive sur Portefeuille'), findsOneWidget);
+      expect(textPlain('140 000 FC'), findsWidgets);
+
+      await tester.tap(find.text('Frais').last);
+      await tester.pumpAndSettle();
+      await type(tester, '1');
+      await tester.tap(find.text('Terminé').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+
+      final b = await balances();
+      expect(b['M-Pesa'], const Money(6900, 'USD'), reason: '120 − 50 − 1');
+      expect(b['Portefeuille'], const Money(14000000, 'CDF'));
+    });
+
+    testWidgets('the detail: « Vers », both accounts, then deleting', (
+      tester,
+    ) async {
+      await addAccount('Épargne', 'USD');
+      final from = (await data.accounts.accounts()).first.id;
+      final to = (await data.accounts.accounts()).last.id;
+      final id = await data.transactions.createTransfer(
+        fromId: from,
+        toId: to,
+        sent: const Money(5000, 'USD'),
+        fees: 0,
+        date: now,
+      );
+      await openDetail(tester, id);
+
+      expect(find.text('Vers Épargne'), findsOneWidget);
+      expect(find.text('Transfert'), findsOneWidget);
+      expect(find.text('Depuis'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Supprimer l’opération'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('Supprimer l’opération'));
+      await tester.pumpAndSettle();
+      expect(find.text('Supprimer ce transfert ?'), findsOneWidget);
+      await tester.tap(find.text('Supprimer'));
+      await tester.pumpAndSettle();
+
+      final b = await balances();
+      expect(b['M-Pesa'], const Money(12000, 'USD'));
+      expect(b['Épargne'], const Money(0, 'USD'));
+    });
   });
 }

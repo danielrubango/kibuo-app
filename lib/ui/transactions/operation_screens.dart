@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
+import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
-import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -111,8 +111,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
                 ),
                 child: Row(
                   children: [
-                    if (labels.category != null)
-                      CategoryTile(category: labels.category!, size: 36),
+                    OperationTile(kind: t.kind, labels: labels, size: 36),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -136,9 +135,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
                     Text(
                       signedTotal(context, t),
                       style: KibuoType.cardTitle.copyWith(
-                        color: t.kind == EntryKind.expense
-                            ? KibuoColors.debtInk
-                            : KibuoColors.accent,
+                        color: kindColors(t.kind).ink,
                       ),
                     ),
                   ],
@@ -234,7 +231,6 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     final saved = _t!;
     final lang = Localizations.localeOf(context).languageCode;
     final l = AppLocalizations.of(context);
-    final expense = saved.kind == EntryKind.expense;
     final labels = await OperationLabels.of(context, widget.data, saved);
     if (!mounted) return;
     final amount = formatMoney(
@@ -244,7 +240,11 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     );
     final sure = await showKibuoSheet<bool>(
       context,
-      title: expense ? l.entryDeleteExpenseTitle : l.entryDeleteIncomeTitle,
+      title: switch (saved.kind) {
+        EntryKind.expense => l.entryDeleteExpenseTitle,
+        EntryKind.income => l.entryDeleteIncomeTitle,
+        EntryKind.transfer => l.entryDeleteTransferTitle,
+      },
       builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -256,8 +256,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
             ),
             child: Row(
               children: [
-                if (labels.category != null)
-                  CategoryTile(category: labels.category!, size: 32),
+                OperationTile(kind: saved.kind, labels: labels, size: 32),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -281,19 +280,30 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                 Text(
                   signedTotal(context, saved),
                   style: KibuoType.itemName.copyWith(
-                    color: expense ? KibuoColors.debtInk : KibuoColors.accent,
+                    color: kindColors(saved.kind).ink,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            expense
-                ? l.entryDeleteExpenseHelp(labels.account, amount)
-                : l.entryDeleteIncomeHelp(labels.account, amount),
-            style: KibuoType.help,
-          ),
+          Text(switch (saved.kind) {
+            EntryKind.expense => l.entryDeleteExpenseHelp(
+              labels.account,
+              amount,
+            ),
+            EntryKind.income => l.entryDeleteIncomeHelp(labels.account, amount),
+            EntryKind.transfer => l.entryDeleteTransferHelp(
+              labels.account,
+              amount,
+              labels.toAccount ?? '',
+              formatMoney(
+                saved.arrived!,
+                currencyOf(saved.arrived!.currency),
+                lang,
+              ),
+            ),
+          }, style: KibuoType.help),
           const SizedBox(height: 16),
           KibuoButton(
             label: l.entryDeleteConfirm,
@@ -322,8 +332,9 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
       return const Scaffold(body: SizedBox.shrink());
     }
     final expense = t.kind == EntryKind.expense;
-    final tint = expense ? KibuoColors.debtTint : KibuoColors.accentTint;
-    final edge = expense ? KibuoColors.debtEdge : KibuoColors.accentTintStrong;
+    final transfer = t.kind == EntryKind.transfer;
+    final (:tint, :edge, :ink) = kindColors(t.kind);
+    String money(Money m) => formatMoney(m, currencyOf(m.currency), lang);
     final date = t.date.toLocal();
     final dateText = DateFormat.yMMMMEEEEd(lang).format(date);
     return Scaffold(
@@ -348,8 +359,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
               children: [
                 Row(
                   children: [
-                    if (labels.category != null)
-                      CategoryTile(category: labels.category!, size: 44),
+                    OperationTile(kind: t.kind, labels: labels, size: 44),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -359,14 +369,11 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                             labels.categoryPath.split(' › ').last,
                             style: KibuoType.cardTitle,
                           ),
-                          Text(
-                            expense ? l.entryExpense : l.entryIncome,
-                            style: KibuoType.caption.copyWith(
-                              color: expense
-                                  ? KibuoColors.debtInk
-                                  : KibuoColors.accent,
-                            ),
-                          ),
+                          Text(switch (t.kind) {
+                            EntryKind.expense => l.entryExpense,
+                            EntryKind.income => l.entryIncome,
+                            EntryKind.transfer => l.transferKind,
+                          }, style: KibuoType.caption.copyWith(color: ink)),
                         ],
                       ),
                     ),
@@ -374,6 +381,17 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(signedTotal(context, t), style: KibuoType.bigAmount),
+                // « Depuis M-Pesa → Vers Épargne » (canvas
+                // OperationCarteTransfert).
+                if (transfer) ...[
+                  const SizedBox(height: 12),
+                  _TransferRoute(
+                    from: labels.account,
+                    to: labels.toAccount ?? '',
+                    background: edge.withValues(alpha: 0.35),
+                    l: l,
+                  ),
+                ],
                 if (t.rate != null) ...[
                   const SizedBox(height: 8),
                   Container(
@@ -394,14 +412,17 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            (expense ? l.entryPaidChip : l.entryReceivedChip)(
-                              formatMoney(
-                                t.paid,
-                                currencyOf(t.paid.currency),
-                                lang,
-                              ),
-                              formatRate(t.rate!, lang),
-                            ),
+                            transfer
+                                ? l.transferArrivedChip(
+                                    money(t.arrived!),
+                                    formatRate(t.rate!, lang),
+                                  )
+                                : (expense
+                                      ? l.entryPaidChip
+                                      : l.entryReceivedChip)(
+                                    money(t.paid),
+                                    formatRate(t.rate!, lang),
+                                  ),
                             style: KibuoType.caption.copyWith(
                               color: KibuoColors.ink,
                             ),
@@ -421,17 +442,20 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
-                EntryField(
-                  icon: KibuoIcons.wallet,
-                  label: l.entryAccount,
-                  value: labels.account,
-                  trailing: labels.accountCurrency,
-                ),
-                EntryField(
-                  icon: KibuoIcons.tag,
-                  label: l.entryCategory,
-                  value: labels.categoryPath,
-                ),
+                // A transfer's accounts are in its card.
+                if (!transfer) ...[
+                  EntryField(
+                    icon: KibuoIcons.wallet,
+                    label: l.entryAccount,
+                    value: labels.account,
+                    trailing: labels.accountCurrency,
+                  ),
+                  EntryField(
+                    icon: KibuoIcons.tag,
+                    label: l.entryCategory,
+                    value: labels.categoryPath,
+                  ),
+                ],
                 EntryField(
                   icon: KibuoIcons.calendarBlank,
                   label: l.entryDate,
@@ -508,6 +532,66 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
               onPressed: _confirmDelete,
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// « Depuis M-Pesa → Vers Épargne », in a band of the card.
+class _TransferRoute extends StatelessWidget {
+  const _TransferRoute({
+    required this.from,
+    required this.to,
+    required this.background,
+    required this.l,
+  });
+
+  final String from;
+  final String to;
+  final Color background;
+  final AppLocalizations l;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget side(String label, String name) => Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: KibuoType.caption.copyWith(color: KibuoColors.projectInk),
+          ),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: KibuoType.body.copyWith(
+              fontWeight: FontWeight.w600,
+              fontVariations: const [FontVariation.weight(600)],
+            ),
+          ),
+        ],
+      ),
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+      ),
+      child: Row(
+        children: [
+          side(l.transferDepuis, from),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Icon(
+              KibuoIcons.arrowRight,
+              size: 16,
+              color: KibuoColors.projectInk,
+            ),
+          ),
+          side(l.transferTo, to),
         ],
       ),
     );

@@ -149,6 +149,7 @@ Future<AccountInfo?> pickAccount(
   BuildContext context, {
   required List<AccountInfo> accounts,
   String? current,
+  String? question,
 }) {
   final l = AppLocalizations.of(context);
   return showKibuoSheet<AccountInfo>(
@@ -156,15 +157,25 @@ Future<AccountInfo?> pickAccount(
     title: l.entryAccount,
     builder: (context) => accounts.isEmpty
         ? Text(l.entryNoAccount, style: KibuoType.body)
-        : _choiceCard([
-            for (final a in accounts)
-              RadioLine(
-                label: a.name,
-                help: a.currency,
-                on: a.id == current,
-                onTap: () => Navigator.of(context).pop(a),
-              ),
-          ]),
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // « Vers quel compte ? » for a transfer (canvas TransfertVers).
+              if (question != null) ...[
+                Text(question, style: KibuoType.help),
+                const SizedBox(height: 12),
+              ],
+              _choiceCard([
+                for (final a in accounts)
+                  RadioLine(
+                    label: a.name,
+                    help: a.currency,
+                    on: a.id == current,
+                    onTap: () => Navigator.of(context).pop(a),
+                  ),
+              ]),
+            ],
+          ),
   );
 }
 
@@ -225,6 +236,7 @@ Future<RateChoice?> pickEntryRate(
   required String quote,
   required ExchangeRate? today,
   required RateChoice current,
+  String? paidLabel,
 }) {
   final l = AppLocalizations.of(context);
   return showKibuoSheet<RateChoice>(
@@ -232,6 +244,7 @@ Future<RateChoice?> pickEntryRate(
     title: l.entryRateTitle,
     builder: (_) => _RateSheet(
       income: income,
+      paidLabel: paidLabel,
       paid: paid,
       base: base,
       quote: quote,
@@ -251,9 +264,13 @@ class _RateSheet extends StatefulWidget {
     required this.today,
     required this.current,
     required this.l,
+    this.paidLabel,
   });
 
   final bool income;
+
+  /// « Envoyé » for a transfer, instead of « Payé » or « Reçu ».
+  final String? paidLabel;
   final String paid;
   final String base;
   final String quote;
@@ -286,7 +303,8 @@ class _RateSheetState extends State<_RateSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.income ? l.entryReceived : l.entryPaid,
+                widget.paidLabel ??
+                    (widget.income ? l.entryReceived : l.entryPaid),
                 style: KibuoType.caption,
               ),
               Text(widget.paid, style: KibuoType.cardTitle),
