@@ -738,4 +738,83 @@ void main() {
       expect(b['Épargne'], const Money(0, 'USD'));
     });
   });
+
+  group('overdraft', () {
+    testWidgets('above what is left, a red line and no save', (tester) async {
+      await start(tester);
+      await type(tester, '1 5 0');
+      await tester.tap(find.text('Terminé'));
+      await tester.pumpAndSettle();
+      await chooseTaxi(tester);
+
+      expect(textPlain('120,00 \$ disponibles sur M-Pesa'), findsOneWidget);
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+      expect(await data.transactions.all(), isEmpty);
+    });
+
+    testWidgets('« Autoriser » opens the account, then it saves', (
+      tester,
+    ) async {
+      await start(tester);
+      await type(tester, '1 5 0');
+      await tester.tap(find.text('Terminé'));
+      await tester.pumpAndSettle();
+      await chooseTaxi(tester);
+
+      await tester.tap(find.text('Autoriser'));
+      await tester.pumpAndSettle();
+      expect(find.text('Modifier le compte'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Autoriser le découvert'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.byType(Switch));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('disponibles sur'), findsNothing);
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+      final m = (await data.accounts.accounts()).single;
+      expect(m.balance, const Money(-3000, 'USD'));
+      expect(m.overdraft.unlimited, isTrue, reason: 'no limit typed');
+    });
+
+    testWidgets('deleting an income the balance needs is refused', (
+      tester,
+    ) async {
+      final mpesa = (await data.accounts.accounts()).single.id;
+      final salary = await data.transactions.create(
+        kind: EntryKind.income,
+        accountId: mpesa,
+        categoryId: 'default-salary',
+        paid: const Money(9000, 'USD'),
+        fees: 0,
+        date: now,
+      );
+      await data.transactions.create(
+        kind: EntryKind.expense,
+        accountId: mpesa,
+        categoryId: 'default-taxi',
+        paid: const Money(17000, 'USD'),
+        fees: 0,
+        date: now,
+      );
+      await openDetail(tester, salary);
+      await tester.scrollUntilVisible(
+        find.text('Supprimer l’opération'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('Supprimer l’opération'));
+      await tester.pumpAndSettle();
+
+      expect(textPlain('M-Pesa passerait à −50,00 \$'), findsOneWidget);
+      expect(find.text('Supprimer'), findsNothing);
+      expect(find.text('Autoriser le découvert'), findsOneWidget);
+    });
+  });
 }

@@ -79,6 +79,14 @@ class Accounts extends Table with SyncColumns {
   /// Out of lists and totals; its transactions stay.
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
 
+  /// Whether the balance may go below zero (GLOSSARY: Découvert).
+  BoolColumn get overdraftAllowed =>
+      boolean().withDefault(const Constant(false))();
+
+  /// How far below zero, in the currency's smallest unit; null or 0 for no
+  /// limit. Kept while [overdraftAllowed] is off.
+  IntColumn get overdraftLimit => integer().nullable()();
+
   /// Order in the lists: one more than the last account at creation.
   IntColumn get position => integer()();
 }
@@ -190,7 +198,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -222,6 +230,10 @@ class KibuoDatabase extends _$KibuoDatabase {
             newColumns: [schema.transactions.toAccountId],
           ),
         );
+      },
+      from7To8: (m, schema) async {
+        await m.addColumn(schema.accounts, schema.accounts.overdraftAllowed);
+        await m.addColumn(schema.accounts, schema.accounts.overdraftLimit);
       },
     ),
     beforeOpen: (details) async {

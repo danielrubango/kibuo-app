@@ -2010,6 +2010,78 @@ abstract class AppLocalizations {
     String to,
     String arrived,
   );
+
+  /// Account form: section label
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvert'**
+  String get overdraftLabel;
+
+  /// Account form: switch
+  ///
+  /// In fr, this message translates to:
+  /// **'Autoriser le découvert'**
+  String get overdraftAllow;
+
+  /// Account form: switch help
+  ///
+  /// In fr, this message translates to:
+  /// **'Le solde peut descendre sous zéro'**
+  String get overdraftAllowHelp;
+
+  /// Account form: limit field
+  ///
+  /// In fr, this message translates to:
+  /// **'Jusqu’à'**
+  String get overdraftUpTo;
+
+  /// Account form: limit help
+  ///
+  /// In fr, this message translates to:
+  /// **'Vide ou 0 : sans limite.'**
+  String get overdraftNoLimitHelp;
+
+  /// Account form: limit placeholder
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans limite'**
+  String get overdraftNoLimit;
+
+  /// Account form: overdraft off while below zero
+  ///
+  /// In fr, this message translates to:
+  /// **'{account} est à {balance} : aucune sortie ne passera tant qu’il ne sera pas remonté. Les entrées restent possibles.'**
+  String overdraftBelowZero(String account, String balance);
+
+  /// Accounts list caption
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvert jusqu’à {amount}'**
+  String overdraftCaptionUpTo(String amount);
+
+  /// Accounts list caption
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvert sans limite'**
+  String get overdraftCaptionNoLimit;
+
+  /// Entry refused: what may still leave
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} disponibles sur {account}'**
+  String overdraftAvailable(String amount, String account);
+
+  /// Entry refused: opens the account form
+  ///
+  /// In fr, this message translates to:
+  /// **'Autoriser'**
+  String get overdraftAuthorize;
+
+  /// Delete refused
+  ///
+  /// In fr, this message translates to:
+  /// **'{account} passerait à {amount}'**
+  String overdraftWouldGo(String account, String amount);
 }
 
 class _AppLocalizationsDelegate

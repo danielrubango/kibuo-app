@@ -5,6 +5,7 @@ import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -14,6 +15,7 @@ import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/overdraft_check.dart';
 
 /// The Opérations tab until « Liste et recherche »: a simple list by day,
 /// provisional (validated 15 November 2026). Touching a line opens it.
@@ -232,13 +234,22 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     final lang = Localizations.localeOf(context).languageCode;
     final l = AppLocalizations.of(context);
     final labels = await OperationLabels.of(context, widget.data, saved);
+    // Deleting an income (or what a transfer brought) may take its account
+    // below its floor (PRODUCT: Découvert).
+    final refusal = checkOverdraft(
+      accounts: await widget.data.accounts.accounts(),
+      before: effectsOf(saved),
+      beforeDate: saved.date,
+      after: const {},
+      date: saved.date,
+    );
     if (!mounted) return;
     final amount = formatMoney(
       saved.total.total,
       currencyOf(saved.total.total.currency),
       lang,
     );
-    final sure = await showKibuoSheet<bool>(
+    final choice = await showKibuoSheet<_DeleteChoice>(
       context,
       title: switch (saved.kind) {
         EntryKind.expense => l.entryDeleteExpenseTitle,
@@ -287,35 +298,104 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Text(switch (saved.kind) {
-            EntryKind.expense => l.entryDeleteExpenseHelp(
-              labels.account,
-              amount,
+          if (refusal != null) ...[
+            // Canvas DecouvertSuppressionA: one red line, then the way out.
+            Row(
+              children: [
+                const Icon(
+                  KibuoIcons.warning,
+                  size: 18,
+                  color: KibuoColors.danger,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l.overdraftWouldGo(
+                      refusal.account.name,
+                      formatMoney(
+                        refusal.after,
+                        currencyOf(refusal.after.currency),
+                        lang,
+                      ),
+                    ),
+                    style: KibuoType.body.copyWith(
+                      fontSize: 14,
+                      color: KibuoColors.danger,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            EntryKind.income => l.entryDeleteIncomeHelp(labels.account, amount),
-            EntryKind.transfer => l.entryDeleteTransferHelp(
-              labels.account,
-              amount,
-              labels.toAccount ?? '',
-              formatMoney(
-                saved.arrived!,
-                currencyOf(saved.arrived!.currency),
-                lang,
+            const SizedBox(height: 16),
+            Material(
+              color: KibuoColors.surface,
+              borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
+                onTap: () => Navigator.of(context).pop(_DeleteChoice.authorize),
+                child: SizedBox(
+                  height: KibuoTheme.heightSecondary,
+                  child: Center(
+                    child: Text(
+                      l.overdraftAllow,
+                      style: KibuoType.buttonSmall.copyWith(
+                        color: KibuoColors.accent,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          }, style: KibuoType.help),
-          const SizedBox(height: 16),
-          KibuoButton(
-            label: l.entryDeleteConfirm,
-            kind: ButtonKind.danger,
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
+          ] else ...[
+            Text(switch (saved.kind) {
+              EntryKind.expense => l.entryDeleteExpenseHelp(
+                labels.account,
+                amount,
+              ),
+              EntryKind.income => l.entryDeleteIncomeHelp(
+                labels.account,
+                amount,
+              ),
+              EntryKind.transfer => l.entryDeleteTransferHelp(
+                labels.account,
+                amount,
+                labels.toAccount ?? '',
+                formatMoney(
+                  saved.arrived!,
+                  currencyOf(saved.arrived!.currency),
+                  lang,
+                ),
+              ),
+            }, style: KibuoType.help),
+            const SizedBox(height: 16),
+            KibuoButton(
+              label: l.entryDeleteConfirm,
+              kind: ButtonKind.danger,
+              onPressed: () => Navigator.of(context).pop(_DeleteChoice.delete),
+            ),
+          ],
         ],
       ),
     );
-    if (!(sure ?? false)) return;
-    await widget.data.transactions.delete(saved.id);
-    if (mounted) Navigator.of(context).pop();
+    switch (choice) {
+      case _DeleteChoice.delete:
+        await widget.data.transactions.delete(saved.id);
+        if (mounted) Navigator.of(context).pop();
+      case _DeleteChoice.authorize:
+        if (!mounted) return;
+        await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) => AccountFormScreen(
+              accounts: widget.data.accounts,
+              currencies: widget.data.currencies,
+              account: refusal!.account,
+            ),
+          ),
+        );
+      case null:
+        return;
+    }
   }
 
   Future<void> _duplicate() async {
@@ -597,3 +677,5 @@ class _TransferRoute extends StatelessWidget {
     );
   }
 }
+
+enum _DeleteChoice { delete, authorize }
