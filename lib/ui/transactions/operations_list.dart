@@ -1,0 +1,1553 @@
+import 'dart:ui' show ImageFilter;
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:kibuo/data/category_repository.dart';
+import 'package:kibuo/data/hint_store.dart';
+import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/money/currency.dart';
+import 'package:kibuo/domain/money/exchange_rate.dart';
+import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/transactions/flow_totals.dart';
+import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/categories/category_labels.dart';
+import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/choice_menu.dart';
+import 'package:kibuo/ui/kit/dashed_border.dart';
+import 'package:kibuo/ui/kit/fading_row.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_flow.dart';
+import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/operation_screens.dart';
+
+/// What an operation brings in or takes out (PRODUCT): an expense with its
+/// fees out, an income less its fees in, only a transfer's fees out.
+MoneyFlow flowOf(TransactionInfo t) => switch (t.kind) {
+  EntryKind.expense => MoneyFlow(outgoing: t.total.total),
+  EntryKind.income => MoneyFlow(incoming: t.total.total),
+  EntryKind.transfer => MoneyFlow(outgoing: t.total.fees),
+};
+
+/// The Opérations tab (canvas ListeOperations): a month, its entries and
+/// exits, the Type, Compte and Catégorie filters, then the days, each
+/// foldable with its own balance.
+class OperationsScreen extends StatefulWidget {
+  const OperationsScreen({
+    super.key,
+    required this.data,
+    this.refresh,
+    this.onAdd,
+    this.hints,
+  });
+
+  final EntryData data;
+
+  /// Bumped by the shell after a save, to reload.
+  final Listenable? refresh;
+
+  /// « Ajouter » from an empty month.
+  final VoidCallback? onAdd;
+
+  /// Where the month swipe is remembered as shown.
+  final HintStore? hints;
+
+  /// Forgets the month, filters and folded days kept while the app runs.
+  @visibleForTesting
+  static void forget() => _OperationsScreenState.forget();
+
+  @override
+  State<OperationsScreen> createState() => _OperationsScreenState();
+}
+
+class _OperationsScreenState extends State<OperationsScreen> {
+  // Kept while the app runs, not from one opening to the next (PRODUCT).
+  static DateTime? _keptMonth;
+  static final _types = <EntryKind>{};
+  static final _accounts = <String>{};
+  static final _categories = <String>{};
+  static final _folded = <DateTime>{};
+
+  static void forget() {
+    _keptMonth = null;
+    _types.clear();
+    _accounts.clear();
+    _categories.clear();
+    _folded.clear();
+  }
+
+  late DateTime _month = _keptMonth ?? _thisMonth();
+  List<(TransactionInfo, OperationLabels)> _all = const [];
+  List<AccountRowInfo> _accountChoices = const [];
+  List<CategoryInfo> _categoryChoices = const [];
+  CurrencyInfo? _main;
+  Map<String, ExchangeRate> _rates = const {};
+  bool _picker = false;
+  bool _tip = false;
+
+  /// The filter whose menu is open, and where its chip is.
+  _Filter? _menu;
+  Rect _menuAt = Rect.zero;
+  final _stackKey = GlobalKey();
+  final _layer = OverlayPortalController();
+  static const _menuWidth = 210.0;
+  final _chipKeys = {for (final f in _Filter.values) f: GlobalKey()};
+  final _chipLinks = {for (final f in _Filter.values) f: LayerLink()};
+
+  static DateTime _thisMonth() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month);
+  }
+
+  bool get _isThisMonth => _month == _thisMonth();
+
+  bool get _filtered =>
+      _types.isNotEmpty || _accounts.isNotEmpty || _categories.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.refresh?.addListener(_load);
+    // Always on; it draws nothing while no layer is open.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _layer.show();
+    });
+    _load();
+    _maybeTip();
+  }
+
+  @override
+  void dispose() {
+    widget.refresh?.removeListener(_load);
+    super.dispose();
+  }
+
+  Future<void> _maybeTip() async {
+    final hints = widget.hints;
+    if (hints == null || await hints.swipeShown()) return;
+    if (mounted) setState(() => _tip = true);
+  }
+
+  Future<void> _tipDone() async {
+    setState(() => _tip = false);
+    await widget.hints?.swipeDone();
+  }
+
+  Future<void> _load() async {
+    final data = widget.data;
+    final all = await data.transactions.all();
+    final accounts = [
+      ...await data.accounts.accounts(),
+      ...await data.accounts.accounts(archived: true),
+    ];
+    final categories = [
+      ...await data.categories.categories(CategoryKind.out),
+      ...await data.categories.categories(CategoryKind.into),
+    ];
+    final code =
+        await data.currencies.primaryCurrency() ??
+        (accounts.isEmpty ? 'USD' : accounts.first.currency);
+    final main = await data.currencies.currency(code);
+    final rates = <String, ExchangeRate>{};
+    for (final c in {for (final a in accounts) a.currency}) {
+      if (c == code) continue;
+      final info = await data.currencies.latestRate(code, c);
+      if (info != null) rates[c] = info.rate;
+    }
+    if (!mounted) return;
+    final list = <(TransactionInfo, OperationLabels)>[];
+    for (final t in all) {
+      if (!mounted) return;
+      list.add((t, await OperationLabels.of(context, data, t)));
+    }
+    if (!mounted) return;
+    setState(() {
+      _all = list;
+      _accountChoices = [
+        for (final a in accounts) AccountRowInfo(a.id, a.name),
+      ];
+      _categoryChoices = categories;
+      _main = main;
+      _rates = rates;
+    });
+  }
+
+  void _goTo(DateTime month) {
+    if (month.isAfter(_thisMonth())) return;
+    setState(() {
+      _month = month;
+      _keptMonth = month;
+      _picker = false;
+    });
+  }
+
+  bool _inMonth(TransactionInfo t) {
+    final d = t.date.toLocal();
+    return d.year == _month.year && d.month == _month.month;
+  }
+
+  /// A top-level category's id, for a category or one of its subcategories.
+  String? _topCategory(String? id) {
+    if (id == null) return null;
+    for (final c in _categoryChoices) {
+      if (c.id == id || c.subs.any((s) => s.id == id)) return c.id;
+    }
+    return id;
+  }
+
+  bool _passes(
+    TransactionInfo t, {
+    bool type = true,
+    bool account = true,
+    bool category = true,
+  }) {
+    if (type && _types.isNotEmpty && !_types.contains(t.kind)) return false;
+    if (account &&
+        _accounts.isNotEmpty &&
+        !_accounts.contains(t.accountId) &&
+        !_accounts.contains(t.toAccountId)) {
+      return false;
+    }
+    if (category &&
+        _categories.isNotEmpty &&
+        !_categories.contains(_topCategory(t.categoryId))) {
+      return false;
+    }
+    return true;
+  }
+
+  FlowTotals _totals(Iterable<TransactionInfo> ops) =>
+      flowTotals(_main!, ops.map(flowOf), (code) => _rates[code]);
+
+  String _money(Money m) => formatMoney(m, currencyOf(m.currency), _lang);
+
+  String get _lang => Localizations.localeOf(context).languageCode;
+
+  Future<void> _open(TransactionInfo t) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => OperationDetailScreen(data: widget.data, id: t.id),
+      ),
+    );
+    await _load();
+  }
+
+  String _dayLabel(DateTime day) {
+    final l = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    if (day == today) return l.entryToday;
+    if (day == today.subtract(const Duration(days: 1))) return l.entryYesterday;
+    final t = DateFormat.MMMMEEEEd(_lang).format(day);
+    return t[0].toUpperCase() + t.substring(1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final main = _main;
+    final month = [
+      for (final e in _all)
+        if (_inMonth(e.$1) && _passes(e.$1)) e,
+    ];
+    // Days, newest first, each with its operations.
+    final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
+    for (final e in month) {
+      final d = e.$1.date.toLocal();
+      (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
+    }
+    // The veil, the month picker, a filter's menu and the first-visit tip
+    // cover the whole phone, tab bar included (canvas ListeOperations).
+    return OverlayPortal(
+      controller: _layer,
+      overlayChildBuilder: (context) => _layers(context, l),
+      child: Stack(
+        key: _stackKey,
+        children: [
+          GestureDetector(
+            // Swipe right for the month before, left for the month after.
+            onHorizontalDragEnd: (d) {
+              final v = d.primaryVelocity ?? 0;
+              if (v > 300) _goTo(DateTime(_month.year, _month.month - 1));
+              if (v < -300) _goTo(DateTime(_month.year, _month.month + 1));
+            },
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 140),
+              children: [
+                _header(l),
+                const SizedBox(height: 16),
+                if (main != null)
+                  _TotalsCard(
+                    // The whole month: the filters choose what the list
+                    // shows, not what the month did (PRODUCT).
+                    totals: _totals([
+                      for (final e in _all)
+                        if (_inMonth(e.$1)) e.$1,
+                    ]),
+                    money: _money,
+                  ),
+                const SizedBox(height: 12),
+                _filters(l),
+                if (days.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: _empty(l),
+                  )
+                else
+                  for (final MapEntry(key: day, value: ops) in days.entries)
+                    ..._day(day, ops),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _layers(BuildContext context, AppLocalizations l) {
+    // Only while this tab is the one shown.
+    final shown = TickerMode.valuesOf(context).enabled;
+    final stack = _stackKey.currentContext?.findRenderObject() as RenderBox?;
+    if (!shown || stack == null || !stack.hasSize) {
+      return const SizedBox.shrink();
+    }
+    if (!_picker && _menu == null && !_tip) return const SizedBox.shrink();
+    final origin = stack.localToGlobal(Offset.zero);
+    final screen = MediaQuery.sizeOf(context);
+    final bottomBar = MediaQuery.viewPaddingOf(context).bottom + 104;
+    return Stack(
+      children: [
+        // A light veil under an open month picker or filter menu; a tap
+        // on it closes them.
+        if (_picker || _menu != null)
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => setState(() {
+                _picker = false;
+                _menu = null;
+              }),
+              child: const ColoredBox(color: KibuoColors.veil),
+            ),
+          ),
+        if (_picker)
+          Positioned(
+            left: origin.dx + 12,
+            top: origin.dy + 64,
+            width: 308,
+            child: _MonthPicker(
+              month: _month,
+              onPick: _goTo,
+              onThisMonth: _isThisMonth ? null : () => _goTo(_thisMonth()),
+            ),
+          ),
+        if (_menu case final menu?) ...[
+          // Both follow the chip at every frame: the chips move when the
+          // totals card grows or shrinks (its bar comes and goes with the
+          // filters), and the menu must stay under its chip.
+          Positioned(
+            left: 0,
+            top: 0,
+            child: CompositedTransformFollower(
+              link: _chipLinks[menu]!,
+              showWhenUnlinked: false,
+              // The open chip stays above the veil (DIRECTION).
+              child: _chipFor(l, menu, open: true),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: CompositedTransformFollower(
+              link: _chipLinks[menu]!,
+              showWhenUnlinked: false,
+              targetAnchor: Alignment.bottomLeft,
+              // Kept 16 from the screen's edges.
+              offset: Offset(
+                _menuAt.left
+                        .clamp(16.0, screen.width - 16 - _menuWidth)
+                        .toDouble() -
+                    _menuAt.left,
+                6,
+              ),
+              child: ChoiceMenu(
+                width: _menuWidth,
+                // Never under the tab bar; a little room for the bar of
+                // the totals coming back.
+                maxHeight: (screen.height - _menuAt.bottom - 6 - bottomBar - 24)
+                    .clamp(140.0, double.infinity),
+                children: _menuRows(l, menu),
+              ),
+            ),
+          ),
+        ],
+        if (_tip)
+          Positioned.fill(
+            child: _SwipeTip(onDone: _tipDone, month: _thisMonth()),
+          ),
+      ],
+    );
+  }
+
+  Widget _header(AppLocalizations l) {
+    final name = DateFormat.MMMM(_lang).format(_month);
+    // Fixed height: « Ce mois-ci » coming and going must not move the list.
+    return SizedBox(
+      height: KibuoTheme.heightTouch,
+      child: Row(
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+                onTap: () => setState(() => _picker = !_picker),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 4,
+                  ),
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: name[0].toUpperCase() + name.substring(1),
+                        ),
+                        TextSpan(
+                          text: ' ${_month.year} ',
+                          style: const TextStyle(
+                            color: KibuoColors.inkSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontVariations: [FontVariation.weight(500)],
+                          ),
+                        ),
+                        const WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Icon(
+                            KibuoIcons.caretDown,
+                            size: 18,
+                            color: KibuoColors.accent,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: KibuoType.tabTitle,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (!_isThisMonth)
+            TextAction(
+              label: l.listThisMonth,
+              onPressed: () => _goTo(_thisMonth()),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// What each filter offers, with how many operations of the month each
+  /// choice keeps; a filter's numbers follow the two other filters.
+  ({
+    List<(EntryKind, String, int)> types,
+    List<(String, String, int)> accounts,
+    List<(String, String, int)> expenses,
+    List<(String, String, int)> incomes,
+    int allTypes,
+    int allAccounts,
+    int allCategories,
+  })
+  _choices(AppLocalizations l) {
+    final inMonth = [
+      for (final e in _all)
+        if (_inMonth(e.$1)) e.$1,
+    ];
+    int count(bool Function(TransactionInfo) keep) =>
+        inMonth.where(keep).length;
+    List<(String, String, int)> cats(CategoryKind kind) => [
+      for (final c in _categoryChoices)
+        if (c.kind == kind)
+          (
+            c.id,
+            categoryName(l, c),
+            count(
+              (t) =>
+                  _topCategory(t.categoryId) == c.id &&
+                  _passes(t, category: false),
+            ),
+          ),
+    ];
+    return (
+      types: [
+        for (final k in EntryKind.values)
+          (
+            k,
+            _typeName(l, k),
+            count((t) => t.kind == k && _passes(t, type: false)),
+          ),
+      ],
+      accounts: [
+        for (final a in _accountChoices)
+          (
+            a.id,
+            a.name,
+            count(
+              (t) =>
+                  (t.accountId == a.id || t.toAccountId == a.id) &&
+                  _passes(t, account: false),
+            ),
+          ),
+      ],
+      expenses: cats(CategoryKind.out),
+      incomes: cats(CategoryKind.into),
+      allTypes: count((t) => _passes(t, type: false)),
+      allAccounts: count((t) => _passes(t, account: false)),
+      allCategories: count((t) => _passes(t, category: false)),
+    );
+  }
+
+  String _typeName(AppLocalizations l, EntryKind k) => switch (k) {
+    EntryKind.expense => l.filterExpenses,
+    EntryKind.income => l.filterIncomes,
+    EntryKind.transfer => l.filterTransfers,
+  };
+
+  Widget _filters(AppLocalizations l) {
+    return FadingRow(
+      children: [for (final f in _Filter.values) _chipFor(l, f)],
+    );
+  }
+
+  Widget _chipFor(AppLocalizations l, _Filter f, {bool open = false}) {
+    String label(
+      String base,
+      Set<Object> chosen,
+      String Function(int) many,
+      String Function(Object) one,
+    ) => chosen.isEmpty
+        ? base
+        : chosen.length == 1
+        ? one(chosen.first)
+        : many(chosen.length);
+    String name(Iterable<(Object, String, int)> list, Object id) {
+      for (final (value, text, _) in list) {
+        if (value == id) return text;
+      }
+      return '';
+    }
+
+    final c = _choices(l);
+    final (text, active) = switch (f) {
+      _Filter.type => (
+        label(l.filterType, _types, l.filterTypes, (k) => name(c.types, k)),
+        _types.isNotEmpty,
+      ),
+      _Filter.account => (
+        label(
+          l.filterAccount,
+          _accounts,
+          l.filterAccounts,
+          (id) => name(c.accounts, id),
+        ),
+        _accounts.isNotEmpty,
+      ),
+      _Filter.category => (
+        label(
+          l.filterCategory,
+          _categories,
+          l.filterCategories,
+          (id) => name([...c.expenses, ...c.incomes], id),
+        ),
+        _categories.isNotEmpty,
+      ),
+    };
+    final chip = FilterChipButton(
+      key: open ? null : _chipKeys[f],
+      label: text,
+      active: active,
+      open: open,
+      onTap: () => open ? setState(() => _menu = null) : _openMenu(f),
+    );
+    // The chip in the row is what the open menu follows.
+    return open
+        ? chip
+        : CompositedTransformTarget(link: _chipLinks[f]!, child: chip);
+  }
+
+  void _openMenu(_Filter f) {
+    final chip = _chipKeys[f]!.currentContext?.findRenderObject() as RenderBox?;
+    final stack = _stackKey.currentContext?.findRenderObject() as RenderBox?;
+    if (chip == null || stack == null) return;
+    final topLeft = chip.localToGlobal(Offset.zero);
+    setState(() {
+      _menu = _menu == f ? null : f;
+      _menuAt = topLeft & chip.size;
+      _picker = false;
+    });
+  }
+
+  void _toggle<T>(Set<T> chosen, T value) => setState(
+    () => chosen.contains(value) ? chosen.remove(value) : chosen.add(value),
+  );
+
+  /// The open filter's choices (canvas ListeFiltreOuvert): « Tous » with a
+  /// line under it, then each choice. Catégorie shows only the categories
+  /// of the month (and those chosen), most used first, by Dépenses and
+  /// Revenus; the others wait behind « Afficher les N autres » (PRODUCT).
+  List<Widget> _menuRows(AppLocalizations l, _Filter f) {
+    final c = _choices(l);
+    switch (f) {
+      case _Filter.type:
+        return [
+          ChoiceRow(
+            label: l.filterAllType,
+            count: c.allTypes,
+            selected: _types.isEmpty,
+            // « Tous » closes the menu: nothing more to choose.
+            onTap: () => setState(() {
+              _types.clear();
+              _menu = null;
+            }),
+          ),
+          for (final (i, (k, name, n)) in c.types.indexed)
+            ChoiceRow(
+              label: name,
+              count: n,
+              selected: _types.contains(k),
+              divided: i == 0,
+              onTap: () => _toggle(_types, k),
+            ),
+        ];
+      case _Filter.account:
+        return [
+          ChoiceRow(
+            label: l.filterAll,
+            count: c.allAccounts,
+            selected: _accounts.isEmpty,
+            // « Tous » closes the menu: nothing more to choose.
+            onTap: () => setState(() {
+              _accounts.clear();
+              _menu = null;
+            }),
+          ),
+          for (final (i, (id, name, n)) in c.accounts.indexed)
+            ChoiceRow(
+              label: name,
+              count: n,
+              selected: _accounts.contains(id),
+              divided: i == 0,
+              onTap: () => _toggle(_accounts, id),
+            ),
+        ];
+      case _Filter.category:
+        List<(String, String, int)> shown(List<(String, String, int)> all) => [
+          for (final o in all)
+            if (o.$3 > 0 || _categories.contains(o.$1)) o,
+        ]..sort((a, b) => b.$3.compareTo(a.$3));
+        final expenses = shown(c.expenses);
+        final incomes = shown(c.incomes);
+        final hidden =
+            c.expenses.length +
+            c.incomes.length -
+            expenses.length -
+            incomes.length;
+        return [
+          ChoiceRow(
+            label: l.filterAllCategories,
+            count: c.allCategories,
+            selected: _categories.isEmpty,
+            // « Tous » closes the menu: nothing more to choose.
+            onTap: () => setState(() {
+              _categories.clear();
+              _menu = null;
+            }),
+          ),
+          ..._categoryGroups(l, expenses, incomes),
+          if (hidden > 0)
+            ChoiceMoreRow(
+              label: l.filterMore(hidden),
+              onTap: () => _allCategories(l),
+            ),
+        ];
+    }
+  }
+
+  List<Widget> _categoryGroups(
+    AppLocalizations l,
+    List<(String, String, int)> expenses,
+    List<(String, String, int)> incomes,
+  ) => [
+    for (final (i, (title, group)) in [
+      if (expenses.isNotEmpty) (l.categoriesExpenses, expenses),
+      if (incomes.isNotEmpty) (l.categoriesIncome, incomes),
+    ].indexed) ...[
+      ChoiceGroupTitle(title, divided: i == 0),
+      for (final (id, name, n) in group)
+        ChoiceRow(
+          label: name,
+          count: n,
+          selected: _categories.contains(id),
+          onTap: () => _toggle(_categories, id),
+        ),
+    ],
+  ];
+
+  /// Every category, in a sheet two thirds of the screen high that scrolls;
+  /// choices apply at once, ✕ or a tap outside closes it.
+  Future<void> _allCategories(AppLocalizations l) async {
+    setState(() => _menu = null);
+    await showKibuoSheet<void>(
+      context,
+      title: l.filterCategory,
+      builder: (context) => StatefulBuilder(
+        builder: (context, refresh) {
+          final c = _choices(l);
+          void again(VoidCallback change) {
+            setState(change);
+            refresh(() {});
+          }
+
+          // In a white card, as the other lists of a sheet; two thirds of
+          // the screen at most, the rest scrolls.
+          return Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 2 / 3 - 120,
+            ),
+            decoration: BoxDecoration(
+              color: KibuoColors.surface,
+              borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(6),
+              children: [
+                ChoiceRow(
+                  label: l.filterAllCategories,
+                  count: c.allCategories,
+                  selected: _categories.isEmpty,
+                  // « Toutes » closes the sheet, as « Tous » the menu.
+                  onTap: () {
+                    setState(_categories.clear);
+                    Navigator.of(context).pop();
+                  },
+                ),
+                for (final (i, (title, group)) in [
+                  (l.categoriesExpenses, c.expenses),
+                  (l.categoriesIncome, c.incomes),
+                ].indexed) ...[
+                  ChoiceGroupTitle(title, divided: i == 0),
+                  for (final (id, name, n) in group)
+                    ChoiceRow(
+                      label: name,
+                      count: n,
+                      selected: _categories.contains(id),
+                      onTap: () => again(
+                        () => _categories.contains(id)
+                            ? _categories.remove(id)
+                            : _categories.add(id),
+                      ),
+                    ),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> _day(
+    DateTime day,
+    List<(TransactionInfo, OperationLabels)> ops,
+  ) {
+    final folded = _folded.contains(day);
+    final t = _totals([for (final e in ops) e.$1]);
+    final net = t.rest;
+    final onlyFreeTransfers = t.entries.minor == 0 && t.exits.minor == 0;
+    final color = net.minor > 0
+        ? KibuoColors.accent
+        : net.minor < 0
+        ? KibuoColors.debtInk
+        : KibuoColors.inkMuted;
+    final amount = net.minor > 0
+        ? '+${_money(net)}'
+        : net.minor < 0
+        ? '−${_money(Money(-net.minor, net.currency))}'
+        : _money(net);
+    return [
+      const SizedBox(height: 6),
+      InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () =>
+            setState(() => folded ? _folded.remove(day) : _folded.add(day)),
+        child: SizedBox(
+          height: KibuoTheme.heightTouch,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: _dayLabel(day),
+                      children: [
+                        if (folded)
+                          TextSpan(
+                            text: ' · ${ops.length}',
+                            style: const TextStyle(color: KibuoColors.inkMuted),
+                          ),
+                      ],
+                    ),
+                    style: KibuoType.sectionTitle,
+                  ),
+                ),
+                if (!onlyFreeTransfers)
+                  Text(
+                    '${t.approximate ? '≈ ' : ''}$amount',
+                    style: KibuoType.sectionTitle.copyWith(color: color),
+                  ),
+                const SizedBox(width: 8),
+                Icon(
+                  folded ? KibuoIcons.caretDown : KibuoIcons.caretUp,
+                  size: 16,
+                  color: KibuoColors.accent,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      if (!folded) const SizedBox(height: 4),
+      if (!folded)
+        for (final (t, labels) in ops)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _Line(t: t, labels: labels, onTap: () => _open(t)),
+          ),
+    ];
+  }
+
+  Widget _empty(AppLocalizations l) {
+    final monthName = DateFormat.yMMMM(_lang).format(_month);
+    final (title, help, action, onAction) = _filtered
+        ? (
+            l.emptyFilterTitle,
+            l.emptyFilterHelp,
+            l.clearFilters,
+            () => setState(() {
+              _types.clear();
+              _accounts.clear();
+              _categories.clear();
+            }),
+          )
+        : !_isThisMonth
+        ? (
+            l.emptyMonthTitle,
+            l.emptyMonthHelp(monthName),
+            l.backToThisMonth,
+            () => _goTo(_thisMonth()),
+          )
+        : (
+            l.emptyMonthTitle,
+            l.emptyMonthHelp(monthName),
+            l.entryNewExpense,
+            widget.onAdd,
+          );
+    // Canvas ListeOperations: white, dashed, the icon in a grey circle,
+    // then a grey button.
+    return DashedBorder(
+      radius: KibuoTheme.radiusCard,
+      color: KibuoColors.line,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: KibuoColors.surface,
+          borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
+        child: Column(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                color: KibuoColors.background,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                KibuoIcons.list,
+                size: 26,
+                color: KibuoColors.inkSecondary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: KibuoType.cardTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              help,
+              style: KibuoType.body.copyWith(
+                color: KibuoColors.inkSecondary,
+                height: 20 / 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (onAction != null) ...[
+              const SizedBox(height: 16),
+              Material(
+                color: KibuoColors.background,
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+                  onTap: onAction,
+                  child: Container(
+                    height: KibuoTheme.heightTouch,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Center(
+                      widthFactor: 1,
+                      child: Text(
+                        action,
+                        style: KibuoType.body.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontVariations: const [FontVariation.weight(600)],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _Filter { type, account, category }
+
+/// An account's id and name, for the Compte filter.
+class AccountRowInfo {
+  const AccountRowInfo(this.id, this.name);
+
+  final String id;
+  final String name;
+}
+
+/// One operation of the list (canvas ListeOperations): white, 16 round,
+/// its 44 tile, name and « account · time », then the amount.
+class _Line extends StatelessWidget {
+  const _Line({required this.t, required this.labels, required this.onTap});
+
+  final TransactionInfo t;
+  final OperationLabels labels;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 14, 10),
+            child: Row(
+              children: [
+                OperationTile(
+                  kind: t.kind,
+                  labels: labels,
+                  size: KibuoTheme.heightTouch,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labels.categoryPath.split(' › ').last,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: KibuoType.rowLabel,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${labels.account} · '
+                        '${DateFormat.Hm(lang).format(t.date.toLocal())}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: KibuoType.help.copyWith(height: 1.2),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  signedTotal(context, t),
+                  style: KibuoType.buttonSmall.copyWith(
+                    color: kindColors(t.kind).ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entries, exits, « 49 % dépensés » and what is left (canvas
+/// ListeOperations, EtatBarre).
+class _TotalsCard extends StatelessWidget {
+  const _TotalsCard({required this.totals, required this.money});
+
+  final FlowTotals totals;
+  final String Function(Money) money;
+
+  /// « +25,00 $ », « −106,00 $ », or « 0,00 $ » in grey.
+  (String, Color) _signed(Money m, {required bool out, String pre = ''}) {
+    if (m.minor == 0) return (money(m), KibuoColors.inkMuted);
+    final abs = Money(m.minor.abs(), m.currency);
+    return out || m.minor < 0
+        ? ('$pre−${money(abs)}', KibuoColors.debtInk)
+        : ('$pre+${money(abs)}', KibuoColors.accent);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final pre = totals.approximate ? '≈ ' : '';
+    // The bar is always there (PRODUCT): empty and grey with nothing in or
+    // out, full and peach with exits but no entry, as when over 100 %.
+    final share = totals.spentPercent;
+    final outOnly = share == null && totals.exits.minor > 0;
+    final level = share ?? (outOnly ? 101 : 0);
+    final calm = level <= 80;
+    final (barColor, shareColor) = calm
+        ? (KibuoColors.inkMuted, KibuoColors.inkSecondary)
+        : level <= 100
+        ? (KibuoColors.warning, KibuoColors.warningInk)
+        : (KibuoColors.debtInk, KibuoColors.debtInk);
+    final (inText, inColor) = _signed(totals.entries, out: false, pre: pre);
+    final (outText, outColor) = _signed(totals.exits, out: true, pre: pre);
+    final (restText, restColor) = _signed(totals.rest, out: false);
+    Widget amount(String label, String text, Color color, {bool end = false}) =>
+        Column(
+          crossAxisAlignment: end
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            Text(label, style: KibuoType.help),
+            const SizedBox(height: 2),
+            Text(text, style: KibuoType.sheetTitle.copyWith(color: color)),
+          ],
+        );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: KibuoColors.surface,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: amount(l.listEntries, inText, inColor)),
+              const SizedBox(width: 12),
+              amount(l.listExits, outText, outColor, end: true),
+            ],
+          ),
+          const SizedBox(height: 10),
+          LinearProgressIndicator(
+            value: (level / 100).clamp(0, 1).toDouble(),
+            minHeight: 12,
+            color: barColor,
+            backgroundColor: KibuoColors.track,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  outOnly ? l.listNoEntries : l.listSpent(level),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: KibuoType.help.copyWith(
+                    color: shareColor,
+                    fontWeight: calm ? FontWeight.w500 : FontWeight.w700,
+                    fontVariations: [FontVariation.weight(calm ? 500 : 700)],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text.rich(
+                TextSpan(
+                  text: '${l.listRest} ',
+                  children: [
+                    TextSpan(
+                      text: restText,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontVariations: const [FontVariation.weight(700)],
+                        color: restColor,
+                      ),
+                    ),
+                  ],
+                ),
+                style: KibuoType.help,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The year between ‹ › and its 12 months; months to come are greyed
+/// (canvas ListeMoisOuvert). « Ce mois-ci » only away from this month.
+class _MonthPicker extends StatefulWidget {
+  const _MonthPicker({
+    required this.month,
+    required this.onPick,
+    required this.onThisMonth,
+  });
+
+  final DateTime month;
+  final ValueChanged<DateTime> onPick;
+  final VoidCallback? onThisMonth;
+
+  @override
+  State<_MonthPicker> createState() => _MonthPickerState();
+}
+
+class _MonthPickerState extends State<_MonthPicker> {
+  late int _year = widget.month.year;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final now = DateTime.now();
+    Widget arrow(IconData icon, VoidCallback? onTap) => SizedBox.square(
+      dimension: KibuoTheme.heightTouch,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        onPressed: onTap,
+        icon: Icon(
+          icon,
+          size: 20,
+          color: onTap == null ? KibuoColors.lineStrong : KibuoColors.ink,
+        ),
+      ),
+    );
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+      decoration: BoxDecoration(
+        color: KibuoColors.surface,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x380E1320),
+            blurRadius: 36,
+            offset: Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              arrow(KibuoIcons.caretLeft, () => setState(() => _year--)),
+              Expanded(
+                child: Text(
+                  '$_year',
+                  textAlign: TextAlign.center,
+                  style: KibuoType.cardTitle,
+                ),
+              ),
+              arrow(
+                KibuoIcons.caretRight,
+                _year >= now.year ? null : () => setState(() => _year++),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          for (var row = 0; row < 4; row++) ...[
+            if (row > 0) const SizedBox(height: 6),
+            Row(
+              children: [
+                for (var col = 0; col < 3; col++) ...[
+                  if (col > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: _monthCell(
+                      DateTime(_year, row * 3 + col + 1),
+                      now,
+                      lang,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+          if (widget.onThisMonth case final back?) ...[
+            const SizedBox(height: 8),
+            TextAction(label: l.listThisMonth, onPressed: back),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _monthCell(DateTime m, DateTime now, String lang) {
+    final future = m.isAfter(DateTime(now.year, now.month));
+    final current = m == widget.month;
+    final name = DateFormat.MMMM(lang).format(m);
+    return Material(
+      color: current ? KibuoColors.ink : KibuoColors.background,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+        onTap: future ? null : () => widget.onPick(m),
+        child: SizedBox(
+          height: KibuoTheme.heightTouch,
+          child: Center(
+            child: Text(
+              name[0].toUpperCase() + name.substring(1),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: KibuoType.body.copyWith(
+                fontWeight: FontWeight.w600,
+                fontVariations: const [FontVariation.weight(600)],
+                color: current
+                    ? KibuoColors.surface
+                    : future
+                    ? KibuoColors.lineStrong
+                    : KibuoColors.ink,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The first visit shows the month swipe (canvas ListeOnboard): the list
+/// darkened and blurred, a card above the tab bar with two months sliding
+/// under a finger, the words, then « Compris ».
+class _SwipeTip extends StatefulWidget {
+  const _SwipeTip({required this.onDone, required this.month});
+
+  final VoidCallback onDone;
+  final DateTime month;
+
+  @override
+  State<_SwipeTip> createState() => _SwipeTipState();
+}
+
+class _SwipeTipState extends State<_SwipeTip>
+    with SingleTickerProviderStateMixin {
+  late final _loop = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 3200),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      // Still, for those who asked the phone for less motion.
+      if (MediaQuery.disableAnimationsOf(context)) return;
+      _loop.repeat();
+    });
+  }
+
+  @override
+  void dispose() {
+    _loop.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: widget.onDone,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                child: const ColoredBox(color: KibuoColors.tipScrim),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          left: 16,
+          right: 16,
+          bottom: MediaQuery.paddingOf(context).bottom + 112,
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: KibuoColors.surface,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x590E1320),
+                  blurRadius: 50,
+                  offset: Offset(0, 20),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SlidingMonths(loop: _loop, month: widget.month),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l.swipeTipTitle, style: KibuoType.cardTitle),
+                      const SizedBox(height: 4),
+                      Text(
+                        l.swipeTipText,
+                        style: KibuoType.body.copyWith(
+                          color: KibuoColors.inkSecondary,
+                          height: 20 / 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                KibuoButton(label: l.plusHoldTipDone, onPressed: widget.onDone),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Two small months side by side, sliding to the month before and back,
+/// a green touch going with them (canvas ListeOnboard, 3.2 s).
+class _SlidingMonths extends StatelessWidget {
+  const _SlidingMonths({required this.loop, required this.month});
+
+  final Animation<double> loop;
+  final DateTime month;
+
+  /// Where the pages are (0: this month, 1: the month before), over the loop.
+  static double _pages(double t) {
+    double ease(double x) => Curves.easeInOut.transform(x.clamp(0, 1));
+    if (t < .10) return 0;
+    if (t < .36) return ease((t - .10) / .26);
+    if (t < .54) return 1;
+    if (t < .80) return 1 - ease((t - .54) / .26);
+    return 0;
+  }
+
+  /// The touch: its place (-1 left, 1 right) and how visible it is.
+  static (double, double) _touch(double t) {
+    double lerp(double a, double b, double x) => a + (b - a) * x.clamp(0, 1);
+    if (t < .04) return (-1, 0);
+    if (t < .10) return (-1, lerp(0, 1, (t - .04) / .06));
+    if (t < .36) return (lerp(-1, 1, (t - .10) / .26), 1);
+    if (t < .42) return (1, lerp(1, 0, (t - .36) / .06));
+    if (t < .48) return (1, 0);
+    if (t < .54) return (1, lerp(0, 1, (t - .48) / .06));
+    if (t < .80) return (lerp(1, -1, (t - .54) / .26), 1);
+    if (t < .86) return (-1, lerp(1, 0, (t - .80) / .06));
+    return (-1, 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    String n(String key) => l.categoryName(key);
+    final bank = l.accountTypeBank;
+    final cash = l.accountTypeCash;
+    // Signed, in dollars: the picture of a month, not real operations.
+    (String, bool) m(int minor) {
+      final text = formatMoney(
+        Money(minor.abs(), 'USD'),
+        currencyOf('USD'),
+        lang,
+      );
+      return (minor < 0 ? '−$text' : '+$text', minor > 0);
+    }
+
+    String title(DateTime m) {
+      final t = DateFormat.yMMMM(lang).format(m);
+      return t[0].toUpperCase() + t.substring(1);
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        height: 190,
+        color: KibuoColors.background,
+        child: LayoutBuilder(
+          builder: (context, box) => AnimatedBuilder(
+            animation: loop,
+            builder: (context, _) {
+              final w = box.maxWidth;
+              final shift = _pages(loop.value) * w;
+              final (x, seen) = _touch(loop.value);
+              return Stack(
+                children: [
+                  Positioned(
+                    left: shift - w,
+                    top: 0,
+                    bottom: 0,
+                    width: w,
+                    child: _MiniMonth(
+                      title: title(DateTime(month.year, month.month - 1)),
+                      lines: [
+                        (n('rent'), '${n('housing')} · $bank', m(-25000)),
+                        (n('salary'), bank, m(120000)),
+                        (n('groceries'), '${n('groceries')} · $cash', m(-3800)),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: shift,
+                    top: 0,
+                    bottom: 0,
+                    width: w,
+                    child: _MiniMonth(
+                      title: title(month),
+                      lines: [
+                        (n('restaurant'), '${n('food')} · $cash', m(-650)),
+                        (n('taxi'), '${n('transport')} · $cash', m(-500)),
+                        (n('salary'), bank, m(120000)),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: w / 2 - 16 + x * 60,
+                    top: 92,
+                    child: Opacity(
+                      opacity: seen,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: KibuoColors.accent.withValues(alpha: .85),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: KibuoColors.accent.withValues(alpha: .18),
+                              spreadRadius: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniMonth extends StatelessWidget {
+  const _MiniMonth({required this.title, required this.lines});
+
+  final String title;
+  final List<(String, String, (String, bool))> lines;
+
+  @override
+  Widget build(BuildContext context) {
+    // A picture: what does not fit (large text) is cut at the bottom.
+    return ClipRect(
+      child: OverflowBox(
+        alignment: Alignment.topLeft,
+        maxHeight: double.infinity,
+        child: _content(),
+      ),
+    );
+  }
+
+  Widget _content() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: KibuoType.cardTitle.copyWith(fontSize: 15)),
+          for (final (name, sub, (amount, income)) in lines) ...[
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              decoration: BoxDecoration(
+                color: KibuoColors.surface,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: KibuoType.caption.copyWith(
+                            color: KibuoColors.ink,
+                            fontWeight: FontWeight.w600,
+                            fontVariations: const [FontVariation.weight(600)],
+                          ),
+                        ),
+                        Text(
+                          sub,
+                          style: KibuoType.caption.copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    amount,
+                    style: KibuoType.caption.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontVariations: const [FontVariation.weight(700)],
+                      color: income ? KibuoColors.accent : KibuoColors.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

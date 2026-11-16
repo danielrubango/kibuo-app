@@ -65,6 +65,12 @@ abstract final class KibuoColors {
   // The veil behind a sheet: ink at 42 %, the page below stays readable.
   static const scrim = Color(0x6B0E1320);
 
+  /// The light veil behind a menu or the month picker: ink at 12 %.
+  static const veil = Color(0x1F0E1320);
+
+  /// Behind a first-visit tip: ink at 45 %, with a light blur.
+  static const tipScrim = Color(0x730E1320);
+
   /// The shadow of a bar floating over the content (keypad, selection).
   static const barShadow = Color(0x2E0E1320);
 
