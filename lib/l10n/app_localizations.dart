@@ -2130,6 +2130,114 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Ajouter la régularisation'**
   String get adjustAdd;
+
+  /// Verrouillage: protect important actions
+  ///
+  /// In fr, this message translates to:
+  /// **'Code pour les actions importantes'**
+  String get lockProtect;
+
+  /// Verrouillage: under the switch
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer, archiver, corriger un solde'**
+  String get lockProtectHelp;
+
+  /// Code sheet title
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmez avec votre code'**
+  String get protectTitle;
+
+  /// Code sheet reason
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour archiver {name}'**
+  String protectArchive(String name);
+
+  /// Code sheet reason
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour supprimer l’opération'**
+  String get protectDeleteOperation;
+
+  /// Code sheet reason
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour supprimer {name}'**
+  String protectDeleteCategory(String name);
+
+  /// Code sheet reason
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour retirer {count, plural, =1{une devise} other{{count} devises}}'**
+  String protectRemoveCurrencies(int count);
+
+  /// Code sheet reason
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour corriger le solde de {name}'**
+  String protectAdjust(String name);
+
+  /// Code sheet reason
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour changer le découvert de {name}'**
+  String protectOverdraft(String name);
+
+  /// Confirm sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'Archiver {name} ?'**
+  String confirmArchiveTitle(String name);
+
+  /// Confirm sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} quitte les listes et les totaux. Ses opérations restent.'**
+  String confirmArchiveHelp(String name);
+
+  /// Confirm sheet button
+  ///
+  /// In fr, this message translates to:
+  /// **'Archiver le compte'**
+  String get confirmArchiveAction;
+
+  /// Confirm sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer {name} ?'**
+  String confirmCategoryTitle(String name);
+
+  /// Confirm sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'{subs, plural, =0{{name} disparaît des choix. Les opérations déjà notées la gardent.} =1{{name} et sa sous-catégorie disparaissent des choix. Les opérations déjà notées les gardent.} other{{name} et ses {subs} sous-catégories disparaissent des choix. Les opérations déjà notées les gardent.}}'**
+  String confirmCategoryHelp(String name, int subs);
+
+  /// Confirm sheet button
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la catégorie'**
+  String get confirmCategoryAction;
+
+  /// Confirm sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Retirer une devise ?} other{Retirer {count} devises ?}}'**
+  String confirmCurrenciesTitle(int count);
+
+  /// Confirm sheet
+  ///
+  /// In fr, this message translates to:
+  /// **'{names} ne {count, plural, =1{sera} other{seront}} plus {count, plural, =1{proposé} other{proposés}}.'**
+  String confirmCurrenciesHelp(String names, int count);
+
+  /// Confirm sheet button
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get confirmCurrenciesAction;
 }
 
 class _AppLocalizationsDelegate

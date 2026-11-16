@@ -127,6 +127,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Retirer la catégorie'));
     await tester.pumpAndSettle();
+    expect(find.text('Supprimer Nourriture ?'), findsOneWidget);
+    await tester.tap(find.text('Supprimer la catégorie'));
+    await tester.pumpAndSettle();
     expect(find.text('Nourriture'), findsNothing);
   });
 

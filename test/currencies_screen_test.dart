@@ -281,6 +281,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Terminé'));
     await tester.pumpAndSettle();
+    expect(find.text('Retirer une devise ?'), findsOneWidget);
+    await tester.tap(find.text('Retirer').last);
+    await tester.pumpAndSettle();
 
     expect(find.text('Euro, EUR'), findsNothing);
     expect(await repo.currencyCodes(), ['USD']);

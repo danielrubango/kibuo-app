@@ -8,6 +8,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -380,6 +381,10 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     );
     switch (choice) {
       case _DeleteChoice.delete:
+        if (!mounted ||
+            !await confirmWithCode(context, l.protectDeleteOperation)) {
+          return;
+        }
         await widget.data.transactions.delete(saved.id);
         if (mounted) Navigator.of(context).pop();
       case _DeleteChoice.authorize:

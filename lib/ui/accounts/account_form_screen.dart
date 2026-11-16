@@ -17,6 +17,7 @@ import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -285,6 +286,25 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       // sheet; closing it saves nothing (PRODUCT: Régularisation).
       final difference = _difference;
       if (difference != 0 && !await _confirmAdjustment(difference)) return;
+      if (!mounted) return;
+      // Correcting a balance or changing the overdraft are important
+      // actions: the code when they ask for it (PRODUCT).
+      final l = AppLocalizations.of(context);
+      final before = account.overdraft;
+      final after = _overdraftChoice;
+      final overdraftChanged =
+          before.allowed != after.allowed ||
+          (after.allowed && (before.limit ?? 0) != (after.limit ?? 0));
+      if (difference != 0 &&
+          !await confirmWithCode(context, l.protectAdjust(account.name))) {
+        return;
+      }
+      if (!mounted) return;
+      if (overdraftChanged &&
+          !await confirmWithCode(context, l.protectOverdraft(account.name))) {
+        return;
+      }
+      if (!mounted) return;
       await widget.accounts.update(
         account.id,
         name: _name.text,
@@ -342,8 +362,33 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     );
   }
 
+  /// « Archiver M-Pesa ? » (canvas ConfirmArchive), then the code when
+  /// important actions ask for it.
   Future<void> _archive() async {
-    await widget.accounts.archive(widget.account!.id);
+    final l = AppLocalizations.of(context);
+    final account = widget.account!;
+    final labels = AccountTypeLabels(l, _custom);
+    final sure = await confirmRemoval(
+      context,
+      title: l.confirmArchiveTitle(account.name),
+      summary: RemovalSummary(
+        leading: _TypeTile(icon: labels.icon(account.type)),
+        title: account.name,
+        subtitle: '${labels.name(account.type)} · ${account.currency}',
+        trailing: formatMoney(
+          account.balance,
+          currencyOf(account.currency),
+          _lang,
+        ),
+      ),
+      text: l.confirmArchiveHelp(account.name),
+      action: l.confirmArchiveAction,
+    );
+    if (!sure || !mounted) return;
+    if (!await confirmWithCode(context, l.protectArchive(account.name))) {
+      return;
+    }
+    await widget.accounts.archive(account.id);
     if (mounted) Navigator.of(context).pop(true);
   }
 
@@ -862,4 +907,21 @@ class _AdjustSheetState extends State<_AdjustSheet> {
       ],
     );
   }
+}
+
+class _TypeTile extends StatelessWidget {
+  const _TypeTile({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 36,
+    height: 36,
+    decoration: BoxDecoration(
+      color: KibuoColors.background,
+      borderRadius: BorderRadius.circular(11),
+    ),
+    child: Icon(icon, size: 20, color: KibuoColors.inkSecondary),
+  );
 }
