@@ -7,8 +7,8 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
-
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
@@ -25,9 +25,11 @@ import 'package:kibuo/ui/shell/tab_icons.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
+import 'package:kibuo/ui/transactions/redo.dart';
 import 'package:path_provider/path_provider.dart';
 
 enum _Tab { home, operations, overview, more }
@@ -46,6 +48,7 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   _Tab _tab = _Tab.home;
   bool _fanOpen = false;
+  bool _tip = false;
   AddChoice? _hovered;
   final _plusKey = GlobalKey();
 
@@ -148,6 +151,14 @@ class _AppShellState extends State<AppShell> {
               onPlusHoldMove: _hover,
               onPlusHoldEnd: _release,
             ),
+            // The hold tip, once, after a few taps (canvas PlusBtnC2).
+            if (_tip && !_fanOpen)
+              Positioned(
+                left: 24,
+                right: 24,
+                bottom: MediaQuery.paddingOf(context).bottom + 96,
+                child: _HoldTip(onDone: _tipDone),
+              ),
             if (_fanOpen)
               Positioned.fill(
                 child: PlusFan(
@@ -232,11 +243,71 @@ class _AppShellState extends State<AppShell> {
   }
 
   Future<void> _openSheet() async {
-    final choice = await showAddSheet(context);
-    if (choice != null && mounted) await _openEntry(choice);
+    final db = KibuoData.maybeOf(context);
+    final tip = db != null && await HintStore(db).sheetOpened();
+    if (!mounted) return;
+    final picked = await showAddSheet(context, redo: _redoCards());
+    if (tip && mounted) setState(() => _tip = true);
+    if (!mounted) return;
+    switch (picked) {
+      case AddChoice():
+        await _openEntry(picked);
+      // « Refaire »: the same operation, ready to save again today.
+      case TransactionInfo():
+        final data = _entryData(context);
+        if (data == null) return;
+        await runEntry(
+          context,
+          data,
+          kind: picked.kind,
+          initial: picked,
+          onSaved: _afterSave,
+        );
+    }
+  }
+
+  /// The « Refaire » cards (PRODUCT): the latest operations, once each.
+  Future<List<RedoCard<Object>>> _redoCards() async {
+    final data = _entryData(context);
+    if (data == null) return const [];
+    final candidates = redoCandidates(await data.transactions.all());
+    final cards = <RedoCard<Object>>[];
+    for (final t in candidates) {
+      if (!mounted) return const [];
+      final labels = await OperationLabels.of(context, data, t);
+      if (!mounted) return const [];
+      final path = labels.categoryPath.split(' › ');
+      cards.add(
+        RedoCard(
+          title: path.last,
+          amount: signedTotal(context, t),
+          color: kindColors(t.kind).ink,
+          subtitle: [
+            labels.account,
+            if (path.length > 1) path.first,
+          ].join(' · '),
+          value: t,
+        ),
+      );
+    }
+    return cards;
+  }
+
+  void _afterSave() {
+    // The list opens on the new operation (PRODUCT).
+    setState(() => _tab = _Tab.operations);
+    _saved.value++;
+  }
+
+  void _tipDone() {
+    setState(() => _tip = false);
+    final db = KibuoData.maybeOf(context);
+    if (db != null) HintStore(db).tipDone();
   }
 
   void _openFan() {
+    // Found the hold alone: the tip never comes.
+    _tipDone();
     HapticFeedback.mediumImpact();
     setState(() {
       _fanOpen = true;
@@ -283,16 +354,7 @@ class _AppShellState extends State<AppShell> {
       _ => null,
     };
     if (data != null && kind != null) {
-      return runEntry(
-        context,
-        data,
-        kind: kind,
-        onSaved: () {
-          // The list opens on the new operation (PRODUCT).
-          setState(() => _tab = _Tab.operations);
-          _saved.value++;
-        },
-      );
+      return runEntry(context, data, kind: kind, onSaved: _afterSave);
     }
     return Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -544,6 +606,56 @@ class _PlusButtonState extends State<_PlusButton>
           ),
         ),
       ),
+    );
+  }
+}
+
+/// « Astuce : maintenez + puis glissez vers un choix, sans lever le
+/// doigt. » with « Compris », pointing at the + (canvas PlusBtnC2).
+class _HoldTip extends StatelessWidget {
+  const _HoldTip({required this.onDone});
+
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+          decoration: BoxDecoration(
+            color: KibuoColors.ink,
+            borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                l.plusHoldTip,
+                style: KibuoType.body.copyWith(
+                  color: KibuoColors.surface,
+                  fontSize: 14,
+                ),
+              ),
+              TextButton(
+                onPressed: onDone,
+                style: TextButton.styleFrom(foregroundColor: KibuoColors.mint),
+                child: Text(l.plusHoldTipDone),
+              ),
+            ],
+          ),
+        ),
+        // The point, towards the +.
+        Transform.translate(
+          offset: const Offset(0, -6),
+          child: Transform.rotate(
+            angle: 0.785398,
+            child: Container(width: 12, height: 12, color: KibuoColors.ink),
+          ),
+        ),
+      ],
     );
   }
 }

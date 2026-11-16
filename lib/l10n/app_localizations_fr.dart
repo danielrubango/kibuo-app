@@ -1319,4 +1319,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get confirmCurrenciesAction => 'Retirer';
+
+  @override
+  String get accountMinusHint => 'Maintenez « , » pour un solde négatif.';
+
+  @override
+  String get addRedo => 'Refaire';
+
+  @override
+  String get plusHoldTip =>
+      'Astuce : maintenez + puis glissez vers un choix, sans lever le doigt.';
+
+  @override
+  String get plusHoldTipDone => 'Compris';
 }

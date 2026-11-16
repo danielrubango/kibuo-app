@@ -71,4 +71,62 @@ void main() {
       );
     });
   }
+
+  for (final allowed in [true, false]) {
+    testWidgets(
+      'holding « , » flips the sign, only with overdraft ($allowed)',
+      (tester) async {
+        final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+        addTearDown(db.close);
+        final accounts = AccountRepository(db);
+        final currencies = CurrencyRepository(db);
+        await currencies.ensurePrimaryCurrency('US');
+        await accounts.create(
+          name: 'Rawbank',
+          type: AccountType.bank,
+          opening: const Money(2000, 'USD'),
+          openingDate: DateTime.utc(2026, 11, 1),
+          overdraft: Overdraft(allowed: allowed),
+        );
+        tester.view.physicalSize = const Size(1080, 2400);
+        tester.view.devicePixelRatio = 2.75;
+        addTearDown(tester.view.reset);
+        tester.platformDispatcher.localesTestValue = const [Locale('fr', 'US')];
+        addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('kibuo/device'),
+          (call) async => 'US',
+        );
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: KibuoTheme.light(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: appLanguages,
+            localeListResolutionCallback: (phone, _) =>
+                resolveAppLanguage(phone),
+            home: AccountsScreen(
+              accounts: accounts,
+              currencies: currencies,
+              categories: CategoryRepository(db),
+              transactions: TransactionRepository(db),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Rawbank'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('20'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text('Maintenez « , » pour un solde négatif.'),
+          allowed ? findsOneWidget : findsNothing,
+        );
+        expect(find.text('−'), allowed ? findsOneWidget : findsNothing);
+        await tester.longPress(find.text(',').last);
+        await tester.pumpAndSettle();
+        expect(find.text('−20'), allowed ? findsOneWidget : findsNothing);
+      },
+    );
+  }
 }
