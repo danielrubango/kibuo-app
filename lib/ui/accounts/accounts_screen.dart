@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/accounts/account_total.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -24,10 +26,16 @@ class AccountsScreen extends StatefulWidget {
     super.key,
     required this.accounts,
     required this.currencies,
+    this.categories,
+    this.transactions,
   });
 
   final AccountRepository accounts;
   final CurrencyRepository currencies;
+
+  /// For « Solde actuel » in an account's form.
+  final CategoryRepository? categories;
+  final TransactionRepository? transactions;
 
   @override
   State<AccountsScreen> createState() => _AccountsScreenState();
@@ -101,6 +109,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
           accounts: widget.accounts,
           currencies: widget.currencies,
           account: account,
+          categories: widget.categories,
+          transactions: widget.transactions,
         ),
       ),
     );

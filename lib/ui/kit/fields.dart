@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -430,6 +431,45 @@ class _BlinkingCaretState extends State<BlinkingCaret>
           margin: const EdgeInsets.only(left: 4),
           color: KibuoColors.accent,
         ),
+      ),
+    );
+  }
+}
+
+/// Under the amount when an account would go below its floor (canvas
+/// DecouvertSaisieA): the alert in red, « Autoriser » in green on the right,
+/// on the card's inner edges.
+class RefusalLine extends StatelessWidget {
+  const RefusalLine({
+    super.key,
+    required this.text,
+    required this.action,
+    required this.onAction,
+  });
+
+  final String text;
+  final String action;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Row(
+        children: [
+          const Icon(KibuoIcons.warning, size: 18, color: KibuoColors.danger),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: KibuoType.body.copyWith(
+                fontSize: 14,
+                color: KibuoColors.danger,
+              ),
+            ),
+          ),
+          TextAction(label: action, onPressed: onAction),
+        ],
       ),
     );
   }

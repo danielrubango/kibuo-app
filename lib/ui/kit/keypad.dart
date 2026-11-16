@@ -14,12 +14,17 @@ class KibuoKeypad extends StatelessWidget {
     required this.onDelete,
     this.decimalSeparator = ',',
     this.allowDecimal = true,
+    this.onMinus,
   });
 
   final ValueChanged<String> onKey;
   final VoidCallback onDelete;
   final String decimalSeparator;
   final bool allowDecimal;
+
+  /// A « − » key that flips the sign, sharing the decimal key's place: only
+  /// where a value may be negative (a balance with overdraft, PRODUCT).
+  final VoidCallback? onMinus;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +46,15 @@ class KibuoKeypad extends StatelessWidget {
               SizedBox(
                 width: width,
                 height: KibuoTheme.heightKey,
-                child: k.isEmpty ? null : _key(context, k),
+                child: onMinus != null && k == keys[9]
+                    ? Row(
+                        children: [
+                          Expanded(child: _key(context, k)),
+                          const SizedBox(width: gap),
+                          Expanded(child: _key(context, '−')),
+                        ],
+                      )
+                    : _key(context, k),
               ),
           ],
         );
@@ -56,7 +69,11 @@ class KibuoKeypad extends StatelessWidget {
       borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: delete ? onDelete : () => onKey(k),
+        onTap: delete
+            ? onDelete
+            : k == '−'
+            ? onMinus
+            : () => onKey(k),
         child: Center(
           child: delete
               ? Icon(
