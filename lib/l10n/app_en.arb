@@ -366,5 +366,9 @@
   "confirmCategoryAction": "Delete the category",
   "confirmCurrenciesTitle": "{count, plural, =1{Remove a currency?} other{Remove {count} currencies?}}",
   "confirmCurrenciesHelp": "{names} will no longer be offered.",
-  "confirmCurrenciesAction": "Remove"
+  "confirmCurrenciesAction": "Remove",
+  "accountMinusHint": "Hold « . » for a negative balance.",
+  "addRedo": "Do again",
+  "plusHoldTip": "Tip: hold + then slide to a choice, without lifting your finger.",
+  "plusHoldTipDone": "Got it"
 }

@@ -2238,6 +2238,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Retirer'**
   String get confirmCurrenciesAction;
+
+  /// Account form: how to type a negative balance
+  ///
+  /// In fr, this message translates to:
+  /// **'Maintenez « , » pour un solde négatif.'**
+  String get accountMinusHint;
+
+  /// + sheet: the latest operations to do again
+  ///
+  /// In fr, this message translates to:
+  /// **'Refaire'**
+  String get addRedo;
+
+  /// Tip bubble over + after a few openings
+  ///
+  /// In fr, this message translates to:
+  /// **'Astuce : maintenez + puis glissez vers un choix, sans lever le doigt.'**
+  String get plusHoldTip;
+
+  /// Tip bubble button
+  ///
+  /// In fr, this message translates to:
+  /// **'Compris'**
+  String get plusHoldTipDone;
 }
 
 class _AppLocalizationsDelegate

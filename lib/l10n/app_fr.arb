@@ -720,5 +720,13 @@
   "confirmCurrenciesHelp": "{names} ne {count, plural, =1{sera} other{seront}} plus {count, plural, =1{proposé} other{proposés}}.",
   "@confirmCurrenciesHelp": {"description": "Confirm sheet", "placeholders": {"names": {"type": "String"}, "count": {"type": "int"}}},
   "confirmCurrenciesAction": "Retirer",
-  "@confirmCurrenciesAction": {"description": "Confirm sheet button"}
+  "@confirmCurrenciesAction": {"description": "Confirm sheet button"},
+  "accountMinusHint": "Maintenez « , » pour un solde négatif.",
+  "@accountMinusHint": {"description": "Account form: how to type a negative balance"},
+  "addRedo": "Refaire",
+  "@addRedo": {"description": "+ sheet: the latest operations to do again"},
+  "plusHoldTip": "Astuce : maintenez + puis glissez vers un choix, sans lever le doigt.",
+  "@plusHoldTip": {"description": "Tip bubble over + after a few openings"},
+  "plusHoldTipDone": "Compris",
+  "@plusHoldTipDone": {"description": "Tip bubble button"}
 }

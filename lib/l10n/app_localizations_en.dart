@@ -1297,4 +1297,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmCurrenciesAction => 'Remove';
+
+  @override
+  String get accountMinusHint => 'Hold « . » for a negative balance.';
+
+  @override
+  String get addRedo => 'Do again';
+
+  @override
+  String get plusHoldTip =>
+      'Tip: hold + then slide to a choice, without lifting your finger.';
+
+  @override
+  String get plusHoldTipDone => 'Got it';
 }
