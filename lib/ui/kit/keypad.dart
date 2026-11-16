@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -22,8 +23,9 @@ class KibuoKeypad extends StatelessWidget {
   final String decimalSeparator;
   final bool allowDecimal;
 
-  /// A « − » key that flips the sign, sharing the decimal key's place: only
-  /// where a value may be negative (a balance with overdraft, PRODUCT).
+  /// Holding the decimal key flips the sign, shown by a small « − » in its
+  /// corner (canvas SigneD): only where a value may be negative (a balance
+  /// with overdraft, PRODUCT).
   final VoidCallback? onMinus;
 
   @override
@@ -46,15 +48,7 @@ class KibuoKeypad extends StatelessWidget {
               SizedBox(
                 width: width,
                 height: KibuoTheme.heightKey,
-                child: onMinus != null && k == keys[9]
-                    ? Row(
-                        children: [
-                          Expanded(child: _key(context, k)),
-                          const SizedBox(width: gap),
-                          Expanded(child: _key(context, '−')),
-                        ],
-                      )
-                    : _key(context, k),
+                child: _key(context, k, minus: k == keys[9] ? onMinus : null),
               ),
           ],
         );
@@ -62,7 +56,7 @@ class KibuoKeypad extends StatelessWidget {
     );
   }
 
-  Widget _key(BuildContext context, String k) {
+  Widget _key(BuildContext context, String k, {VoidCallback? minus}) {
     final delete = k == '←';
     return Material(
       color: KibuoColors.surface,
@@ -71,22 +65,47 @@ class KibuoKeypad extends StatelessWidget {
       child: InkWell(
         onTap: delete
             ? onDelete
-            : k == '−'
-            ? onMinus
             // The decimal key shows the language's mark (« . » in English)
             // but always types « , », the one the app reads.
             : () => onKey(allowDecimal && k == decimalSeparator ? ',' : k),
-        child: Center(
-          child: delete
-              ? Icon(
-                  KibuoIcons.arrowLeft,
-                  size: 24,
-                  color: KibuoColors.ink,
-                  semanticLabel: AppLocalizations.of(context).keypadDelete,
-                )
-              : Text(k, style: KibuoType.key),
+        onLongPress: minus == null
+            ? null
+            : () {
+                HapticFeedback.mediumImpact();
+                minus();
+              },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (minus != null)
+              Positioned(
+                top: 4,
+                right: 10,
+                child: Text(
+                  '−',
+                  style: KibuoType.caption.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontVariations: const [FontVariation.weight(600)],
+                  ),
+                ),
+              ),
+            Center(child: _label(context, k, delete)),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _label(BuildContext context, String k, bool delete) {
+    return Center(
+      child: delete
+          ? Icon(
+              KibuoIcons.arrowLeft,
+              size: 24,
+              color: KibuoColors.ink,
+              semanticLabel: AppLocalizations.of(context).keypadDelete,
+            )
+          : Text(k, style: KibuoType.key),
     );
   }
 }

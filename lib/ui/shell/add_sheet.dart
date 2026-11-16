@@ -6,19 +6,44 @@ import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
-/// The « Ajouter » sheet opened by a tap on +. Resolves to the chosen entry,
-/// or null when closed.
-Future<AddChoice?> showAddSheet(BuildContext context) {
-  return showModalBottomSheet<AddChoice>(
+/// One « Refaire » card (canvas PlusBtnB1): the label, the amount in its
+/// type's colour, the account and category; [value] comes back when
+/// touched.
+class RedoCard<T> {
+  const RedoCard({
+    required this.title,
+    required this.amount,
+    required this.color,
+    required this.subtitle,
+    required this.value,
+  });
+
+  final String title;
+  final String amount;
+  final Color color;
+  final String subtitle;
+  final T value;
+}
+
+/// The « Ajouter » sheet opened by a tap on +. Resolves to the chosen
+/// [AddChoice], to the value of a « Refaire » card, or null when closed.
+Future<Object?> showAddSheet(
+  BuildContext context, {
+  Future<List<RedoCard<Object>>>? redo,
+}) {
+  return showModalBottomSheet<Object>(
     context: context,
     isScrollControlled: true,
     barrierColor: KibuoColors.ink.withValues(alpha: 0.42),
-    builder: (context) => const _AddSheet(),
+    builder: (context) => _AddSheet(redo: redo),
   );
 }
 
 class _AddSheet extends StatelessWidget {
-  const _AddSheet();
+  const _AddSheet({required this.redo});
+
+  /// Loaded while the sheet is already open: the + answers at once.
+  final Future<List<RedoCard<Object>>>? redo;
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +93,44 @@ class _AddSheet extends StatelessWidget {
                   ),
               ],
             ),
+            FutureBuilder(
+              future: redo,
+              builder: (context, snap) => _redoSection(context, snap.data),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _redoSection(BuildContext context, List<RedoCard<Object>>? redo) {
+    if (redo == null || redo.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            AppLocalizations.of(context).addRedo,
+            style: KibuoType.sectionTitle,
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 84,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            itemCount: redo.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (context, i) => _RedoTile(
+              card: redo[i],
+              onTap: () => Navigator.of(context).pop(redo[i].value),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -203,6 +263,59 @@ class _IconTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(size / 3),
       ),
       child: Icon(icon, size: 20, color: ink),
+    );
+  }
+}
+
+class _RedoTile extends StatelessWidget {
+  const _RedoTile({required this.card, required this.onTap});
+
+  final RedoCard<Object> card;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+        onTap: onTap,
+        child: Container(
+          width: 140,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                card.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: KibuoType.rowLabel.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontVariations: const [FontVariation.weight(600)],
+                ),
+              ),
+              Text(
+                card.amount,
+                maxLines: 1,
+                style: KibuoType.caption.copyWith(
+                  color: card.color,
+                  fontWeight: FontWeight.w700,
+                  fontVariations: const [FontVariation.weight(700)],
+                ),
+              ),
+              Text(
+                card.subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: KibuoType.caption,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

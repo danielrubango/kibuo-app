@@ -534,8 +534,13 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       unit: currency.code,
                       focused: _keypad && _typing == _Typing.current,
                       onTap: () => _openKeypad(_Typing.current),
+                      // While typing it with overdraft allowed, how to make
+                      // it negative (canvas SigneD); nothing about it
+                      // otherwise.
                       note: _currentRefused
                           ? null
+                          : _keypad && _typing == _Typing.current && _overdraft
+                          ? l.accountMinusHint
                           : l.accountCurrentHelp(
                               formatMoney(
                                 widget.account!.balance,
