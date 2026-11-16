@@ -7,6 +7,8 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -82,8 +84,30 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
     if (mounted) Navigator.of(context).pop(true);
   }
 
+  /// « Supprimer Transport ? » (canvas ConfirmCategorie), then the code
+  /// when important actions ask for it.
   Future<void> _remove() async {
-    await widget.categories.remove(widget.category!.id);
+    final l = AppLocalizations.of(context);
+    final category = widget.category!;
+    final name = categoryName(l, category);
+    final sure = await confirmRemoval(
+      context,
+      title: l.confirmCategoryTitle(name),
+      summary: RemovalSummary(
+        leading: CategoryTile(category: category, size: 36),
+        title: name,
+        subtitle: category.subs.isEmpty
+            ? null
+            : [for (final s in category.subs) categoryName(l, s)].join(', '),
+      ),
+      text: l.confirmCategoryHelp(name, category.subs.length),
+      action: l.confirmCategoryAction,
+    );
+    if (!sure || !mounted) return;
+    if (!await confirmWithCode(context, l.protectDeleteCategory(name))) {
+      return;
+    }
+    await widget.categories.remove(category.id);
     if (mounted) Navigator.of(context).pop(true);
   }
 

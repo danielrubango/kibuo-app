@@ -142,6 +142,9 @@ class LockController extends ChangeNotifier {
 
   bool get ready => _ready;
   bool get hasPin => _hasPin;
+
+  /// Important actions ask the code too (PRODUCT).
+  bool get protectsActions => _hasPin && _settings.protectActions;
   bool get locked => _locked;
   int get pinLength => _pinLength ?? 4;
   bool get biometricsAvailable => _biometricsAvailable;
@@ -204,7 +207,9 @@ class LockController extends ChangeNotifier {
     await pins.removePin();
     _hasPin = false;
     _pinLength = null;
-    await updateSettings(_settings.copyWith(fingerprint: false));
+    await updateSettings(
+      _settings.copyWith(fingerprint: false, protectActions: false),
+    );
   }
 
   Future<void> updateSettings(LockSettings settings) async {
