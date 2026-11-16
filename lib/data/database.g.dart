@@ -2165,6 +2165,32 @@ class $AccountsTable extends Accounts
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _overdraftAllowedMeta = const VerificationMeta(
+    'overdraftAllowed',
+  );
+  @override
+  late final GeneratedColumn<bool> overdraftAllowed = GeneratedColumn<bool>(
+    'overdraft_allowed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("overdraft_allowed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _overdraftLimitMeta = const VerificationMeta(
+    'overdraftLimit',
+  );
+  @override
+  late final GeneratedColumn<int> overdraftLimit = GeneratedColumn<int>(
+    'overdraft_limit',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _positionMeta = const VerificationMeta(
     'position',
   );
@@ -2188,6 +2214,8 @@ class $AccountsTable extends Accounts
     openingBalance,
     openingDate,
     archived,
+    overdraftAllowed,
+    overdraftLimit,
     position,
   ];
   @override
@@ -2281,6 +2309,24 @@ class $AccountsTable extends Accounts
         archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
       );
     }
+    if (data.containsKey('overdraft_allowed')) {
+      context.handle(
+        _overdraftAllowedMeta,
+        overdraftAllowed.isAcceptableOrUnknown(
+          data['overdraft_allowed']!,
+          _overdraftAllowedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('overdraft_limit')) {
+      context.handle(
+        _overdraftLimitMeta,
+        overdraftLimit.isAcceptableOrUnknown(
+          data['overdraft_limit']!,
+          _overdraftLimitMeta,
+        ),
+      );
+    }
     if (data.containsKey('position')) {
       context.handle(
         _positionMeta,
@@ -2338,6 +2384,14 @@ class $AccountsTable extends Accounts
         DriftSqlType.bool,
         data['${effectivePrefix}archived'],
       )!,
+      overdraftAllowed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}overdraft_allowed'],
+      )!,
+      overdraftLimit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}overdraft_limit'],
+      ),
       position: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}position'],
@@ -2373,6 +2427,13 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
   /// Out of lists and totals; its transactions stay.
   final bool archived;
 
+  /// Whether the balance may go below zero (GLOSSARY: Découvert).
+  final bool overdraftAllowed;
+
+  /// How far below zero, in the currency's smallest unit; null or 0 for no
+  /// limit. Kept while [overdraftAllowed] is off.
+  final int? overdraftLimit;
+
   /// Order in the lists: one more than the last account at creation.
   final int position;
   const AccountRow({
@@ -2386,6 +2447,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     required this.openingBalance,
     required this.openingDate,
     required this.archived,
+    required this.overdraftAllowed,
+    this.overdraftLimit,
     required this.position,
   });
   @override
@@ -2401,6 +2464,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     map['opening_balance'] = Variable<int>(openingBalance);
     map['opening_date'] = Variable<DateTime>(openingDate);
     map['archived'] = Variable<bool>(archived);
+    map['overdraft_allowed'] = Variable<bool>(overdraftAllowed);
+    if (!nullToAbsent || overdraftLimit != null) {
+      map['overdraft_limit'] = Variable<int>(overdraftLimit);
+    }
     map['position'] = Variable<int>(position);
     return map;
   }
@@ -2417,6 +2484,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       openingBalance: Value(openingBalance),
       openingDate: Value(openingDate),
       archived: Value(archived),
+      overdraftAllowed: Value(overdraftAllowed),
+      overdraftLimit: overdraftLimit == null && nullToAbsent
+          ? const Value.absent()
+          : Value(overdraftLimit),
       position: Value(position),
     );
   }
@@ -2437,6 +2508,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       openingBalance: serializer.fromJson<int>(json['openingBalance']),
       openingDate: serializer.fromJson<DateTime>(json['openingDate']),
       archived: serializer.fromJson<bool>(json['archived']),
+      overdraftAllowed: serializer.fromJson<bool>(json['overdraftAllowed']),
+      overdraftLimit: serializer.fromJson<int?>(json['overdraftLimit']),
       position: serializer.fromJson<int>(json['position']),
     );
   }
@@ -2454,6 +2527,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       'openingBalance': serializer.toJson<int>(openingBalance),
       'openingDate': serializer.toJson<DateTime>(openingDate),
       'archived': serializer.toJson<bool>(archived),
+      'overdraftAllowed': serializer.toJson<bool>(overdraftAllowed),
+      'overdraftLimit': serializer.toJson<int?>(overdraftLimit),
       'position': serializer.toJson<int>(position),
     };
   }
@@ -2469,6 +2544,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     int? openingBalance,
     DateTime? openingDate,
     bool? archived,
+    bool? overdraftAllowed,
+    Value<int?> overdraftLimit = const Value.absent(),
     int? position,
   }) => AccountRow(
     id: id ?? this.id,
@@ -2481,6 +2558,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     openingBalance: openingBalance ?? this.openingBalance,
     openingDate: openingDate ?? this.openingDate,
     archived: archived ?? this.archived,
+    overdraftAllowed: overdraftAllowed ?? this.overdraftAllowed,
+    overdraftLimit: overdraftLimit.present
+        ? overdraftLimit.value
+        : this.overdraftLimit,
     position: position ?? this.position,
   );
   AccountRow copyWithCompanion(AccountsCompanion data) {
@@ -2499,6 +2580,12 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           ? data.openingDate.value
           : this.openingDate,
       archived: data.archived.present ? data.archived.value : this.archived,
+      overdraftAllowed: data.overdraftAllowed.present
+          ? data.overdraftAllowed.value
+          : this.overdraftAllowed,
+      overdraftLimit: data.overdraftLimit.present
+          ? data.overdraftLimit.value
+          : this.overdraftLimit,
       position: data.position.present ? data.position.value : this.position,
     );
   }
@@ -2516,6 +2603,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           ..write('openingBalance: $openingBalance, ')
           ..write('openingDate: $openingDate, ')
           ..write('archived: $archived, ')
+          ..write('overdraftAllowed: $overdraftAllowed, ')
+          ..write('overdraftLimit: $overdraftLimit, ')
           ..write('position: $position')
           ..write(')'))
         .toString();
@@ -2533,6 +2622,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     openingBalance,
     openingDate,
     archived,
+    overdraftAllowed,
+    overdraftLimit,
     position,
   );
   @override
@@ -2549,6 +2640,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           other.openingBalance == this.openingBalance &&
           other.openingDate == this.openingDate &&
           other.archived == this.archived &&
+          other.overdraftAllowed == this.overdraftAllowed &&
+          other.overdraftLimit == this.overdraftLimit &&
           other.position == this.position);
 }
 
@@ -2563,6 +2656,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
   final Value<int> openingBalance;
   final Value<DateTime> openingDate;
   final Value<bool> archived;
+  final Value<bool> overdraftAllowed;
+  final Value<int?> overdraftLimit;
   final Value<int> position;
   final Value<int> rowid;
   const AccountsCompanion({
@@ -2576,6 +2671,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     this.openingBalance = const Value.absent(),
     this.openingDate = const Value.absent(),
     this.archived = const Value.absent(),
+    this.overdraftAllowed = const Value.absent(),
+    this.overdraftLimit = const Value.absent(),
     this.position = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -2590,6 +2687,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     required int openingBalance,
     required DateTime openingDate,
     this.archived = const Value.absent(),
+    this.overdraftAllowed = const Value.absent(),
+    this.overdraftLimit = const Value.absent(),
     required int position,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -2612,6 +2711,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Expression<int>? openingBalance,
     Expression<DateTime>? openingDate,
     Expression<bool>? archived,
+    Expression<bool>? overdraftAllowed,
+    Expression<int>? overdraftLimit,
     Expression<int>? position,
     Expression<int>? rowid,
   }) {
@@ -2626,6 +2727,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       if (openingBalance != null) 'opening_balance': openingBalance,
       if (openingDate != null) 'opening_date': openingDate,
       if (archived != null) 'archived': archived,
+      if (overdraftAllowed != null) 'overdraft_allowed': overdraftAllowed,
+      if (overdraftLimit != null) 'overdraft_limit': overdraftLimit,
       if (position != null) 'position': position,
       if (rowid != null) 'rowid': rowid,
     });
@@ -2642,6 +2745,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Value<int>? openingBalance,
     Value<DateTime>? openingDate,
     Value<bool>? archived,
+    Value<bool>? overdraftAllowed,
+    Value<int?>? overdraftLimit,
     Value<int>? position,
     Value<int>? rowid,
   }) {
@@ -2656,6 +2761,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       openingBalance: openingBalance ?? this.openingBalance,
       openingDate: openingDate ?? this.openingDate,
       archived: archived ?? this.archived,
+      overdraftAllowed: overdraftAllowed ?? this.overdraftAllowed,
+      overdraftLimit: overdraftLimit ?? this.overdraftLimit,
       position: position ?? this.position,
       rowid: rowid ?? this.rowid,
     );
@@ -2694,6 +2801,12 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
+    if (overdraftAllowed.present) {
+      map['overdraft_allowed'] = Variable<bool>(overdraftAllowed.value);
+    }
+    if (overdraftLimit.present) {
+      map['overdraft_limit'] = Variable<int>(overdraftLimit.value);
+    }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
     }
@@ -2716,6 +2829,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
           ..write('openingBalance: $openingBalance, ')
           ..write('openingDate: $openingDate, ')
           ..write('archived: $archived, ')
+          ..write('overdraftAllowed: $overdraftAllowed, ')
+          ..write('overdraftLimit: $overdraftLimit, ')
           ..write('position: $position, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -6188,6 +6303,8 @@ typedef $$AccountsTableCreateCompanionBuilder = AccountsCompanion Function({
   required int openingBalance,
   required DateTime openingDate,
   Value<bool> archived,
+  Value<bool> overdraftAllowed,
+  Value<int?> overdraftLimit,
   required int position,
   Value<int> rowid,
 });
@@ -6202,6 +6319,8 @@ typedef $$AccountsTableUpdateCompanionBuilder = AccountsCompanion Function({
   Value<int> openingBalance,
   Value<DateTime> openingDate,
   Value<bool> archived,
+  Value<bool> overdraftAllowed,
+  Value<int?> overdraftLimit,
   Value<int> position,
   Value<int> rowid,
 });
@@ -6262,6 +6381,16 @@ class $$AccountsTableFilterComposer
 
   ColumnFilters<bool> get archived => $composableBuilder(
     column: $table.archived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get overdraftAllowed => $composableBuilder(
+    column: $table.overdraftAllowed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get overdraftLimit => $composableBuilder(
+    column: $table.overdraftLimit,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6330,6 +6459,16 @@ class $$AccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get overdraftAllowed => $composableBuilder(
+    column: $table.overdraftAllowed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get overdraftLimit => $composableBuilder(
+    column: $table.overdraftLimit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get position => $composableBuilder(
     column: $table.position,
     builder: (column) => ColumnOrderings(column),
@@ -6379,6 +6518,16 @@ class $$AccountsTableAnnotationComposer
   GeneratedColumn<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => column);
 
+  GeneratedColumn<bool> get overdraftAllowed => $composableBuilder(
+    column: $table.overdraftAllowed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get overdraftLimit => $composableBuilder(
+    column: $table.overdraftLimit,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get position =>
       $composableBuilder(column: $table.position, builder: (column) => column);
 }
@@ -6424,6 +6573,8 @@ class $$AccountsTableTableManager
                 Value<int> openingBalance = const Value.absent(),
                 Value<DateTime> openingDate = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<bool> overdraftAllowed = const Value.absent(),
+                Value<int?> overdraftLimit = const Value.absent(),
                 Value<int> position = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AccountsCompanion(
@@ -6437,6 +6588,8 @@ class $$AccountsTableTableManager
                 openingBalance: openingBalance,
                 openingDate: openingDate,
                 archived: archived,
+                overdraftAllowed: overdraftAllowed,
+                overdraftLimit: overdraftLimit,
                 position: position,
                 rowid: rowid,
               ),
@@ -6452,6 +6605,8 @@ class $$AccountsTableTableManager
                 required int openingBalance,
                 required DateTime openingDate,
                 Value<bool> archived = const Value.absent(),
+                Value<bool> overdraftAllowed = const Value.absent(),
+                Value<int?> overdraftLimit = const Value.absent(),
                 required int position,
                 Value<int> rowid = const Value.absent(),
               }) => AccountsCompanion.insert(
@@ -6465,6 +6620,8 @@ class $$AccountsTableTableManager
                 openingBalance: openingBalance,
                 openingDate: openingDate,
                 archived: archived,
+                overdraftAllowed: overdraftAllowed,
+                overdraftLimit: overdraftLimit,
                 position: position,
                 rowid: rowid,
               ),

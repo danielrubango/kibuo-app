@@ -328,5 +328,17 @@
   "transferSecondText": "A transfer moves money between two of your accounts. Create a second one, then note your transfer.",
   "transferSecondAction": "Create an account",
   "entryDeleteTransferTitle": "Delete this transfer?",
-  "entryDeleteTransferHelp": "It leaves the list: {from} gets {withdrawn} back and {to} loses {arrived}."
+  "entryDeleteTransferHelp": "It leaves the list: {from} gets {withdrawn} back and {to} loses {arrived}.",
+  "overdraftLabel": "Overdraft",
+  "overdraftAllow": "Allow overdraft",
+  "overdraftAllowHelp": "The balance can go below zero",
+  "overdraftUpTo": "Up to",
+  "overdraftNoLimitHelp": "Empty or 0: no limit.",
+  "overdraftNoLimit": "No limit",
+  "overdraftBelowZero": "{account} is at {balance}: nothing can leave it until it comes back up. Money can still come in.",
+  "overdraftCaptionUpTo": "Overdraft up to {amount}",
+  "overdraftCaptionNoLimit": "Unlimited overdraft",
+  "overdraftAvailable": "{amount} available in {account}",
+  "overdraftAuthorize": "Allow",
+  "overdraftWouldGo": "{account} would go to {amount}"
 }

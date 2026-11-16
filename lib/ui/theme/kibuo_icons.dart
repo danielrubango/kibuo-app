@@ -27,6 +27,7 @@ abstract final class KibuoIcons {
   static const arrowUp = IconData(0xe08e, fontFamily: _regular);
   static const arrowsLeftRight = IconData(0xe0a0, fontFamily: _regular);
   static const arrowRight = IconData(0xe06c, fontFamily: _regular);
+  static const warning = IconData(0xe4e0, fontFamily: _regular);
   static const handCoins = IconData(0xea8c, fontFamily: _regular);
   static const target = IconData(0xe47c, fontFamily: _regular);
 

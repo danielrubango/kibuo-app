@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -306,5 +307,70 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('EUR'), findsOneWidget);
+  });
+
+  testWidgets('overdraft up to a limit, shown in the list', (tester) async {
+    await accounts.create(
+      name: 'Rawbank',
+      type: AccountType.bank,
+      opening: const Money(0, 'USD'),
+      openingDate: day,
+    );
+    await start(tester);
+    await tester.tap(find.text('Rawbank'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Jusqu’à'), findsNothing, reason: 'off at first');
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sans limite'));
+    await tester.pumpAndSettle();
+    await type(tester, '100');
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+
+    final o = (await accounts.accounts()).single.overdraft;
+    expect(o.allowed, isTrue);
+    expect(o.limit, 10000);
+    expect(textPlain('USD · Découvert jusqu’à 100,00 \$'), findsOneWidget);
+  });
+
+  testWidgets('turning it off below zero warns, and is allowed', (
+    tester,
+  ) async {
+    final id = await accounts.create(
+      name: 'Rawbank',
+      type: AccountType.bank,
+      opening: const Money(0, 'USD'),
+      openingDate: day,
+      overdraft: const Overdraft(allowed: true),
+    );
+    await TransactionRepository(db).create(
+      kind: EntryKind.expense,
+      accountId: id,
+      categoryId: 'default-taxi',
+      paid: const Money(2000, 'USD'),
+      fees: 0,
+      date: day,
+    );
+    await start(tester);
+    expect(textPlain('USD · Découvert sans limite'), findsOneWidget);
+    await tester.tap(find.text('Rawbank'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+    expect(
+      textPlain(
+        'Rawbank est à −20,00 \$ : aucune sortie ne passera tant qu’il ne '
+        'sera pas remonté. Les entrées restent possibles.',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+    expect((await accounts.accounts()).single.overdraft.allowed, isFalse);
   });
 }

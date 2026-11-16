@@ -133,4 +133,34 @@ void main() {
     await repo.setAllInMain(false);
     expect(await repo.allInMain(), isFalse);
   });
+
+  test('no overdraft at creation, then allowed up to a limit', () async {
+    final id = await repo.create(
+      name: 'Rawbank',
+      type: AccountType.bank,
+      opening: const Money(0, 'USD'),
+      openingDate: DateTime.utc(2026, 11, 1),
+    );
+    expect((await repo.accounts()).single.overdraft.allowed, isFalse);
+
+    await repo.update(
+      id,
+      name: 'Rawbank',
+      type: AccountType.bank,
+      overdraft: const Overdraft(allowed: true, limit: 10000),
+    );
+    var o = (await repo.accounts()).single.overdraft;
+    expect(o.allowed, isTrue);
+    expect(o.limit, 10000);
+
+    await repo.update(
+      id,
+      name: 'Rawbank',
+      type: AccountType.bank,
+      overdraft: const Overdraft(allowed: false, limit: 10000),
+    );
+    o = (await repo.accounts()).single.overdraft;
+    expect(o.allowed, isFalse);
+    expect(o.limit, 10000, reason: 'kept for when it comes back');
+  });
 }

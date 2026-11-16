@@ -13,10 +13,12 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
+import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_sheets.dart';
 
 /// « Nouveau compte » (canvas: CompteNouveau): type, name, starting balance
 /// with its currency on the right, and the balance's date. For [account],
@@ -48,6 +50,13 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   DateTime _date = _today();
   bool _keypad = false;
   final _openingKey = GlobalKey();
+
+  // The overdraft (PRODUCT): off at creation; the limit is typed on the
+  // same keypad as the starting balance.
+  late bool _overdraft = widget.account?.overdraft.allowed ?? false;
+  String _limit = '';
+  bool _typingLimit = false;
+  final _limitKey = GlobalKey();
   bool _named = true;
 
   static DateTime _today() {
@@ -79,9 +88,13 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
         defaultPrimaryCurrency(await deviceCountry());
     final currency = await widget.currencies.currency(code);
     if (!mounted) return;
+    final limit = account?.overdraft.limit;
     setState(() {
       _custom = custom;
       _currency = currency;
+      if (limit != null && limit > 0) {
+        _limit = typedFrom(Money(limit, currency.code), currency);
+      }
     });
   }
 
@@ -91,12 +104,37 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     final c = _currency;
     if (c == null) return;
     // The keypad shows « , » with cents, « 000 » without (PRODUCT).
-    _typed = typeKey(_typed, k, decimals: c.usesDecimals ? c.digits : 0);
+    final decimals = c.usesDecimals ? c.digits : 0;
+    if (_typingLimit) {
+      _limit = typeKey(_limit, k, decimals: decimals);
+    } else {
+      _typed = typeKey(_typed, k, decimals: decimals);
+    }
   });
 
   void _delete() => setState(() {
-    if (_typed.isNotEmpty) _typed = _typed.substring(0, _typed.length - 1);
+    if (_typingLimit) {
+      if (_limit.isNotEmpty) _limit = _limit.substring(0, _limit.length - 1);
+    } else if (_typed.isNotEmpty) {
+      _typed = _typed.substring(0, _typed.length - 1);
+    }
   });
+
+  /// Opens Kibuo's keypad on the starting balance or on the limit.
+  void _openKeypad({required bool limit}) {
+    // The phone's keyboard gives way to Kibuo's.
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _keypad = true;
+      _typingLimit = limit;
+    });
+    revealAboveKeypad(limit ? _limitKey : _openingKey);
+  }
+
+  Overdraft get _overdraftChoice {
+    final limit = typedMoney(_limit, _currency!).minor;
+    return Overdraft(allowed: _overdraft, limit: limit == 0 ? null : limit);
+  }
 
   /// « 1 200,5 » as the field shows it.
   String _shown() {
@@ -181,9 +219,15 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
         type: _type,
         opening: _opening,
         openingDate: _date,
+        overdraft: _overdraftChoice,
       );
     } else {
-      await widget.accounts.update(account.id, name: _name.text, type: _type);
+      await widget.accounts.update(
+        account.id,
+        name: _name.text,
+        type: _type,
+        overdraft: _overdraftChoice,
+      );
     }
     if (mounted) Navigator.of(context).pop(true);
   }
@@ -197,6 +241,90 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     final day = DateFormat.MMMMd(_lang).format(_date);
     if (_date == _today()) return l.accountToday(day);
     return DateFormat.yMMMMd(_lang).format(_date);
+  }
+
+  /// « Autoriser le découvert » and, once on, « Jusqu'à » in the same card
+  /// (canvas DecouvertA).
+  Widget _overdraftCard(AppLocalizations l, CurrencyInfo currency) {
+    return Container(
+      decoration: BoxDecoration(
+        color: KibuoColors.surface,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l.overdraftAllow, style: KibuoType.rowLabel),
+                      Text(l.overdraftAllowHelp, style: KibuoType.caption),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: _overdraft,
+                  onChanged: (on) => setState(() {
+                    _overdraft = on;
+                    if (!on && _typingLimit) _keypad = false;
+                  }),
+                ),
+              ],
+            ),
+          ),
+          if (_overdraft) ...[
+            const Divider(height: 1, color: KibuoColors.background),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              child: ValueField(
+                key: _limitKey,
+                label: l.overdraftUpTo,
+                value: shownTyped(context, _limit),
+                placeholder: l.overdraftNoLimit,
+                unit: currency.code,
+                fill: KibuoColors.background,
+                focused: _keypad && _typingLimit,
+                onTap: () => _openKeypad(limit: true),
+                note: l.overdraftNoLimitHelp,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Turning the overdraft off on an account already below zero is allowed,
+  /// with a warning (canvas DecouvertSousZero).
+  List<Widget> _belowZeroWarning(AppLocalizations l) {
+    final account = widget.account;
+    if (_overdraft || account == null || account.balance.minor >= 0) {
+      return const [];
+    }
+    final balance = formatMoney(
+      account.balance,
+      currencyOf(account.currency),
+      _lang,
+    );
+    return [
+      const SizedBox(height: 8),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: KibuoColors.warningTint,
+          borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+        ),
+        child: Text(
+          l.overdraftBelowZero(account.name, balance),
+          style: KibuoType.help.copyWith(color: KibuoColors.warningInk),
+        ),
+      ),
+    ];
   }
 
   @override
@@ -249,13 +377,8 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       value: _shown(),
                       unit: currency.code,
                       onUnitTap: _pickCurrency,
-                      focused: _keypad,
-                      onTap: () {
-                        // The phone's keyboard gives way to Kibuo's.
-                        FocusScope.of(context).unfocus();
-                        setState(() => _keypad = true);
-                        revealAboveKeypad(_openingKey);
-                      },
+                      focused: _keypad && !_typingLimit,
+                      onTap: () => _openKeypad(limit: false),
                       note: l.accountCurrencyNote(
                         currencyName(context, currency),
                         currency.code,
@@ -266,6 +389,12 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     _DateRow(text: _dateText(l), onTap: _pickDate),
                     const SizedBox(height: 8),
                     HelpText(l.accountOpeningDateHelp),
+                  ],
+                  if (currency != null) ...[
+                    const SizedBox(height: 16),
+                    FieldLabel(l.overdraftLabel),
+                    _overdraftCard(l, currency),
+                    ..._belowZeroWarning(l),
                   ],
                   if (_editing) ...[
                     const SizedBox(height: 24),

@@ -9,6 +9,7 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -24,6 +25,7 @@ import 'package:kibuo/ui/transactions/attachment_viewer.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
+import 'package:kibuo/ui/transactions/overdraft_check.dart';
 import 'package:uuid/uuid.dart';
 
 /// The repositories an entry needs.
@@ -353,7 +355,58 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
+  /// When the change would take an account below its floor (PRODUCT:
+  /// Découvert), what to say.
+  OverdraftRefusal? get _refusal {
+    final account = _account;
+    final paid = _paid;
+    if (account == null || paid == null || paid.minor == 0) return null;
+    final Map<String, int> after;
+    if (_transfer) {
+      final moved = _transferTotal;
+      after = {
+        account.id: -(paid.minor + _feesMinor),
+        if (moved != null && _to != null) _to!.id: moved.arrived.minor,
+      };
+    } else {
+      final total = _total;
+      if (total == null) return null;
+      after = {account.id: total.balanceChange};
+    }
+    final initial = widget.editing ? widget.initial : null;
+    return checkOverdraft(
+      accounts: _accounts,
+      after: after,
+      date: _date.toUtc(),
+      before: initial == null ? const {} : effectsOf(initial),
+      beforeDate: initial?.date,
+    );
+  }
+
+  /// « Autoriser » opens the account's form, then the entry carries on.
+  Future<void> _authorize(AccountInfo account) async {
+    await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => AccountFormScreen(
+          accounts: widget.data.accounts,
+          currencies: widget.data.currencies,
+          account: account,
+        ),
+      ),
+    );
+    final accounts = await widget.data.accounts.accounts();
+    if (!mounted) return;
+    AccountInfo? fresh(AccountInfo? a) =>
+        a == null ? null : accounts.where((x) => x.id == a.id).firstOrNull;
+    setState(() {
+      _accounts = accounts;
+      _account = fresh(_account) ?? _account;
+      _to = fresh(_to);
+    });
+  }
+
   bool get _canSave =>
+      _refusal == null &&
       (_paid?.minor ?? 0) > 0 &&
       _account != null &&
       (_transfer
@@ -792,6 +845,22 @@ class _EntryScreenState extends State<EntryScreen> {
                             ),
                           ],
                   ),
+                  if (_refusal case final refusal?) ...[
+                    const SizedBox(height: 8),
+                    _RefusalLine(
+                      text: refusal.account.id == account?.id
+                          ? l.overdraftAvailable(
+                              _money(refusal.available),
+                              refusal.account.name,
+                            )
+                          : l.overdraftWouldGo(
+                              refusal.account.name,
+                              _money(refusal.after),
+                            ),
+                      action: l.overdraftAuthorize,
+                      onAction: () => _authorize(refusal.account),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   _FieldsCard(
                     children: _transfer
@@ -1270,6 +1339,44 @@ class _NoteCard extends StatelessWidget {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Under the amount when an account would go below its floor (canvas
+/// DecouvertSaisieA): the alert in red, « Autoriser » in green on the right,
+/// on the card's inner edges.
+class _RefusalLine extends StatelessWidget {
+  const _RefusalLine({
+    required this.text,
+    required this.action,
+    required this.onAction,
+  });
+
+  final String text;
+  final String action;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Row(
+        children: [
+          const Icon(KibuoIcons.warning, size: 18, color: KibuoColors.danger),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: KibuoType.body.copyWith(
+                fontSize: 14,
+                color: KibuoColors.danger,
+              ),
+            ),
+          ),
+          TextAction(label: action, onPressed: onAction),
         ],
       ),
     );
