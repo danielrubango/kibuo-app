@@ -114,10 +114,18 @@ class Categories extends Table with SyncColumns {
 /// the smallest unit; the kind gives the direction.
 @DataClassName('TransactionRow')
 class Transactions extends Table with SyncColumns {
-  /// « out » for an expense, « in » for an income.
+  /// « out » for an expense, « in » for an income, « move » for a
+  /// transfer.
   TextColumn get kind => text()();
+
+  /// The account paid from or into; for a transfer, the sending one.
   TextColumn get accountId => text()();
-  TextColumn get categoryId => text()();
+
+  /// A transfer's receiving account.
+  TextColumn get toAccountId => text().nullable()();
+
+  /// None for a transfer.
+  TextColumn get categoryId => text().nullable()();
 
   /// What was paid or received, in [currency].
   IntColumn get amount => integer()();
@@ -132,7 +140,8 @@ class Transactions extends Table with SyncColumns {
   /// Typed for this operation (the changer's), not taken from Devises.
   BoolColumn get rateTyped => boolean().withDefault(const Constant(false))();
 
-  /// [amount] in the account's currency, rounded once and kept.
+  /// [amount] in the account's currency, rounded once and kept; for a
+  /// transfer, what reached the receiving account, in its currency.
   IntColumn get converted => integer()();
 
   /// In the account's currency.
@@ -181,7 +190,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -204,6 +213,15 @@ class KibuoDatabase extends _$KibuoDatabase {
       },
       from5To6: (m, schema) async {
         await m.createTable(schema.attachments);
+      },
+      from6To7: (m, schema) async {
+        // categoryId becomes optional: SQLite rebuilds the table, rows kept.
+        await m.alterTable(
+          TableMigration(
+            schema.transactions,
+            newColumns: [schema.transactions.toAccountId],
+          ),
+        );
       },
     ),
     beforeOpen: (details) async {

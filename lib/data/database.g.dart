@@ -3459,6 +3459,17 @@ class $TransactionsTable extends Transactions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _toAccountIdMeta = const VerificationMeta(
+    'toAccountId',
+  );
+  @override
+  late final GeneratedColumn<String> toAccountId = GeneratedColumn<String>(
+    'to_account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _categoryIdMeta = const VerificationMeta(
     'categoryId',
   );
@@ -3466,9 +3477,9 @@ class $TransactionsTable extends Transactions
   late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
     'category_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _amountMeta = const VerificationMeta('amount');
   @override
@@ -3585,6 +3596,7 @@ class $TransactionsTable extends Transactions
     deleted,
     kind,
     accountId,
+    toAccountId,
     categoryId,
     amount,
     currency,
@@ -3652,13 +3664,20 @@ class $TransactionsTable extends Transactions
     } else if (isInserting) {
       context.missing(_accountIdMeta);
     }
+    if (data.containsKey('to_account_id')) {
+      context.handle(
+        _toAccountIdMeta,
+        toAccountId.isAcceptableOrUnknown(
+          data['to_account_id']!,
+          _toAccountIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('category_id')) {
       context.handle(
         _categoryIdMeta,
         categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_categoryIdMeta);
     }
     if (data.containsKey('amount')) {
       context.handle(
@@ -3761,10 +3780,14 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}account_id'],
       )!,
+      toAccountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}to_account_id'],
+      ),
       categoryId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}category_id'],
-      )!,
+      ),
       amount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}amount'],
@@ -3820,10 +3843,18 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
   final String deviceId;
   final bool deleted;
 
-  /// « out » for an expense, « in » for an income.
+  /// « out » for an expense, « in » for an income, « move » for a
+  /// transfer.
   final String kind;
+
+  /// The account paid from or into; for a transfer, the sending one.
   final String accountId;
-  final String categoryId;
+
+  /// A transfer's receiving account.
+  final String? toAccountId;
+
+  /// None for a transfer.
+  final String? categoryId;
 
   /// What was paid or received, in [currency].
   final int amount;
@@ -3838,7 +3869,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
   /// Typed for this operation (the changer's), not taken from Devises.
   final bool rateTyped;
 
-  /// [amount] in the account's currency, rounded once and kept.
+  /// [amount] in the account's currency, rounded once and kept; for a
+  /// transfer, what reached the receiving account, in its currency.
   final int converted;
 
   /// In the account's currency.
@@ -3852,7 +3884,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     required this.deleted,
     required this.kind,
     required this.accountId,
-    required this.categoryId,
+    this.toAccountId,
+    this.categoryId,
     required this.amount,
     required this.currency,
     this.rateBase,
@@ -3873,7 +3906,12 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     map['deleted'] = Variable<bool>(deleted);
     map['kind'] = Variable<String>(kind);
     map['account_id'] = Variable<String>(accountId);
-    map['category_id'] = Variable<String>(categoryId);
+    if (!nullToAbsent || toAccountId != null) {
+      map['to_account_id'] = Variable<String>(toAccountId);
+    }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
     map['amount'] = Variable<int>(amount);
     map['currency'] = Variable<String>(currency);
     if (!nullToAbsent || rateBase != null) {
@@ -3903,7 +3941,12 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       deleted: Value(deleted),
       kind: Value(kind),
       accountId: Value(accountId),
-      categoryId: Value(categoryId),
+      toAccountId: toAccountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(toAccountId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
       amount: Value(amount),
       currency: Value(currency),
       rateBase: rateBase == null && nullToAbsent
@@ -3935,7 +3978,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       deleted: serializer.fromJson<bool>(json['deleted']),
       kind: serializer.fromJson<String>(json['kind']),
       accountId: serializer.fromJson<String>(json['accountId']),
-      categoryId: serializer.fromJson<String>(json['categoryId']),
+      toAccountId: serializer.fromJson<String?>(json['toAccountId']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
       amount: serializer.fromJson<int>(json['amount']),
       currency: serializer.fromJson<String>(json['currency']),
       rateBase: serializer.fromJson<String?>(json['rateBase']),
@@ -3958,7 +4002,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       'deleted': serializer.toJson<bool>(deleted),
       'kind': serializer.toJson<String>(kind),
       'accountId': serializer.toJson<String>(accountId),
-      'categoryId': serializer.toJson<String>(categoryId),
+      'toAccountId': serializer.toJson<String?>(toAccountId),
+      'categoryId': serializer.toJson<String?>(categoryId),
       'amount': serializer.toJson<int>(amount),
       'currency': serializer.toJson<String>(currency),
       'rateBase': serializer.toJson<String?>(rateBase),
@@ -3979,7 +4024,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     bool? deleted,
     String? kind,
     String? accountId,
-    String? categoryId,
+    Value<String?> toAccountId = const Value.absent(),
+    Value<String?> categoryId = const Value.absent(),
     int? amount,
     String? currency,
     Value<String?> rateBase = const Value.absent(),
@@ -3997,7 +4043,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     deleted: deleted ?? this.deleted,
     kind: kind ?? this.kind,
     accountId: accountId ?? this.accountId,
-    categoryId: categoryId ?? this.categoryId,
+    toAccountId: toAccountId.present ? toAccountId.value : this.toAccountId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
     amount: amount ?? this.amount,
     currency: currency ?? this.currency,
     rateBase: rateBase.present ? rateBase.value : this.rateBase,
@@ -4017,6 +4064,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       deleted: data.deleted.present ? data.deleted.value : this.deleted,
       kind: data.kind.present ? data.kind.value : this.kind,
       accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      toAccountId: data.toAccountId.present
+          ? data.toAccountId.value
+          : this.toAccountId,
       categoryId: data.categoryId.present
           ? data.categoryId.value
           : this.categoryId,
@@ -4042,6 +4092,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           ..write('deleted: $deleted, ')
           ..write('kind: $kind, ')
           ..write('accountId: $accountId, ')
+          ..write('toAccountId: $toAccountId, ')
           ..write('categoryId: $categoryId, ')
           ..write('amount: $amount, ')
           ..write('currency: $currency, ')
@@ -4065,6 +4116,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     deleted,
     kind,
     accountId,
+    toAccountId,
     categoryId,
     amount,
     currency,
@@ -4087,6 +4139,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           other.deleted == this.deleted &&
           other.kind == this.kind &&
           other.accountId == this.accountId &&
+          other.toAccountId == this.toAccountId &&
           other.categoryId == this.categoryId &&
           other.amount == this.amount &&
           other.currency == this.currency &&
@@ -4107,7 +4160,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
   final Value<bool> deleted;
   final Value<String> kind;
   final Value<String> accountId;
-  final Value<String> categoryId;
+  final Value<String?> toAccountId;
+  final Value<String?> categoryId;
   final Value<int> amount;
   final Value<String> currency;
   final Value<String?> rateBase;
@@ -4126,6 +4180,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.deleted = const Value.absent(),
     this.kind = const Value.absent(),
     this.accountId = const Value.absent(),
+    this.toAccountId = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.amount = const Value.absent(),
     this.currency = const Value.absent(),
@@ -4146,7 +4201,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.deleted = const Value.absent(),
     required String kind,
     required String accountId,
-    required String categoryId,
+    this.toAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
     required int amount,
     required String currency,
     this.rateBase = const Value.absent(),
@@ -4163,7 +4219,6 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
        deviceId = Value(deviceId),
        kind = Value(kind),
        accountId = Value(accountId),
-       categoryId = Value(categoryId),
        amount = Value(amount),
        currency = Value(currency),
        converted = Value(converted),
@@ -4175,6 +4230,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Expression<bool>? deleted,
     Expression<String>? kind,
     Expression<String>? accountId,
+    Expression<String>? toAccountId,
     Expression<String>? categoryId,
     Expression<int>? amount,
     Expression<String>? currency,
@@ -4195,6 +4251,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       if (deleted != null) 'deleted': deleted,
       if (kind != null) 'kind': kind,
       if (accountId != null) 'account_id': accountId,
+      if (toAccountId != null) 'to_account_id': toAccountId,
       if (categoryId != null) 'category_id': categoryId,
       if (amount != null) 'amount': amount,
       if (currency != null) 'currency': currency,
@@ -4217,7 +4274,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Value<bool>? deleted,
     Value<String>? kind,
     Value<String>? accountId,
-    Value<String>? categoryId,
+    Value<String?>? toAccountId,
+    Value<String?>? categoryId,
     Value<int>? amount,
     Value<String>? currency,
     Value<String?>? rateBase,
@@ -4237,6 +4295,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       deleted: deleted ?? this.deleted,
       kind: kind ?? this.kind,
       accountId: accountId ?? this.accountId,
+      toAccountId: toAccountId ?? this.toAccountId,
       categoryId: categoryId ?? this.categoryId,
       amount: amount ?? this.amount,
       currency: currency ?? this.currency,
@@ -4272,6 +4331,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     }
     if (accountId.present) {
       map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (toAccountId.present) {
+      map['to_account_id'] = Variable<String>(toAccountId.value);
     }
     if (categoryId.present) {
       map['category_id'] = Variable<String>(categoryId.value);
@@ -4321,6 +4383,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
           ..write('deleted: $deleted, ')
           ..write('kind: $kind, ')
           ..write('accountId: $accountId, ')
+          ..write('toAccountId: $toAccountId, ')
           ..write('categoryId: $categoryId, ')
           ..write('amount: $amount, ')
           ..write('currency: $currency, ')
@@ -6765,7 +6828,8 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       Value<bool> deleted,
       required String kind,
       required String accountId,
-      required String categoryId,
+      Value<String?> toAccountId,
+      Value<String?> categoryId,
       required int amount,
       required String currency,
       Value<String?> rateBase,
@@ -6786,7 +6850,8 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<bool> deleted,
       Value<String> kind,
       Value<String> accountId,
-      Value<String> categoryId,
+      Value<String?> toAccountId,
+      Value<String?> categoryId,
       Value<int> amount,
       Value<String> currency,
       Value<String?> rateBase,
@@ -6836,6 +6901,11 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get accountId => $composableBuilder(
     column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get toAccountId => $composableBuilder(
+    column: $table.toAccountId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6934,6 +7004,11 @@ class $$TransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get toAccountId => $composableBuilder(
+    column: $table.toAccountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get categoryId => $composableBuilder(
     column: $table.categoryId,
     builder: (column) => ColumnOrderings(column),
@@ -7017,6 +7092,11 @@ class $$TransactionsTableAnnotationComposer
   GeneratedColumn<String> get accountId =>
       $composableBuilder(column: $table.accountId, builder: (column) => column);
 
+  GeneratedColumn<String> get toAccountId => $composableBuilder(
+    column: $table.toAccountId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get categoryId => $composableBuilder(
     column: $table.categoryId,
     builder: (column) => column,
@@ -7090,7 +7170,8 @@ class $$TransactionsTableTableManager
                 Value<bool> deleted = const Value.absent(),
                 Value<String> kind = const Value.absent(),
                 Value<String> accountId = const Value.absent(),
-                Value<String> categoryId = const Value.absent(),
+                Value<String?> toAccountId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
                 Value<int> amount = const Value.absent(),
                 Value<String> currency = const Value.absent(),
                 Value<String?> rateBase = const Value.absent(),
@@ -7109,6 +7190,7 @@ class $$TransactionsTableTableManager
                 deleted: deleted,
                 kind: kind,
                 accountId: accountId,
+                toAccountId: toAccountId,
                 categoryId: categoryId,
                 amount: amount,
                 currency: currency,
@@ -7130,7 +7212,8 @@ class $$TransactionsTableTableManager
                 Value<bool> deleted = const Value.absent(),
                 required String kind,
                 required String accountId,
-                required String categoryId,
+                Value<String?> toAccountId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
                 required int amount,
                 required String currency,
                 Value<String?> rateBase = const Value.absent(),
@@ -7149,6 +7232,7 @@ class $$TransactionsTableTableManager
                 deleted: deleted,
                 kind: kind,
                 accountId: accountId,
+                toAccountId: toAccountId,
                 categoryId: categoryId,
                 amount: amount,
                 currency: currency,

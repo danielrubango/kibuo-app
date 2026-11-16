@@ -1,4 +1,5 @@
 {
+  "transferTitle": "To {account}",
   "@@locale": "en",
 
   "tabHome": "Home",
@@ -306,5 +307,26 @@
   "attachOpenWith": "Open with…",
   "attachPage": "Page 1 of {pages}",
   "attachNoApp": "No app on this phone opens this file.",
-  "attachPhotoName": "Photo {n}"
+  "attachPhotoName": "Photo {n}",
+  "entryTransfer": "Transfer",
+  "entryNewTransfer": "New transfer",
+  "entryEditTransfer": "Edit transfer",
+  "transferFrom": "From",
+  "transferTo": "To",
+  "transferToQuestion": "To which account?",
+  "transferSent": "Sent",
+  "transferArrives": "Arrives in {account}",
+  "transferTakenFrom": "Taken from {account}",
+  "transferSaved": "Transfer saved",
+  "transferSavedSub": "{from} to {to} · {when}",
+  "transferAnother": "New transfer",
+  "transferKind": "Transfer",
+  "transferDepuis": "From",
+  "transferArrivedChip": "{amount} arrived · {rate}",
+  "transferFirstAccountText": "A transfer moves money between two of your accounts: your pocket, your mobile money, your bank. Create the first one, then a second.",
+  "transferSecondTitle": "First, a second account",
+  "transferSecondText": "A transfer moves money between two of your accounts. Create a second one, then note your transfer.",
+  "transferSecondAction": "Create an account",
+  "entryDeleteTransferTitle": "Delete this transfer?",
+  "entryDeleteTransferHelp": "It leaves the list: {from} gets {withdrawn} back and {to} loses {arrived}."
 }

@@ -49,7 +49,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Catégories et sous-catégories
 - [x] Dépenses et revenus
 - [x] Pièces jointes des opérations (photo, galerie, rangement et sauvegardes)
-- [ ] Transferts entre comptes, y compris entre devises
+- [x] Transferts entre comptes, y compris entre devises
 - [ ] Saisie rapide, dont la bulle qui fait découvrir l'appui long sur le +
 - [ ] Liste et recherche des opérations
 - [ ] Premier lancement guidé

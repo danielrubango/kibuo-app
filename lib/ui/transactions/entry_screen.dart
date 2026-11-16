@@ -22,6 +22,7 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/attachment_viewer.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
+import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
 import 'package:uuid/uuid.dart';
 
@@ -99,6 +100,10 @@ class _EntryScreenState extends State<EntryScreen> {
   CurrencyInfo? _accountCurrency;
   CurrencyInfo? _paidCurrency;
   CategoryInfo? _category;
+
+  // A transfer's receiving account (none chosen at first: PRODUCT).
+  AccountInfo? _to;
+  CurrencyInfo? _toCurrency;
   ExchangeRate? _today;
   String _typed = '';
   String _fees = '';
@@ -166,6 +171,8 @@ class _EntryScreenState extends State<EntryScreen> {
     });
     await _loadAttachments();
     await _setAccount(account, paid: initial?.paid.currency);
+    final to = accounts.where((a) => a.id == initial?.toAccountId).firstOrNull;
+    if (to != null) await _setTo(to);
     if (initial != null && mounted) {
       final paid = await data.currencies.currency(initial.paid.currency);
       setState(() {
@@ -249,9 +256,27 @@ class _EntryScreenState extends State<EntryScreen> {
     await _loadToday();
   }
 
+  Future<void> _setTo(AccountInfo to) async {
+    final currency = await widget.data.currencies.currency(to.currency);
+    if (!mounted) return;
+    setState(() {
+      _to = to;
+      _toCurrency = currency;
+      _rateTyped = false;
+      _rateText = '';
+    });
+    await _loadToday();
+  }
+
+  bool get _transfer => _kind == EntryKind.transfer;
+
+  /// The currency the amount is converted into or from: the one paid for an
+  /// expense or income, the receiving account's for a transfer.
+  CurrencyInfo? get _otherCurrency => _transfer ? _toCurrency : _paidCurrency;
+
   Future<void> _loadToday() async {
     final account = _accountCurrency;
-    final paid = _paidCurrency;
+    final paid = _otherCurrency;
     if (account == null || paid == null || account.code == paid.code) {
       setState(() => _today = null);
       return;
@@ -281,12 +306,12 @@ class _EntryScreenState extends State<EntryScreen> {
   String get _lang => Localizations.localeOf(context).languageCode;
 
   bool get _converts =>
-      _paidCurrency != null &&
+      _otherCurrency != null &&
       _accountCurrency != null &&
-      _paidCurrency!.code != _accountCurrency!.code;
+      _otherCurrency!.code != _accountCurrency!.code;
 
   (String, String) get _direction =>
-      rateDirection(main: _accountCurrency!, other: _paidCurrency!);
+      rateDirection(main: _accountCurrency!, other: _otherCurrency!);
 
   ExchangeRate? get _rate {
     if (!_converts) return null;
@@ -303,10 +328,21 @@ class _EntryScreenState extends State<EntryScreen> {
     return typedMoney(_typed, c);
   }
 
+  int get _feesMinor =>
+      _fees.isEmpty ? 0 : typedMoney(_fees, _accountCurrency!).minor;
+
+  TransferTotal? get _transferTotal {
+    final sent = _paid;
+    final to = _toCurrency;
+    if (!_transfer || sent == null || to == null) return null;
+    if (_converts && _rate == null) return null;
+    return transferTotal(sent: sent, to: to, rate: _rate, fees: _feesMinor);
+  }
+
   EntryTotal? get _total {
     final paid = _paid;
     final account = _accountCurrency;
-    if (paid == null || account == null) return null;
+    if (_transfer || paid == null || account == null) return null;
     if (_converts && _rate == null) return null;
     return entryTotal(
       kind: _kind,
@@ -320,28 +356,48 @@ class _EntryScreenState extends State<EntryScreen> {
   bool get _canSave =>
       (_paid?.minor ?? 0) > 0 &&
       _account != null &&
-      _category != null &&
-      _total != null;
+      (_transfer
+          ? _to != null && _transferTotal != null
+          : _category != null && _total != null);
 
   String _money(Money m) => formatMoney(
     m,
     m.currency == _accountCurrency?.code
         ? _accountCurrency!
-        : m.currency == _paidCurrency?.code
-        ? _paidCurrency!
+        : m.currency == _otherCurrency?.code
+        ? _otherCurrency!
         : currencyOf(m.currency),
     _lang,
   );
 
   Future<void> _switchKind(EntryKind kind) async {
     if (kind == _kind) return;
+    if (kind == EntryKind.transfer) {
+      // Two accounts first (PRODUCT), then back to this entry.
+      if (!await transferAccountsReady(context, widget.data)) return;
+      final accounts = await widget.data.accounts.accounts();
+      if (!mounted) return;
+      setState(() {
+        _accounts = accounts;
+        _kind = kind;
+        _category = null;
+        _rateTyped = false;
+        _rateText = '';
+      });
+      // Sent in the sending account's currency.
+      await _setAccount(_account ?? accounts.first);
+      return;
+    }
     final categories = await widget.data.categories.categories(kind.category);
     if (!mounted) return;
     setState(() {
       _kind = kind;
       _categories = categories;
       _category = null;
+      _to = null;
+      _toCurrency = null;
     });
+    await _loadToday();
   }
 
   Future<void> _chooseAccount() async {
@@ -350,7 +406,29 @@ class _EntryScreenState extends State<EntryScreen> {
       accounts: _accounts,
       current: _account?.id,
     );
-    if (picked != null) await _setAccount(picked);
+    if (picked == null) return;
+    // The two accounts of a transfer differ.
+    if (picked.id == _to?.id) {
+      setState(() {
+        _to = null;
+        _toCurrency = null;
+      });
+    }
+    await _setAccount(picked);
+  }
+
+  Future<void> _chooseTo() async {
+    final l = AppLocalizations.of(context);
+    final picked = await pickAccount(
+      context,
+      accounts: [
+        for (final a in _accounts)
+          if (a.id != _account?.id) a,
+      ],
+      current: _to?.id,
+      question: l.transferToQuestion,
+    );
+    if (picked != null) await _setTo(picked);
   }
 
   Future<void> _choosePaidCurrency() async {
@@ -391,12 +469,14 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   Future<void> _chooseRate() async {
+    final l = AppLocalizations.of(context);
     final paid = _paid;
     if (paid == null) return;
     final (base, quote) = _direction;
     final choice = await pickEntryRate(
       context,
       income: _kind == EntryKind.income,
+      paidLabel: _transfer ? l.transferSent : null,
       paid: _money(paid),
       base: base,
       quote: quote,
@@ -446,10 +526,34 @@ class _EntryScreenState extends State<EntryScreen> {
   Future<void> _save() async {
     final paid = _paid!;
     final repo = widget.data.transactions;
-    final fees = _fees.isEmpty ? 0 : typedMoney(_fees, _accountCurrency!).minor;
+    final fees = _feesMinor;
     final initial = widget.initial;
     final String id;
-    if (widget.editing && initial != null) {
+    if (_transfer && widget.editing && initial != null) {
+      id = initial.id;
+      await repo.updateTransfer(
+        id,
+        fromId: _account!.id,
+        toId: _to!.id,
+        sent: paid,
+        rate: _rate,
+        rateTyped: _rateTyped,
+        fees: fees,
+        date: _date,
+        note: _note.text,
+      );
+    } else if (_transfer) {
+      id = await repo.createTransfer(
+        fromId: _account!.id,
+        toId: _to!.id,
+        sent: paid,
+        rate: _rate,
+        rateTyped: _rateTyped,
+        fees: fees,
+        date: _date,
+        note: _note.text,
+      );
+    } else if (widget.editing && initial != null) {
       id = initial.id;
       await repo.update(
         id,
@@ -476,6 +580,11 @@ class _EntryScreenState extends State<EntryScreen> {
         note: _note.text,
       );
     }
+    await _finish(id);
+  }
+
+  /// Gives the attachments to the saved operation [id], then closes.
+  Future<void> _finish(String id) async {
     final attachments = widget.data.attachments;
     final drafts = (await attachments.list(_draft)).map((a) => a.id).toList();
     await attachments.attach(drafts, id);
@@ -497,15 +606,90 @@ class _EntryScreenState extends State<EntryScreen> {
     return text[0].toUpperCase() + text.substring(1);
   }
 
+  /// The transfer's details (canvas TransfertDecompte): sent, rate and what
+  /// arrives when the currencies differ, then the fees.
+  List<(String, String, String?, VoidCallback?)> _transferLines(
+    AppLocalizations l,
+    TransferTotal? moved,
+  ) => [
+    if (_converts && _paid != null) ...[
+      (l.transferSent, _money(_paid!), null, null),
+      (
+        l.entryRateFor(currencyOf(_direction.$1).symbol),
+        _rate == null
+            ? l.entryChoose
+            : formatRate(_rate!, _lang).split(' = ').last,
+        _rateTyped ? l.entryRateTypedTag : l.entryRateTodayTag,
+        _chooseRate,
+      ),
+      if (moved != null)
+        (l.transferArrives(_to?.name ?? ''), _money(moved.arrived), null, null),
+    ],
+    (
+      l.entryFees,
+      moved == null || moved.fees.minor == 0
+          ? l.entryNone
+          : '+ ${_money(moved.fees)}',
+      null,
+      _chooseFees,
+    ),
+  ];
+
+  /// De, Vers, Date and Frais (canvas TransfertMeme): no category.
+  List<Widget> _transferFields(AppLocalizations l, AccountInfo? account) {
+    final labels = AccountTypeLabels(l, _types);
+    final moved = _transferTotal;
+    return [
+      EntryField(
+        icon: account == null ? KibuoIcons.wallet : labels.icon(account.type),
+        label: l.transferFrom,
+        value: account?.name,
+        placeholder: l.entryChoose,
+        trailing: account?.currency,
+        onTap: _chooseAccount,
+      ),
+      EntryField(
+        icon: _to == null ? KibuoIcons.wallet : labels.icon(_to!.type),
+        label: l.transferTo,
+        value: _to?.name,
+        placeholder: l.entryChoose,
+        trailing: _to?.currency,
+        onTap: _chooseTo,
+      ),
+      EntryField(
+        icon: KibuoIcons.calendarBlank,
+        label: l.entryDate,
+        value: _dateText(l),
+        trailing: DateFormat.Hm(_lang).format(_date),
+        onTap: _chooseDate,
+      ),
+      EntryField(
+        icon: KibuoIcons.receipt,
+        label: l.entryFees,
+        value: moved == null || moved.fees.minor == 0
+            ? null
+            : _money(moved.fees),
+        placeholder: l.entryNone,
+        onTap: _chooseFees,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final expense = _kind == EntryKind.expense;
-    final title = widget.editing
-        ? (expense ? l.entryEditExpense : l.entryEditIncome)
-        : (expense ? l.entryNewExpense : l.entryNewIncome);
+    final title = switch ((_kind, widget.editing)) {
+      (EntryKind.expense, false) => l.entryNewExpense,
+      (EntryKind.expense, true) => l.entryEditExpense,
+      (EntryKind.income, false) => l.entryNewIncome,
+      (EntryKind.income, true) => l.entryEditIncome,
+      (EntryKind.transfer, false) => l.entryNewTransfer,
+      (EntryKind.transfer, true) => l.entryEditTransfer,
+    };
     final account = _account;
     final total = _total;
+    final moved = _transferTotal;
     final categoryText = _category == null
         ? null
         : _category!.parentId == null
@@ -525,6 +709,7 @@ class _EntryScreenState extends State<EntryScreen> {
                     items: [
                       (EntryKind.expense, l.entryExpense),
                       (EntryKind.income, l.entryIncome),
+                      (EntryKind.transfer, l.entryTransfer),
                     ],
                     value: _kind,
                     onPick: _switchKind,
@@ -532,7 +717,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   const SizedBox(height: 12),
                   _AmountCard(
                     key: _amountKey,
-                    income: !expense,
+                    kind: _kind,
                     value: shownTyped(context, _typed),
                     unit: _paidCurrency?.symbol ?? '',
                     focused: _keypad,
@@ -542,82 +727,119 @@ class _EntryScreenState extends State<EntryScreen> {
                       setState(() => _keypad = true);
                       revealAboveKeypad(_amountKey);
                     },
-                    onUnitTap: _choosePaidCurrency,
-                    footLabel: expense ? l.entryTakenFrom : l.entryAddedTo,
-                    footValue: total == null ? '' : _money(total.total),
+                    // A transfer is sent in its account's currency.
+                    onUnitTap: _transfer ? null : _choosePaidCurrency,
+                    footLabel: _transfer
+                        ? l.transferTakenFrom(account?.name ?? '')
+                        : expense
+                        ? l.entryTakenFrom
+                        : l.entryAddedTo,
+                    // What leaves the account is known before « Vers ».
+                    footValue: _transfer
+                        ? (_paid == null
+                              ? ''
+                              : _money(
+                                  Money(
+                                    _paid!.minor + _feesMinor,
+                                    _paid!.currency,
+                                  ),
+                                ))
+                        : total == null
+                        ? ''
+                        : _money(total.total),
                     open: _open,
                     onToggle: () => setState(() => _open = !_open),
-                    lines: [
-                      if (_converts && _paid != null) ...[
-                        (
-                          expense ? l.entryPaid : l.entryReceived,
-                          _money(_paid!),
-                          null,
-                          null,
-                        ),
-                        (
-                          l.entryRateFor(currencyOf(_direction.$1).symbol),
-                          _rate == null
-                              ? l.entryChoose
-                              : formatRate(_rate!, _lang).split(' = ').last,
-                          _rateTyped
-                              ? l.entryRateTypedTag
-                              : l.entryRateTodayTag,
-                          _chooseRate,
-                        ),
-                        if (total != null)
-                          (l.entrySo, _money(total.converted), null, null),
-                      ],
-                      (
-                        l.entryFees,
-                        total == null || total.fees.minor == 0
-                            ? l.entryNone
-                            : '${expense ? '+' : '−'} ${_money(total.fees)}',
-                        null,
-                        _chooseFees,
-                      ),
-                    ],
+                    lines: _transfer
+                        ? _transferLines(l, moved)
+                        : [
+                            if (_converts && _paid != null) ...[
+                              (
+                                expense ? l.entryPaid : l.entryReceived,
+                                _money(_paid!),
+                                null,
+                                null,
+                              ),
+                              (
+                                l.entryRateFor(
+                                  currencyOf(_direction.$1).symbol,
+                                ),
+                                _rate == null
+                                    ? l.entryChoose
+                                    : formatRate(
+                                        _rate!,
+                                        _lang,
+                                      ).split(' = ').last,
+                                _rateTyped
+                                    ? l.entryRateTypedTag
+                                    : l.entryRateTodayTag,
+                                _chooseRate,
+                              ),
+                              if (total != null)
+                                (
+                                  l.entrySo,
+                                  _money(total.converted),
+                                  null,
+                                  null,
+                                ),
+                            ],
+                            (
+                              l.entryFees,
+                              total == null || total.fees.minor == 0
+                                  ? l.entryNone
+                                  : '${expense ? '+' : '−'} ${_money(total.fees)}',
+                              null,
+                              _chooseFees,
+                            ),
+                          ],
                   ),
                   const SizedBox(height: 12),
                   _FieldsCard(
-                    children: [
-                      EntryField(
-                        icon: account == null
-                            ? KibuoIcons.wallet
-                            : AccountTypeLabels(l, _types).icon(account.type),
-                        label: l.entryAccount,
-                        value: account?.name,
-                        placeholder: l.entryChoose,
-                        trailing: account?.currency,
-                        onTap: _chooseAccount,
-                      ),
-                      EntryField(
-                        leading: _category == null
-                            ? null
-                            : CategoryTile(category: _category!, size: 32),
-                        icon: KibuoIcons.tag,
-                        label: l.entryCategory,
-                        value: categoryText,
-                        placeholder: l.entryChoose,
-                        onTap: _chooseCategory,
-                      ),
-                      EntryField(
-                        icon: KibuoIcons.calendarBlank,
-                        label: l.entryDate,
-                        value: _dateText(l),
-                        trailing: DateFormat.Hm(_lang).format(_date),
-                        onTap: _chooseDate,
-                      ),
-                      EntryField(
-                        icon: KibuoIcons.receipt,
-                        label: l.entryFees,
-                        value: total == null || total.fees.minor == 0
-                            ? null
-                            : _money(total.fees),
-                        placeholder: l.entryNone,
-                        onTap: _chooseFees,
-                      ),
-                    ],
+                    children: _transfer
+                        ? _transferFields(l, account)
+                        : [
+                            EntryField(
+                              icon: account == null
+                                  ? KibuoIcons.wallet
+                                  : AccountTypeLabels(
+                                      l,
+                                      _types,
+                                    ).icon(account.type),
+                              label: l.entryAccount,
+                              value: account?.name,
+                              placeholder: l.entryChoose,
+                              trailing: account?.currency,
+                              onTap: _chooseAccount,
+                            ),
+                            EntryField(
+                              leading: _category == null
+                                  ? null
+                                  : CategoryTile(
+                                      category: _category!,
+                                      size: 32,
+                                    ),
+                              icon: KibuoIcons.tag,
+                              label: l.entryCategory,
+                              value: categoryText,
+                              placeholder: l.entryChoose,
+                              onTap: _chooseCategory,
+                            ),
+                            EntryField(
+                              icon: KibuoIcons.calendarBlank,
+                              label: l.entryDate,
+                              value: _dateText(l),
+                              trailing: DateFormat.Hm(_lang).format(_date),
+                              onTap: _chooseDate,
+                            ),
+                            EntryField(
+                              icon: KibuoIcons.receipt,
+                              label: l.entryFees,
+                              value: total == null || total.fees.minor == 0
+                                  ? null
+                                  : _money(total.fees),
+                              placeholder: l.entryNone,
+                              onTap: _chooseFees,
+                            ),
+                          ],
                   ),
                   const SizedBox(height: 12),
                   AttachmentsCard(
@@ -707,7 +929,7 @@ extension on EntryKind {
 class _AmountCard extends StatelessWidget {
   const _AmountCard({
     super.key,
-    required this.income,
+    required this.kind,
     required this.value,
     required this.unit,
     required this.focused,
@@ -720,12 +942,14 @@ class _AmountCard extends StatelessWidget {
     required this.lines,
   });
 
-  final bool income;
+  final EntryKind kind;
   final String value;
   final String unit;
   final bool focused;
   final VoidCallback onTap;
-  final VoidCallback onUnitTap;
+
+  /// None when the currency can't change (a transfer).
+  final VoidCallback? onUnitTap;
   final String footLabel;
   final String footValue;
   final bool open;
@@ -736,10 +960,14 @@ class _AmountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = income ? KibuoColors.accentTint : KibuoColors.debtTint;
-    final edge = income ? KibuoColors.accentTintStrong : KibuoColors.debtEdge;
-    final ink = income ? KibuoColors.accent : KibuoColors.debtInk;
-    final sign = income ? '+' : '−';
+    // Peach for an expense, mint for an income, blue for a transfer, which
+    // neither earns nor spends (canvas TransfertMeme).
+    final (:tint, :edge, :ink) = kindColors(kind);
+    final sign = switch (kind) {
+      EntryKind.expense => '−',
+      EntryKind.income => '+',
+      EntryKind.transfer => '',
+    };
     return Container(
       decoration: BoxDecoration(
         color: tint,

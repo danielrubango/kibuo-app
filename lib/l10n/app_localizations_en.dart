@@ -10,6 +10,11 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String transferTitle(String account) {
+    return 'To $account';
+  }
+
+  @override
   String get tabHome => 'Home';
 
   @override
@@ -1037,5 +1042,85 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String attachPhotoName(int n) {
     return 'Photo $n';
+  }
+
+  @override
+  String get entryTransfer => 'Transfer';
+
+  @override
+  String get entryNewTransfer => 'New transfer';
+
+  @override
+  String get entryEditTransfer => 'Edit transfer';
+
+  @override
+  String get transferFrom => 'From';
+
+  @override
+  String get transferTo => 'To';
+
+  @override
+  String get transferToQuestion => 'To which account?';
+
+  @override
+  String get transferSent => 'Sent';
+
+  @override
+  String transferArrives(String account) {
+    return 'Arrives in $account';
+  }
+
+  @override
+  String transferTakenFrom(String account) {
+    return 'Taken from $account';
+  }
+
+  @override
+  String get transferSaved => 'Transfer saved';
+
+  @override
+  String transferSavedSub(String from, String to, String when) {
+    return '$from to $to · $when';
+  }
+
+  @override
+  String get transferAnother => 'New transfer';
+
+  @override
+  String get transferKind => 'Transfer';
+
+  @override
+  String get transferDepuis => 'From';
+
+  @override
+  String transferArrivedChip(String amount, String rate) {
+    return '$amount arrived · $rate';
+  }
+
+  @override
+  String get transferFirstAccountText =>
+      'A transfer moves money between two of your accounts: your pocket, your mobile money, your bank. Create the first one, then a second.';
+
+  @override
+  String get transferSecondTitle => 'First, a second account';
+
+  @override
+  String get transferSecondText =>
+      'A transfer moves money between two of your accounts. Create a second one, then note your transfer.';
+
+  @override
+  String get transferSecondAction => 'Create an account';
+
+  @override
+  String get entryDeleteTransferTitle => 'Delete this transfer?';
+
+  @override
+  String entryDeleteTransferHelp(
+    String from,
+    String withdrawn,
+    String to,
+    String arrived,
+  ) {
+    return 'It leaves the list: $from gets $withdrawn back and $to loses $arrived.';
   }
 }
