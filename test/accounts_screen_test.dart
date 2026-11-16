@@ -7,6 +7,7 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
@@ -16,6 +17,7 @@ import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
+import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 String plain(String s) => s.replaceAll(RegExp('[\\u00A0\\u202F]'), ' ');
@@ -202,6 +204,15 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.tap(find.text('Archiver le compte'));
+    await tester.pumpAndSettle();
+    expect(find.text('Archiver Ancien ?'), findsOneWidget);
+    expect(
+      find.text(
+        'Ancien quitte les listes et les totaux. Ses opérations restent.',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Archiver le compte').last);
     await tester.pumpAndSettle();
 
     expect(find.text('Ancien'), findsNothing);
@@ -445,4 +456,104 @@ void main() {
       expect(m.balance, const Money(12000, 'USD'));
     });
   });
+
+  testWidgets('with « Code pour les actions importantes », archiving asks it', (
+    tester,
+  ) async {
+    await accounts.create(
+      name: 'Ancien',
+      type: AccountType.cash,
+      opening: const Money(0, 'USD'),
+      openingDate: day,
+    );
+    final lock = LockController(
+      vault: _MemoryVault(),
+      biometrics: _NoBiometrics(),
+      privacy: _NoPrivacy(),
+    );
+    await lock.pins.setPin('2468');
+    await lock.load();
+    await lock.updateSettings(
+      lock.settings.copyWith(protectActions: true, shuffle: false),
+    );
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.reset);
+    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await tester.pumpWidget(
+      KibuoLock(
+        controller: lock,
+        eraseAll: () async {},
+        child: MaterialApp(
+          theme: KibuoTheme.light(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: appLanguages,
+          localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+          home: AccountsScreen(accounts: accounts, currencies: currencies),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ancien'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Archiver le compte'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Archiver le compte'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Archiver le compte').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Confirmez avec votre code'), findsOneWidget);
+    expect(find.text('Pour archiver Ancien'), findsOneWidget);
+    for (final d in '1111'.split('')) {
+      await tester.tap(find.text(d).last);
+      await tester.pumpAndSettle();
+    }
+    expect(await accounts.accounts(archived: true), isEmpty);
+    for (final d in '2468'.split('')) {
+      await tester.tap(find.text(d).last);
+      await tester.pumpAndSettle();
+    }
+    expect((await accounts.accounts(archived: true)).single.name, 'Ancien');
+  });
+}
+
+class _MemoryVault implements KeyVault {
+  final values = <String, String>{};
+
+  @override
+  Future<String?> read(String name) async => values[name];
+
+  @override
+  Future<void> write(String name, String value) async => values[name] = value;
+
+  @override
+  Future<void> delete(String name) async => values.remove(name);
+
+  @override
+  Future<void> deleteAll() async => values.clear();
+}
+
+class _NoBiometrics implements Biometrics {
+  @override
+  Future<bool> available() async => false;
+
+  @override
+  Future<bool> authenticate(String reason) async => false;
+}
+
+class _NoPrivacy implements PrivacyPlatform {
+  @override
+  Future<bool> canHidePreview() async => true;
+
+  @override
+  Future<void> apply({
+    required bool allowScreenshots,
+    required bool hideInRecents,
+    required bool androidCopy,
+  }) async {}
 }

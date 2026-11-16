@@ -8,6 +8,7 @@ import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Réglages › Sécurité: Verrouillage and Confidentialité. The recovery code
 /// row joins at its own step.
@@ -161,6 +162,42 @@ class LockSettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           HelpText(l.lockShuffleHelp),
+          // Canvas VerrouProtection: only once a code exists.
+          if (lock.hasPin) ...[
+            const SizedBox(height: 24),
+            SettingsCard(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l.lockProtect, style: KibuoType.rowLabel),
+                            Text(l.lockProtectHelp, style: KibuoType.caption),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: s.protectActions,
+                        onChanged: (on) async {
+                          // Turning the protection off takes the code too.
+                          if (!on && !await _confirmCurrent(context, lock)) {
+                            return;
+                          }
+                          await lock.updateSettings(
+                            s.copyWith(protectActions: on),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
           if (lock.hasPin) ...[
             const SizedBox(height: 24),
             SettingsCard(
