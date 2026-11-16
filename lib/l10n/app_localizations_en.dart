@@ -1123,4 +1123,48 @@ class AppLocalizationsEn extends AppLocalizations {
   ) {
     return 'It leaves the list: $from gets $withdrawn back and $to loses $arrived.';
   }
+
+  @override
+  String get overdraftLabel => 'Overdraft';
+
+  @override
+  String get overdraftAllow => 'Allow overdraft';
+
+  @override
+  String get overdraftAllowHelp => 'The balance can go below zero';
+
+  @override
+  String get overdraftUpTo => 'Up to';
+
+  @override
+  String get overdraftNoLimitHelp => 'Empty or 0: no limit.';
+
+  @override
+  String get overdraftNoLimit => 'No limit';
+
+  @override
+  String overdraftBelowZero(String account, String balance) {
+    return '$account is at $balance: nothing can leave it until it comes back up. Money can still come in.';
+  }
+
+  @override
+  String overdraftCaptionUpTo(String amount) {
+    return 'Overdraft up to $amount';
+  }
+
+  @override
+  String get overdraftCaptionNoLimit => 'Unlimited overdraft';
+
+  @override
+  String overdraftAvailable(String amount, String account) {
+    return '$amount available in $account';
+  }
+
+  @override
+  String get overdraftAuthorize => 'Allow';
+
+  @override
+  String overdraftWouldGo(String account, String amount) {
+    return '$account would go to $amount';
+  }
 }

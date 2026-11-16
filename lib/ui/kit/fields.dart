@@ -186,11 +186,15 @@ class ValueField extends StatelessWidget {
     this.onTap,
     this.error,
     this.note,
+    this.fill = KibuoColors.surface,
   });
 
   final String value;
   final String? label;
   final String? prefix;
+
+  /// The field's background: grey inside a white card.
+  final Color fill;
   final String placeholder;
   final String? unit;
   final VoidCallback? onUnitTap;
@@ -207,7 +211,7 @@ class ValueField extends StatelessWidget {
         ? KibuoColors.danger
         : focused
         ? KibuoColors.accent
-        : KibuoColors.surface;
+        : fill;
     final empty = value.isEmpty;
     // The label is part of the field: touching it opens the keypad too.
     return GestureDetector(
@@ -222,7 +226,7 @@ class ValueField extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 60),
             padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
             decoration: BoxDecoration(
-              color: KibuoColors.surface,
+              color: fill,
               borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
               border: Border.all(color: borderColor, width: 2),
             ),

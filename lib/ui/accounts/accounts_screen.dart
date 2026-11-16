@@ -261,6 +261,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         name: labels.name(type),
         count: folded ? l.accountsCount(accounts.length) : null,
         total: _money(_total(accounts).amount),
+        negative: _total(accounts).amount.minor < 0,
         folded: folded,
         onTap: () =>
             setState(() => folded ? _folded.remove(type) : _folded.add(type)),
@@ -290,12 +291,20 @@ class _AccountsScreenState extends State<AccountsScreen> {
         detail = '≈ ${_money(inMain)}';
       }
     }
+    // « Découvert jusqu'à 100 $ » or « Découvert sans limite » (PRODUCT).
+    final o = a.overdraft;
+    final overdraft = !o.allowed
+        ? null
+        : o.unlimited
+        ? l.overdraftCaptionNoLimit
+        : l.overdraftCaptionUpTo(_money(Money(o.limit!, a.currency)));
     return _AccountCard(
       name: a.name,
       code: a.currency,
-      detail: detail,
+      detail: [?detail, ?overdraft].join(' · ').ifEmpty,
       amount: amount,
       muted: muted,
+      negative: a.balance.minor < 0,
       onTap: () => _open(a),
     );
   }
@@ -423,12 +432,16 @@ class _GroupHeader extends StatelessWidget {
     required this.folded,
     required this.onTap,
     this.count,
+    this.negative = false,
   });
 
   final IconData icon;
   final String name;
   final String? count;
   final String total;
+
+  /// The group's total below zero: in red.
+  final bool negative;
   final bool folded;
   final VoidCallback onTap;
 
@@ -472,7 +485,7 @@ class _GroupHeader extends StatelessWidget {
                 Text(
                   total,
                   style: KibuoType.sectionTitle.copyWith(
-                    color: KibuoColors.ink,
+                    color: negative ? KibuoColors.danger : KibuoColors.ink,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -498,6 +511,7 @@ class _AccountCard extends StatelessWidget {
     required this.onTap,
     this.detail,
     this.muted = false,
+    this.negative = false,
   });
 
   final String name;
@@ -505,6 +519,9 @@ class _AccountCard extends StatelessWidget {
   final String? detail;
   final String amount;
   final bool muted;
+
+  /// Below zero: the amount in red.
+  final bool negative;
   final VoidCallback onTap;
 
   @override
@@ -553,7 +570,9 @@ class _AccountCard extends StatelessWidget {
             amount,
             style: muted
                 ? KibuoType.buttonSmall.copyWith(color: KibuoColors.inkMuted)
-                : KibuoType.cardTitle,
+                : KibuoType.cardTitle.copyWith(
+                    color: negative ? KibuoColors.danger : null,
+                  ),
           ),
         ],
       ),
@@ -600,4 +619,8 @@ class _DisplayChoice extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on String {
+  String? get ifEmpty => isEmpty ? null : this;
 }
