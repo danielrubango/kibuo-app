@@ -16,6 +16,9 @@ abstract final class KibuoColors {
   static const track = Color(0xFFDDE2EC);
   static const fill = Color(0xFFE4E8F0);
 
+  /// Under the subcategories of an opened category.
+  static const fillSoft = Color(0xFFF4F6FA);
+
   // Brand.
   static const mint = Color(0xFF5EEAB5);
   static const coin = Color(0xFFFFC247);
@@ -25,10 +28,19 @@ abstract final class KibuoColors {
   static const accentTint = Color(0xFFE9F8F1);
   static const accentTintStrong = Color(0xFFD5F2E4);
 
+  /// A dark green for text on the mint « Dépense » choice.
+  static const accentDeep = Color(0xFF1F3A30);
+
+  /// An opened category's toggle.
+  static const accentTintOpen = Color(0xFFCDEFE0);
+
   // Meaning: what I owe, money going out.
   static const debtInk = Color(0xFF8A4B12);
   static const debtTint = Color(0xFFFFE6D3);
   static const debtLine = Color(0xFFE8A878);
+
+  /// The edge of an expense's amount card.
+  static const debtEdge = Color(0xFFF2CFB3);
 
   // Meaning: projects, money set aside.
   static const projectInk = Color(0xFF33528A);
@@ -43,6 +55,15 @@ abstract final class KibuoColors {
   // Meaning: late or over budget.
   static const danger = Color(0xFFB3321A);
 
+  /// What fills a danger button held down.
+  static const dangerTint = Color(0xFFFBE3DE);
+
   // The veil behind a sheet: ink at 42 %, the page below stays readable.
   static const scrim = Color(0x6B0E1320);
+
+  /// The shadow of a bar floating over the content (keypad, selection).
+  static const barShadow = Color(0x2E0E1320);
+
+  /// The shadow of the + fan's choices.
+  static const fanShadow = Color(0x40000000);
 }

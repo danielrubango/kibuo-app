@@ -27,7 +27,7 @@ class _AddSheet extends StatelessWidget {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -95,7 +95,7 @@ class _ExpenseCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               const _IconTile(
@@ -116,7 +116,7 @@ class _ExpenseCard extends StatelessWidget {
                     Text(
                       choice.hint(AppLocalizations.of(context)),
                       style: text.bodyMedium?.copyWith(
-                        color: const Color(0xFF1F3A30),
+                        color: KibuoColors.accentDeep,
                       ),
                     ),
                   ],

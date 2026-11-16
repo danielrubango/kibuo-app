@@ -85,7 +85,7 @@ Future<AttachmentSource?> pickAttachmentSource(BuildContext context) {
   ) => InkWell(
     onTap: () => Navigator.of(context).pop(source),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Container(
@@ -200,7 +200,7 @@ class AttachmentsCard extends StatelessWidget {
                   size: 14,
                   color: KibuoColors.inkSecondary,
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 // One Expanded, not Flexible plus Spacer: those two would
                 // split the free width and leave a gap after « Ajouter ».
                 Expanded(
@@ -215,7 +215,7 @@ class AttachmentsCard extends StatelessWidget {
                         ),
                       ),
                       if (items.isNotEmpty) ...[
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Text(
                           '${items.length}/${AttachmentRepository.maxCount}',
                           style: KibuoType.caption.copyWith(
@@ -231,7 +231,7 @@ class AttachmentsCard extends StatelessWidget {
                     onTap: onAdd,
                     borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 10, 4, 10),
+                      padding: const EdgeInsets.fromLTRB(4, 12, 4, 12),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -316,7 +316,7 @@ class AttachmentsCard extends StatelessWidget {
               ),
           if (error != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 6, 6, 0),
+              padding: const EdgeInsets.fromLTRB(0, 8, 8, 0),
               child: Text(
                 error!,
                 style: KibuoType.help.copyWith(color: KibuoColors.danger),
@@ -369,7 +369,7 @@ class _Line extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 64),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
                 children: [
                   Semantics(
@@ -423,7 +423,7 @@ class _Line extends StatelessWidget {
                             fontVariations: const [FontVariation.weight(500)],
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 4),
                         Text(
                           '$kindText · ${attachmentSize(context, item.size)}',
                           style: KibuoType.caption,
@@ -494,7 +494,7 @@ class AttachmentSelectionBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x2E0E1320),
+            color: KibuoColors.barShadow,
             blurRadius: 24,
             offset: Offset(0, 6),
           ),

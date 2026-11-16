@@ -73,7 +73,7 @@ class RadioLine extends StatelessWidget {
       child: InkWell(
         onTap: enabled ? onTap : null,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               Container(
@@ -277,7 +277,7 @@ class _RateSheetState extends State<_RateSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: KibuoColors.surface,
             borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
@@ -485,18 +485,19 @@ class _CategorySheetState extends State<_CategorySheet> {
           borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
           clipBehavior: Clip.antiAlias,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (final c in shown) ...[
                 InkWell(
                   onTap: () => Navigator.of(context).pop(c),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 6),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                     child: Row(
                       children: [
                         _Radio(on: c.id == widget.current),
                         const SizedBox(width: 12),
                         CategoryTile(category: c),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             categoryName(l, c),
@@ -512,7 +513,9 @@ class _CategorySheetState extends State<_CategorySheet> {
                 ),
                 if (c.subs.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(48, 0, 14, 10),
+                    // Under the category's name: 16 + circle 22 + 12 +
+                    // tile 28 + 8.
+                    padding: const EdgeInsets.fromLTRB(86, 0, 16, 12),
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -576,7 +579,7 @@ class _SubChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             label,
             style: KibuoType.body.copyWith(

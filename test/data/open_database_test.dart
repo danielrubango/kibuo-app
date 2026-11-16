@@ -103,6 +103,22 @@ void main() {
     expect(kept, hasLength(1), reason: 'never deleted, only set aside');
   });
 
+  test('« Effacer et repartir de zéro » erases the attachments too', () async {
+    final db = ((await open()) as Opened).database;
+    await db.close();
+    Directory('${folder.path}/attachments').createSync();
+    File('${folder.path}/attachments/receipt.enc').writeAsStringSync('x');
+
+    final result = await eraseAndStartOver(
+      folder: folder,
+      vault: vault,
+      inBackground: false,
+    );
+
+    await (result as Opened).database.close();
+    expect(Directory('${folder.path}/attachments').existsSync(), isFalse);
+  });
+
   test('a new phone gets its own device, even with copied data', () async {
     final db = ((await open()) as Opened).database;
     final firstDevice = (await db.thisDevice()).id;

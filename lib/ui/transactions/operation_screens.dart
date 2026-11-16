@@ -6,6 +6,7 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -105,7 +106,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
               onTap: () => _open(t),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
+                  horizontal: 16,
                   vertical: 12,
                 ),
                 child: Row(
@@ -201,7 +202,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     final t = await widget.data.transactions.get(widget.id);
     if (!mounted) return;
     if (t == null) {
-      // Deleted from « Modifier »: back to the list.
+      // Gone (deleted elsewhere): back to the list.
       Navigator.of(context).pop();
       return;
     }
@@ -227,6 +228,86 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     await _load();
   }
 
+  /// « Supprimer cette dépense ? » (canvas DelConfirm): the operation as
+  /// saved, what deleting does to its account, then « Supprimer ».
+  Future<void> _confirmDelete() async {
+    final saved = _t!;
+    final lang = Localizations.localeOf(context).languageCode;
+    final l = AppLocalizations.of(context);
+    final expense = saved.kind == EntryKind.expense;
+    final labels = await OperationLabels.of(context, widget.data, saved);
+    if (!mounted) return;
+    final amount = formatMoney(
+      saved.total.total,
+      currencyOf(saved.total.total.currency),
+      lang,
+    );
+    final sure = await showKibuoSheet<bool>(
+      context,
+      title: expense ? l.entryDeleteExpenseTitle : l.entryDeleteIncomeTitle,
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: KibuoColors.surface,
+              borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+            ),
+            child: Row(
+              children: [
+                if (labels.category != null)
+                  CategoryTile(category: labels.category!, size: 32),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labels.categoryPath.split(' › ').last,
+                        style: KibuoType.rowLabel.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontVariations: const [FontVariation.weight(600)],
+                        ),
+                      ),
+                      Text(
+                        '${labels.account} · '
+                        '${operationWhen(context, saved.date, DateTime.now())}',
+                        style: KibuoType.caption,
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  signedTotal(context, saved),
+                  style: KibuoType.itemName.copyWith(
+                    color: expense ? KibuoColors.debtInk : KibuoColors.accent,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            expense
+                ? l.entryDeleteExpenseHelp(labels.account, amount)
+                : l.entryDeleteIncomeHelp(labels.account, amount),
+            style: KibuoType.help,
+          ),
+          const SizedBox(height: 16),
+          KibuoButton(
+            label: l.entryDeleteConfirm,
+            kind: ButtonKind.danger,
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    );
+    if (!(sure ?? false)) return;
+    await widget.data.transactions.delete(saved.id);
+    if (mounted) Navigator.of(context).pop();
+  }
+
   Future<void> _duplicate() async {
     await runEntry(context, widget.data, kind: _t!.kind, initial: _t);
   }
@@ -242,9 +323,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     }
     final expense = t.kind == EntryKind.expense;
     final tint = expense ? KibuoColors.debtTint : KibuoColors.accentTint;
-    final edge = expense
-        ? const Color(0xFFF2CFB3)
-        : KibuoColors.accentTintStrong;
+    final edge = expense ? KibuoColors.debtEdge : KibuoColors.accentTintStrong;
     final date = t.date.toLocal();
     final dateText = DateFormat.yMMMMEEEEd(lang).format(date);
     return Scaffold(
@@ -299,8 +378,8 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                     decoration: BoxDecoration(
                       color: edge,
@@ -312,7 +391,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(KibuoIcons.lockSimple, size: 14),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Flexible(
                           child: Text(
                             (expense ? l.entryPaidChip : l.entryReceivedChip)(
@@ -385,7 +464,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
           if (t.note != null) ...[
             const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 4),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               decoration: BoxDecoration(
                 color: KibuoColors.surface,
                 borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
@@ -407,7 +486,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                       onPressed: () => setState(() => _noteOpen = true),
                     )
                   else
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                 ],
               ),
             ),
@@ -418,6 +497,16 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
             kind: ButtonKind.secondary,
             icon: KibuoIcons.copy,
             onPressed: _duplicate,
+          ),
+          // Under « Dupliquer », as a plain red action (owner, 15 November
+          // 2026; canvas OperationCarteTransfert).
+          const SizedBox(height: 8),
+          Center(
+            child: TextAction(
+              label: l.entryDeleteOperation,
+              color: KibuoColors.danger,
+              onPressed: _confirmDelete,
+            ),
           ),
         ],
       ),

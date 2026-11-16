@@ -204,7 +204,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     chosen: _chip,
                     onPick: (t) => setState(() => _chip = t),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                 ],
                 _TotalCard(
                   label: _chip == null
@@ -225,7 +225,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 if (_chip == null)
                   for (final t in types) ..._group(l, labels, t)
                 else
@@ -267,7 +267,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       ),
       if (!folded)
         for (final a in accounts) ...[_card(l, a), const SizedBox(height: 8)],
-      const SizedBox(height: 6),
+      const SizedBox(height: 8),
     ];
   }
 
@@ -344,7 +344,7 @@ class _Chips extends StatelessWidget {
                 Container(
                   constraints: const BoxConstraints(minWidth: 24),
                   height: 24,
-                  padding: const EdgeInsets.symmetric(horizontal: 7),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: on ? KibuoColors.mint : KibuoColors.background,
@@ -388,7 +388,7 @@ class _TotalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
@@ -400,7 +400,7 @@ class _TotalCard extends StatelessWidget {
             label,
             style: KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
@@ -526,7 +526,7 @@ class _AccountCard extends StatelessWidget {
                     fontVariations: const [FontVariation.weight(600)],
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text.rich(
                   TextSpan(
                     children: [
@@ -581,7 +581,7 @@ class _DisplayChoice extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               Expanded(

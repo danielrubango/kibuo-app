@@ -89,7 +89,7 @@ class KeypadPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       decoration: const BoxDecoration(
         color: KibuoColors.background,
         borderRadius: BorderRadius.vertical(
@@ -97,7 +97,7 @@ class KeypadPanel extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0x2E0E1320),
+            color: KibuoColors.barShadow,
             blurRadius: 30,
             offset: Offset(0, -10),
           ),
@@ -109,7 +109,7 @@ class KeypadPanel extends StatelessWidget {
           Container(
             width: 40,
             height: 4,
-            margin: const EdgeInsets.only(bottom: 14),
+            margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               color: KibuoColors.line,
               borderRadius: BorderRadius.circular(2),
@@ -171,4 +171,20 @@ String typeKey(String typed, String k, {required int decimals}) {
   }
   if (parts[0].length + add.length > 12) return typed;
   return typed == '0' ? (add == '000' ? typed : add) : '$typed$add';
+}
+
+/// Once Kibuo's keypad is laid out, scrolls the field of [key] just enough
+/// to sit above it: the keypad takes the bottom of the screen, and nothing
+/// else would bring the field back into view.
+void revealAboveKeypad(GlobalKey key) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final context = key.currentContext;
+    if (context == null || !context.mounted) return;
+    Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+    );
+  });
 }
