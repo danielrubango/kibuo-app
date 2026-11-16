@@ -168,7 +168,7 @@ class FingerprintOfferScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
           child: Column(
             children: [
               const Spacer(),

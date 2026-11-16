@@ -4,6 +4,7 @@ import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/l10n/currency_name_phrase.dart';
 import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
@@ -258,8 +259,7 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
             ),
       bottomNavigationBar: main == null || _editing
           ? null
-          : SafeArea(
-              minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          : BottomAction(
               child: KibuoButton(label: l.currenciesAdd, onPressed: _add),
             ),
     );
@@ -405,7 +405,7 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
             ),
             const SizedBox(height: 8),
             HelpText(l.currencyDecimalsHelp),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
           ],
           if (_showAll)
             KibuoTextField(
@@ -416,7 +416,7 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
             ),
           for (final (title, currencies) in _showAll ? groups : groups.take(1))
             if (currencies.isNotEmpty) ...[
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               SectionTitle(title),
               for (final c in currencies) ...[
                 _CurrencyTile(
@@ -478,7 +478,7 @@ class _CurrencyTile extends StatelessWidget {
         onTap: onTap,
         child: Container(
           constraints: const BoxConstraints(minHeight: 48),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               Expanded(
@@ -504,22 +504,9 @@ class _CurrencyTile extends StatelessWidget {
   }
 }
 
-/// « du franc congolais », « de l’euro », « de la livre sterling »: the
-/// currency's French name after « Taux ».
-String frenchOfName(String name) {
-  final lower = name.substring(0, 1).toLowerCase() + name.substring(1);
-  const feminine = {
-    'livre', 'roupie', 'couronne', 'lire', 'hryvnia', 'gourde', 'peseta', //
-    'nouvelle', 'roupiah',
-  };
-  if (RegExp('^[aeiouyhéèêâîôû]').hasMatch(lower)) return 'de l’$lower';
-  if (feminine.contains(lower.split(' ').first)) return 'de la $lower';
-  return 'du $lower';
-}
-
 /// The rate sheet (validated mock-up « Taux depuis Réglages »): « 1 $ = … »
 /// typed on the Kibuo keypad with its currency on the right, the previous
-/// rate and the change, then « Enregistrer le taux » and « Annuler ».
+/// rate and the change, then « Enregistrer le taux ».
 Future<void> showRateSheet(
   BuildContext context, {
   required CurrencyRepository repository,
@@ -531,7 +518,7 @@ Future<void> showRateSheet(
   final l = AppLocalizations.of(context);
   return showKibuoSheet<void>(
     context,
-    title: l.rateSheetTitle(_lang(context) == 'fr' ? frenchOfName(name) : name),
+    title: l.rateSheetTitle(currencyNameAfterOf(_lang(context), name)),
     builder: (_) => _RateSheet(
       repository: repository,
       main: main,
@@ -730,12 +717,6 @@ class _RateSheetState extends State<_RateSheet> {
         KibuoButton(
           label: l.rateSave,
           onPressed: _value == null ? null : _save,
-        ),
-        const SizedBox(height: 8),
-        KibuoButton(
-          label: l.cancel,
-          kind: ButtonKind.secondary,
-          onPressed: () => Navigator.of(context).pop(),
         ),
       ],
     );

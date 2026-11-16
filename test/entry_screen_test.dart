@@ -438,19 +438,49 @@ void main() {
     date: now,
   );
 
-  testWidgets('Modifier › « Supprimer la dépense », once confirmed', (
+  testWidgets('editing keeps the rate frozen when it was saved', (
+    tester,
+  ) async {
+    await data.currencies.addCurrency('CDF');
+    await data.currencies.setRate('USD', 'CDF', RateValue.parse('2800'));
+    final id = await data.transactions.create(
+      kind: EntryKind.expense,
+      accountId: (await data.accounts.accounts()).single.id,
+      categoryId: 'default-taxi',
+      paid: const Money(1400000, 'CDF'),
+      rate: ExchangeRate(
+        base: 'USD',
+        quote: 'CDF',
+        value: RateValue.parse('2800'),
+      ),
+      fees: 0,
+      date: now,
+    );
+    // Devises gets a newer rate after the expense was saved.
+    await data.currencies.setRate('USD', 'CDF', RateValue.parse('3000'));
+
+    await openDetail(tester, id);
+    await tester.tap(find.text('Modifier'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enregistrer les modifications'));
+    await tester.pumpAndSettle();
+
+    final saved = (await data.transactions.all()).single;
+    expect(saved.total.converted, const Money(500, 'USD'));
+    expect(saved.rate!.value, RateValue.parse('2800'));
+  });
+
+  testWidgets('the detail › « Supprimer l’opération », once confirmed', (
     tester,
   ) async {
     await openDetail(tester, await taxi());
 
-    await tester.tap(find.text('Modifier'));
-    await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.text('Supprimer la dépense'),
+      find.text('Supprimer l’opération'),
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('Supprimer la dépense'));
+    await tester.tap(find.text('Supprimer l’opération'));
     await tester.pumpAndSettle();
     expect(find.text('Supprimer cette dépense ?'), findsOneWidget);
     expect(
@@ -466,22 +496,20 @@ void main() {
     expect(find.text('liste'), findsOneWidget, reason: 'back to the list');
   });
 
-  testWidgets('« Annuler » in the confirmation keeps it', (tester) async {
+  testWidgets('closing the confirmation with ✕ keeps it', (tester) async {
     await openDetail(tester, await taxi());
-    await tester.tap(find.text('Modifier'));
-    await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.text('Supprimer la dépense'),
+      find.text('Supprimer l’opération'),
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('Supprimer la dépense'));
+    await tester.tap(find.text('Supprimer l’opération'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Annuler').last);
+    await tester.tap(find.byTooltip('Fermer'));
     await tester.pumpAndSettle();
 
     expect(await data.transactions.all(), hasLength(1));
-    expect(find.text('Modifier la dépense'), findsOneWidget);
+    expect(find.text('Dupliquer'), findsOneWidget, reason: 'still the detail');
   });
 
   testWidgets('attachments wait for « Enregistrer », then belong to it', (

@@ -12,7 +12,7 @@ class FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 2, bottom: 6),
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
         text,
         style: KibuoType.sectionTitle.copyWith(color: KibuoColors.ink),
@@ -32,6 +32,7 @@ class KibuoTextField extends StatelessWidget {
     this.error,
     this.autofocus = false,
     this.textCapitalization = TextCapitalization.sentences,
+    this.onFocus,
   });
 
   final String? label;
@@ -41,6 +42,10 @@ class KibuoTextField extends StatelessWidget {
   final String? error;
   final bool autofocus;
   final TextCapitalization textCapitalization;
+
+  /// When the field takes the focus, whatever way: a screen closes Kibuo's
+  /// keypad here, so the phone's keyboard never shows with it.
+  final VoidCallback? onFocus;
 
   @override
   Widget build(BuildContext context) {
@@ -55,32 +60,39 @@ class KibuoTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (label != null) FieldLabel(label!),
-        TextField(
-          controller: controller,
-          onChanged: onChanged,
-          autofocus: autofocus,
-          textCapitalization: textCapitalization,
-          style: KibuoType.body.copyWith(fontSize: 16),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: KibuoType.body.copyWith(
-              fontSize: 16,
-              color: KibuoColors.inkMuted,
-            ),
-            filled: true,
-            fillColor: KibuoColors.surface,
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 15,
-            ),
-            border: border(KibuoColors.surface, 0),
-            enabledBorder: error == null
-                ? border(KibuoColors.surface, 0)
-                : border(KibuoColors.danger, 2),
-            focusedBorder: border(
-              error == null ? KibuoColors.accent : KibuoColors.danger,
-              2,
+        Focus(
+          canRequestFocus: false,
+          skipTraversal: true,
+          onFocusChange: (on) {
+            if (on) onFocus?.call();
+          },
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            autofocus: autofocus,
+            textCapitalization: textCapitalization,
+            style: KibuoType.body.copyWith(fontSize: 16),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: KibuoType.body.copyWith(
+                fontSize: 16,
+                color: KibuoColors.inkMuted,
+              ),
+              filled: true,
+              fillColor: KibuoColors.surface,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 15,
+              ),
+              border: border(KibuoColors.surface, 0),
+              enabledBorder: error == null
+                  ? border(KibuoColors.surface, 0)
+                  : border(KibuoColors.danger, 2),
+              focusedBorder: border(
+                error == null ? KibuoColors.accent : KibuoColors.danger,
+                2,
+              ),
             ),
           ),
         ),
@@ -98,7 +110,7 @@ class _ErrorLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
       child: Text(
         text,
         style: KibuoType.help.copyWith(color: KibuoColors.danger),
@@ -147,7 +159,7 @@ class CurrencyPill extends StatelessWidget {
                 ),
               ),
               if (onTap != null) ...[
-                const SizedBox(width: 2),
+                const SizedBox(width: 4),
                 Icon(KibuoIcons.caretDown, size: 16, color: foreground),
               ],
             ],
@@ -208,7 +220,7 @@ class ValueField extends StatelessWidget {
           if (label != null) FieldLabel(label!),
           Container(
             constraints: const BoxConstraints(minHeight: 60),
-            padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
             decoration: BoxDecoration(
               color: KibuoColors.surface,
               borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
@@ -258,7 +270,7 @@ class ValueField extends StatelessWidget {
             _ErrorLine(error!)
           else if (note != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+              padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
               child: Text(note!, style: KibuoType.caption),
             ),
         ],
@@ -292,12 +304,10 @@ class OperationAmountField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tint = income ? KibuoColors.accentTint : KibuoColors.debtTint;
-    final line = income
-        ? KibuoColors.accentTintStrong
-        : const Color(0xFFF2CFB3);
+    final line = income ? KibuoColors.accentTintStrong : KibuoColors.debtEdge;
     final ink = income ? KibuoColors.accent : KibuoColors.debtInk;
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 12, 12, 10),
+      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
       decoration: BoxDecoration(
         color: tint,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
@@ -334,7 +344,7 @@ class OperationAmountField extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Divider(height: 1, color: line),
           const SizedBox(height: 8),
           Row(
@@ -413,7 +423,7 @@ class _BlinkingCaretState extends State<BlinkingCaret>
         child: Container(
           width: 2,
           height: widget.height,
-          margin: const EdgeInsets.only(left: 3),
+          margin: const EdgeInsets.only(left: 4),
           color: KibuoColors.accent,
         ),
       ),

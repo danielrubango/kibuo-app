@@ -43,17 +43,17 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 | Bouton | Inter 16 demi-gras (15 pour les secondaires) |
 | Touche du clavier | Plus Jakarta 22 |
 
-**Espaces, coins et hauteurs.** Grille de 4 ; marges d'écran de 16. Coins : 12 pastille, 14 champ texte, 16 champ de montant et touche, 18 carte et bouton principal, 22 carte mise en avant, 26 feuille. Hauteurs : 44 zone tactile, 48 bouton secondaire, 50 touche, 52 champ texte, 54 bouton principal.
+**Espaces, coins et hauteurs.** Une seule échelle d'espaces (validée le 15 novembre 2026), dans le thème : 4 et 8 à l'intérieur d'un groupe (libellé et valeur, icône et texte), 12 entre deux cartes ou deux champs, 16 pour les marges d'écran (tous les écrans, y compris ceux du code) et l'intérieur des cartes, 24 avant le bouton principal et sous le contenu d'une feuille (en plus de la barre du téléphone), 32 entre deux grandes parties d'un écran. Aucune autre valeur. Coins : 12 pastille, 14 champ texte, 16 champ de montant et touche, 18 carte et bouton principal, 22 carte mise en avant, 26 feuille. Hauteurs : 44 zone tactile, 48 bouton secondaire, 50 touche, 52 champ texte, 54 bouton principal.
 
 **Couleurs.** Celles du tableau ci-dessus, plus le voile derrière une feuille : l'encre à 42 %.
 
-**Boutons.** Principal (menthe, un seul par écran, en bas), secondaire (blanc : Annuler, Plus tard), contour (choix lourd mais sans danger), sombre (Terminé), danger (contour rouge, appui maintenu), créer (pointillés), et l'action texte verte.
+**Boutons.** Principal (menthe, un seul par écran, en bas), secondaire (blanc : Plus tard), contour (choix lourd mais sans danger), sombre (Terminé), danger (contour rouge ; appui maintenu pour un geste lourd sans feuille de confirmation, comme restaurer une sauvegarde ou tout effacer ; un simple toucher quand une feuille confirme déjà), créer (pointillés), et l'action texte verte.
 
-**Champs.** Le libellé au-dessus ; au repos, blanc sans bord ; en saisie, bord vert et curseur vert. Une valeur tapée au clavier Kibuo (montant, taux) est à gauche, juste après son préfixe gris (« 1 $ = »), et sa devise est une pastille grise à droite ; la pastille porte ˅ quand on peut changer la devise. Une erreur : bord rouge et une ligne rouge dessous.
+**Champs.** Le libellé au-dessus ; au repos, blanc sans bord ; en saisie, bord vert et curseur vert. Une valeur tapée au clavier Kibuo (montant, taux) est à gauche, juste après son préfixe gris (« 1 $ = »), et sa devise est une pastille grise à droite ; la pastille porte ˅ quand on peut changer la devise. Une erreur : bord rouge et une ligne rouge dessous. Un seul clavier à la fois : toucher un champ de texte ferme le clavier Kibuo, toucher un montant ferme celui du téléphone. Le champ touché remonte toujours au-dessus du clavier qui s'ouvre.
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.
 
-**Feuilles.** Poignée claire, titre avec ✕, puis le contenu ; le clavier Kibuo est le même partout (1 à 9, virgule, 0, ←).
+**Feuilles.** Poignée claire, titre avec ✕, puis le contenu ; le clavier Kibuo est le même partout (1 à 9, virgule, 0, ←). Une feuille n'a pas de bouton « Annuler » : on la quitte par le ✕, un toucher à côté, un glissement vers le bas ou le geste retour. Un second bouton n'y reste que s'il dit autre chose que fermer (« Plus tard »).
 
 **Icônes.** Toutes de Phosphor, y compris ‹ pour revenir et ← pour effacer.
 

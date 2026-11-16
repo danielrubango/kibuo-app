@@ -11,6 +11,7 @@ import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/categories/category_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -125,7 +126,6 @@ Future<void> runEntry(
     );
     if (id == null || !context.mounted) return;
     onSaved?.call();
-    if (id.isEmpty) return; // Deleted.
     if (nextEditing && editing) return;
     final saved = await data.transactions.get(id);
     if (saved == null || !context.mounted) return;
@@ -217,7 +217,7 @@ Future<bool> _firstSheet(
     useSafeArea: true,
     isScrollControlled: true,
     builder: (context) => Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+      padding: sheetPadding(context),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -233,7 +233,7 @@ Future<bool> _firstSheet(
               child: Icon(icon, size: 34, color: KibuoColors.accent),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -342,7 +342,7 @@ class _SavedSheetState extends State<_SavedSheet>
     return Listener(
       onPointerDown: (_) => _hold(),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: sheetPadding(context),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -461,7 +461,7 @@ class _SavedSheetState extends State<_SavedSheet>
                   ),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               Text(l.entryClosesSoon, style: KibuoType.caption),
             ],
           ],

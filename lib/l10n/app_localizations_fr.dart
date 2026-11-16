@@ -961,10 +961,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get entryLater => 'Plus tard';
 
   @override
-  String get entryDeleteExpense => 'Supprimer la dépense';
-
-  @override
-  String get entryDeleteIncome => 'Supprimer le revenu';
+  String get entryDeleteOperation => 'Supprimer l’opération';
 
   @override
   String get entryDeleteExpenseTitle => 'Supprimer cette dépense ?';

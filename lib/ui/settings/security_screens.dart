@@ -61,7 +61,7 @@ class SecurityScreen extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           HelpText(l.securityFooter),
         ],
       ),
@@ -159,10 +159,10 @@ class LockSettingsScreen extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           HelpText(l.lockShuffleHelp),
           if (lock.hasPin) ...[
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             SettingsCard(
               children: [
                 SettingsRow(
@@ -176,7 +176,7 @@ class LockSettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             HelpText(l.lockRemoveHelp),
           ],
         ],
@@ -221,7 +221,7 @@ class PrivacyScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           HelpText(l.privacyHelp),
         ],
       ),
@@ -248,7 +248,7 @@ Future<AutoLockDelay?> showDelaySheet(
     context: context,
     builder: (sheetContext) => SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
