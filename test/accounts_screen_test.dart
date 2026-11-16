@@ -12,6 +12,8 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_type_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/kit/fields.dart';
+import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 String plain(String s) => s.replaceAll(RegExp('[\\u00A0\\u202F]'), ' ');
@@ -36,8 +38,11 @@ void main() {
   });
   tearDown(() => db.close());
 
-  Future<void> start(WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1080, 2400);
+  Future<void> start(
+    WidgetTester tester, {
+    Size screen = const Size(1080, 2400),
+  }) async {
+    tester.view.physicalSize = screen;
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.reset);
     tester.platformDispatcher.localesTestValue = const [Locale('fr', 'US')];
@@ -75,8 +80,16 @@ void main() {
     expect(find.text('Nouveau compte'), findsOneWidget);
     await tester.tap(find.text('Banque'));
     await tester.enterText(find.byType(TextField), 'Rawbank');
-    await tester.tap(find.text('Solde de départ'));
+    expect(tester.testTextInput.isVisible, isTrue);
+    await tester.tap(
+      find.descendant(of: find.byType(ValueField), matching: find.text('0')),
+    );
     await tester.pumpAndSettle();
+    expect(
+      tester.testTextInput.isVisible,
+      isFalse,
+      reason: 'the phone keyboard gives way to Kibuo’s',
+    );
     await type(tester, '120');
     await tester.tap(find.text('Terminé'));
     await tester.pumpAndSettle();
@@ -89,6 +102,47 @@ void main() {
     final saved = (await accounts.accounts()).single;
     expect(saved.type, AccountType.bank);
     expect(saved.balance, const Money(12000, 'USD'));
+  });
+
+  testWidgets('touching the name closes Kibuo’s keypad', (tester) async {
+    await start(tester);
+    await tester.tap(find.text('Ajouter un compte'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(of: find.byType(ValueField), matching: find.text('0')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(KeypadPanel), findsOneWidget);
+
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+
+    expect(tester.testTextInput.isVisible, isTrue);
+    expect(
+      find.byType(KeypadPanel),
+      findsNothing,
+      reason: 'never both keyboards at once',
+    );
+  });
+
+  testWidgets('on a small screen, the keypad never hides its field', (
+    tester,
+  ) async {
+    await start(tester, screen: const Size(1080, 1500));
+    await tester.tap(find.text('Ajouter un compte'));
+    await tester.pumpAndSettle();
+    final field = find.byType(ValueField);
+    await tester.scrollUntilVisible(
+      find.descendant(of: field, matching: find.text('0')),
+      100,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.descendant(of: field, matching: find.text('0')));
+    await tester.pumpAndSettle();
+
+    final keypadTop = tester.getTopLeft(find.byType(KeypadPanel)).dy;
+    final amount = find.descendant(of: field, matching: find.text('0'));
+    expect(tester.getBottomLeft(amount).dy, lessThanOrEqualTo(keypadTop));
   });
 
   testWidgets('an account needs a name', (tester) async {

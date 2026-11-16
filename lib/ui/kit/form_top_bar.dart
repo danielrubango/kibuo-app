@@ -13,12 +13,15 @@ class FormTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The button's own 12 of padding plus 4 here: « Annuler » starts on
+    // the cards' edge, 16 from the screen's.
+    return Container(
       height: 52,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         children: [
           SizedBox(
-            width: 96,
+            width: 92,
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextAction(
@@ -37,7 +40,7 @@ class FormTopBar extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(width: 96),
+          const SizedBox(width: 92),
         ],
       ),
     );

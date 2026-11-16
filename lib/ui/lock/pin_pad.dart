@@ -203,7 +203,7 @@ class PinLayout extends StatelessWidget {
       appBar: appBar,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           // Full width, so the top and the keypad are centred on the screen.
           child: SizedBox(
             width: double.infinity,

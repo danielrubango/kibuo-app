@@ -86,7 +86,7 @@ class FeaturedCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
             children: [
               Expanded(
@@ -245,7 +245,7 @@ class SettingsRow extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               Expanded(
@@ -266,7 +266,7 @@ class SettingsRow extends StatelessWidget {
               ],
               if (!danger)
                 const Padding(
-                  padding: EdgeInsets.only(left: 6),
+                  padding: EdgeInsets.only(left: 8),
                   child: Icon(
                     KibuoIcons.caretRight,
                     size: 16,
@@ -297,7 +297,7 @@ class SettingsSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 4, 8, 4),
+      padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
       child: Row(
         children: [
           Expanded(child: Text(label, style: KibuoType.rowLabel)),
@@ -332,7 +332,7 @@ class IconRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(
           children: [
             Container(
@@ -349,7 +349,7 @@ class IconRow extends StatelessWidget {
             if (value != null)
               Text(value!, style: KibuoType.caption.copyWith(fontSize: 13)),
             const Padding(
-              padding: EdgeInsets.only(left: 6),
+              padding: EdgeInsets.only(left: 8),
               child: Icon(
                 KibuoIcons.caretRight,
                 size: 16,

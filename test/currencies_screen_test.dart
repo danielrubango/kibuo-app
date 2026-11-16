@@ -9,6 +9,7 @@ import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/l10n/currency_name_phrase.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -72,10 +73,13 @@ void main() {
   }
 
   test('a rate sheet title reads well in French', () {
-    expect(frenchOfName('Franc congolais'), 'du franc congolais');
-    expect(frenchOfName('Euro'), 'de l’euro');
-    expect(frenchOfName('Livre sterling'), 'de la livre sterling');
-    expect(frenchOfName('Dollar des États-Unis'), 'du dollar des États-Unis');
+    expect(currencyNameAfterOf('fr', 'Franc congolais'), 'du franc congolais');
+    expect(currencyNameAfterOf('fr', 'Euro'), 'de l’euro');
+    expect(currencyNameAfterOf('fr', 'Livre sterling'), 'de la livre sterling');
+    expect(
+      currencyNameAfterOf('fr', 'Dollar des États-Unis'),
+      'du dollar des États-Unis',
+    );
   });
 
   testWidgets('the main currency comes from the phone’s country', (

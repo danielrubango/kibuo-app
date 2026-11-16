@@ -95,7 +95,7 @@ class _AttachmentViewerState extends State<AttachmentViewer> {
   PdfFirstPage? _page;
   bool _loaded = false;
 
-  static const _soft = Color(0xFFB6BDCB);
+  static const _soft = KibuoColors.lineStrong;
 
   @override
   void initState() {
@@ -190,7 +190,7 @@ class _AttachmentViewerState extends State<AttachmentViewer> {
             Expanded(child: _content(l)),
             if (_loaded && !photo)
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: SizedBox(
                   width: double.infinity,
                   height: 48,

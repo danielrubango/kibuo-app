@@ -52,7 +52,7 @@ class _ForgotSheet extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,7 +185,7 @@ class _HoldToConfirmState extends State<HoldToConfirm>
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: KibuoColors.danger, width: 1.5),
               gradient: LinearGradient(
-                colors: const [Color(0xFFFBE3DE), KibuoColors.surface],
+                colors: const [KibuoColors.dangerTint, KibuoColors.surface],
                 stops: [_hold.value, _hold.value],
               ),
             ),

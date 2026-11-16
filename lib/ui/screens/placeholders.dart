@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -44,7 +45,7 @@ class TabPlaceholder extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           decoration: BoxDecoration(
             color: KibuoColors.surface,
             borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
@@ -86,40 +87,42 @@ class EntryPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leadingWidth: 96,
-        leading: TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context).cancel),
+      body: SafeArea(
+        child: Column(
+          children: [
+            FormTopBar(title: choice.entryTitle(l), cancel: l.cancel),
+            Expanded(child: _body(context, text)),
+          ],
         ),
-        title: Text(choice.entryTitle(AppLocalizations.of(context))),
-        centerTitle: true,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: choice.tint,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Icon(choice.icon, color: choice.ink),
+    );
+  }
+
+  Widget _body(BuildContext context, TextTheme text) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: choice.tint,
+                borderRadius: BorderRadius.circular(18),
               ),
-              const SizedBox(height: 12),
-              Text(
-                AppLocalizations.of(context).entryComingLater,
-                textAlign: TextAlign.center,
-                style: text.bodyMedium,
-              ),
-            ],
-          ),
+              child: Icon(choice.icon, color: choice.ink),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              AppLocalizations.of(context).entryComingLater,
+              textAlign: TextAlign.center,
+              style: text.bodyMedium,
+            ),
+          ],
         ),
       ),
     );

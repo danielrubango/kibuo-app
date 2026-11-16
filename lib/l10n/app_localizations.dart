@@ -1730,17 +1730,11 @@ abstract class AppLocalizations {
   /// **'Plus tard'**
   String get entryLater;
 
-  /// Entry: entryDeleteExpense
+  /// Operation detail: red action under Dupliquer
   ///
   /// In fr, this message translates to:
-  /// **'Supprimer la dépense'**
-  String get entryDeleteExpense;
-
-  /// Entry: entryDeleteIncome
-  ///
-  /// In fr, this message translates to:
-  /// **'Supprimer le revenu'**
-  String get entryDeleteIncome;
+  /// **'Supprimer l’opération'**
+  String get entryDeleteOperation;
 
   /// Entry: entryDeleteExpenseTitle
   ///
