@@ -47,6 +47,10 @@ abstract final class KibuoColors {
   static const projectTint = Color(0xFFE1E8F6);
   static const projectLine = Color(0xFF8FA8D6);
 
+  /// A transfer's amount card and its edge (canvas TransfertMeme).
+  static const transferTint = Color(0xFFEEF2FA);
+  static const transferEdge = Color(0xFFC6D3EC);
+
   // Meaning: warning (budget at 80 %).
   static const warning = Color(0xFFD99A1C);
   static const warningInk = Color(0xFF8A5A00);

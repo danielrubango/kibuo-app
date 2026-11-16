@@ -10,6 +10,11 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String transferTitle(String account) {
+    return 'Vers $account';
+  }
+
+  @override
   String get tabHome => 'Accueil';
 
   @override
@@ -1047,5 +1052,85 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String attachPhotoName(int n) {
     return 'Photo $n';
+  }
+
+  @override
+  String get entryTransfer => 'Transfert';
+
+  @override
+  String get entryNewTransfer => 'Nouveau transfert';
+
+  @override
+  String get entryEditTransfer => 'Modifier le transfert';
+
+  @override
+  String get transferFrom => 'De';
+
+  @override
+  String get transferTo => 'Vers';
+
+  @override
+  String get transferToQuestion => 'Vers quel compte ?';
+
+  @override
+  String get transferSent => 'Envoyé';
+
+  @override
+  String transferArrives(String account) {
+    return 'Arrive sur $account';
+  }
+
+  @override
+  String transferTakenFrom(String account) {
+    return 'Retiré de $account';
+  }
+
+  @override
+  String get transferSaved => 'Transfert enregistré';
+
+  @override
+  String transferSavedSub(String from, String to, String when) {
+    return '$from vers $to · $when';
+  }
+
+  @override
+  String get transferAnother => 'Nouveau transfert';
+
+  @override
+  String get transferKind => 'Transfert';
+
+  @override
+  String get transferDepuis => 'Depuis';
+
+  @override
+  String transferArrivedChip(String amount, String rate) {
+    return '$amount arrivés · $rate';
+  }
+
+  @override
+  String get transferFirstAccountText =>
+      'Un transfert déplace de l’argent entre deux de vos comptes : votre poche, votre mobile money, votre banque. Créez le premier, puis un deuxième.';
+
+  @override
+  String get transferSecondTitle => 'D’abord, un deuxième compte';
+
+  @override
+  String get transferSecondText =>
+      'Un transfert déplace de l’argent entre deux de vos comptes. Créez-en un deuxième, puis notez votre transfert.';
+
+  @override
+  String get transferSecondAction => 'Créer un compte';
+
+  @override
+  String get entryDeleteTransferTitle => 'Supprimer ce transfert ?';
+
+  @override
+  String entryDeleteTransferHelp(
+    String from,
+    String withdrawn,
+    String to,
+    String arrived,
+  ) {
+    return 'Il disparaît de la liste : $from reprend $withdrawn et $to perd $arrived.';
   }
 }

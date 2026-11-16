@@ -25,11 +25,17 @@ class OperationLabels {
     required this.categoryPath,
     required this.account,
     required this.accountCurrency,
+    this.toAccount,
   });
 
+  /// None for a transfer.
   final CategoryInfo? category;
 
-  /// « Taxi », or « Transport › Taxi » for a subcategory.
+  /// A transfer's receiving account.
+  final String? toAccount;
+
+  /// « Taxi », or « Transport › Taxi » for a subcategory; « Vers
+  /// Portefeuille » for a transfer.
   final String categoryPath;
   final String account;
   final String accountCurrency;
@@ -40,7 +46,9 @@ class OperationLabels {
     TransactionInfo t,
   ) async {
     final l = AppLocalizations.of(context);
-    final category = await data.categories.category(t.categoryId);
+    final category = t.categoryId == null
+        ? null
+        : await data.categories.category(t.categoryId!);
     final parent = category?.parentId == null
         ? null
         : await data.categories.category(category!.parentId!);
@@ -49,15 +57,77 @@ class OperationLabels {
       ...await data.accounts.accounts(archived: true),
     ];
     final account = accounts.where((a) => a.id == t.accountId).firstOrNull;
+    final to = accounts.where((a) => a.id == t.toAccountId).firstOrNull;
     final name = category == null ? '' : categoryName(l, category);
     return OperationLabels(
       category: category,
-      categoryPath: parent == null
+      categoryPath: t.kind == EntryKind.transfer
+          ? l.transferTitle(to?.name ?? '')
+          : parent == null
           ? name
           : '${categoryName(l, parent)} › $name',
       account: account?.name ?? '',
+      toAccount: to?.name,
       accountCurrency: account?.currency ?? t.total.total.currency,
     );
+  }
+}
+
+/// The colours of an operation: peach for an expense, mint for an income,
+/// blue for a transfer, which neither earns nor spends.
+({Color tint, Color edge, Color ink}) kindColors(EntryKind kind) =>
+    switch (kind) {
+      EntryKind.expense => (
+        tint: KibuoColors.debtTint,
+        edge: KibuoColors.debtEdge,
+        ink: KibuoColors.debtInk,
+      ),
+      EntryKind.income => (
+        tint: KibuoColors.accentTint,
+        edge: KibuoColors.accentTintStrong,
+        ink: KibuoColors.accent,
+      ),
+      EntryKind.transfer => (
+        tint: KibuoColors.transferTint,
+        edge: KibuoColors.transferEdge,
+        ink: KibuoColors.projectInk,
+      ),
+    };
+
+/// An operation's tile: its category's, or ⇄ for a transfer.
+class OperationTile extends StatelessWidget {
+  const OperationTile({
+    super.key,
+    required this.kind,
+    required this.labels,
+    required this.size,
+  });
+
+  final EntryKind kind;
+  final OperationLabels labels;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    if (kind == EntryKind.transfer) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: KibuoColors.projectTint,
+          borderRadius: BorderRadius.circular(size * 0.3),
+        ),
+        child: Icon(
+          KibuoIcons.arrowsLeftRight,
+          size: size * 0.5,
+          color: KibuoColors.projectInk,
+        ),
+      );
+    }
+    final category = labels.category;
+    return category == null
+        ? SizedBox.square(dimension: size)
+        : CategoryTile(category: category, size: size);
   }
 }
 
@@ -70,7 +140,12 @@ String signedTotal(BuildContext context, TransactionInfo t) {
     currencyOf(total.currency),
     lang,
   );
-  return t.kind == EntryKind.expense ? '−$text' : '+$text';
+  return switch (t.kind) {
+    EntryKind.expense => '−$text',
+    EntryKind.income => '+$text',
+    // Money moved between the user's own accounts: no sign.
+    EntryKind.transfer => text,
+  };
 }
 
 /// « Aujourd'hui, 15:45 », « Hier, 08:15 », « Mardi 10 novembre, 08:15 ».
@@ -159,6 +234,9 @@ Future<String?> _needed(
   final l = AppLocalizations.of(context);
   final expense = kind == EntryKind.expense;
   var accountId = '';
+  if (kind == EntryKind.transfer) {
+    return await transferAccountsReady(context, data) ? '' : null;
+  }
   if ((await data.accounts.accounts()).isEmpty) {
     if (!context.mounted) return null;
     final go = await _firstSheet(
@@ -200,6 +278,35 @@ Future<String?> _needed(
     if (!(created ?? false)) return null;
   }
   return accountId;
+}
+
+/// A transfer needs two accounts: until there are, a sheet says why and
+/// offers to create the missing one (« D'abord, un deuxième compte »).
+/// Returns false if the user puts it off.
+Future<bool> transferAccountsReady(BuildContext context, EntryData data) async {
+  final l = AppLocalizations.of(context);
+  while (true) {
+    final count = (await data.accounts.accounts()).length;
+    if (count >= 2) return true;
+    if (!context.mounted) return false;
+    final go = await _firstSheet(
+      context,
+      icon: KibuoIcons.wallet,
+      title: count == 0 ? l.entryFirstAccountTitle : l.transferSecondTitle,
+      text: count == 0 ? l.transferFirstAccountText : l.transferSecondText,
+      action: count == 0 ? l.entryFirstAccountAction : l.transferSecondAction,
+    );
+    if (!go || !context.mounted) return false;
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => AccountFormScreen(
+          accounts: data.accounts,
+          currencies: data.currencies,
+        ),
+      ),
+    );
+    if (!(created ?? false)) return false;
+  }
 }
 
 /// « D'abord, un compte »: an icon, why it is needed, then the action and
@@ -318,8 +425,23 @@ class _SavedSheetState extends State<_SavedSheet>
     final lang = Localizations.localeOf(context).languageCode;
     final t = widget.saved;
     final expense = t.kind == EntryKind.expense;
+    final transfer = t.kind == EntryKind.transfer;
+    String money(Money m) => formatMoney(m, currencyOf(m.currency), lang);
     final details = <(String, String, bool)>[
-      if (t.rate != null) ...[
+      // A transfer (canvas ApresTransfert): what arrived, the frozen rate.
+      if (transfer && t.rate != null) ...[
+        (
+          l.transferArrives(widget.labels.toAccount ?? ''),
+          money(t.arrived!),
+          false,
+        ),
+        (
+          l.entryRateFrozen(currencyOf(t.rate!.base).symbol),
+          formatRate(t.rate!, lang).split(' = ').last,
+          true,
+        ),
+      ],
+      if (!transfer && t.rate != null) ...[
         (
           expense ? l.entryPaid : l.entryReceived,
           formatMoney(t.paid, currencyOf(t.paid.currency), lang),
@@ -334,8 +456,7 @@ class _SavedSheetState extends State<_SavedSheet>
       if (t.total.fees.minor > 0)
         (
           l.entryFees,
-          '${expense ? '+' : '−'} '
-              '${formatMoney(t.total.fees, currencyOf(t.total.fees.currency), lang)}',
+          '${expense || transfer ? '+' : '−'} ${money(t.total.fees)}',
           false,
         ),
     ];
@@ -363,14 +484,21 @@ class _SavedSheetState extends State<_SavedSheet>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(switch (t.kind) {
+                        EntryKind.expense => l.entrySavedExpense,
+                        EntryKind.income => l.entrySavedIncome,
+                        EntryKind.transfer => l.transferSaved,
+                      }, style: KibuoType.itemName),
                       Text(
-                        expense ? l.entrySavedExpense : l.entrySavedIncome,
-                        style: KibuoType.itemName,
-                      ),
-                      Text(
-                        '${widget.labels.categoryPath.split(' › ').last} · '
-                        '${widget.labels.account} · '
-                        '${operationWhen(context, t.date, DateTime.now())}',
+                        transfer
+                            ? l.transferSavedSub(
+                                widget.labels.account,
+                                widget.labels.toAccount ?? '',
+                                operationWhen(context, t.date, DateTime.now()),
+                              )
+                            : '${widget.labels.categoryPath.split(' › ').last} · '
+                                  '${widget.labels.account} · '
+                                  '${operationWhen(context, t.date, DateTime.now())}',
                         style: KibuoType.caption,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -439,7 +567,11 @@ class _SavedSheetState extends State<_SavedSheet>
                 const SizedBox(width: 8),
                 Expanded(
                   child: KibuoButton(
-                    label: expense ? l.entryNewExpense : l.entryNewIncome,
+                    label: switch (t.kind) {
+                      EntryKind.expense => l.entryNewExpense,
+                      EntryKind.income => l.entryNewIncome,
+                      EntryKind.transfer => l.transferAnother,
+                    },
                     kind: ButtonKind.secondary,
                     onPressed: () =>
                         Navigator.of(context).pop(SavedAction.another),
