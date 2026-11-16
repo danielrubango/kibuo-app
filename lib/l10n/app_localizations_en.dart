@@ -1310,4 +1310,98 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plusHoldTipDone => 'Got it';
+
+  @override
+  String get listEntries => 'In';
+
+  @override
+  String get listExits => 'Out';
+
+  @override
+  String listSpent(int percent) {
+    return '$percent % spent';
+  }
+
+  @override
+  String get listRest => 'Left';
+
+  @override
+  String get listThisMonth => 'This month';
+
+  @override
+  String get filterType => 'Type';
+
+  @override
+  String get filterAccount => 'Account';
+
+  @override
+  String get filterCategory => 'Category';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String filterTypes(int count) {
+    return '$count types';
+  }
+
+  @override
+  String filterAccounts(int count) {
+    return '$count accounts';
+  }
+
+  @override
+  String filterCategories(int count) {
+    return '$count categories';
+  }
+
+  @override
+  String get emptyMonthTitle => 'No transactions';
+
+  @override
+  String emptyMonthHelp(String month) {
+    return 'Expenses, income and transfers of $month will show here.';
+  }
+
+  @override
+  String get emptyFilterTitle => 'Nothing with these filters';
+
+  @override
+  String get emptyFilterHelp => 'Try other choices, or clear the filters.';
+
+  @override
+  String get clearFilters => 'Clear the filters';
+
+  @override
+  String get backToThisMonth => 'Back to this month';
+
+  @override
+  String get swipeTipTitle => 'Change month with a swipe';
+
+  @override
+  String get swipeTipText =>
+      'Swipe the list right for the month before, left for the month after. Or tap the month’s title.';
+
+  @override
+  String get filterAllType => 'All';
+
+  @override
+  String get filterAllCategories => 'All';
+
+  @override
+  String get filterExpenses => 'Expenses';
+
+  @override
+  String get filterIncomes => 'Income';
+
+  @override
+  String get filterTransfers => 'Transfers';
+
+  @override
+  String filterMore(int count) {
+    return 'Show $count more';
+  }
+
+  @override
+  String get listNoEntries => 'No income';
 }

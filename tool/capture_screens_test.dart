@@ -35,6 +35,7 @@ import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
+import 'package:kibuo/ui/transactions/operations_list.dart';
 
 class _Vault implements KeyVault {
   final values = <String, String>{};
