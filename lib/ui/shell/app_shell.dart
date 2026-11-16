@@ -28,7 +28,7 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
-import 'package:kibuo/ui/transactions/operation_screens.dart';
+import 'package:kibuo/ui/transactions/operations_list.dart';
 import 'package:kibuo/ui/transactions/redo.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -111,10 +111,18 @@ class _AppShellState extends State<AppShell> {
                       message: AppLocalizations.of(context).homePlaceholder,
                     ),
                     if (_entryData(context) case final data?)
-                      OperationsScreen(
+                      // A hidden tab keeps its place but not its animations.
+                      TickerMode(
                         key: const ValueKey('screen-operations'),
-                        data: data,
-                        refresh: _saved,
+                        enabled: _tab == _Tab.operations,
+                        child: OperationsScreen(
+                          data: data,
+                          refresh: _saved,
+                          onAdd: () => _openEntry(AddChoice.expense),
+                          hints: KibuoData.maybeOf(context) == null
+                              ? null
+                              : HintStore(KibuoData.maybeOf(context)!),
+                        ),
                       )
                     else
                       TabPlaceholder(

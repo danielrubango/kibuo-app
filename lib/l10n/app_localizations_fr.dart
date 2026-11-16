@@ -1332,4 +1332,99 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get plusHoldTipDone => 'Compris';
+
+  @override
+  String get listEntries => 'Entrées';
+
+  @override
+  String get listExits => 'Sorties';
+
+  @override
+  String listSpent(int percent) {
+    return '$percent % dépensés';
+  }
+
+  @override
+  String get listRest => 'Reste';
+
+  @override
+  String get listThisMonth => 'Ce mois-ci';
+
+  @override
+  String get filterType => 'Type';
+
+  @override
+  String get filterAccount => 'Compte';
+
+  @override
+  String get filterCategory => 'Catégorie';
+
+  @override
+  String get filterAll => 'Tous';
+
+  @override
+  String filterTypes(int count) {
+    return '$count types';
+  }
+
+  @override
+  String filterAccounts(int count) {
+    return '$count comptes';
+  }
+
+  @override
+  String filterCategories(int count) {
+    return '$count catégories';
+  }
+
+  @override
+  String get emptyMonthTitle => 'Aucune opération';
+
+  @override
+  String emptyMonthHelp(String month) {
+    return 'Les dépenses, revenus et transferts de $month apparaîtront ici.';
+  }
+
+  @override
+  String get emptyFilterTitle => 'Rien avec ces filtres';
+
+  @override
+  String get emptyFilterHelp =>
+      'Essayez d’autres choix, ou effacez les filtres.';
+
+  @override
+  String get clearFilters => 'Effacer les filtres';
+
+  @override
+  String get backToThisMonth => 'Revenir au mois en cours';
+
+  @override
+  String get swipeTipTitle => 'Changez de mois d’un geste';
+
+  @override
+  String get swipeTipText =>
+      'Glissez la liste vers la droite pour le mois d’avant, vers la gauche pour le mois suivant. Ou touchez le titre du mois.';
+
+  @override
+  String get filterAllType => 'Tout';
+
+  @override
+  String get filterAllCategories => 'Toutes';
+
+  @override
+  String get filterExpenses => 'Dépenses';
+
+  @override
+  String get filterIncomes => 'Revenus';
+
+  @override
+  String get filterTransfers => 'Transferts';
+
+  @override
+  String filterMore(int count) {
+    return 'Afficher les $count autres';
+  }
+
+  @override
+  String get listNoEntries => 'Aucune entrée';
 }
