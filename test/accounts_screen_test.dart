@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -60,7 +61,12 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: appLanguages,
         localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-        home: AccountsScreen(accounts: accounts, currencies: currencies),
+        home: AccountsScreen(
+          accounts: accounts,
+          currencies: currencies,
+          categories: CategoryRepository(db),
+          transactions: TransactionRepository(db),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -372,5 +378,71 @@ void main() {
     await tester.tap(find.text('Enregistrer'));
     await tester.pumpAndSettle();
     expect((await accounts.accounts()).single.overdraft.allowed, isFalse);
+  });
+
+  group('« Solde actuel »', () {
+    Future<void> openMpesa(WidgetTester tester) async {
+      await accounts.create(
+        name: 'M-Pesa',
+        type: AccountType.mobile,
+        opening: const Money(12000, 'USD'),
+        openingDate: day,
+      );
+      await start(tester);
+      await tester.tap(find.text('M-Pesa'));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> typeBalance(WidgetTester tester, String digits) async {
+      await tester.tap(find.text('Solde actuel'));
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 8; i++) {
+        await tester.tap(find.bySemanticsLabel('Effacer').last);
+        await tester.pump();
+      }
+      await type(tester, digits);
+      await tester.tap(find.text('Terminé'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a lower balance adds a « Régularisation » expense', (
+      tester,
+    ) async {
+      await openMpesa(tester);
+      await typeBalance(tester, '100');
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Corriger le solde de M-Pesa ?'), findsOneWidget);
+      expect(textPlain('−20,00 \$'), findsOneWidget);
+      expect(find.text('Régularisation'), findsOneWidget);
+      await tester.tap(find.text('Ajouter la régularisation'));
+      await tester.pumpAndSettle();
+
+      final m = (await accounts.accounts()).single;
+      expect(m.balance, const Money(10000, 'USD'));
+      final t = (await TransactionRepository(db).all()).single;
+      expect(t.kind, EntryKind.expense);
+      expect(t.categoryId, 'default-adjustExpense');
+      expect(
+        t.note!.replaceAll(RegExp('[\u00a0\u202f]'), ' '),
+        'Solde corrigé : 120,00 \$ → 100,00 \$',
+      );
+    });
+
+    testWidgets('closing the sheet saves nothing', (tester) async {
+      await openMpesa(tester);
+      await tester.enterText(find.byType(TextField), 'M-Pesa dollars');
+      await typeBalance(tester, '150');
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Fermer'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Modifier le compte'), findsOneWidget);
+      final m = (await accounts.accounts()).single;
+      expect(m.name, 'M-Pesa');
+      expect(m.balance, const Money(12000, 'USD'));
+    });
   });
 }

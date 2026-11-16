@@ -33,6 +33,7 @@ void main() {
           'outings',
           'contributions',
           'otherExpense',
+          'adjustExpense',
         ],
       );
       final transport = out[1];
@@ -43,10 +44,17 @@ void main() {
       expect(transport.name, isNull, reason: 'named by the app’s language');
 
       await repo.categories(CategoryKind.out);
-      expect(await repo.categories(CategoryKind.out), hasLength(11));
+      expect(await repo.categories(CategoryKind.out), hasLength(12));
       expect(
         [for (final c in await repo.categories(CategoryKind.into)) c.key],
-        ['salary', 'business', 'giftReceived', 'refund', 'otherIncome'],
+        [
+          'salary',
+          'business',
+          'giftReceived',
+          'refund',
+          'otherIncome',
+          'adjustIncome',
+        ],
       );
     },
   );
@@ -111,5 +119,25 @@ void main() {
 
   test('a provided category can be read before the lists are', () async {
     expect((await repo.category('default-taxi'))!.key, 'taxi');
+  });
+
+  test('« Régularisation » closes both lists, even for older data', () async {
+    final out = await repo.categories(CategoryKind.out);
+    final into = await repo.categories(CategoryKind.into);
+    expect(out.last.id, adjustmentCategoryId(CategoryKind.out));
+    expect(into.last.id, adjustmentCategoryId(CategoryKind.into));
+    expect(out.last.key, 'adjustExpense');
+
+    // Data seeded before it existed gets it once, at the end.
+    await (db.delete(
+      db.categories,
+    )..where((c) => c.key.isIn(['adjustExpense', 'adjustIncome']))).go();
+    await (db.delete(
+      db.preferences,
+    )..where((p) => p.name.equals('categories_adjust_seeded'))).go();
+    final again = CategoryRepository(db);
+    final out2 = await again.categories(CategoryKind.out);
+    expect(out2.last.key, 'adjustExpense');
+    expect(out2.where((c) => c.key == 'adjustExpense'), hasLength(1));
   });
 }

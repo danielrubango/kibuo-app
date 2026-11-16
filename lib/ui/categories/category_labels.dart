@@ -42,6 +42,7 @@ const categoryIcons = <String, IconData>{
   'tag': KibuoIcons.tag,
   'arrowCounterClockwise': KibuoIcons.arrowCounterClockwise,
   'dotsThreeCircle': KibuoIcons.dotsThreeCircle,
+  'arrowsDownUp': KibuoIcons.arrowsDownUp,
 };
 
 /// A category's name: the user's, else the app's language for a provided

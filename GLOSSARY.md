@@ -16,6 +16,9 @@ Ce que contenait un compte à une date choisie à sa création. Les opérations 
 **Découvert** (`overdraft`) :
 Ce qu'un compte peut descendre sous zéro. Il est autorisé ou non, compte par compte ; autorisé, il va jusqu'à une limite ou sans limite.
 
+**Régularisation** (`balance adjustment`) :
+Dépense ou revenu qui ramène le solde d'un compte à ce qu'il contient vraiment, quand on tape son solde réel au lieu de noter chaque opération.
+
 **Compte archivé** (`archived account`) :
 Compte retiré des listes et des totaux, dont les opérations restent.
 

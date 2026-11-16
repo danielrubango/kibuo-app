@@ -391,6 +391,8 @@ class _EntryScreenState extends State<EntryScreen> {
           accounts: widget.data.accounts,
           currencies: widget.data.currencies,
           account: account,
+          categories: widget.data.categories,
+          transactions: widget.data.transactions,
         ),
       ),
     );
@@ -847,7 +849,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   ),
                   if (_refusal case final refusal?) ...[
                     const SizedBox(height: 8),
-                    _RefusalLine(
+                    RefusalLine(
                       text: refusal.account.id == account?.id
                           ? l.overdraftAvailable(
                               _money(refusal.available),
@@ -1339,44 +1341,6 @@ class _NoteCard extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Under the amount when an account would go below its floor (canvas
-/// DecouvertSaisieA): the alert in red, « Autoriser » in green on the right,
-/// on the card's inner edges.
-class _RefusalLine extends StatelessWidget {
-  const _RefusalLine({
-    required this.text,
-    required this.action,
-    required this.onAction,
-  });
-
-  final String text;
-  final String action;
-  final VoidCallback onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16),
-      child: Row(
-        children: [
-          const Icon(KibuoIcons.warning, size: 18, color: KibuoColors.danger),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: KibuoType.body.copyWith(
-                fontSize: 14,
-                color: KibuoColors.danger,
-              ),
-            ),
-          ),
-          TextAction(label: action, onPressed: onAction),
         ],
       ),
     );

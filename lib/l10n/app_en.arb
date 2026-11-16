@@ -201,7 +201,7 @@
   "currencyRemoveShort": "Remove",
   "currencyKept": "Kept",
   "currencyKeep": "Keep",
-  "categoryName": "{key, select, food{Food} restaurant{Restaurant} market{Market} transport{Transport} taxi{Taxi} motoTaxi{Motorbike taxi} bus{Bus} fuel{Fuel} toll{Toll} groceries{Groceries} housing{Housing} rent{Rent} electricity{Electricity} water{Water} communication{Phone and internet} airtime{Airtime} internet{Internet} health{Health} pharmacy{Pharmacy} school{School} family{Family} outings{Going out} contributions{Contributions} otherExpense{Other} salary{Salary} business{Business} sale{Sales} service{Services} giftReceived{Gift received} refund{Refund} otherIncome{Other} other{}}",
+  "categoryName": "{key, select, food{Food} restaurant{Restaurant} market{Market} transport{Transport} taxi{Taxi} motoTaxi{Motorbike taxi} bus{Bus} fuel{Fuel} toll{Toll} groceries{Groceries} housing{Housing} rent{Rent} electricity{Electricity} water{Water} communication{Phone and internet} airtime{Airtime} internet{Internet} health{Health} pharmacy{Pharmacy} school{School} family{Family} outings{Going out} contributions{Contributions} otherExpense{Other} salary{Salary} business{Business} sale{Sales} service{Services} giftReceived{Gift received} refund{Refund} otherIncome{Other} adjustExpense{Adjustment} adjustIncome{Adjustment} other{}}",
   "categoriesTitle": "Categories",
   "categoriesExpenses": "Expenses",
   "categoriesIncome": "Income",
@@ -340,5 +340,13 @@
   "overdraftCaptionNoLimit": "Unlimited overdraft",
   "overdraftAvailable": "{amount} available in {account}",
   "overdraftAuthorize": "Allow",
-  "overdraftWouldGo": "{account} would go to {amount}"
+  "overdraftWouldGo": "{account} would go to {amount}",
+  "accountCurrentBalance": "Current balance",
+  "accountCurrentHelp": "In Kibuo today: {balance}. Type what the account really holds.",
+  "adjustTitle": "Correct {account}’s balance?",
+  "adjustInKibuo": "In Kibuo",
+  "adjustReal": "Real balance",
+  "adjustHelp": "The difference is added as a transaction, which you can change later.",
+  "adjustNote": "Balance corrected: {before} → {after}",
+  "adjustAdd": "Add the adjustment"
 }

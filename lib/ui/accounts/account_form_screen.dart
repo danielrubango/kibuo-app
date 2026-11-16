@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_type_screen.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
+import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
 
 /// « Nouveau compte » (canvas: CompteNouveau): type, name, starting balance
@@ -31,10 +36,17 @@ class AccountFormScreen extends StatefulWidget {
     required this.accounts,
     required this.currencies,
     this.account,
+    this.categories,
+    this.transactions,
   });
 
   final AccountRepository accounts;
   final CurrencyRepository currencies;
+
+  /// Where a corrected balance's difference goes (PRODUCT: Régularisation);
+  /// without them, « Solde actuel » isn't offered.
+  final CategoryRepository? categories;
+  final TransactionRepository? transactions;
   final AccountInfo? account;
 
   @override
@@ -55,7 +67,13 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   // same keypad as the starting balance.
   late bool _overdraft = widget.account?.overdraft.allowed ?? false;
   String _limit = '';
-  bool _typingLimit = false;
+  _Typing _typing = _Typing.opening;
+  bool get _typingLimit => _typing == _Typing.limit;
+
+  // « Solde actuel » (canvas RegulFormA): today's balance, typed again.
+  String _current = '';
+  bool _currentNegative = false;
+  final _currentKey = GlobalKey();
   final _limitKey = GlobalKey();
   bool _named = true;
 
@@ -92,6 +110,10 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     setState(() {
       _custom = custom;
       _currency = currency;
+      if (account != null) {
+        _current = typedFrom(account.balance, currency);
+        _currentNegative = account.balance.minor < 0;
+      }
       if (limit != null && limit > 0) {
         _limit = typedFrom(Money(limit, currency.code), currency);
       }
@@ -105,30 +127,67 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     if (c == null) return;
     // The keypad shows « , » with cents, « 000 » without (PRODUCT).
     final decimals = c.usesDecimals ? c.digits : 0;
-    if (_typingLimit) {
-      _limit = typeKey(_limit, k, decimals: decimals);
-    } else {
-      _typed = typeKey(_typed, k, decimals: decimals);
+    switch (_typing) {
+      case _Typing.opening:
+        _typed = typeKey(_typed, k, decimals: decimals);
+      case _Typing.limit:
+        _limit = typeKey(_limit, k, decimals: decimals);
+      case _Typing.current:
+        _current = typeKey(_current, k, decimals: decimals);
     }
   });
+
+  String _erase(String s) => s.isEmpty ? s : s.substring(0, s.length - 1);
 
   void _delete() => setState(() {
-    if (_typingLimit) {
-      if (_limit.isNotEmpty) _limit = _limit.substring(0, _limit.length - 1);
-    } else if (_typed.isNotEmpty) {
-      _typed = _typed.substring(0, _typed.length - 1);
+    switch (_typing) {
+      case _Typing.opening:
+        _typed = _erase(_typed);
+      case _Typing.limit:
+        _limit = _erase(_limit);
+      case _Typing.current:
+        _current = _erase(_current);
     }
   });
 
-  /// Opens Kibuo's keypad on the starting balance or on the limit.
-  void _openKeypad({required bool limit}) {
+  /// Opens Kibuo's keypad on one of the form's values.
+  void _openKeypad(_Typing typing) {
     // The phone's keyboard gives way to Kibuo's.
     FocusScope.of(context).unfocus();
     setState(() {
       _keypad = true;
-      _typingLimit = limit;
+      _typing = typing;
     });
-    revealAboveKeypad(limit ? _limitKey : _openingKey);
+    revealAboveKeypad(switch (typing) {
+      _Typing.opening => _openingKey,
+      _Typing.limit => _limitKey,
+      _Typing.current => _currentKey,
+    });
+  }
+
+  bool get _offersCurrent =>
+      _editing && widget.categories != null && widget.transactions != null;
+
+  /// The balance typed in « Solde actuel », with its sign.
+  Money? get _currentTyped {
+    final c = _currency;
+    if (!_offersCurrent || c == null) return null;
+    final m = typedMoney(_current, c);
+    return _currentNegative ? Money(-m.minor, m.currency) : m;
+  }
+
+  /// The difference to add, or zero when the balance is unchanged.
+  int get _difference {
+    final typed = _currentTyped;
+    return typed == null ? 0 : typed.minor - widget.account!.balance.minor;
+  }
+
+  /// A typed balance below the floor the form's overdraft allows.
+  bool get _currentRefused {
+    final typed = _currentTyped;
+    return typed != null &&
+        _difference < 0 &&
+        !_overdraftChoice.allows(typed.minor);
   }
 
   Overdraft get _overdraftChoice {
@@ -222,14 +281,65 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
         overdraft: _overdraftChoice,
       );
     } else {
+      // A new balance: the difference becomes an operation, confirmed in a
+      // sheet; closing it saves nothing (PRODUCT: Régularisation).
+      final difference = _difference;
+      if (difference != 0 && !await _confirmAdjustment(difference)) return;
       await widget.accounts.update(
         account.id,
         name: _name.text,
         type: _type,
         overdraft: _overdraftChoice,
       );
+      if (difference != 0) await _addAdjustment(difference);
     }
     if (mounted) Navigator.of(context).pop(true);
+  }
+
+  CategoryInfo? _adjustCategory;
+
+  Future<bool> _confirmAdjustment(int difference) async {
+    final kind = difference < 0 ? CategoryKind.out : CategoryKind.into;
+    final categories = await widget.categories!.categories(kind);
+    if (!mounted) return false;
+    final account = widget.account!;
+    final currency = _currency!;
+    String money(int minor) =>
+        formatMoney(Money(minor, currency.code), currency, _lang);
+    final id = adjustmentCategoryId(kind);
+    _adjustCategory = categories.where((c) => c.id == id).firstOrNull;
+    final go = await showKibuoSheet<bool>(
+      context,
+      title: AppLocalizations.of(context).adjustTitle(account.name),
+      builder: (context) => _AdjustSheet(
+        before: money(account.balance.minor),
+        after: money(_currentTyped!.minor),
+        amount: money(difference.abs()),
+        kind: kind,
+        categories: categories,
+        initial: _adjustCategory,
+        onCategory: (c) => _adjustCategory = c,
+      ),
+    );
+    return (go ?? false) && _adjustCategory != null;
+  }
+
+  Future<void> _addAdjustment(int difference) async {
+    final account = widget.account!;
+    final currency = _currency!;
+    String money(int minor) =>
+        formatMoney(Money(minor, currency.code), currency, _lang);
+    await widget.transactions!.create(
+      kind: difference < 0 ? EntryKind.expense : EntryKind.income,
+      accountId: account.id,
+      categoryId: _adjustCategory!.id,
+      paid: Money(difference.abs(), currency.code),
+      fees: 0,
+      date: DateTime.now(),
+      note: AppLocalizations.of(
+        context,
+      ).adjustNote(money(account.balance.minor), money(_currentTyped!.minor)),
+    );
   }
 
   Future<void> _archive() async {
@@ -289,7 +399,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                 unit: currency.code,
                 fill: KibuoColors.background,
                 focused: _keypad && _typingLimit,
-                onTap: () => _openKeypad(limit: true),
+                onTap: () => _openKeypad(_Typing.limit),
                 note: l.overdraftNoLimitHelp,
               ),
             ),
@@ -368,6 +478,39 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                         ? null
                         : l.accountNameMissing,
                   ),
+                  if (_offersCurrent && currency != null) ...[
+                    const SizedBox(height: 16),
+                    ValueField(
+                      key: _currentKey,
+                      label: l.accountCurrentBalance,
+                      value:
+                          '${_currentNegative ? '−' : ''}'
+                          '${shownTyped(context, _current)}',
+                      unit: currency.code,
+                      focused: _keypad && _typing == _Typing.current,
+                      onTap: () => _openKeypad(_Typing.current),
+                      note: _currentRefused
+                          ? null
+                          : l.accountCurrentHelp(
+                              formatMoney(
+                                widget.account!.balance,
+                                currency,
+                                _lang,
+                              ),
+                            ),
+                    ),
+                    if (_currentRefused) ...[
+                      const SizedBox(height: 4),
+                      RefusalLine(
+                        text: l.overdraftWouldGo(
+                          widget.account!.name,
+                          formatMoney(_currentTyped!, currency, _lang),
+                        ),
+                        action: l.overdraftAuthorize,
+                        onAction: () => setState(() => _overdraft = true),
+                      ),
+                    ],
+                  ],
                   // The starting balance and its currency are set once.
                   if (!_editing && currency != null) ...[
                     const SizedBox(height: 16),
@@ -377,8 +520,8 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       value: _shown(),
                       unit: currency.code,
                       onUnitTap: _pickCurrency,
-                      focused: _keypad && !_typingLimit,
-                      onTap: () => _openKeypad(limit: false),
+                      focused: _keypad && _typing == _Typing.opening,
+                      onTap: () => _openKeypad(_Typing.opening),
                       note: l.accountCurrencyNote(
                         currencyName(context, currency),
                         currency.code,
@@ -418,6 +561,11 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                 keypad: KibuoKeypad(
                   onKey: _key,
                   onDelete: _delete,
+                  // « − » only for a balance that may go below zero.
+                  onMinus: _typing == _Typing.current && _overdraft
+                      ? () =>
+                            setState(() => _currentNegative = !_currentNegative)
+                      : null,
                   allowDecimal: currency?.usesDecimals ?? false,
                   decimalSeparator: NumberFormat.decimalPattern(_lang)
                       .symbols
@@ -431,7 +579,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: KibuoButton(
                   label: _editing ? l.accountSave : l.accountCreate,
-                  onPressed: currency == null ? null : _save,
+                  onPressed: currency == null || _currentRefused ? null : _save,
                 ),
               ),
           ],
@@ -571,6 +719,147 @@ class _DateRow extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+enum _Typing { opening, limit, current }
+
+/// « Corriger le solde de M-Pesa ? » (canvas RegulFeuille): before and
+/// after, then the operation that makes up the difference, its category
+/// changeable, and « Ajouter la régularisation ».
+class _AdjustSheet extends StatefulWidget {
+  const _AdjustSheet({
+    required this.before,
+    required this.after,
+    required this.amount,
+    required this.kind,
+    required this.categories,
+    required this.initial,
+    required this.onCategory,
+  });
+
+  final String before;
+  final String after;
+  final String amount;
+  final CategoryKind kind;
+  final List<CategoryInfo> categories;
+  final CategoryInfo? initial;
+  final ValueChanged<CategoryInfo> onCategory;
+
+  @override
+  State<_AdjustSheet> createState() => _AdjustSheetState();
+}
+
+class _AdjustSheetState extends State<_AdjustSheet> {
+  late CategoryInfo? _category = widget.initial;
+
+  Future<void> _choose() async {
+    final picked = await pickCategory(
+      context,
+      categories: widget.categories,
+      current: _category?.id,
+    );
+    if (picked == null) return;
+    widget.onCategory(picked);
+    setState(() => _category = picked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final out = widget.kind == CategoryKind.out;
+    Widget side(String label, String value, {bool muted = false}) => Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: KibuoType.caption),
+          Text(
+            value,
+            style: KibuoType.cardTitle.copyWith(
+              color: muted ? KibuoColors.inkMuted : null,
+            ),
+          ),
+        ],
+      ),
+    );
+    final parent = _category?.parentId == null
+        ? null
+        : widget.categories
+              .where((c) => c.id == _category!.parentId)
+              .firstOrNull;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: KibuoColors.surface,
+            borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+          ),
+          child: Row(
+            children: [
+              side(l.adjustInKibuo, widget.before, muted: true),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Icon(
+                  KibuoIcons.arrowRight,
+                  size: 18,
+                  color: KibuoColors.inkSecondary,
+                ),
+              ),
+              side(l.adjustReal, widget.after),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(l.adjustHelp, style: KibuoType.help),
+        ),
+        const SizedBox(height: 12),
+        Material(
+          color: KibuoColors.surface,
+          borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              EntryField(
+                icon: out ? KibuoIcons.arrowDown : KibuoIcons.arrowUp,
+                label: out ? l.entryExpense : l.entryIncome,
+                value: '${out ? '−' : '+'}${widget.amount}',
+              ),
+              EntryField(
+                leading: _category == null
+                    ? null
+                    : CategoryTile(category: _category!, size: 32),
+                icon: KibuoIcons.tag,
+                label: l.entryCategory,
+                value: _category == null
+                    ? null
+                    : parent == null
+                    ? categoryName(l, _category!)
+                    : '${categoryName(l, parent)} › '
+                          '${categoryName(l, _category!)}',
+                placeholder: l.entryChoose,
+                onTap: _choose,
+              ),
+              EntryField(
+                icon: KibuoIcons.list,
+                label: l.entryNote,
+                value: l.adjustNote(widget.before, widget.after),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        KibuoButton(
+          label: l.adjustAdd,
+          onPressed: _category == null
+              ? null
+              : () => Navigator.of(context).pop(true),
+        ),
+      ],
     );
   }
 }

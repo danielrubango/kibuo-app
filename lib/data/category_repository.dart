@@ -41,6 +41,7 @@ class CategoryRepository {
   HybridClock? _clock;
 
   static const _seeded = 'categories_seeded';
+  static const _adjustSeeded = 'categories_adjust_seeded';
 
   Future<int> _nextVersion() async {
     _clock ??= HybridClock(last: await _db.lastVersion());
@@ -107,10 +108,63 @@ class CategoryRepository {
     });
   }
 
+  /// « Régularisation » came after the first categories: added once, at the
+  /// end of each list, for new and older data alike.
+  Future<void> _ensureAdjustments() async {
+    final flag = await (_db.select(
+      _db.preferences,
+    )..where((p) => p.name.equals(_adjustSeeded))).getSingleOrNull();
+    if (flag != null) return;
+    await _db.transaction(() async {
+      for (final (kind, c) in [
+        (CategoryKind.out, adjustmentExpense),
+        (CategoryKind.into, adjustmentIncome),
+      ]) {
+        final last = _db.categories.position.max();
+        final position =
+            await (_db.selectOnly(_db.categories)
+                  ..addColumns([last])
+                  ..where(
+                    _db.categories.kind.equals(kind.stored) &
+                        _db.categories.parentId.isNull(),
+                  ))
+                .map((r) => r.read(last))
+                .getSingle() ??
+            0;
+        await _db
+            .into(_db.categories)
+            .insert(
+              CategoriesCompanion.insert(
+                id: adjustmentCategoryId(kind),
+                version: await _nextVersion(),
+                deviceId: _db.deviceId,
+                kind: kind.stored,
+                key: Value(c.key),
+                icon: c.icon,
+                position: position + 1,
+              ),
+              mode: InsertMode.insertOrIgnore,
+            );
+      }
+      await _db
+          .into(_db.preferences)
+          .insert(
+            PreferencesCompanion.insert(
+              id: const Uuid().v7(),
+              version: await _nextVersion(),
+              deviceId: _db.deviceId,
+              name: _adjustSeeded,
+              value: 'true',
+            ),
+          );
+    });
+  }
+
   /// The categories of [kind] still offered, in order, each with its own
   /// subcategories still offered.
   Future<List<CategoryInfo>> categories(CategoryKind kind) async {
     await _ensureProvided();
+    await _ensureAdjustments();
     final rows =
         await (_db.select(_db.categories)
               ..where(
@@ -164,6 +218,7 @@ class CategoryRepository {
   }) async {
     final clean = _cleanName(name);
     await _ensureProvided();
+    await _ensureAdjustments();
     final last = _db.categories.position.max();
     final query = _db.selectOnly(_db.categories)
       ..addColumns([last])
