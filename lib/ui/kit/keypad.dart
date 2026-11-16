@@ -73,7 +73,9 @@ class KibuoKeypad extends StatelessWidget {
             ? onDelete
             : k == '−'
             ? onMinus
-            : () => onKey(k),
+            // The decimal key shows the language's mark (« . » in English)
+            // but always types « , », the one the app reads.
+            : () => onKey(allowDecimal && k == decimalSeparator ? ',' : k),
         child: Center(
           child: delete
               ? Icon(
