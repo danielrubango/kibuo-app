@@ -1241,7 +1241,7 @@ abstract class AppLocalizations {
   /// Categories: categoryName
   ///
   /// In fr, this message translates to:
-  /// **'{key, select, food{Repas} restaurant{Restaurant} market{Marché} transport{Transport} taxi{Taxi} motoTaxi{Moto-taxi} bus{Bus} fuel{Carburant} toll{Péage} groceries{Courses} housing{Logement} rent{Loyer} electricity{Électricité} water{Eau} communication{Communication} airtime{Crédit} internet{Internet} health{Santé} pharmacy{Pharmacie} school{École} family{Famille} outings{Sorties} contributions{Cotisations} otherExpense{Autres} salary{Salaire} business{Activité} sale{Vente} service{Prestation} giftReceived{Cadeau reçu} refund{Remboursement} otherIncome{Autres} other{}}'**
+  /// **'{key, select, food{Repas} restaurant{Restaurant} market{Marché} transport{Transport} taxi{Taxi} motoTaxi{Moto-taxi} bus{Bus} fuel{Carburant} toll{Péage} groceries{Courses} housing{Logement} rent{Loyer} electricity{Électricité} water{Eau} communication{Communication} airtime{Crédit} internet{Internet} health{Santé} pharmacy{Pharmacie} school{École} family{Famille} outings{Sorties} contributions{Cotisations} otherExpense{Autres} salary{Salaire} business{Activité} sale{Vente} service{Prestation} giftReceived{Cadeau reçu} refund{Remboursement} otherIncome{Autres} adjustExpense{Régularisation} adjustIncome{Régularisation} other{}}'**
   String categoryName(String key);
 
   /// Categories: categoriesTitle
@@ -2082,6 +2082,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{account} passerait à {amount}'**
   String overdraftWouldGo(String account, String amount);
+
+  /// Account form: today's balance
+  ///
+  /// In fr, this message translates to:
+  /// **'Solde actuel'**
+  String get accountCurrentBalance;
+
+  /// Account form: under Solde actuel
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans Kibuo aujourd’hui : {balance}. Tapez ce que contient vraiment le compte.'**
+  String accountCurrentHelp(String balance);
+
+  /// Adjustment sheet title
+  ///
+  /// In fr, this message translates to:
+  /// **'Corriger le solde de {account} ?'**
+  String adjustTitle(String account);
+
+  /// Adjustment sheet: balance before
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans Kibuo'**
+  String get adjustInKibuo;
+
+  /// Adjustment sheet: balance typed
+  ///
+  /// In fr, this message translates to:
+  /// **'Solde réel'**
+  String get adjustReal;
+
+  /// Adjustment sheet help
+  ///
+  /// In fr, this message translates to:
+  /// **'La différence est ajoutée comme une opération, que vous pourrez modifier ensuite.'**
+  String get adjustHelp;
+
+  /// Note of an adjustment
+  ///
+  /// In fr, this message translates to:
+  /// **'Solde corrigé : {before} → {after}'**
+  String adjustNote(String before, String after);
+
+  /// Adjustment sheet button
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter la régularisation'**
+  String get adjustAdd;
 }
 
 class _AppLocalizationsDelegate

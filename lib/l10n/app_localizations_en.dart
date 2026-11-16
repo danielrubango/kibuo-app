@@ -674,6 +674,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'giftReceived': 'Gift received',
       'refund': 'Refund',
       'otherIncome': 'Other',
+      'adjustExpense': 'Adjustment',
+      'adjustIncome': 'Adjustment',
       'other': '',
     });
     return '$_temp0';
@@ -1167,4 +1169,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String overdraftWouldGo(String account, String amount) {
     return '$account would go to $amount';
   }
+
+  @override
+  String get accountCurrentBalance => 'Current balance';
+
+  @override
+  String accountCurrentHelp(String balance) {
+    return 'In Kibuo today: $balance. Type what the account really holds.';
+  }
+
+  @override
+  String adjustTitle(String account) {
+    return 'Correct $account’s balance?';
+  }
+
+  @override
+  String get adjustInKibuo => 'In Kibuo';
+
+  @override
+  String get adjustReal => 'Real balance';
+
+  @override
+  String get adjustHelp =>
+      'The difference is added as a transaction, which you can change later.';
+
+  @override
+  String adjustNote(String before, String after) {
+    return 'Balance corrected: $before → $after';
+  }
+
+  @override
+  String get adjustAdd => 'Add the adjustment';
 }
