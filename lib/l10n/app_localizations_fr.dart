@@ -1133,4 +1133,48 @@ class AppLocalizationsFr extends AppLocalizations {
   ) {
     return 'Il disparaît de la liste : $from reprend $withdrawn et $to perd $arrived.';
   }
+
+  @override
+  String get overdraftLabel => 'Découvert';
+
+  @override
+  String get overdraftAllow => 'Autoriser le découvert';
+
+  @override
+  String get overdraftAllowHelp => 'Le solde peut descendre sous zéro';
+
+  @override
+  String get overdraftUpTo => 'Jusqu’à';
+
+  @override
+  String get overdraftNoLimitHelp => 'Vide ou 0 : sans limite.';
+
+  @override
+  String get overdraftNoLimit => 'Sans limite';
+
+  @override
+  String overdraftBelowZero(String account, String balance) {
+    return '$account est à $balance : aucune sortie ne passera tant qu’il ne sera pas remonté. Les entrées restent possibles.';
+  }
+
+  @override
+  String overdraftCaptionUpTo(String amount) {
+    return 'Découvert jusqu’à $amount';
+  }
+
+  @override
+  String get overdraftCaptionNoLimit => 'Découvert sans limite';
+
+  @override
+  String overdraftAvailable(String amount, String account) {
+    return '$amount disponibles sur $account';
+  }
+
+  @override
+  String get overdraftAuthorize => 'Autoriser';
+
+  @override
+  String overdraftWouldGo(String account, String amount) {
+    return '$account passerait à $amount';
+  }
 }

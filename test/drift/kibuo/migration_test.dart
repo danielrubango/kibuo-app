@@ -13,6 +13,7 @@ import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
+import 'generated/schema_v8.dart' as v8;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -257,4 +258,35 @@ void main() {
       );
     },
   );
+
+  test('version 7 to 8 keeps the accounts, without overdraft', () async {
+    const account = v7.AccountsData(
+      id: 'acc-1',
+      version: 60,
+      deviceId: 'phone-1',
+      deleted: 0,
+      name: 'M-Pesa',
+      type: 'mobile',
+      currency: 'USD',
+      openingBalance: 12000,
+      openingDate: 1793750400,
+      archived: 0,
+      position: 1,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 7,
+      newVersion: 8,
+      createOld: v7.DatabaseAtV7.new,
+      createNew: v8.DatabaseAtV8.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.accounts, account),
+      validateItems: (newDb) async {
+        final kept = (await newDb.select(newDb.accounts).get()).single;
+        expect(kept.name, 'M-Pesa');
+        expect(kept.overdraftAllowed, 0, reason: 'off for existing accounts');
+        expect(kept.overdraftLimit, equals(null));
+      },
+    );
+  });
 }

@@ -13,6 +13,9 @@ _Avoid_ : portefeuille, wallet
 **Solde de départ** (`opening balance`) :
 Ce que contenait un compte à une date choisie à sa création. Les opérations qui suivent cette date le font évoluer.
 
+**Découvert** (`overdraft`) :
+Ce qu'un compte peut descendre sous zéro. Il est autorisé ou non, compte par compte ; autorisé, il va jusqu'à une limite ou sans limite.
+
 **Compte archivé** (`archived account`) :
 Compte retiré des listes et des totaux, dont les opérations restent.
 

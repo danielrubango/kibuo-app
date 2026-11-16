@@ -2,11 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/accounts/account_type.dart';
+import 'package:kibuo/domain/accounts/overdraft.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/sync/hybrid_clock.dart';
 import 'package:uuid/uuid.dart';
 
 export 'package:kibuo/domain/accounts/account_type.dart';
+export 'package:kibuo/domain/accounts/overdraft.dart';
 
 /// An account as the screens show it.
 class AccountInfo {
@@ -18,6 +20,7 @@ class AccountInfo {
     required this.openingDate,
     required this.balance,
     required this.archived,
+    this.overdraft = Overdraft.none,
   });
 
   final String id;
@@ -31,6 +34,9 @@ class AccountInfo {
   /// Today's balance: the starting balance, then its transactions.
   final Money balance;
   final bool archived;
+
+  /// How far below zero the balance may go (PRODUCT).
+  final Overdraft overdraft;
 
   String get currency => opening.currency;
 }
@@ -77,6 +83,7 @@ class AccountRepository {
     required AccountType type,
     required Money opening,
     required DateTime openingDate,
+    Overdraft overdraft = Overdraft.none,
   }) async {
     final clean = _cleanName(name);
     await CurrencyRepository(_db).addCurrency(opening.currency);
@@ -99,21 +106,33 @@ class AccountRepository {
             currency: opening.currency,
             openingBalance: opening.minor,
             openingDate: openingDate.toUtc(),
+            overdraftAllowed: Value(overdraft.allowed),
+            overdraftLimit: Value(overdraft.limit),
             position: position + 1,
           ),
         );
     return id;
   }
 
-  /// Renames [id] or changes its type. Its currency and starting balance
-  /// are set once, at creation.
+  /// Renames [id], changes its type or its overdraft. Its currency and
+  /// starting balance are set once, at creation.
   Future<void> update(
     String id, {
     required String name,
     required AccountType type,
+    Overdraft? overdraft,
   }) => _write(
     id,
-    AccountsCompanion(name: Value(_cleanName(name)), type: Value(type.key)),
+    AccountsCompanion(
+      name: Value(_cleanName(name)),
+      type: Value(type.key),
+      overdraftAllowed: overdraft == null
+          ? const Value.absent()
+          : Value(overdraft.allowed),
+      overdraftLimit: overdraft == null
+          ? const Value.absent()
+          : Value(overdraft.limit),
+    ),
   );
 
   /// Takes the account out of lists and totals, or back with [archived]
@@ -140,6 +159,10 @@ class AccountRepository {
           openingDate: r.openingDate.toUtc(),
           balance: Money(r.openingBalance + (changes[r.id] ?? 0), r.currency),
           archived: r.archived,
+          overdraft: Overdraft(
+            allowed: r.overdraftAllowed,
+            limit: r.overdraftLimit,
+          ),
         ),
     ];
   }
