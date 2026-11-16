@@ -71,4 +71,12 @@ class HintStore {
   /// The tip was read (« Compris »), or the hold was found alone: never
   /// again.
   Future<void> tipDone() => _write(_done, 'true');
+
+  static const _swipe = 'hint_list_swipe_done';
+
+  /// Whether the month swipe was already shown (DIRECTION: a hidden
+  /// gesture is shown on the first visit).
+  Future<bool> swipeShown() async => await _read(_swipe) == 'true';
+
+  Future<void> swipeDone() => _write(_swipe, 'true');
 }

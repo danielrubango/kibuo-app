@@ -2262,6 +2262,168 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Compris'**
   String get plusHoldTipDone;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées'**
+  String get listEntries;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties'**
+  String get listExits;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'{percent} % dépensés'**
+  String listSpent(int percent);
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste'**
+  String get listRest;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce mois-ci'**
+  String get listThisMonth;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Type'**
+  String get filterType;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get filterAccount;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get filterCategory;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get filterAll;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} types'**
+  String filterTypes(int count);
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} comptes'**
+  String filterAccounts(int count);
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} catégories'**
+  String filterCategories(int count);
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune opération'**
+  String get emptyMonthTitle;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Les dépenses, revenus et transferts de {month} apparaîtront ici.'**
+  String emptyMonthHelp(String month);
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien avec ces filtres'**
+  String get emptyFilterTitle;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Essayez d’autres choix, ou effacez les filtres.'**
+  String get emptyFilterHelp;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer les filtres'**
+  String get clearFilters;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir au mois en cours'**
+  String get backToThisMonth;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Changez de mois d’un geste'**
+  String get swipeTipTitle;
+
+  /// Operations list
+  ///
+  /// In fr, this message translates to:
+  /// **'Glissez la liste vers la droite pour le mois d’avant, vers la gauche pour le mois suivant. Ou touchez le titre du mois.'**
+  String get swipeTipText;
+
+  /// The first choice of the Type filter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get filterAllType;
+
+  /// The first choice of the Catégorie filter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get filterAllCategories;
+
+  /// The Type filter: expenses.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépenses'**
+  String get filterExpenses;
+
+  /// The Type filter: income.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenus'**
+  String get filterIncomes;
+
+  /// The Type filter: transfers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transferts'**
+  String get filterTransfers;
+
+  /// Opens all the categories, those without operations this month too.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher les {count} autres'**
+  String filterMore(int count);
+
+  /// In the totals card: exits but no entry this month.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune entrée'**
+  String get listNoEntries;
 }
 
 class _AppLocalizationsDelegate
