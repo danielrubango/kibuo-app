@@ -123,7 +123,7 @@ class UnreadableScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+          padding: const EdgeInsets.fromLTRB(16, 48, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -139,7 +139,7 @@ class UnreadableScreen extends StatelessWidget {
                   color: KibuoColors.warningInk,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               Text(l.unreadableTitle, style: text.headlineMedium),
               const SizedBox(height: 12),
               Text(l.unreadableBody, style: text.bodyLarge),
@@ -152,7 +152,7 @@ class UnreadableScreen extends StatelessWidget {
                     child: Text(l.unreadableRecover),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
               ],
               SizedBox(
                 width: double.infinity,

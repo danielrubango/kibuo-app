@@ -487,12 +487,6 @@ class _RateDemoState extends State<_RateDemo> {
           label: 'Enregistrer le taux',
           onPressed: () => Navigator.of(context).pop(),
         ),
-        const SizedBox(height: 8),
-        KibuoButton(
-          label: 'Annuler',
-          kind: ButtonKind.secondary,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ],
     );
   }

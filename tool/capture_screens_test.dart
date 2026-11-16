@@ -105,6 +105,10 @@ void main() {
   Future<void> show(WidgetTester tester, Widget home) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
+    // The phone's status bar and gesture bar (24 each), as on the device,
+    // so a button too close to the edge shows in the capture.
+    tester.view.padding = const FakeViewPadding(top: 48, bottom: 48);
+    tester.view.viewPadding = const FakeViewPadding(top: 48, bottom: 48);
     addTearDown(tester.view.reset);
     tester.platformDispatcher.localesTestValue = const [Locale('fr', 'US')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
@@ -122,6 +126,31 @@ void main() {
         supportedLocales: appLanguages,
         localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
         home: home,
+        builder: (context, child) => Stack(
+          children: [
+            child!,
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 24,
+              child: IgnorePointer(
+                child: Center(
+                  child: SizedBox(
+                    width: 108,
+                    height: 4,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Color(0x660E1320),
+                        borderRadius: BorderRadius.all(Radius.circular(2)),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -395,6 +424,10 @@ void main() {
     await snap(tester, 'AttachmentViewer');
     tester.state<NavigatorState>(find.byType(Navigator).last).pop();
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Supprimer l’opération'), 200);
+    await tester.tap(find.text('Supprimer l’opération'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'DeleteSheet');
     await show(
       tester,
       EntryScreen(

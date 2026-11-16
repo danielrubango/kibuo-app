@@ -5,6 +5,7 @@ import 'package:kibuo/ui/categories/category_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -101,7 +102,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     ),
                     if (_open == c.id)
                       Container(
-                        color: const Color(0xFFF4F6FA),
+                        color: KibuoColors.fillSoft,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -112,7 +113,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   padding: const EdgeInsets.fromLTRB(
                                     52,
                                     12,
-                                    14,
+                                    16,
                                     12,
                                   ),
                                   child: Text(
@@ -140,8 +141,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      bottomNavigationBar: BottomAction(
         child: KibuoButton(label: l.categoriesAdd, onPressed: () => _form()),
       ),
     );
@@ -168,18 +168,18 @@ class _CategoryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: open ? const Color(0xFFF4F6FA) : null,
+      color: open ? KibuoColors.fillSoft : null,
       child: Row(
         children: [
           Expanded(
             child: InkWell(
               onTap: onEdit,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+                padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
                 child: Row(
                   children: [
                     CategoryTile(category: category),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         name,
@@ -220,7 +220,7 @@ class _CategoryRow extends StatelessWidget {
                     height: 28,
                     decoration: BoxDecoration(
                       color: open
-                          ? const Color(0xFFCDEFE0)
+                          ? KibuoColors.accentTintOpen
                           : KibuoColors.background,
                       shape: BoxShape.circle,
                     ),
@@ -234,7 +234,7 @@ class _CategoryRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 8),
         ],
       ),
     );

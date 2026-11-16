@@ -93,6 +93,9 @@ Future<OpenResult> eraseAndStartOver({
       entry.deleteSync();
     }
   }
+  // The attachments' key was in the erased database (ADR 0011).
+  final attachments = Directory(p.join(folder.path, 'attachments'));
+  if (attachments.existsSync()) attachments.deleteSync(recursive: true);
   await vault.deleteAll();
   return openKibuoDatabase(
     folder: folder,

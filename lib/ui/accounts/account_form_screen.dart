@@ -47,6 +47,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   String _typed = '';
   DateTime _date = _today();
   bool _keypad = false;
+  final _openingKey = GlobalKey();
   bool _named = true;
 
   static DateTime _today() {
@@ -232,6 +233,9 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     label: l.accountName,
                     hint: l.accountNameHint,
                     controller: _name,
+                    onFocus: () {
+                      if (_keypad) setState(() => _keypad = false);
+                    },
                     error: _named || _name.text.trim().isNotEmpty
                         ? null
                         : l.accountNameMissing,
@@ -240,12 +244,18 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                   if (!_editing && currency != null) ...[
                     const SizedBox(height: 16),
                     ValueField(
+                      key: _openingKey,
                       label: l.accountOpening,
                       value: _shown(),
                       unit: currency.code,
                       onUnitTap: _pickCurrency,
                       focused: _keypad,
-                      onTap: () => setState(() => _keypad = true),
+                      onTap: () {
+                        // The phone's keyboard gives way to Kibuo's.
+                        FocusScope.of(context).unfocus();
+                        setState(() => _keypad = true);
+                        revealAboveKeypad(_openingKey);
+                      },
                       note: l.accountCurrencyNote(
                         currencyName(context, currency),
                         currency.code,
@@ -254,11 +264,11 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     const SizedBox(height: 16),
                     FieldLabel(l.accountOpeningDate),
                     _DateRow(text: _dateText(l), onTap: _pickDate),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     HelpText(l.accountOpeningDateHelp),
                   ],
                   if (_editing) ...[
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     SettingsCard(
                       children: [
                         SettingsRow(
@@ -289,7 +299,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
               )
             else
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: KibuoButton(
                   label: _editing ? l.accountSave : l.accountCreate,
                   onPressed: currency == null ? null : _save,
@@ -407,7 +417,7 @@ class _DateRow extends StatelessWidget {
         child: SizedBox(
           height: KibuoTheme.heightField,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
                 const Icon(
@@ -415,7 +425,7 @@ class _DateRow extends StatelessWidget {
                   size: 20,
                   color: KibuoColors.inkSecondary,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     text,

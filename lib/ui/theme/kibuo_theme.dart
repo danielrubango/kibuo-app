@@ -215,3 +215,22 @@ abstract final class KibuoType {
     height: height,
   );
 }
+
+/// The only spaces Kibuo uses (DIRECTION, validated 15 November 2026).
+abstract final class KibuoSpace {
+  /// Inside a group: a label and its value, an icon and its text.
+  static const xs = 4.0;
+  static const s = 8.0;
+
+  /// Between two cards or two fields.
+  static const m = 12.0;
+
+  /// Screen margins and the inside of cards.
+  static const l = 16.0;
+
+  /// Before the main button, and under a sheet's content.
+  static const xl = 24.0;
+
+  /// Between two large parts of a screen.
+  static const xxl = 32.0;
+}

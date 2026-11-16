@@ -5,6 +5,7 @@ import 'package:kibuo/ui/accounts/account_types.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 
 /// « Nouveau type » (canvas: TypeCompte): a name and an icon among about
 /// twenty. Pops the new type's id.
@@ -61,8 +62,7 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      bottomNavigationBar: BottomAction(
         child: KibuoButton(
           label: l.typeSave,
           onPressed: _name.text.trim().isEmpty ? null : _save,

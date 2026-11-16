@@ -42,7 +42,7 @@ class RecoveryShowScreen extends StatelessWidget {
               Text(l.recoveryShowTitle, style: text.headlineSmall),
               const SizedBox(height: 12),
               Text(l.recoveryShowBody, style: text.bodyLarge),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               _CodeCard(code: code),
               const SizedBox(height: 12),
               Text(
@@ -130,7 +130,7 @@ class _Group extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 120,
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: KibuoColors.background,
@@ -210,7 +210,7 @@ class _RecoveryProofScreenState extends State<RecoveryProofScreen> {
                   color: _wrong ? KibuoColors.danger : KibuoColors.inkSecondary,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -438,7 +438,7 @@ class _RecoveryEntryScreenState extends State<RecoveryEntryScreen> {
                   color: _wrong ? KibuoColors.danger : KibuoColors.inkSecondary,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -568,7 +568,7 @@ class RecoverySettingsScreen extends StatelessWidget {
                             ),
                             style: text.titleMedium,
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: 4),
                           Text(l.recoveryNotKept, style: text.bodySmall),
                         ],
                       ),
@@ -585,9 +585,9 @@ class RecoverySettingsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               HelpText(l.recoveryNewHelp),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               SettingsCard(
                 children: [
                   SettingsSwitch(
@@ -598,7 +598,7 @@ class RecoverySettingsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               HelpText(l.recoveryAndroidCopyHelp),
             ],
           ],

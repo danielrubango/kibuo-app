@@ -123,7 +123,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                     onPick: (name) => setState(() => _icon = name),
                   ),
                   if (_editing) ...[
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     SettingsCard(
                       children: [
                         SettingsRow(
@@ -147,7 +147,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               child: KibuoButton(
                 label: _editing
                     ? l.categorySave
@@ -172,7 +172,7 @@ class _ParentRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: KibuoTheme.heightField,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
@@ -180,7 +180,7 @@ class _ParentRow extends StatelessWidget {
       child: Row(
         children: [
           CategoryTile(category: parent),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(name, style: KibuoType.body.copyWith(fontSize: 16)),
           ),

@@ -952,10 +952,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get entryLater => 'Later';
 
   @override
-  String get entryDeleteExpense => 'Delete the expense';
-
-  @override
-  String get entryDeleteIncome => 'Delete the income';
+  String get entryDeleteOperation => 'Delete operation';
 
   @override
   String get entryDeleteExpenseTitle => 'Delete this expense?';

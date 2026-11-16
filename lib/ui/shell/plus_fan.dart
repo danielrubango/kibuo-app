@@ -165,7 +165,7 @@ class _FanTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x40000000),
+                      color: KibuoColors.fanShadow,
                       blurRadius: 16,
                       offset: Offset(0, 6),
                     ),
@@ -178,7 +178,7 @@ class _FanTile extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               choice.fanLabel(AppLocalizations.of(context)),
               textAlign: TextAlign.center,

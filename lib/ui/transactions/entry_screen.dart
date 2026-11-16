@@ -16,14 +16,12 @@ import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
-import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/attachment_viewer.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
-import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
 import 'package:uuid/uuid.dart';
 
@@ -109,6 +107,7 @@ class _EntryScreenState extends State<EntryScreen> {
   late DateTime _date;
   final _note = TextEditingController();
   bool _keypad = true;
+  final _amountKey = GlobalKey();
   bool _open = false;
 
   // Attachments: added under a draft id until « Enregistrer » (PRODUCT);
@@ -257,11 +256,20 @@ class _EntryScreenState extends State<EntryScreen> {
       setState(() => _today = null);
       return;
     }
+    final (base, quote) = rateDirection(main: account, other: paid);
+    // A saved operation keeps the rate it was converted at (« Une conversion
+    // passée ne change jamais »), as long as its two currencies are the same.
+    final saved = widget.initial?.rate;
+    if (widget.editing &&
+        saved != null &&
+        {saved.base, saved.quote}.containsAll({account.code, paid.code})) {
+      setState(() => _today = saved.toward(base, quote));
+      return;
+    }
     final info = await widget.data.currencies.latestRate(
       account.code,
       paid.code,
     );
-    final (base, quote) = rateDirection(main: account, other: paid);
     if (mounted) {
       setState(() {
         _today = info?.rate.toward(base, quote);
@@ -477,92 +485,6 @@ class _EntryScreenState extends State<EntryScreen> {
     if (mounted) Navigator.of(context).pop(id);
   }
 
-  /// « Supprimer cette dépense ? » (canvas DelConfirm): the operation as
-  /// saved, what deleting does to its account, then « Supprimer ».
-  Future<void> _confirmDelete() async {
-    final saved = widget.initial!;
-    final l = AppLocalizations.of(context);
-    final expense = saved.kind == EntryKind.expense;
-    final labels = await OperationLabels.of(context, widget.data, saved);
-    if (!mounted) return;
-    final amount = formatMoney(
-      saved.total.total,
-      currencyOf(saved.total.total.currency),
-      _lang,
-    );
-    final sure = await showKibuoSheet<bool>(
-      context,
-      title: expense ? l.entryDeleteExpenseTitle : l.entryDeleteIncomeTitle,
-      builder: (context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: KibuoColors.surface,
-              borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-            ),
-            child: Row(
-              children: [
-                if (labels.category != null)
-                  CategoryTile(category: labels.category!, size: 32),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        labels.categoryPath.split(' › ').last,
-                        style: KibuoType.rowLabel.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontVariations: const [FontVariation.weight(600)],
-                        ),
-                      ),
-                      Text(
-                        '${labels.account} · '
-                        '${operationWhen(context, saved.date, _now())}',
-                        style: KibuoType.caption,
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  signedTotal(context, saved),
-                  style: KibuoType.itemName.copyWith(
-                    color: expense ? KibuoColors.debtInk : KibuoColors.accent,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            expense
-                ? l.entryDeleteExpenseHelp(labels.account, amount)
-                : l.entryDeleteIncomeHelp(labels.account, amount),
-            style: KibuoType.help,
-          ),
-          const SizedBox(height: 16),
-          KibuoButton(
-            label: l.entryDeleteConfirm,
-            kind: ButtonKind.danger,
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-          const SizedBox(height: 8),
-          KibuoButton(
-            label: l.cancel,
-            kind: ButtonKind.secondary,
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-        ],
-      ),
-    );
-    if (!(sure ?? false)) return;
-    await widget.data.transactions.delete(saved.id);
-    // An empty id tells the caller the operation is gone.
-    if (mounted) Navigator.of(context).pop('');
-  }
-
   String _dateText(AppLocalizations l) {
     final now = _now();
     final today = DateTime(now.year, now.month, now.day);
@@ -609,11 +531,17 @@ class _EntryScreenState extends State<EntryScreen> {
                   ),
                   const SizedBox(height: 12),
                   _AmountCard(
+                    key: _amountKey,
                     income: !expense,
                     value: shownTyped(context, _typed),
                     unit: _paidCurrency?.symbol ?? '',
                     focused: _keypad,
-                    onTap: () => setState(() => _keypad = true),
+                    onTap: () {
+                      // The phone's keyboard gives way to Kibuo's.
+                      FocusScope.of(context).unfocus();
+                      setState(() => _keypad = true);
+                      revealAboveKeypad(_amountKey);
+                    },
                     onUnitTap: _choosePaidCurrency,
                     footLabel: expense ? l.entryTakenFrom : l.entryAddedTo,
                     footValue: total == null ? '' : _money(total.total),
@@ -712,22 +640,12 @@ class _EntryScreenState extends State<EntryScreen> {
                     controller: _note,
                     onFocus: () => setState(() => _keypad = false),
                   ),
-                  if (widget.editing && widget.initial != null) ...[
-                    const SizedBox(height: 20),
-                    KibuoButton(
-                      label: widget.initial!.kind == EntryKind.expense
-                          ? l.entryDeleteExpense
-                          : l.entryDeleteIncome,
-                      kind: ButtonKind.danger,
-                      onPressed: _confirmDelete,
-                    ),
-                  ],
                 ],
               ),
             ),
             if (_chosen.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: AttachmentSelectionBar(
                   count: _chosen.length,
                   onClear: () => setState(_chosen.clear),
@@ -766,7 +684,7 @@ class _EntryScreenState extends State<EntryScreen> {
               )
             else
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: KibuoButton(
                   label: widget.editing ? l.entrySaveChanges : l.entrySave,
                   onPressed: _canSave ? _save : null,
@@ -788,6 +706,7 @@ extension on EntryKind {
 /// touching that line unrolls the details (paid, rate, converted, fees).
 class _AmountCard extends StatelessWidget {
   const _AmountCard({
+    super.key,
     required this.income,
     required this.value,
     required this.unit,
@@ -818,9 +737,7 @@ class _AmountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tint = income ? KibuoColors.accentTint : KibuoColors.debtTint;
-    final edge = income
-        ? KibuoColors.accentTintStrong
-        : const Color(0xFFF2CFB3);
+    final edge = income ? KibuoColors.accentTintStrong : KibuoColors.debtEdge;
     final ink = income ? KibuoColors.accent : KibuoColors.debtInk;
     final sign = income ? '+' : '−';
     return Container(
@@ -835,7 +752,7 @@ class _AmountCard extends StatelessWidget {
             onTap: onTap,
             behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 12, 10),
+              padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
               child: Row(
                 children: [
                   Expanded(
@@ -876,7 +793,7 @@ class _AmountCard extends StatelessWidget {
           InkWell(
             onTap: onToggle,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 12, 12),
+              padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
               child: Row(
                 children: [
                   Expanded(
@@ -923,7 +840,7 @@ class _Line extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 12, 8),
+        padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
         child: Row(
           children: [
             Expanded(child: Text(label, style: KibuoType.body)),
@@ -949,7 +866,7 @@ class _Line extends StatelessWidget {
               const SizedBox(width: 4),
               const Icon(KibuoIcons.caretRight, size: 14),
             ] else
-              const SizedBox(width: 18),
+              const SizedBox(width: 16),
           ],
         ),
       ),
@@ -1013,7 +930,7 @@ class EntryField extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 9, 12, 9),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
         child: Row(
           children: [
             leading ??
@@ -1051,7 +968,7 @@ class EntryField extends StatelessWidget {
               Text(trailing!, style: KibuoType.caption.copyWith(fontSize: 13)),
             if (onTap != null)
               const Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: EdgeInsets.only(left: 8),
                 child: Icon(
                   KibuoIcons.caretRight,
                   size: 16,
@@ -1081,7 +998,7 @@ class _NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 10, 14, 4),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
@@ -1096,25 +1013,33 @@ class _NoteCard extends StatelessWidget {
                 size: 14,
                 color: KibuoColors.inkSecondary,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               Text(label, style: KibuoType.caption),
             ],
           ),
-          TextField(
-            controller: controller,
-            onTap: onFocus,
-            minLines: 1,
-            maxLines: 5,
-            style: KibuoType.body.copyWith(fontSize: 15),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: KibuoType.body.copyWith(
-                fontSize: 15,
-                color: KibuoColors.inkMuted,
+          // Focus, not only a tap: Kibuo's keypad closes whatever way the
+          // note takes the focus.
+          Focus(
+            canRequestFocus: false,
+            skipTraversal: true,
+            onFocusChange: (on) {
+              if (on) onFocus();
+            },
+            child: TextField(
+              controller: controller,
+              minLines: 1,
+              maxLines: 5,
+              style: KibuoType.body.copyWith(fontSize: 15),
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: KibuoType.body.copyWith(
+                  fontSize: 15,
+                  color: KibuoColors.inkMuted,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
               ),
-              border: InputBorder.none,
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
             ),
           ),
         ],

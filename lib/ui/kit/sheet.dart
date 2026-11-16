@@ -17,7 +17,7 @@ Future<T?> showKibuoSheet<T>(
     builder: (context) => Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        padding: sheetPadding(context),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -28,6 +28,34 @@ Future<T?> showKibuoSheet<T>(
           ],
         ),
       ),
+    ),
+  );
+}
+
+/// A sheet's margins: 16 on the sides, and 24 above the phone's own bar
+/// (gestures or buttons), so the last button never sits on the screen's
+/// edge (DIRECTION).
+EdgeInsets sheetPadding(BuildContext context, {double top = 0}) =>
+    EdgeInsets.fromLTRB(
+      16,
+      top,
+      16,
+      24 + MediaQuery.viewPaddingOf(context).bottom,
+    );
+
+/// The main action at the bottom of a screen: 8 above it, and 24 above
+/// the phone's own bar (DIRECTION).
+class BottomAction extends StatelessWidget {
+  const BottomAction({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+    top: false,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      child: child,
     ),
   );
 }
