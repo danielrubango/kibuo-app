@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
@@ -380,5 +381,46 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(ChoiceMenu), findsNothing);
     expect(find.text('Compte'), findsOneWidget);
+  });
+
+  String monthTitle(DateTime m) {
+    final t = DateFormat.MMMM('fr').format(m);
+    return t[0].toUpperCase() + t.substring(1);
+  }
+
+  Finder titled(DateTime m) => find.byWidgetPredicate(
+    (w) =>
+        w is RichText &&
+        plain(w.text.toPlainText()).startsWith('${monthTitle(m)} ${m.year}'),
+  );
+
+  testWidgets('the month before slides in under the finger', (tester) async {
+    await start(tester);
+    final thisMonth = DateTime(now.year, now.month);
+    final before = DateTime(now.year, now.month - 1);
+    final finger = await tester.startGesture(const Offset(100, 500));
+    await finger.moveBy(const Offset(40, 0));
+    await finger.moveBy(const Offset(120, 0));
+    await tester.pump();
+    expect(titled(thisMonth), findsOneWidget);
+    expect(titled(before), findsOneWidget, reason: 'both pages show');
+    // Too short a slide: back to this month.
+    await finger.up();
+    await tester.pumpAndSettle();
+    expect(titled(thisMonth), findsOneWidget);
+    expect(titled(before), findsNothing);
+    expect(find.text('Taxi'), findsOneWidget);
+  });
+
+  testWidgets('no month after this one', (tester) async {
+    await start(tester);
+    await tester.fling(
+      find.byType(ListView).first,
+      const Offset(-400, 0),
+      1000,
+    );
+    await tester.pumpAndSettle();
+    expect(titled(DateTime(now.year, now.month)), findsOneWidget);
+    expect(find.text('Taxi'), findsOneWidget);
   });
 }

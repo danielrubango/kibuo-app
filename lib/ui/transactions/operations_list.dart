@@ -121,6 +121,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
 
   @override
   void dispose() {
+    _pages.dispose();
     widget.refresh?.removeListener(_load);
     super.dispose();
   }
@@ -175,18 +176,49 @@ class _OperationsScreenState extends State<OperationsScreen> {
     });
   }
 
-  void _goTo(DateTime month) {
-    if (month.isAfter(_thisMonth())) return;
-    setState(() {
-      _month = month;
-      _keptMonth = month;
-      _picker = false;
-    });
+  /// Months are pages: 0 is this month, 1 the month before, and so on.
+  static int _indexOf(DateTime month) {
+    final now = _thisMonth();
+    return (now.year - month.year) * 12 + now.month - month.month;
   }
 
-  bool _inMonth(TransactionInfo t) {
+  static DateTime _monthAt(int index) {
+    final now = _thisMonth();
+    return DateTime(now.year, now.month - index);
+  }
+
+  late final _pages = PageController(initialPage: _indexOf(_month));
+
+  /// Goes to [month]: a slide when it is next door, a jump from the
+  /// picker.
+  void _goTo(DateTime month) {
+    if (month.isAfter(_thisMonth())) return;
+    setState(() => _picker = false);
+    final index = _indexOf(month);
+    if (!_pages.hasClients) return _showMonth(index);
+    final far = (index - (_pages.page ?? index.toDouble())).abs() > 1.5;
+    if (far) {
+      _pages.jumpToPage(index);
+    } else {
+      _pages.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  void _showMonth(int index) => setState(() {
+    _month = _monthAt(index);
+    _keptMonth = _month;
+    _menu = null;
+    _picker = false;
+  });
+
+  bool _inMonth(TransactionInfo t, [DateTime? month]) {
+    final m = month ?? _month;
     final d = t.date.toLocal();
-    return d.year == _month.year && d.month == _month.month;
+    return d.year == m.year && d.month == m.month;
   }
 
   /// A top-level category's id, for a category or one of its subcategories.
@@ -248,17 +280,6 @@ class _OperationsScreenState extends State<OperationsScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final main = _main;
-    final month = [
-      for (final e in _all)
-        if (_inMonth(e.$1) && _passes(e.$1)) e,
-    ];
-    // Days, newest first, each with its operations.
-    final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
-    for (final e in month) {
-      final d = e.$1.date.toLocal();
-      (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
-    }
     // The veil, the month picker, a filter's menu and the first-visit tip
     // cover the whole phone, tab bar included (canvas ListeOperations).
     return OverlayPortal(
@@ -267,43 +288,60 @@ class _OperationsScreenState extends State<OperationsScreen> {
       child: Stack(
         key: _stackKey,
         children: [
-          GestureDetector(
-            // Swipe right for the month before, left for the month after.
-            onHorizontalDragEnd: (d) {
-              final v = d.primaryVelocity ?? 0;
-              if (v > 300) _goTo(DateTime(_month.year, _month.month - 1));
-              if (v < -300) _goTo(DateTime(_month.year, _month.month + 1));
-            },
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 140),
-              children: [
-                _header(l),
-                const SizedBox(height: 16),
-                if (main != null)
-                  _TotalsCard(
-                    // The whole month: the filters choose what the list
-                    // shows, not what the month did (PRODUCT).
-                    totals: _totals([
-                      for (final e in _all)
-                        if (_inMonth(e.$1)) e.$1,
-                    ]),
-                    money: _money,
-                  ),
-                const SizedBox(height: 12),
-                _filters(l),
-                if (days.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: _empty(l),
-                  )
-                else
-                  for (final MapEntry(key: day, value: ops) in days.entries)
-                    ..._day(day, ops),
-              ],
-            ),
+          // Each month is a page that follows the finger: right for the
+          // month before, left for the month after, never past this month
+          // (canvas ListeOnboard).
+          PageView.builder(
+            controller: _pages,
+            reverse: true,
+            onPageChanged: _showMonth,
+            itemBuilder: (context, index) =>
+                _page(l, _monthAt(index), current: _monthAt(index) == _month),
           ),
         ],
       ),
+    );
+  }
+
+  /// One month: its title, totals, filters and days.
+  Widget _page(AppLocalizations l, DateTime month, {required bool current}) {
+    final main = _main;
+    final shown = [
+      for (final e in _all)
+        if (_inMonth(e.$1, month) && _passes(e.$1)) e,
+    ];
+    // Days, newest first, each with its operations.
+    final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
+    for (final e in shown) {
+      final d = e.$1.date.toLocal();
+      (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
+    }
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 140),
+      children: [
+        _header(l, month),
+        const SizedBox(height: 16),
+        if (main != null)
+          _TotalsCard(
+            // The whole month: the filters choose what the list shows, not
+            // what the month did (PRODUCT).
+            totals: _totals([
+              for (final e in _all)
+                if (_inMonth(e.$1, month)) e.$1,
+            ]),
+            money: _money,
+          ),
+        const SizedBox(height: 12),
+        _filters(l, current: current),
+        if (days.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: _empty(l, month),
+          )
+        else
+          for (final MapEntry(key: day, value: ops) in days.entries)
+            ..._day(day, ops),
+      ],
     );
   }
 
@@ -392,8 +430,8 @@ class _OperationsScreenState extends State<OperationsScreen> {
     );
   }
 
-  Widget _header(AppLocalizations l) {
-    final name = DateFormat.MMMM(_lang).format(_month);
+  Widget _header(AppLocalizations l, DateTime month) {
+    final name = DateFormat.MMMM(_lang).format(month);
     // Fixed height: « Ce mois-ci » coming and going must not move the list.
     return SizedBox(
       height: KibuoTheme.heightTouch,
@@ -417,7 +455,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
                           text: name[0].toUpperCase() + name.substring(1),
                         ),
                         TextSpan(
-                          text: ' ${_month.year} ',
+                          text: ' ${month.year} ',
                           style: const TextStyle(
                             color: KibuoColors.inkSecondary,
                             fontWeight: FontWeight.w500,
@@ -440,7 +478,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
               ),
             ),
           ),
-          if (!_isThisMonth)
+          if (month != _thisMonth())
             TextAction(
               label: l.listThisMonth,
               onPressed: () => _goTo(_thisMonth()),
@@ -516,13 +554,22 @@ class _OperationsScreenState extends State<OperationsScreen> {
     EntryKind.transfer => l.filterTransfers,
   };
 
-  Widget _filters(AppLocalizations l) {
+  /// The chips; only the shown month's carry what the open menu follows
+  /// (a neighbour month is drawn too while the finger slides).
+  Widget _filters(AppLocalizations l, {required bool current}) {
     return FadingRow(
-      children: [for (final f in _Filter.values) _chipFor(l, f)],
+      children: [
+        for (final f in _Filter.values) _chipFor(l, f, inRow: current),
+      ],
     );
   }
 
-  Widget _chipFor(AppLocalizations l, _Filter f, {bool open = false}) {
+  Widget _chipFor(
+    AppLocalizations l,
+    _Filter f, {
+    bool open = false,
+    bool inRow = false,
+  }) {
     String label(
       String base,
       Set<Object> chosen,
@@ -566,16 +613,16 @@ class _OperationsScreenState extends State<OperationsScreen> {
       ),
     };
     final chip = FilterChipButton(
-      key: open ? null : _chipKeys[f],
+      key: inRow ? _chipKeys[f] : null,
       label: text,
       active: active,
       open: open,
       onTap: () => open ? setState(() => _menu = null) : _openMenu(f),
     );
     // The chip in the row is what the open menu follows.
-    return open
-        ? chip
-        : CompositedTransformTarget(link: _chipLinks[f]!, child: chip);
+    return inRow
+        ? CompositedTransformTarget(link: _chipLinks[f]!, child: chip)
+        : chip;
   }
 
   void _openMenu(_Filter f) {
@@ -831,8 +878,8 @@ class _OperationsScreenState extends State<OperationsScreen> {
     ];
   }
 
-  Widget _empty(AppLocalizations l) {
-    final monthName = DateFormat.yMMMM(_lang).format(_month);
+  Widget _empty(AppLocalizations l, DateTime month) {
+    final monthName = DateFormat.yMMMM(_lang).format(month);
     final (title, help, action, onAction) = _filtered
         ? (
             l.emptyFilterTitle,
@@ -844,7 +891,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
               _categories.clear();
             }),
           )
-        : !_isThisMonth
+        : month != _thisMonth()
         ? (
             l.emptyMonthTitle,
             l.emptyMonthHelp(monthName),
