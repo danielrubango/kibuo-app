@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -118,6 +119,95 @@ class StepTitle extends StatelessWidget {
           style: KibuoType.sectionTitle.copyWith(color: KibuoColors.accent),
         ),
         Text(title, style: KibuoType.highlight),
+      ],
+    );
+  }
+}
+
+/// A confirmation before something is removed (PRODUCT, canvas
+/// ConfirmArchive): what is concerned, the consequence in one sentence, then
+/// the red button; ✕ or a tap outside gives up. True for the red button.
+Future<bool> confirmRemoval(
+  BuildContext context, {
+  required String title,
+  required Widget summary,
+  required String text,
+  required String action,
+}) async {
+  final sure = await showKibuoSheet<bool>(
+    context,
+    title: title,
+    builder: (context) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: KibuoColors.surface,
+            borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+          ),
+          child: summary,
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(text, style: KibuoType.help),
+        ),
+        const SizedBox(height: 24),
+        KibuoButton(
+          label: action,
+          kind: ButtonKind.danger,
+          onPressed: () => Navigator.of(context).pop(true),
+        ),
+      ],
+    ),
+  );
+  return sure ?? false;
+}
+
+/// The summary line of [confirmRemoval]: a tile, a name, a line under it.
+class RemovalSummary extends StatelessWidget {
+  const RemovalSummary({
+    super.key,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+  });
+
+  final Widget leading;
+  final String title;
+  final String? subtitle;
+  final String? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        leading,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: KibuoType.rowLabel.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontVariations: const [FontVariation.weight(600)],
+                ),
+              ),
+              if (subtitle != null)
+                Text(
+                  subtitle!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: KibuoType.caption,
+                ),
+            ],
+          ),
+        ),
+        if (trailing != null) Text(trailing!, style: KibuoType.itemName),
       ],
     );
   }

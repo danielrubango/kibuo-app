@@ -10,6 +10,7 @@ class LockSettings {
     this.hideInRecents = true,
     this.allowScreenshots = true,
     this.androidCopy = true,
+    this.protectActions = false,
   });
 
   final bool fingerprint;
@@ -22,6 +23,10 @@ class LockSettings {
   /// recovery code exists (ADR 0010).
   final bool androidCopy;
 
+  /// Ask the code (or fingerprint) before important actions, after their
+  /// confirmation (PRODUCT); only with a code.
+  final bool protectActions;
+
   LockSettings copyWith({
     bool? fingerprint,
     bool? shuffle,
@@ -29,6 +34,7 @@ class LockSettings {
     bool? hideInRecents,
     bool? allowScreenshots,
     bool? androidCopy,
+    bool? protectActions,
   }) => LockSettings(
     fingerprint: fingerprint ?? this.fingerprint,
     shuffle: shuffle ?? this.shuffle,
@@ -36,6 +42,7 @@ class LockSettings {
     hideInRecents: hideInRecents ?? this.hideInRecents,
     allowScreenshots: allowScreenshots ?? this.allowScreenshots,
     androidCopy: androidCopy ?? this.androidCopy,
+    protectActions: protectActions ?? this.protectActions,
   );
 }
 
@@ -50,6 +57,7 @@ class LockSettingsStore {
   static const _hideInRecents = 'privacy_hide_recents';
   static const _allowScreenshots = 'privacy_screenshots';
   static const _androidCopy = 'backup_android_copy';
+  static const _protectActions = 'lock_protect_actions';
 
   Future<LockSettings> load() async {
     const fallback = LockSettings();
@@ -73,6 +81,7 @@ class LockSettingsStore {
         fallback.allowScreenshots,
       ),
       androidCopy: await flag(_androidCopy, fallback.androidCopy),
+      protectActions: await flag(_protectActions, fallback.protectActions),
     );
   }
 
@@ -83,5 +92,6 @@ class LockSettingsStore {
     await _vault.write(_hideInRecents, '${s.hideInRecents}');
     await _vault.write(_allowScreenshots, '${s.allowScreenshots}');
     await _vault.write(_androidCopy, '${s.androidCopy}');
+    await _vault.write(_protectActions, '${s.protectActions}');
   }
 }

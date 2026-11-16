@@ -1210,4 +1210,113 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adjustAdd => 'Ajouter la régularisation';
+
+  @override
+  String get lockProtect => 'Code pour les actions importantes';
+
+  @override
+  String get lockProtectHelp => 'Supprimer, archiver, corriger un solde';
+
+  @override
+  String get protectTitle => 'Confirmez avec votre code';
+
+  @override
+  String protectArchive(String name) {
+    return 'Pour archiver $name';
+  }
+
+  @override
+  String get protectDeleteOperation => 'Pour supprimer l’opération';
+
+  @override
+  String protectDeleteCategory(String name) {
+    return 'Pour supprimer $name';
+  }
+
+  @override
+  String protectRemoveCurrencies(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count devises',
+      one: 'une devise',
+    );
+    return 'Pour retirer $_temp0';
+  }
+
+  @override
+  String protectAdjust(String name) {
+    return 'Pour corriger le solde de $name';
+  }
+
+  @override
+  String protectOverdraft(String name) {
+    return 'Pour changer le découvert de $name';
+  }
+
+  @override
+  String confirmArchiveTitle(String name) {
+    return 'Archiver $name ?';
+  }
+
+  @override
+  String confirmArchiveHelp(String name) {
+    return '$name quitte les listes et les totaux. Ses opérations restent.';
+  }
+
+  @override
+  String get confirmArchiveAction => 'Archiver le compte';
+
+  @override
+  String confirmCategoryTitle(String name) {
+    return 'Supprimer $name ?';
+  }
+
+  @override
+  String confirmCategoryHelp(String name, int subs) {
+    String _temp0 = intl.Intl.pluralLogic(
+      subs,
+      locale: localeName,
+      other:
+          '$name et ses $subs sous-catégories disparaissent des choix. Les opérations déjà notées les gardent.',
+      one:
+          '$name et sa sous-catégorie disparaissent des choix. Les opérations déjà notées les gardent.',
+      zero: '$name disparaît des choix. Les opérations déjà notées la gardent.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get confirmCategoryAction => 'Supprimer la catégorie';
+
+  @override
+  String confirmCurrenciesTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Retirer $count devises ?',
+      one: 'Retirer une devise ?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String confirmCurrenciesHelp(String names, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'seront',
+      one: 'sera',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'proposés',
+      one: 'proposé',
+    );
+    return '$names ne $_temp0 plus $_temp1.';
+  }
+
+  @override
+  String get confirmCurrenciesAction => 'Retirer';
 }

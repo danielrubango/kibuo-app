@@ -1200,4 +1200,101 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adjustAdd => 'Add the adjustment';
+
+  @override
+  String get lockProtect => 'Code for important actions';
+
+  @override
+  String get lockProtectHelp => 'Delete, archive, correct a balance';
+
+  @override
+  String get protectTitle => 'Confirm with your code';
+
+  @override
+  String protectArchive(String name) {
+    return 'To archive $name';
+  }
+
+  @override
+  String get protectDeleteOperation => 'To delete the transaction';
+
+  @override
+  String protectDeleteCategory(String name) {
+    return 'To delete $name';
+  }
+
+  @override
+  String protectRemoveCurrencies(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count currencies',
+      one: 'a currency',
+    );
+    return 'To remove $_temp0';
+  }
+
+  @override
+  String protectAdjust(String name) {
+    return 'To correct $name’s balance';
+  }
+
+  @override
+  String protectOverdraft(String name) {
+    return 'To change $name’s overdraft';
+  }
+
+  @override
+  String confirmArchiveTitle(String name) {
+    return 'Archive $name?';
+  }
+
+  @override
+  String confirmArchiveHelp(String name) {
+    return '$name leaves lists and totals. Its transactions stay.';
+  }
+
+  @override
+  String get confirmArchiveAction => 'Archive the account';
+
+  @override
+  String confirmCategoryTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String confirmCategoryHelp(String name, int subs) {
+    String _temp0 = intl.Intl.pluralLogic(
+      subs,
+      locale: localeName,
+      other:
+          '$name and its $subs subcategories leave the choices. Transactions already noted keep them.',
+      one:
+          '$name and its subcategory leave the choices. Transactions already noted keep them.',
+      zero: '$name leaves the choices. Transactions already noted keep it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get confirmCategoryAction => 'Delete the category';
+
+  @override
+  String confirmCurrenciesTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Remove $count currencies?',
+      one: 'Remove a currency?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String confirmCurrenciesHelp(String names, int count) {
+    return '$names will no longer be offered.';
+  }
+
+  @override
+  String get confirmCurrenciesAction => 'Remove';
 }

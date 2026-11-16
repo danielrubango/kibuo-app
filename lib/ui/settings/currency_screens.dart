@@ -11,6 +11,7 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -135,6 +136,53 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
   }
 
   Future<void> _finishEditing() async {
+    // « Retirer 2 devises ? » (canvas ConfirmDevises), then the code when
+    // important actions ask for it; giving up keeps the editing open.
+    if (_leaving.isNotEmpty) {
+      final l = AppLocalizations.of(context);
+      final leaving = [
+        for (final code in _leaving)
+          (code, currencyName(context, currencyOf(code))),
+      ];
+      final sure = await confirmRemoval(
+        context,
+        title: l.confirmCurrenciesTitle(leaving.length),
+        summary: Column(
+          children: [
+            for (final (i, (code, name)) in leaving.indexed) ...[
+              if (i > 0)
+                const Divider(height: 16, color: KibuoColors.background),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      name,
+                      style: KibuoType.rowLabel.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontVariations: const [FontVariation.weight(600)],
+                      ),
+                    ),
+                  ),
+                  Text(code, style: KibuoType.help),
+                ],
+              ),
+            ],
+          ],
+        ),
+        text: l.confirmCurrenciesHelp(
+          [for (final (_, name) in leaving) name].join(', '),
+          leaving.length,
+        ),
+        action: l.confirmCurrenciesAction,
+      );
+      if (!sure || !mounted) return;
+      if (!await confirmWithCode(
+        context,
+        l.protectRemoveCurrencies(leaving.length),
+      )) {
+        return;
+      }
+    }
     for (final code in _leaving) {
       await _repo.removeCurrency(code);
     }

@@ -52,7 +52,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Transferts entre comptes, y compris entre devises
 - [x] Découvert des comptes
 - [x] Régularisation du solde d'un compte
-- [ ] Confirmer et protéger les actions importantes
+- [x] Confirmer et protéger les actions importantes
 - [ ] Saisie rapide, dont la bulle qui fait découvrir l'appui long sur le +
 - [ ] Liste et recherche des opérations
 - [ ] Premier lancement guidé
