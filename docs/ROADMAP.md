@@ -58,7 +58,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Recherche des opérations
 - [x] Premier lancement guidé
 - [x] Accueil : date, disponible et bilan du mois ; les autres sections arrivent avec leurs modules
-- [ ] Montants courts (« 1,2 M FC »), réglables : automatique, toujours ou jamais
+- [x] Montants courts (« 1,2 M FC »), réglables : automatique, toujours ou jamais
 
 ## Phase 4 : Planification
 

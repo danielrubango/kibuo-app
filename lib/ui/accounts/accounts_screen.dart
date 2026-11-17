@@ -13,6 +13,7 @@ import 'package:kibuo/ui/accounts/account_types.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -89,7 +90,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   String get _lang => Localizations.localeOf(context).languageCode;
 
-  String _money(Money m) => formatMoney(m, _infos[m.currency]!, _lang);
+  String _money(Money m, {bool short = false}) =>
+      formatAmount(m, _infos[m.currency]!, _lang, short: short);
 
   AccountTotal _total(Iterable<AccountInfo> accounts) => totalIn(_main!, [
     for (final a in accounts) a.balance,
@@ -129,13 +131,13 @@ class _AccountsScreenState extends State<AccountsScreen> {
           SectionTitle(l.accountsDisplayAmounts),
           SettingsCard(
             children: [
-              _DisplayChoice(
+              CheckChoice(
                 label: l.accountsDisplayEach,
                 help: l.accountsDisplayEachHelp,
                 on: !_allInMain,
                 onTap: () => Navigator.of(context).pop(false),
               ),
-              _DisplayChoice(
+              CheckChoice(
                 label: l.accountsDisplayAll(
                   currencyName(context, main).toLowerCase(),
                   main.code,
@@ -220,7 +222,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   label: _chip == null
                       ? l.accountsTotal
                       : l.accountsTotalOf(_lowerFirst(labels.name(_chip!))),
-                  amount: _money(_total(shown).amount),
+                  long: isLong(_total(shown).amount),
+                  amount: (short) => _money(_total(shown).amount, short: short),
                 ),
                 if (_total(shown).withoutRate.isNotEmpty) ...[
                   const SizedBox(height: 8),
@@ -270,7 +273,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
         icon: labels.icon(type),
         name: labels.name(type),
         count: folded ? l.accountsCount(accounts.length) : null,
-        total: _money(_total(accounts).amount),
+        long: isLong(_total(accounts).amount),
+        total: (short) => _money(_total(accounts).amount, short: short),
         negative: _total(accounts).amount.minor < 0,
         folded: folded,
         onTap: () =>
@@ -284,19 +288,22 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   Widget _card(AppLocalizations l, AccountInfo a) {
     final inMain = _inMain(a.balance);
-    final String amount;
+    final String Function(bool short) amount;
+    var long = false;
     String? detail;
     var muted = false;
     if (_allInMain && a.currency != _main!.code) {
       if (inMain == null) {
-        amount = l.accountsNoRate;
+        amount = (_) => l.accountsNoRate;
         muted = true;
       } else {
-        amount = _money(inMain);
+        amount = (short) => _money(inMain, short: short);
+        long = isLong(inMain);
       }
       detail = _money(a.balance);
     } else {
-      amount = _money(a.balance);
+      amount = (short) => _money(a.balance, short: short);
+      long = isLong(a.balance);
       if (a.currency != _main!.code && inMain != null) {
         detail = '≈ ${_money(inMain)}';
       }
@@ -313,6 +320,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       code: a.currency,
       detail: [?detail, ?overdraft].join(' · ').ifEmpty,
       amount: amount,
+      long: long,
       muted: muted,
       negative: a.balance.minor < 0,
       onTap: () => _open(a),
@@ -399,10 +407,15 @@ class _Chips extends StatelessWidget {
 }
 
 class _TotalCard extends StatelessWidget {
-  const _TotalCard({required this.label, required this.amount});
+  const _TotalCard({
+    required this.label,
+    required this.amount,
+    required this.long,
+  });
 
   final String label;
-  final String amount;
+  final String Function(bool short) amount;
+  final bool long;
 
   @override
   Widget build(BuildContext context) {
@@ -420,13 +433,10 @@ class _TotalCard extends StatelessWidget {
             style: KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
           ),
           const SizedBox(height: 4),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              amount,
-              style: KibuoType.highlight.copyWith(fontSize: 30),
-            ),
+          FitAmount(
+            long: long,
+            style: KibuoType.highlight.copyWith(fontSize: 30),
+            span: (short) => TextSpan(text: amount(short)),
           ),
         ],
       ),
@@ -439,6 +449,7 @@ class _GroupHeader extends StatelessWidget {
     required this.icon,
     required this.name,
     required this.total,
+    required this.long,
     required this.folded,
     required this.onTap,
     this.count,
@@ -448,7 +459,8 @@ class _GroupHeader extends StatelessWidget {
   final IconData icon;
   final String name;
   final String? count;
-  final String total;
+  final String Function(bool short) total;
+  final bool long;
 
   /// The group's total below zero: in red.
   final bool negative;
@@ -492,11 +504,14 @@ class _GroupHeader extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  total,
+                FitAmount(
+                  long: long,
+                  alignment: Alignment.centerRight,
+                  maxWidth: MediaQuery.sizeOf(context).width * 0.45,
                   style: KibuoType.sectionTitle.copyWith(
                     color: negative ? KibuoColors.danger : KibuoColors.ink,
                   ),
+                  span: (short) => TextSpan(text: total(short)),
                 ),
                 const SizedBox(width: 8),
                 Icon(
@@ -518,6 +533,7 @@ class _AccountCard extends StatelessWidget {
     required this.name,
     required this.code,
     required this.amount,
+    required this.long,
     required this.onTap,
     this.detail,
     this.muted = false,
@@ -527,7 +543,8 @@ class _AccountCard extends StatelessWidget {
   final String name;
   final String code;
   final String? detail;
-  final String amount;
+  final String Function(bool short) amount;
+  final bool long;
   final bool muted;
 
   /// Below zero: the amount in red.
@@ -576,56 +593,18 @@ class _AccountCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Text(
-            amount,
+          FitAmount(
+            long: long,
+            alignment: Alignment.centerRight,
+            maxWidth: MediaQuery.sizeOf(context).width * 0.45,
             style: muted
                 ? KibuoType.buttonSmall.copyWith(color: KibuoColors.inkMuted)
                 : KibuoType.cardTitle.copyWith(
                     color: negative ? KibuoColors.danger : null,
                   ),
+            span: (short) => TextSpan(text: amount(short)),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DisplayChoice extends StatelessWidget {
-  const _DisplayChoice({
-    required this.label,
-    required this.help,
-    required this.on,
-    required this.onTap,
-  });
-
-  final String label;
-  final String help;
-  final bool on;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      selected: on,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label, style: KibuoType.rowLabel),
-                    Text(help, style: KibuoType.caption),
-                  ],
-                ),
-              ),
-              if (on) const Icon(KibuoIcons.check, color: KibuoColors.accent),
-            ],
-          ),
-        ),
       ),
     );
   }

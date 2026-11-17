@@ -10,6 +10,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -138,7 +139,12 @@ class _HomeScreenState extends State<HomeScreen> {
         if (available != null && month != null && main != null) ...[
           const SizedBox(height: 16),
           _AvailableCard(
-            amount: formatMoney(available.amount, main, lang),
+            long: isLong(available.amount),
+            amount: (short) => (short ? formatShort : formatMoney)(
+              available.amount,
+              main,
+              lang,
+            ),
             onTap: widget.onOpenAccounts,
           ),
           if (available.withoutRate.isNotEmpty) ...[
@@ -157,8 +163,12 @@ class _HomeScreenState extends State<HomeScreen> {
             name: _capitalized(DateFormat.MMMM(lang).format(now)),
             totals: month,
             today: now,
-            money: (m) => formatMoney(m, main, lang),
-            signed: (m) => formatSigned(m, main, lang),
+            money: (m, short) =>
+                (short ? formatShort : formatMoney)(m, main, lang),
+            signed: (m, short) => short
+                ? '${m.minor > 0 ? '+' : ''}'
+                      '${formatShort(m, main, lang, symbol: false)}'
+                : formatSigned(m, main, lang),
             onTap: widget.onOpenMonth,
           ),
         ],
@@ -173,9 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
 /// « Disponible », the amount, « à dépenser librement »: mint, 22 round,
 /// opening Comptes.
 class _AvailableCard extends StatelessWidget {
-  const _AvailableCard({required this.amount, this.onTap});
+  const _AvailableCard({required this.amount, required this.long, this.onTap});
 
-  final String amount;
+  /// Whole or short.
+  final String Function(bool short) amount;
+  final bool long;
   final VoidCallback? onTap;
 
   @override
@@ -207,13 +219,10 @@ class _AvailableCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          amount,
-                          style: KibuoType.bigAmount.copyWith(height: 42 / 34),
-                        ),
+                      FitAmount(
+                        long: long,
+                        style: KibuoType.bigAmount.copyWith(height: 42 / 34),
+                        span: (short) => TextSpan(text: amount(short)),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -255,8 +264,8 @@ class _MonthCard extends StatelessWidget {
   final String name;
   final FlowTotals totals;
   final DateTime today;
-  final String Function(Money) money;
-  final String Function(Money) signed;
+  final String Function(Money, bool short) money;
+  final String Function(Money, bool short) signed;
   final VoidCallback? onTap;
 
   @override
@@ -281,7 +290,8 @@ class _MonthCard extends StatelessWidget {
       color: shareColor,
     );
     final exits = Money(-totals.exits.minor, totals.exits.currency);
-    final restText = rest.minor > 0 ? '+${money(rest)}' : money(rest);
+    String restText(bool short) =>
+        rest.minor > 0 ? '+${money(rest, short)}' : money(rest, short);
     return Material(
       color: KibuoColors.surface,
       borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
@@ -333,9 +343,10 @@ class _MonthCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              Text.rich(
-                TextSpan(
-                  text: '$pre$restText',
+              FitAmount(
+                long: isLong(rest),
+                span: (short) => TextSpan(
+                  text: '$pre${restText(short)}',
                   style: KibuoType.tabTitle.copyWith(
                     height: 1.2,
                     color: rest.minor < 0 ? KibuoColors.debtInk : null,
@@ -361,27 +372,28 @@ class _MonthCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: outOnly ? l.listNoEntries : null),
-                          if (!outOnly) ..._percent(l.listSpent(level), bold),
-                        ],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KibuoType.caption,
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: outOnly ? l.listNoEntries : null),
+                        if (!outOnly) ..._percent(l.listSpent(level), bold),
+                      ],
                     ),
+                    maxLines: 1,
+                    style: KibuoType.caption,
                   ),
                   const SizedBox(width: 10),
-                  Text.rich(
-                    _outOfIn(
-                      l,
-                      '$pre${signed(exits)}',
-                      '$pre${signed(totals.entries)}',
+                  Expanded(
+                    child: FitAmount(
+                      long: isLong(exits) || isLong(totals.entries),
+                      alignment: Alignment.centerRight,
+                      style: KibuoType.caption,
+                      span: (short) => _outOfIn(
+                        l,
+                        '$pre${signed(exits, short)}',
+                        '$pre${signed(totals.entries, short)}',
+                      ),
                     ),
-                    style: KibuoType.caption,
                   ),
                 ],
               ),

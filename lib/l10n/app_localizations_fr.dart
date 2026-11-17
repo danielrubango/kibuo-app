@@ -30,6 +30,32 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeTitle => 'Aujourd’hui';
 
   @override
+  String get longAmounts => 'Montants longs';
+
+  @override
+  String get longAmountsAuto => 'Automatique';
+
+  @override
+  String get longAmountsAutoHelp => 'Raccourcit seulement ce qui ne tient pas';
+
+  @override
+  String get longAmountsAlways => 'Toujours';
+
+  @override
+  String get longAmountsAlwaysHelp => 'Dès 10 000 : 1,2 M au lieu de 1 245 000';
+
+  @override
+  String get longAmountsNever => 'Jamais';
+
+  @override
+  String get longAmountsNeverHelp =>
+      'Toujours en entier, plus petit s’il le faut';
+
+  @override
+  String get longAmountsNote =>
+      'La saisie, le détail d’une opération et les confirmations montrent toujours le montant entier.';
+
+  @override
   String get homeAvailable => 'Disponible';
 
   @override

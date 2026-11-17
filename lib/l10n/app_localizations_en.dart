@@ -30,6 +30,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTitle => 'Today';
 
   @override
+  String get longAmounts => 'Long amounts';
+
+  @override
+  String get longAmountsAuto => 'Automatic';
+
+  @override
+  String get longAmountsAutoHelp => 'Shortens only what doesn’t fit';
+
+  @override
+  String get longAmountsAlways => 'Always';
+
+  @override
+  String get longAmountsAlwaysHelp => 'From 10,000: 1.2M instead of 1,245,000';
+
+  @override
+  String get longAmountsNever => 'Never';
+
+  @override
+  String get longAmountsNeverHelp => 'Always whole, smaller if needed';
+
+  @override
+  String get longAmountsNote =>
+      'Entry, an operation’s details and confirmations always show the whole amount.';
+
+  @override
   String get homeAvailable => 'Available';
 
   @override
