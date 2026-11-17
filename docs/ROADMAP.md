@@ -55,7 +55,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Confirmer et protéger les actions importantes
 - [x] Saisie rapide, dont la bulle qui fait découvrir l'appui long sur le +
 - [x] Liste des opérations
-- [ ] Recherche des opérations
+- [x] Recherche des opérations
 - [ ] Premier lancement guidé
 - [ ] Accueil
 

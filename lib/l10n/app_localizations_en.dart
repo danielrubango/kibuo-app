@@ -1404,4 +1404,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listNoEntries => 'No income';
+
+  @override
+  String get listSearch => 'Search';
+
+  @override
+  String get searchHint => 'Name, category, account, amount';
+
+  @override
+  String get searchClose => 'Close search';
+
+  @override
+  String get searchClear => 'Clear the search';
+
+  @override
+  String get searchRecent => 'Recent searches';
+
+  @override
+  String get searchRecentClear => 'Clear';
+
+  @override
+  String get searchBy => 'Search by';
+
+  @override
+  String get searchHelp =>
+      'Search covers every month: name, category, account, note and amount.';
+
+  @override
+  String searchResults(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '1 result',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchOthers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more results',
+      one: '1 more result',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchEarlierMonths => 'In earlier months';
+
+  @override
+  String get searchOtherMonths => 'In other months';
+
+  @override
+  String searchEarlierFold(int count) {
+    return 'Earlier months · $count';
+  }
+
+  @override
+  String searchOtherFold(int count) {
+    return 'Other months · $count';
+  }
+
+  @override
+  String get searchFold => 'Fold';
+
+  @override
+  String searchNothingInMonth(String month, String query) {
+    return 'Nothing in $month for “$query”.';
+  }
+
+  @override
+  String searchNoResultTitle(String query) {
+    return 'No result for “$query”';
+  }
+
+  @override
+  String get searchNoResultHelp =>
+      'Check the spelling or search for an amount.';
 }

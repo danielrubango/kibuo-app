@@ -424,7 +424,7 @@ class _DesignSystemScreenState extends State<DesignSystemScreen> {
   List<Widget> _headers() {
     return [
       _label('Onglet'),
-      const TabTitle('Plus'),
+      TabHeader(title: TabHeader.text('Plus')),
       _label('Écran avec retour : en haut de cette page'),
       _label('Premier lancement'),
       const StepTitle(step: 'Étape 2 sur 4', title: 'Votre devise principale'),
