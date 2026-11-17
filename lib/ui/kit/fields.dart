@@ -443,13 +443,15 @@ class RefusalLine extends StatelessWidget {
   const RefusalLine({
     super.key,
     required this.text,
-    required this.action,
-    required this.onAction,
+    this.action,
+    this.onAction,
   });
 
   final String text;
-  final String action;
-  final VoidCallback onAction;
+
+  /// « Autoriser »; none when there is nothing to offer.
+  final String? action;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +470,10 @@ class RefusalLine extends StatelessWidget {
               ),
             ),
           ),
-          TextAction(label: action, onPressed: onAction),
+          if (action case final label?)
+            TextAction(label: label, onPressed: onAction)
+          else
+            const SizedBox(height: KibuoTheme.heightTouch),
         ],
       ),
     );

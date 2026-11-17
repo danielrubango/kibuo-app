@@ -39,7 +39,19 @@ class AccountFormScreen extends StatefulWidget {
     this.account,
     this.categories,
     this.transactions,
+    this.intro,
+    this.action,
+    this.onCreated,
   });
+
+  /// The first launch's step 3 (canvas Lancement3, Lancement3Decouvert):
+  /// [intro] in place of the top bar, no balance date (today), [action] on
+  /// the button, and [onCreated] instead of closing.
+  final Widget? intro;
+  final String? action;
+  final ValueChanged<String>? onCreated;
+
+  bool get _firstLaunch => intro != null;
 
   final AccountRepository accounts;
   final CurrencyRepository currencies;
@@ -60,6 +72,9 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   List<CustomAccountType> _custom = const [];
   CurrencyInfo? _currency;
   String _typed = '';
+
+  /// A starting balance below zero, with the overdraft only (PRODUCT).
+  bool _openingNegative = false;
   DateTime _date = _today();
   bool _keypad = false;
   final _openingKey = GlobalKey();
@@ -211,8 +226,16 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   Money get _opening {
     final c = _currency!;
     final typed = _typed.isEmpty ? '0' : _typed.replaceAll(',', '.');
-    return Money.fromMajor(typed.endsWith('.') ? '${typed}0' : typed, c);
+    final m = Money.fromMajor(typed.endsWith('.') ? '${typed}0' : typed, c);
+    return _openingNegative ? Money(-m.minor, m.currency) : m;
   }
+
+  /// A negative starting balance past the overdraft's limit.
+  bool get _openingRefused =>
+      !_editing &&
+      _currency != null &&
+      _opening.minor < 0 &&
+      !_overdraftChoice.allows(_opening.minor);
 
   Future<void> _pickCurrency() async {
     final l = AppLocalizations.of(context);
@@ -274,13 +297,17 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     }
     final account = widget.account;
     if (account == null) {
-      await widget.accounts.create(
+      final id = await widget.accounts.create(
         name: _name.text,
         type: _type,
         opening: _opening,
         openingDate: _date,
         overdraft: _overdraftChoice,
       );
+      if (widget.onCreated case final created?) {
+        created(id);
+        return;
+      }
     } else {
       // A new balance: the difference becomes an operation, confirmed in a
       // sheet; closing it saves nothing (PRODUCT: Régularisation).
@@ -426,6 +453,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                   value: _overdraft,
                   onChanged: (on) => setState(() {
                     _overdraft = on;
+                    if (!on) _openingNegative = false;
                     if (!on && _typingLimit) _keypad = false;
                   }),
                 ),
@@ -491,14 +519,21 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            FormTopBar(
-              title: _editing ? l.accountEditTitle : l.accountNewTitle,
-              cancel: l.cancel,
-            ),
+            if (!widget._firstLaunch)
+              FormTopBar(
+                title: _editing ? l.accountEditTitle : l.accountNewTitle,
+                cancel: l.cancel,
+              ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                padding: widget._firstLaunch
+                    ? const EdgeInsets.fromLTRB(24, 32, 24, 24)
+                    : const EdgeInsets.fromLTRB(16, 4, 16, 24),
                 children: [
+                  if (widget.intro case final intro?) ...[
+                    intro,
+                    const SizedBox(height: 18),
+                  ],
                   FieldLabel(l.accountTypeLabel),
                   _TypeGrid(
                     labels: labels,
@@ -567,7 +602,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     ValueField(
                       key: _openingKey,
                       label: l.accountOpening,
-                      value: _shown(),
+                      value: '${_openingNegative ? '−' : ''}${_shown()}',
                       unit: currency.code,
                       onUnitTap: _pickCurrency,
                       focused: _keypad && _typing == _Typing.opening,
@@ -577,11 +612,30 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                         currency.code,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    FieldLabel(l.accountOpeningDate),
-                    _DateRow(text: _dateText(l), onTap: _pickDate),
-                    const SizedBox(height: 8),
-                    HelpText(l.accountOpeningDateHelp),
+                    // With the overdraft, how to make it negative (canvas
+                    // Lancement3Decouvert).
+                    if (_overdraft) ...[
+                      const SizedBox(height: 2),
+                      HelpText(l.accountMinusHint),
+                    ],
+                    if (_openingRefused) ...[
+                      const SizedBox(height: 4),
+                      RefusalLine(
+                        text: l.overdraftWouldGo(
+                          _name.text.trim().isEmpty
+                              ? l.accountOpening
+                              : _name.text.trim(),
+                          formatMoney(_opening, currency, _lang),
+                        ),
+                      ),
+                    ],
+                    if (!widget._firstLaunch) ...[
+                      const SizedBox(height: 16),
+                      FieldLabel(l.accountOpeningDate),
+                      _DateRow(text: _dateText(l), onTap: _pickDate),
+                      const SizedBox(height: 8),
+                      HelpText(l.accountOpeningDateHelp),
+                    ],
                   ],
                   if (currency != null) ...[
                     const SizedBox(height: 16),
@@ -612,9 +666,14 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                   onKey: _key,
                   onDelete: _delete,
                   // « − » only for a balance that may go below zero.
-                  onMinus: _typing == _Typing.current && _overdraft
+                  onMinus: !_overdraft
+                      ? null
+                      : _typing == _Typing.current
                       ? () =>
                             setState(() => _currentNegative = !_currentNegative)
+                      : _typing == _Typing.opening && !_editing
+                      ? () =>
+                            setState(() => _openingNegative = !_openingNegative)
                       : null,
                   allowDecimal: currency?.usesDecimals ?? false,
                   decimalSeparator: NumberFormat.decimalPattern(_lang)
@@ -626,10 +685,20 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
               )
             else
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                padding: widget._firstLaunch
+                    ? const EdgeInsets.fromLTRB(24, 8, 24, 24)
+                    : const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: KibuoButton(
-                  label: _editing ? l.accountSave : l.accountCreate,
-                  onPressed: currency == null || _currentRefused ? null : _save,
+                  label:
+                      widget.action ??
+                      (_editing ? l.accountSave : l.accountCreate),
+                  onPressed:
+                      currency == null ||
+                          _currentRefused ||
+                          _openingRefused ||
+                          (widget._firstLaunch && _name.text.trim().isEmpty)
+                      ? null
+                      : _save,
                 ),
               ),
           ],
