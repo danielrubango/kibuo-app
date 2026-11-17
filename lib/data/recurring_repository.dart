@@ -44,6 +44,23 @@ class RecurringInfo {
   final bool? asDraft;
   final DateTime? doneUntil;
   final bool stopped;
+
+  /// The next [count] dates still to come on [now]: after today's if it
+  /// was made already, from today otherwise.
+  List<DateTime> upcoming(DateTime now, {int count = 3}) {
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final done = doneUntil;
+    return next(
+      after: done != null && done.isAfter(yesterday) ? done : yesterday,
+      count: count,
+    );
+  }
+
+  /// The next [count] dates after [after].
+  List<DateTime> next({required DateTime after, int count = 3}) {
+    final day = DateTime(after.year, after.month, after.day);
+    return schedule.dates().where((d) => d.isAfter(day)).take(count).toList();
+  }
 }
 
 /// The user's recurrences, and catching up on their dates (PRODUCT:
@@ -96,8 +113,10 @@ class RecurringRepository {
     int? endCount,
     DateTime? endDate,
     bool? asDraft,
+    String? firstMade,
   }) async {
     final id = const Uuid().v7();
+    final first = DateTime(start.year, start.month, start.day);
     await _db
         .into(_db.recurringRules)
         .insert(
@@ -120,9 +139,65 @@ class RecurringRepository {
             endCount: Value(endCount),
             endDate: Value(endDate),
             asDraft: Value(asDraft),
+            // Made from an entry: that operation is its first time.
+            doneUntil: Value(firstMade == null ? null : first),
           ),
         );
+    if (firstMade != null) {
+      await (_db.update(
+        _db.transactions,
+      )..where((t) => t.id.equals(firstMade))).write(
+        TransactionsCompanion(
+          recurringId: Value(id),
+          occurrence: Value(_day(first)),
+          version: Value(await _nextVersion()),
+          deviceId: Value(_db.deviceId),
+        ),
+      );
+    }
     return id;
+  }
+
+  /// Changes [id] for the times to come (PRODUCT): what it already made
+  /// stays as it is.
+  Future<void> update(
+    String id, {
+    required EntryKind kind,
+    required String accountId,
+    required Money amount,
+    required RepeatUnit unit,
+    required DateTime start,
+    String? toAccountId,
+    String? categoryId,
+    int fees = 0,
+    String? note,
+    int every = 1,
+    Set<int> weekdays = const {},
+    int? endCount,
+    DateTime? endDate,
+    bool? asDraft,
+  }) async {
+    await (_db.update(_db.recurringRules)..where((r) => r.id.equals(id))).write(
+      RecurringRulesCompanion(
+        kind: Value(kind.stored),
+        accountId: Value(accountId),
+        toAccountId: Value(toAccountId),
+        categoryId: Value(categoryId),
+        amount: Value(amount.minor),
+        currency: Value(amount.currency),
+        fees: Value(fees),
+        note: Value(note),
+        unit: Value(unit.name),
+        every: Value(every),
+        weekdays: Value(_weekdayBits(weekdays)),
+        start: Value(DateTime(start.year, start.month, start.day)),
+        endCount: Value(endCount),
+        endDate: Value(endDate),
+        asDraft: Value(asDraft),
+        version: Value(await _nextVersion()),
+        deviceId: Value(_db.deviceId),
+      ),
+    );
   }
 
   Future<List<RecurringInfo>> rules() async {

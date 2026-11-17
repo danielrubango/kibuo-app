@@ -83,6 +83,7 @@ abstract final class KibuoIcons {
   static const tooth = IconData(0xe9cc, fontFamily: _regular);
   static const money = IconData(0xe588, fontFamily: _regular);
   static const currencyCircleDollar = IconData(0xe54c, fontFamily: _regular);
+  static const repeat = IconData(0xe3f6, fontFamily: _regular);
   static const calendarBlank = IconData(0xe10a, fontFamily: _regular);
   static const slidersHorizontal = IconData(0xe434, fontFamily: _regular);
   static const caretUp = IconData(0xe13c, fontFamily: _regular);

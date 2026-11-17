@@ -590,6 +590,420 @@ abstract class AppLocalizations {
   /// **'Non vérifié'**
   String get securityRecoveryUnverified;
 
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque jour'**
+  String get rhythmDaily;
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les {n} jours'**
+  String rhythmEveryDays(String n);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque {days}'**
+  String rhythmWeekly(String days);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days}, une semaine sur deux'**
+  String rhythmEveryOtherWeek(String days);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days}, toutes les {n} semaines'**
+  String rhythmEveryWeeks(String days, String n);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le {day} de chaque mois'**
+  String rhythmMonthly(String day);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le {day}, tous les {n} mois'**
+  String rhythmEveryMonths(String day, String n);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque {date}'**
+  String rhythmYearly(String date);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le {date}, tous les {n} ans'**
+  String rhythmEveryYears(String date, String n);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'sans fin'**
+  String get rhythmEndNever;
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n} fois en tout'**
+  String rhythmEndCount(String n);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'jusqu’au {date}'**
+  String rhythmEndDate(String date);
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'et'**
+  String get rhythmAnd;
+
+  /// Recurrence rhythm text.
+  ///
+  /// In fr, this message translates to:
+  /// **'le {day}'**
+  String rhythmThe(String day);
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle récurrence'**
+  String get recurrenceNew;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la récurrence'**
+  String get recurrenceEdit;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Répéter'**
+  String get repeatTitle;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jour'**
+  String get repeatDay;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine'**
+  String get repeatWeek;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mois'**
+  String get repeatMonth;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année'**
+  String get repeatYear;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =1{Tous les jours} other{Tous les {n} jours}}'**
+  String repeatEveryDay(int n);
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =1{Toutes les semaines} other{Toutes les {n} semaines}}'**
+  String repeatEveryWeek(int n);
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =1{Tous les mois} other{Tous les {n} mois}}'**
+  String repeatEveryMonth(int n);
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =1{Tous les ans} other{Tous les {n} ans}}'**
+  String repeatEveryYear(int n);
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Première fois'**
+  String get repeatFirst;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fin'**
+  String get repeatEnd;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jamais'**
+  String get repeatEndNever;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Après X fois'**
+  String get repeatEndCount;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'À une date'**
+  String get repeatEndDate;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de fois'**
+  String get repeatCount;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière date possible'**
+  String get repeatLastDate;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'La récurrence continue jusqu’à ce que vous l’arrêtiez.'**
+  String get repeatEndNeverHelp;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utile pour un crédit ou des mensualités : elle s’arrête toute seule.'**
+  String get repeatEndCountHelp;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune opération ne sera créée après cette date.'**
+  String get repeatEndDateHelp;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaines dates : {dates}'**
+  String repeatNext(String dates);
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'À chaque échéance'**
+  String get repeatEach;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get repeatModeSave;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparer un brouillon'**
+  String get repeatModeDraft;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’opération est ajoutée automatiquement à sa date.'**
+  String get repeatModeSaveHelp;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un brouillon attend votre validation, utile si le montant varie.'**
+  String get repeatModeDraftHelp;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jamais'**
+  String get repeatNever;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ne plus répéter'**
+  String get repeatStop;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moins'**
+  String get repeatLess;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus'**
+  String get repeatMore;
+
+  /// Recurrence form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get repeatSave;
+
+  /// Nouvelle récurrence: the amount in what repeats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant'**
+  String get entryAmount;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récurrences'**
+  String get recurrencesTitle;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépenses'**
+  String get recurrencesExpenses;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenus'**
+  String get recurrencesIncome;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transferts'**
+  String get recurrencesTransfers;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune récurrence pour l’instant'**
+  String get recurrencesEmptyTitle;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Loyer, salaire, abonnements : notez-les une fois, kibuo s’en souvient.'**
+  String get recurrencesEmptyHelp;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'À valider'**
+  String get recurrenceToValidate;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'le {date}'**
+  String recurrenceNextOn(String date);
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récurrence'**
+  String get recurrenceTitle;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get recurrenceEditAction;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaines fois'**
+  String get recurrenceNextTimes;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernières fois'**
+  String get recurrencePast;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ignoré'**
+  String get recurrenceIgnored;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get recurrenceDraft;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter la récurrence'**
+  String get recurrenceStop;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter la récurrence {name} ?'**
+  String recurrenceStopTitle(String name);
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce qui a déjà été créé reste ; les brouillons en attente sont supprimés.'**
+  String get recurrenceStopText;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter'**
+  String get recurrenceStopAction;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'vers {name}'**
+  String recurrenceToAccount(String name);
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparer un brouillon'**
+  String get recurrenceAskDraft;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get recurrenceSaveDirect;
+
+  /// Recurrences page and card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus de prochaine fois'**
+  String get recurrenceNone;
+
   /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:
