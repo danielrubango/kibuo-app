@@ -91,7 +91,7 @@ Rien n'est codé avant la fin de cette phase.
 ## Phase 8 : Publication
 
 - [ ] Vérifier les conditions actuelles de Google Play pour les nouveaux comptes
-- [ ] Préparer la fiche, la politique de confidentialité et les captures
+- [ ] Préparer la fiche, la politique de confidentialité et les captures (pages publiées sur le [site public](backlog/site-public.md))
 - [ ] Publier sur Google Play
 
 ## Après la V1

@@ -6,7 +6,7 @@ labels: [outillage]
 
 # Porter le suivi sur GitHub
 
-Dépôt privé sur le compte personnel du propriétaire, à créer rapidement.
+Dépôt créé le 17 novembre 2026 : [danielrubango/kibuo-app](https://github.com/danielrubango/kibuo-app), sur le compte personnel du propriétaire. Reste à y pousser le code et à y porter le suivi.
 
 | Local | GitHub |
 |---|---|
