@@ -17,6 +17,7 @@ import 'package:kibuo/ui/kit/choice_menu.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -271,7 +272,8 @@ class _OperationsScreenState extends State<OperationsScreen> {
   FlowTotals _totals(Iterable<TransactionInfo> ops) =>
       flowTotals(_main!, ops.map(flowOf), (code) => _rates[code]);
 
-  String _money(Money m) => formatMoney(m, currencyOf(m.currency), _lang);
+  String _money(Money m, {bool short = false}) =>
+      formatAmount(m, currencyOf(m.currency), _lang, short: short);
 
   String get _lang => Localizations.localeOf(context).languageCode;
 
@@ -878,11 +880,11 @@ class _OperationsScreenState extends State<OperationsScreen> {
         : net.minor < 0
         ? KibuoColors.debtInk
         : KibuoColors.inkMuted;
-    final amount = net.minor > 0
-        ? '+${_money(net)}'
+    String amount(bool short) => net.minor > 0
+        ? '+${_money(net, short: short)}'
         : net.minor < 0
-        ? '−${_money(Money(-net.minor, net.currency))}'
-        : _money(net);
+        ? '−${_money(Money(-net.minor, net.currency), short: short)}'
+        : _money(net, short: short);
     return [
       const SizedBox(height: 6),
       InkWell(
@@ -911,9 +913,14 @@ class _OperationsScreenState extends State<OperationsScreen> {
                   ),
                 ),
                 if (!onlyFreeTransfers)
-                  Text(
-                    '${t.approximate ? '≈ ' : ''}$amount',
+                  FitAmount(
+                    long: isLong(net),
+                    alignment: Alignment.centerRight,
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.45,
                     style: KibuoType.sectionTitle.copyWith(color: color),
+                    span: (short) => TextSpan(
+                      text: '${t.approximate ? '≈ ' : ''}${amount(short)}',
+                    ),
                   ),
                 const SizedBox(width: 8),
                 Icon(
@@ -998,15 +1005,22 @@ class _TotalsCard extends StatelessWidget {
   const _TotalsCard({required this.totals, required this.money});
 
   final FlowTotals totals;
-  final String Function(Money) money;
+  final String Function(Money, {bool short}) money;
 
-  /// « +25,00 $ », « −106,00 $ », or « 0,00 $ » in grey.
-  (String, Color) _signed(Money m, {required bool out, String pre = ''}) {
-    if (m.minor == 0) return (money(m), KibuoColors.inkMuted);
+  /// « +25,00 $ », « −106,00 $ », or « 0,00 $ » in grey; [short] writes
+  /// « +1,2 M $ ».
+  (String Function(bool short), Color) _signed(
+    Money m, {
+    required bool out,
+    String pre = '',
+  }) {
+    if (m.minor == 0) {
+      return ((short) => money(m, short: short), KibuoColors.inkMuted);
+    }
     final abs = Money(m.minor.abs(), m.currency);
     return out || m.minor < 0
-        ? ('$pre−${money(abs)}', KibuoColors.debtInk)
-        : ('$pre+${money(abs)}', KibuoColors.accent);
+        ? ((short) => '$pre−${money(abs, short: short)}', KibuoColors.debtInk)
+        : ((short) => '$pre+${money(abs, short: short)}', KibuoColors.accent);
   }
 
   @override
@@ -1027,17 +1041,27 @@ class _TotalsCard extends StatelessWidget {
     final (inText, inColor) = _signed(totals.entries, out: false, pre: pre);
     final (outText, outColor) = _signed(totals.exits, out: true, pre: pre);
     final (restText, restColor) = _signed(totals.rest, out: false);
-    Widget amount(String label, String text, Color color, {bool end = false}) =>
-        Column(
-          crossAxisAlignment: end
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
-          children: [
-            Text(label, style: KibuoType.help),
-            const SizedBox(height: 2),
-            Text(text, style: KibuoType.sheetTitle.copyWith(color: color)),
-          ],
-        );
+    Widget amount(
+      String label,
+      String Function(bool short) text,
+      Color color,
+      Money m, {
+      bool end = false,
+    }) => Column(
+      crossAxisAlignment: end
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      children: [
+        Text(label, style: KibuoType.help),
+        const SizedBox(height: 2),
+        FitAmount(
+          long: isLong(m),
+          alignment: end ? Alignment.centerRight : Alignment.centerLeft,
+          style: KibuoType.sheetTitle.copyWith(color: color),
+          span: (short) => TextSpan(text: text(short)),
+        ),
+      ],
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -1048,9 +1072,19 @@ class _TotalsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: amount(l.listEntries, inText, inColor)),
+              Expanded(
+                child: amount(l.listEntries, inText, inColor, totals.entries),
+              ),
               const SizedBox(width: 12),
-              amount(l.listExits, outText, outColor, end: true),
+              Expanded(
+                child: amount(
+                  l.listExits,
+                  outText,
+                  outColor,
+                  totals.exits,
+                  end: true,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -1077,21 +1111,25 @@ class _TotalsCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Text.rich(
-                TextSpan(
-                  text: '${l.listRest} ',
-                  children: [
-                    TextSpan(
-                      text: restText,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontVariations: const [FontVariation.weight(700)],
-                        color: restColor,
+              Expanded(
+                child: FitAmount(
+                  long: isLong(totals.rest),
+                  alignment: Alignment.centerRight,
+                  style: KibuoType.help,
+                  span: (short) => TextSpan(
+                    text: '${l.listRest} ',
+                    children: [
+                      TextSpan(
+                        text: restText(short),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontVariations: const [FontVariation.weight(700)],
+                          color: restColor,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                style: KibuoType.help,
               ),
             ],
           ),

@@ -51,6 +51,63 @@ String formatRate(ExchangeRate rate, String locale) {
       '${_withSymbol('', trimmed, quote.symbol, locale)}';
 }
 
+const _units = [(1000, 'k', 'K'), (1000000, 'M', 'M'), (1000000000, 'Md', 'B')];
+
+/// « 128,5 M FC », « 1,2 k $ » in French; « FC 128.5M », « $1.2K » in
+/// English (PRODUCT: Montants longs): one decimal at most, no « ,0 ».
+/// Below 1 000 the amount stays whole. Without [symbol], the number alone
+/// (« 2,4 M »), where the currency is said next to it.
+String formatShort(
+  Money amount,
+  CurrencyInfo currency,
+  String locale, {
+  bool symbol = true,
+}) {
+  final sign = amount.minor < 0 ? _minus : '';
+  final scale = _pow10(currency.digits).toInt();
+  final abs = amount.minor.abs();
+  var i = _units.lastIndexWhere((u) => abs >= u.$1 * scale);
+  if (i < 0) {
+    if (symbol) return formatMoney(amount, currency, locale);
+    final decimals = currency.usesDecimals ? currency.digits : 0;
+    return sign +
+        NumberFormat.decimalPatternDigits(
+          locale: locale,
+          decimalDigits: decimals,
+        ).format(abs / scale);
+  }
+  int tenthsIn(int unit) => (abs * 10 + unit * scale ~/ 2) ~/ (unit * scale);
+  var tenths = tenthsIn(_units[i].$1);
+  // 999 960 is « 1 M », not « 1 000 k ».
+  if (tenths >= 10000 && i < _units.length - 1) {
+    i++;
+    tenths = tenthsIn(_units[i].$1);
+  }
+  final format = NumberFormat.decimalPattern(locale);
+  final whole = format.format(tenths ~/ 10);
+  final decimal = tenths % 10 == 0
+      ? ''
+      : '${format.symbols.DECIMAL_SEP}${tenths % 10}';
+  final french = locale.startsWith('fr');
+  final unit = french ? '$_nbsp${_units[i].$2}' : _units[i].$3;
+  final number = '$whole$decimal$unit';
+  return symbol
+      ? _withSymbol(sign, number, currency.symbol, locale)
+      : '$sign$number';
+}
+
+/// [amount] whole, or short (« 128,5 M FC »).
+String formatAmount(
+  Money amount,
+  CurrencyInfo currency,
+  String locale, {
+  bool short = false,
+}) => (short ? formatShort : formatMoney)(amount, currency, locale);
+
+/// From 10 000 in its own currency, « Toujours » shortens an amount.
+bool isLong(Money amount) =>
+    amount.minor.abs() >= 10000 * _pow10(currencyOf(amount.currency).digits);
+
 String _withSymbol(String sign, String number, String symbol, String locale) {
   final before = !locale.startsWith('fr');
   if (!before) return '$sign$number$_nbsp$symbol';
