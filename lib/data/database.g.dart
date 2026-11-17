@@ -5128,6 +5128,937 @@ class AttachmentsCompanion extends UpdateCompanion<AttachmentRow> {
   }
 }
 
+class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, BudgetRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _positionMeta = const VerificationMeta(
+    'position',
+  );
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    categoryId,
+    position,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budgets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('position')) {
+      context.handle(
+        _positionMeta,
+        position.isAcceptableOrUnknown(data['position']!, _positionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_positionMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetsTable createAlias(String alias) {
+    return $BudgetsTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetRow extends DataClass implements Insertable<BudgetRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+
+  /// A top-level expense category; its subcategories count with it.
+  final String categoryId;
+
+  /// « Mon ordre ».
+  final int position;
+  const BudgetRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.categoryId,
+    required this.position,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['category_id'] = Variable<String>(categoryId);
+    map['position'] = Variable<int>(position);
+    return map;
+  }
+
+  BudgetsCompanion toCompanion(bool nullToAbsent) {
+    return BudgetsCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      categoryId: Value(categoryId),
+      position: Value(position),
+    );
+  }
+
+  factory BudgetRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      categoryId: serializer.fromJson<String>(json['categoryId']),
+      position: serializer.fromJson<int>(json['position']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'categoryId': serializer.toJson<String>(categoryId),
+      'position': serializer.toJson<int>(position),
+    };
+  }
+
+  BudgetRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? categoryId,
+    int? position,
+  }) => BudgetRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    categoryId: categoryId ?? this.categoryId,
+    position: position ?? this.position,
+  );
+  BudgetRow copyWithCompanion(BudgetsCompanion data) {
+    return BudgetRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      position: data.position.present ? data.position.value : this.position,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('position: $position')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, version, deviceId, deleted, categoryId, position);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.categoryId == this.categoryId &&
+          other.position == this.position);
+}
+
+class BudgetsCompanion extends UpdateCompanion<BudgetRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> categoryId;
+  final Value<int> position;
+  final Value<int> rowid;
+  const BudgetsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.position = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetsCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String categoryId,
+    required int position,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       categoryId = Value(categoryId),
+       position = Value(position);
+  static Insertable<BudgetRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? categoryId,
+    Expression<int>? position,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (categoryId != null) 'category_id': categoryId,
+      if (position != null) 'position': position,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? categoryId,
+    Value<int>? position,
+    Value<int>? rowid,
+  }) {
+    return BudgetsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      categoryId: categoryId ?? this.categoryId,
+      position: position ?? this.position,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('position: $position, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BudgetAmountsTable extends BudgetAmounts
+    with TableInfo<$BudgetAmountsTable, BudgetAmountRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetAmountsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _budgetIdMeta = const VerificationMeta(
+    'budgetId',
+  );
+  @override
+  late final GeneratedColumn<String> budgetId = GeneratedColumn<String>(
+    'budget_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fromMonthMeta = const VerificationMeta(
+    'fromMonth',
+  );
+  @override
+  late final GeneratedColumn<int> fromMonth = GeneratedColumn<int>(
+    'from_month',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    budgetId,
+    fromMonth,
+    amount,
+    currency,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budget_amounts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetAmountRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('budget_id')) {
+      context.handle(
+        _budgetIdMeta,
+        budgetId.isAcceptableOrUnknown(data['budget_id']!, _budgetIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_budgetIdMeta);
+    }
+    if (data.containsKey('from_month')) {
+      context.handle(
+        _fromMonthMeta,
+        fromMonth.isAcceptableOrUnknown(data['from_month']!, _fromMonthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fromMonthMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetAmountRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetAmountRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      budgetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}budget_id'],
+      )!,
+      fromMonth: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}from_month'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetAmountsTable createAlias(String alias) {
+    return $BudgetAmountsTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetAmountRow extends DataClass implements Insertable<BudgetAmountRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+  final String budgetId;
+
+  /// The first period it holds for, as year × 100 + month (202611).
+  final int fromMonth;
+
+  /// In the currency's minor unit.
+  final int amount;
+  final String currency;
+  const BudgetAmountRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.budgetId,
+    required this.fromMonth,
+    required this.amount,
+    required this.currency,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['budget_id'] = Variable<String>(budgetId);
+    map['from_month'] = Variable<int>(fromMonth);
+    map['amount'] = Variable<int>(amount);
+    map['currency'] = Variable<String>(currency);
+    return map;
+  }
+
+  BudgetAmountsCompanion toCompanion(bool nullToAbsent) {
+    return BudgetAmountsCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      budgetId: Value(budgetId),
+      fromMonth: Value(fromMonth),
+      amount: Value(amount),
+      currency: Value(currency),
+    );
+  }
+
+  factory BudgetAmountRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetAmountRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      budgetId: serializer.fromJson<String>(json['budgetId']),
+      fromMonth: serializer.fromJson<int>(json['fromMonth']),
+      amount: serializer.fromJson<int>(json['amount']),
+      currency: serializer.fromJson<String>(json['currency']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'budgetId': serializer.toJson<String>(budgetId),
+      'fromMonth': serializer.toJson<int>(fromMonth),
+      'amount': serializer.toJson<int>(amount),
+      'currency': serializer.toJson<String>(currency),
+    };
+  }
+
+  BudgetAmountRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? budgetId,
+    int? fromMonth,
+    int? amount,
+    String? currency,
+  }) => BudgetAmountRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    budgetId: budgetId ?? this.budgetId,
+    fromMonth: fromMonth ?? this.fromMonth,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+  );
+  BudgetAmountRow copyWithCompanion(BudgetAmountsCompanion data) {
+    return BudgetAmountRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      budgetId: data.budgetId.present ? data.budgetId.value : this.budgetId,
+      fromMonth: data.fromMonth.present ? data.fromMonth.value : this.fromMonth,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currency: data.currency.present ? data.currency.value : this.currency,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetAmountRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('budgetId: $budgetId, ')
+          ..write('fromMonth: $fromMonth, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    deviceId,
+    deleted,
+    budgetId,
+    fromMonth,
+    amount,
+    currency,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetAmountRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.budgetId == this.budgetId &&
+          other.fromMonth == this.fromMonth &&
+          other.amount == this.amount &&
+          other.currency == this.currency);
+}
+
+class BudgetAmountsCompanion extends UpdateCompanion<BudgetAmountRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> budgetId;
+  final Value<int> fromMonth;
+  final Value<int> amount;
+  final Value<String> currency;
+  final Value<int> rowid;
+  const BudgetAmountsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.budgetId = const Value.absent(),
+    this.fromMonth = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetAmountsCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String budgetId,
+    required int fromMonth,
+    required int amount,
+    required String currency,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       budgetId = Value(budgetId),
+       fromMonth = Value(fromMonth),
+       amount = Value(amount),
+       currency = Value(currency);
+  static Insertable<BudgetAmountRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? budgetId,
+    Expression<int>? fromMonth,
+    Expression<int>? amount,
+    Expression<String>? currency,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (budgetId != null) 'budget_id': budgetId,
+      if (fromMonth != null) 'from_month': fromMonth,
+      if (amount != null) 'amount': amount,
+      if (currency != null) 'currency': currency,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetAmountsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? budgetId,
+    Value<int>? fromMonth,
+    Value<int>? amount,
+    Value<String>? currency,
+    Value<int>? rowid,
+  }) {
+    return BudgetAmountsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      budgetId: budgetId ?? this.budgetId,
+      fromMonth: fromMonth ?? this.fromMonth,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (budgetId.present) {
+      map['budget_id'] = Variable<String>(budgetId.value);
+    }
+    if (fromMonth.present) {
+      map['from_month'] = Variable<int>(fromMonth.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetAmountsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('budgetId: $budgetId, ')
+          ..write('fromMonth: $fromMonth, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$KibuoDatabase extends GeneratedDatabase {
   _$KibuoDatabase(QueryExecutor e) : super(e);
   $KibuoDatabaseManager get managers => $KibuoDatabaseManager(this);
@@ -5140,6 +6071,8 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $TransactionsTable transactions = $TransactionsTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
+  late final $BudgetsTable budgets = $BudgetsTable(this);
+  late final $BudgetAmountsTable budgetAmounts = $BudgetAmountsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5154,6 +6087,8 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
     categories,
     transactions,
     attachments,
+    budgets,
+    budgetAmounts,
   ];
 }
 
@@ -7743,6 +8678,503 @@ typedef $$AttachmentsTableProcessedTableManager =
       AttachmentRow,
       PrefetchHooks Function()
     >;
+typedef $$BudgetsTableCreateCompanionBuilder = BudgetsCompanion Function({
+  required String id,
+  required int version,
+  required String deviceId,
+  Value<bool> deleted,
+  required String categoryId,
+  required int position,
+  Value<int> rowid,
+});
+typedef $$BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
+  Value<String> id,
+  Value<int> version,
+  Value<String> deviceId,
+  Value<bool> deleted,
+  Value<String> categoryId,
+  Value<int> position,
+  Value<int> rowid,
+});
+
+class $$BudgetsTableFilterComposer
+    extends Composer<_$KibuoDatabase, $BudgetsTable> {
+  $$BudgetsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BudgetsTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $BudgetsTable> {
+  $$BudgetsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BudgetsTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $BudgetsTable> {
+  $$BudgetsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => column);
+}
+
+class $$BudgetsTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $BudgetsTable,
+          BudgetRow,
+          $$BudgetsTableFilterComposer,
+          $$BudgetsTableOrderingComposer,
+          $$BudgetsTableAnnotationComposer,
+          $$BudgetsTableCreateCompanionBuilder,
+          $$BudgetsTableUpdateCompanionBuilder,
+          (
+            BudgetRow,
+            BaseReferences<_$KibuoDatabase, $BudgetsTable, BudgetRow>,
+          ),
+          BudgetRow,
+          PrefetchHooks Function()
+        > {
+  $$BudgetsTableTableManager(_$KibuoDatabase db, $BudgetsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BudgetsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> categoryId = const Value.absent(),
+                Value<int> position = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetsCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                categoryId: categoryId,
+                position: position,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String categoryId,
+                required int position,
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetsCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                categoryId: categoryId,
+                position: position,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BudgetsTable, BudgetRow>(table),
+                  BaseReferences<_$KibuoDatabase, $BudgetsTable, BudgetRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BudgetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $BudgetsTable,
+      BudgetRow,
+      $$BudgetsTableFilterComposer,
+      $$BudgetsTableOrderingComposer,
+      $$BudgetsTableAnnotationComposer,
+      $$BudgetsTableCreateCompanionBuilder,
+      $$BudgetsTableUpdateCompanionBuilder,
+      (BudgetRow, BaseReferences<_$KibuoDatabase, $BudgetsTable, BudgetRow>),
+      BudgetRow,
+      PrefetchHooks Function()
+    >;
+typedef $$BudgetAmountsTableCreateCompanionBuilder =
+    BudgetAmountsCompanion Function({
+      required String id,
+      required int version,
+      required String deviceId,
+      Value<bool> deleted,
+      required String budgetId,
+      required int fromMonth,
+      required int amount,
+      required String currency,
+      Value<int> rowid,
+    });
+typedef $$BudgetAmountsTableUpdateCompanionBuilder =
+    BudgetAmountsCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<String> deviceId,
+      Value<bool> deleted,
+      Value<String> budgetId,
+      Value<int> fromMonth,
+      Value<int> amount,
+      Value<String> currency,
+      Value<int> rowid,
+    });
+
+class $$BudgetAmountsTableFilterComposer
+    extends Composer<_$KibuoDatabase, $BudgetAmountsTable> {
+  $$BudgetAmountsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get budgetId => $composableBuilder(
+    column: $table.budgetId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fromMonth => $composableBuilder(
+    column: $table.fromMonth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BudgetAmountsTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $BudgetAmountsTable> {
+  $$BudgetAmountsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get budgetId => $composableBuilder(
+    column: $table.budgetId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fromMonth => $composableBuilder(
+    column: $table.fromMonth,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BudgetAmountsTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $BudgetAmountsTable> {
+  $$BudgetAmountsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get budgetId =>
+      $composableBuilder(column: $table.budgetId, builder: (column) => column);
+
+  GeneratedColumn<int> get fromMonth =>
+      $composableBuilder(column: $table.fromMonth, builder: (column) => column);
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+}
+
+class $$BudgetAmountsTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $BudgetAmountsTable,
+          BudgetAmountRow,
+          $$BudgetAmountsTableFilterComposer,
+          $$BudgetAmountsTableOrderingComposer,
+          $$BudgetAmountsTableAnnotationComposer,
+          $$BudgetAmountsTableCreateCompanionBuilder,
+          $$BudgetAmountsTableUpdateCompanionBuilder,
+          (
+            BudgetAmountRow,
+            BaseReferences<
+              _$KibuoDatabase,
+              $BudgetAmountsTable,
+              BudgetAmountRow
+            >,
+          ),
+          BudgetAmountRow,
+          PrefetchHooks Function()
+        > {
+  $$BudgetAmountsTableTableManager(
+    _$KibuoDatabase db,
+    $BudgetAmountsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetAmountsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetAmountsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BudgetAmountsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> budgetId = const Value.absent(),
+                Value<int> fromMonth = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetAmountsCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                budgetId: budgetId,
+                fromMonth: fromMonth,
+                amount: amount,
+                currency: currency,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String budgetId,
+                required int fromMonth,
+                required int amount,
+                required String currency,
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetAmountsCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                budgetId: budgetId,
+                fromMonth: fromMonth,
+                amount: amount,
+                currency: currency,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BudgetAmountsTable, BudgetAmountRow>(table),
+                  BaseReferences<
+                    _$KibuoDatabase,
+                    $BudgetAmountsTable,
+                    BudgetAmountRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BudgetAmountsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $BudgetAmountsTable,
+      BudgetAmountRow,
+      $$BudgetAmountsTableFilterComposer,
+      $$BudgetAmountsTableOrderingComposer,
+      $$BudgetAmountsTableAnnotationComposer,
+      $$BudgetAmountsTableCreateCompanionBuilder,
+      $$BudgetAmountsTableUpdateCompanionBuilder,
+      (
+        BudgetAmountRow,
+        BaseReferences<_$KibuoDatabase, $BudgetAmountsTable, BudgetAmountRow>,
+      ),
+      BudgetAmountRow,
+      PrefetchHooks Function()
+    >;
 
 class $KibuoDatabaseManager {
   final _$KibuoDatabase _db;
@@ -7765,4 +9197,8 @@ class $KibuoDatabaseManager {
       $$TransactionsTableTableManager(_db, _db.transactions);
   $$AttachmentsTableTableManager get attachments =>
       $$AttachmentsTableTableManager(_db, _db.attachments);
+  $$BudgetsTableTableManager get budgets =>
+      $$BudgetsTableTableManager(_db, _db.budgets);
+  $$BudgetAmountsTableTableManager get budgetAmounts =>
+      $$BudgetAmountsTableTableManager(_db, _db.budgetAmounts);
 }

@@ -218,6 +218,258 @@ abstract class AppLocalizations {
   /// **'Enregistrer'**
   String get monthStartSave;
 
+  /// Budgets page title and Plus row.
+  ///
+  /// In fr, this message translates to:
+  /// **'Budgets'**
+  String get budgetsTitle;
+
+  /// Budgets: none yet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun budget pour l’instant'**
+  String get budgetsEmptyTitle;
+
+  /// Budgets: none yet, the help.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fixez un montant par catégorie pour suivre vos dépenses.'**
+  String get budgetsEmptyHelp;
+
+  /// Budgets: the dashed button.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un budget'**
+  String get budgetsAdd;
+
+  /// Budgets summary: a period within one month, days only.
+  ///
+  /// In fr, this message translates to:
+  /// **'du {first} au {last}'**
+  String budgetsDays(String first, String last);
+
+  /// Budgets summary: spent out of the budgets' total.
+  ///
+  /// In fr, this message translates to:
+  /// **'{spent} sur {amount}'**
+  String budgetsOutOf(String spent, String amount);
+
+  /// Budgets: after an amount past its budget.
+  ///
+  /// In fr, this message translates to:
+  /// **'de trop'**
+  String get budgetsTooMuch;
+
+  /// Budget tile: under what is left.
+  ///
+  /// In fr, this message translates to:
+  /// **'restants sur {amount}'**
+  String budgetsLeftOf(String amount);
+
+  /// Budget tile: under what went past.
+  ///
+  /// In fr, this message translates to:
+  /// **'de trop sur {amount}'**
+  String budgetsOverOf(String amount);
+
+  /// Budget row: spent out of its amount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{spent} dépensés sur {amount}'**
+  String budgetsSpentOf(String spent, String amount);
+
+  /// Budgets list group.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépassés'**
+  String get budgetsGroupOver;
+
+  /// Budgets list group.
+  ///
+  /// In fr, this message translates to:
+  /// **'Presque atteints'**
+  String get budgetsGroupNear;
+
+  /// Budgets list group.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans les clous'**
+  String get budgetsGroupOk;
+
+  /// Budgets display sheet title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage des budgets'**
+  String get budgetsDisplay;
+
+  /// Budgets display: layout section.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disposition'**
+  String get budgetsLayout;
+
+  /// Budgets display: tiles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tuiles'**
+  String get budgetsTiles;
+
+  /// Budgets display: tiles help.
+  ///
+  /// In fr, this message translates to:
+  /// **'Deux colonnes, ce qui reste en grand'**
+  String get budgetsTilesHelp;
+
+  /// Budgets display: list.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste'**
+  String get budgetsList;
+
+  /// Budgets display: list help.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une ligne par budget, groupée par état'**
+  String get budgetsListHelp;
+
+  /// Budgets display: order section.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ordre'**
+  String get budgetsOrder;
+
+  /// Budgets display: most used first.
+  ///
+  /// In fr, this message translates to:
+  /// **'À surveiller'**
+  String get budgetsWatch;
+
+  /// Budgets display: watch help.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les plus consommés d’abord'**
+  String get budgetsWatchHelp;
+
+  /// Budgets display: the user's order.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mon ordre'**
+  String get budgetsMine;
+
+  /// Budgets display: own order help.
+  ///
+  /// In fr, this message translates to:
+  /// **'Celui que vous choisissez, en glissant'**
+  String get budgetsMineHelp;
+
+  /// Budgets display: closes the sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get budgetsDone;
+
+  /// New budget screen title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau budget'**
+  String get budgetNew;
+
+  /// Edit budget screen title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le budget'**
+  String get budgetEdit;
+
+  /// Budget form: the amount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant par mois'**
+  String get budgetAmount;
+
+  /// Budget form: the average under the amount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous dépensez en moyenne {amount} par mois en {category}'**
+  String budgetAverage(String amount, String category);
+
+  /// Budget form: category row.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get budgetCategory;
+
+  /// Budget form: no category yet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir'**
+  String get budgetChoose;
+
+  /// Budget form: period row.
+  ///
+  /// In fr, this message translates to:
+  /// **'Période'**
+  String get budgetPeriod;
+
+  /// Budget form: the period.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque mois'**
+  String get budgetEveryMonth;
+
+  /// Budget form: the note.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le reste ne se reporte pas sur le mois suivant.'**
+  String get budgetNoCarry;
+
+  /// Budget form: create.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le budget'**
+  String get budgetCreate;
+
+  /// Budget form: save.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get budgetSave;
+
+  /// Budget form: delete, in red.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le budget'**
+  String get budgetDelete;
+
+  /// Delete budget sheet title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le budget {category} ?'**
+  String budgetDeleteTitle(String category);
+
+  /// Delete budget sheet: the consequence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les opérations ne changent pas.'**
+  String get budgetDeleteText;
+
+  /// Delete budget sheet: the button.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get budgetDeleteConfirm;
+
+  /// Budget form: a category that has one.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà un budget'**
+  String get budgetAlready;
+
+  /// Code sheet reason when deleting a budget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour supprimer le budget {name}'**
+  String protectDeleteBudget(String name);
+
   /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:

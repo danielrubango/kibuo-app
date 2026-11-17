@@ -79,6 +79,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monthStartSave => 'Save';
 
   @override
+  String get budgetsTitle => 'Budgets';
+
+  @override
+  String get budgetsEmptyTitle => 'No budgets yet';
+
+  @override
+  String get budgetsEmptyHelp =>
+      'Set an amount per category to follow your spending.';
+
+  @override
+  String get budgetsAdd => 'Add a budget';
+
+  @override
+  String budgetsDays(String first, String last) {
+    return '$first to $last';
+  }
+
+  @override
+  String budgetsOutOf(String spent, String amount) {
+    return '$spent of $amount';
+  }
+
+  @override
+  String get budgetsTooMuch => 'over';
+
+  @override
+  String budgetsLeftOf(String amount) {
+    return 'left of $amount';
+  }
+
+  @override
+  String budgetsOverOf(String amount) {
+    return 'over $amount';
+  }
+
+  @override
+  String budgetsSpentOf(String spent, String amount) {
+    return '$spent spent of $amount';
+  }
+
+  @override
+  String get budgetsGroupOver => 'Over';
+
+  @override
+  String get budgetsGroupNear => 'Nearly reached';
+
+  @override
+  String get budgetsGroupOk => 'On track';
+
+  @override
+  String get budgetsDisplay => 'Budgets display';
+
+  @override
+  String get budgetsLayout => 'Layout';
+
+  @override
+  String get budgetsTiles => 'Tiles';
+
+  @override
+  String get budgetsTilesHelp => 'Two columns, what’s left large';
+
+  @override
+  String get budgetsList => 'List';
+
+  @override
+  String get budgetsListHelp => 'One row per budget, grouped by state';
+
+  @override
+  String get budgetsOrder => 'Order';
+
+  @override
+  String get budgetsWatch => 'To watch';
+
+  @override
+  String get budgetsWatchHelp => 'Most used first';
+
+  @override
+  String get budgetsMine => 'My order';
+
+  @override
+  String get budgetsMineHelp => 'The one you choose, by dragging';
+
+  @override
+  String get budgetsDone => 'Done';
+
+  @override
+  String get budgetNew => 'New budget';
+
+  @override
+  String get budgetEdit => 'Edit budget';
+
+  @override
+  String get budgetAmount => 'Amount per month';
+
+  @override
+  String budgetAverage(String amount, String category) {
+    return 'You spend $amount a month on average on $category';
+  }
+
+  @override
+  String get budgetCategory => 'Category';
+
+  @override
+  String get budgetChoose => 'Choose';
+
+  @override
+  String get budgetPeriod => 'Period';
+
+  @override
+  String get budgetEveryMonth => 'Every month';
+
+  @override
+  String get budgetNoCarry =>
+      'What’s left doesn’t carry over to the next month.';
+
+  @override
+  String get budgetCreate => 'Create the budget';
+
+  @override
+  String get budgetSave => 'Save';
+
+  @override
+  String get budgetDelete => 'Delete the budget';
+
+  @override
+  String budgetDeleteTitle(String category) {
+    return 'Delete the $category budget?';
+  }
+
+  @override
+  String get budgetDeleteText => 'Operations don’t change.';
+
+  @override
+  String get budgetDeleteConfirm => 'Delete';
+
+  @override
+  String get budgetAlready => 'Already has a budget';
+
+  @override
+  String protectDeleteBudget(String name) {
+    return 'To delete the $name budget';
+  }
+
+  @override
   String get homeAvailable => 'Available';
 
   @override

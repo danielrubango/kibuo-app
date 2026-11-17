@@ -14,6 +14,7 @@ import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
 import 'generated/schema_v8.dart' as v8;
+import 'generated/schema_v9.dart' as v9;
 
 KibuoDatabase _open(QueryExecutor e) => KibuoDatabase(e, deviceId: 'phone-1');
 
@@ -286,6 +287,65 @@ void main() {
         expect(kept.name, 'M-Pesa');
         expect(kept.overdraftAllowed, 0, reason: 'off for existing accounts');
         expect(kept.overdraftLimit, equals(null));
+      },
+    );
+  });
+
+  test('version 8 to 9 keeps the operations, adds budgets', () async {
+    const account = v8.AccountsData(
+      id: 'acc-1',
+      version: 60,
+      deviceId: 'phone-1',
+      deleted: 0,
+      name: 'M-Pesa',
+      type: 'mobile',
+      currency: 'USD',
+      openingBalance: 12000,
+      openingDate: 1793750400,
+      archived: 0,
+      position: 1,
+      overdraftAllowed: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 8,
+      newVersion: 9,
+      createOld: v8.DatabaseAtV8.new,
+      createNew: v9.DatabaseAtV9.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.accounts, account),
+      validateItems: (newDb) async {
+        expect(
+          (await newDb.select(newDb.accounts).get()).single.name,
+          'M-Pesa',
+        );
+        expect(await newDb.select(newDb.budgets).get(), isEmpty);
+        await newDb
+            .into(newDb.budgets)
+            .insert(
+              const v9.BudgetsData(
+                id: 'b-1',
+                version: 90,
+                deviceId: 'phone-1',
+                deleted: 0,
+                categoryId: 'default-food',
+                position: 0,
+              ),
+            );
+        await newDb
+            .into(newDb.budgetAmounts)
+            .insert(
+              const v9.BudgetAmountsData(
+                id: 'ba-1',
+                version: 91,
+                deviceId: 'phone-1',
+                deleted: 0,
+                budgetId: 'b-1',
+                fromMonth: 202611,
+                amount: 10000,
+                currency: 'USD',
+              ),
+            );
       },
     );
   });
