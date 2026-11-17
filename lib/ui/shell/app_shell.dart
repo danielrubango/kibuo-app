@@ -9,8 +9,10 @@ import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/hint_store.dart';
+import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
@@ -19,8 +21,10 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
+import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
+import 'package:kibuo/ui/settings/long_amounts_sheet.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/shell/add_sheet.dart';
@@ -73,6 +77,18 @@ class _AppShellState extends State<AppShell> {
     _homeShown.dispose();
     _thisMonth.dispose();
     super.dispose();
+  }
+
+  bool _choiceRead = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // « Montants longs », once at start.
+    final db = KibuoData.maybeOf(context);
+    if (_choiceRead || db == null) return;
+    _choiceRead = true;
+    LongAmountsStore(db).read().then((c) => longAmountsChoice.value = c);
   }
 
   void _show(_Tab tab) {
@@ -275,6 +291,15 @@ class _AppShellState extends State<AppShell> {
                 builder: (_) =>
                     CurrenciesScreen(repository: CurrencyRepository(db)),
               ),
+            ),
+          ),
+        if (db != null)
+          ValueListenableBuilder<LongAmounts>(
+            valueListenable: longAmountsChoice,
+            builder: (context, choice, _) => SettingsRow(
+              label: AppLocalizations.of(context).longAmounts,
+              value: longAmountsName(AppLocalizations.of(context), choice),
+              onTap: () => showLongAmountsSheet(context, LongAmountsStore(db)),
             ),
           ),
         if (lock != null)
