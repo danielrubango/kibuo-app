@@ -32,6 +32,7 @@ import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
+import 'package:kibuo/ui/start/first_launch.dart';
 import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
@@ -467,5 +468,32 @@ void main() {
         matchesGoldenFile('screens_out/demarrage_$ms.png'),
       );
     }
+  });
+
+  testWidgets('Premier lancement', (tester) async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'cap');
+    addTearDown(db.close);
+    await CurrencyRepository(db).ensurePrimaryCurrency('US');
+    await show(
+      tester,
+      KibuoData(
+        database: db,
+        child: const FirstLaunchGate(child: Text('Accueil')),
+      ),
+    );
+    await snap(tester, 'lancement_1');
+    await tester.tap(find.text('Continuer'));
+    await snap(tester, 'lancement_2');
+    await tester.tap(find.text('Continuer'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, 'M-Pesa');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await snap(tester, 'lancement_3');
+    await tester.drag(find.byType(ListView).first, const Offset(0, -500));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(Switch));
+    await snap(tester, 'lancement_3_decouvert');
+    await tester.tap(find.text('Continuer'));
+    await snap(tester, 'lancement_4');
   });
 }

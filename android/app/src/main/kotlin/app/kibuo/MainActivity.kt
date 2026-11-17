@@ -1,8 +1,10 @@
 package app.kibuo
 
+import android.app.LocaleManager
 import android.app.backup.BackupManager
 import android.content.res.Resources
 import android.os.Build
+import android.os.LocaleList
 import android.telephony.TelephonyManager
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -18,6 +20,16 @@ class MainActivity : FlutterFragmentActivity() {
         // system settings, which Kibuo's own language choice does not change.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/device")
             .setMethodCallHandler { call, result ->
+                // The language chosen in kibuo: Android 13+ keeps it as the
+                // app's own language, shown in Android's settings.
+                if (call.method == "appLanguage") {
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        getSystemService(LocaleManager::class.java).applicationLocales =
+                            LocaleList.forLanguageTags(call.arguments as String)
+                        return@setMethodCallHandler result.success(true)
+                    }
+                    return@setMethodCallHandler result.success(false)
+                }
                 if (call.method != "country") return@setMethodCallHandler result.notImplemented()
                 val phone = getSystemService(TELEPHONY_SERVICE) as? TelephonyManager
                 val country = listOfNotNull(

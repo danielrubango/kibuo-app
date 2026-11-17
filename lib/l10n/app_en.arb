@@ -415,5 +415,22 @@
   "searchFold": "Fold",
   "searchNothingInMonth": "Nothing in {month} for “{query}”.",
   "searchNoResultTitle": "No result for “{query}”",
-  "searchNoResultHelp": "Check the spelling or search for an amount."
+  "searchNoResultHelp": "Check the spelling or search for an amount.",
+  "firstWelcome": "Welcome to kibuo",
+  "firstWelcomeText": "Your accounts, debts and projects in one place. Your data stays on your phone.",
+  "firstLanguage": "Choose your language",
+  "firstContinue": "Continue",
+  "firstStep": "Step {step} of {count}",
+  "firstCurrencyTitle": "Your main currency",
+  "firstCurrencyText": "It is used for tracking and reports. Each account keeps its own currency.",
+  "firstCurrencySearch": "Search for a currency",
+  "firstCurrencySearchHint": "Name or code",
+  "firstAccountTitle": "Your first account",
+  "firstAccountText": "Start with the one you use most. You can add others later.",
+  "firstProtectTitle": "Protect your data",
+  "firstProtectText": "Your data stays on this phone. Without a backup, it is lost if you lose the phone.",
+  "firstLockTitle": "Lock the app",
+  "firstLockHelp": "PIN or fingerprint. You will be given a recovery code.",
+  "firstLater": "You can change these choices at any time in the settings.",
+  "firstStart": "Start"
 }
