@@ -1,6 +1,6 @@
 # Direction visuelle
 
-Direction retenue : **variante Blocs, thème clair**. Le thème sombre viendra plus tard ([backlog](../backlog/theme-sombre.md)). Les maquettes de référence sont sur la [planche Kibuo](https://claude.ai/artifact/CiWTkb7rvvSx7Vy8nxZwdm) (privée).
+Direction retenue : **variante Blocs, thème clair**. Le thème sombre viendra plus tard ([backlog](../backlog/theme-sombre.md)). Les maquettes de référence sont sur la [planche kibuo](https://claude.ai/artifact/CiWTkb7rvvSx7Vy8nxZwdm) (privée).
 
 ## Couleurs
 
@@ -21,7 +21,7 @@ Le menthe `#5EEAB5` avec un texte `#0E1320` sert au bloc du total, au bouton + e
 
 Validé le 15 novembre 2026, sur la page « Système de design » de la planche et sur l'écran du même nom de l'appli (Plus, version d'essai seulement). Chaque écran se construit avec ces pièces ; tout écart passe d'abord par une proposition.
 
-**Polices.** Plus Jakarta Sans pour les titres, les montants et les touches du clavier ; Inter pour le reste. Le nom « Kibuo » à côté du logo garde Space Grotesk.
+**Polices.** Plus Jakarta Sans pour les titres, les montants et les touches du clavier ; Inter pour le reste. Le nom « kibuo » à côté du logo garde Space Grotesk.
 
 **Une taille par rôle.**
 
@@ -49,22 +49,22 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Boutons.** Principal (menthe, un seul par écran, en bas), secondaire (blanc : Plus tard), contour (choix lourd mais sans danger), sombre (Terminé), danger (contour rouge ; appui maintenu pour un geste lourd sans feuille de confirmation, comme restaurer une sauvegarde ou tout effacer ; un simple toucher quand une feuille confirme déjà), créer (pointillés), et l'action texte verte.
 
-**Champs.** Le libellé au-dessus ; au repos, blanc sans bord ; en saisie, bord vert et curseur vert. Une valeur tapée au clavier Kibuo (montant, taux) est à gauche, juste après son préfixe gris (« 1 $ = »), et sa devise est une pastille grise à droite ; la pastille porte ˅ quand on peut changer la devise. Une erreur : bord rouge et une ligne rouge dessous. Un seul clavier à la fois : toucher un champ de texte ferme le clavier Kibuo, toucher un montant ferme celui du téléphone. Le champ touché remonte toujours au-dessus du clavier qui s'ouvre.
+**Champs.** Le libellé au-dessus ; au repos, blanc sans bord ; en saisie, bord vert et curseur vert. Une valeur tapée au clavier kibuo (montant, taux) est à gauche, juste après son préfixe gris (« 1 $ = »), et sa devise est une pastille grise à droite ; la pastille porte ˅ quand on peut changer la devise. Une erreur : bord rouge et une ligne rouge dessous. Un seul clavier à la fois : toucher un champ de texte ferme le clavier kibuo, toucher un montant ferme celui du téléphone. Le champ touché remonte toujours au-dessus du clavier qui s'ouvre.
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.
 
-**Feuilles.** Poignée claire, titre avec ✕, puis le contenu ; le clavier Kibuo est le même partout (1 à 9, virgule, 0, ←). Une feuille n'a pas de bouton « Annuler » : on la quitte par le ✕, un toucher à côté, un glissement vers le bas ou le geste retour. Un second bouton n'y reste que s'il dit autre chose que fermer (« Plus tard »).
+**Feuilles.** Poignée claire, titre avec ✕, puis le contenu ; le clavier kibuo est le même partout (1 à 9, virgule, 0, ←). Une feuille n'a pas de bouton « Annuler » : on la quitte par le ✕, un toucher à côté, un glissement vers le bas ou le geste retour. Un second bouton n'y reste que s'il dit autre chose que fermer (« Plus tard »).
 
 **Icônes.** Toutes de Phosphor, y compris ‹ pour revenir et ← pour effacer.
 
 ## Icônes et animations
 
 - Phosphor pour les icônes courantes (listes, réglages, catégories) et pour la barre du bas : la version en trait au repos, la version pleine pour l'onglet actif.
-- Dessinées pour Kibuo, avec la pièce ambre et la menthe du logo, pour ce qui donne vie à l'application : les 5 choix du + avec la saisie rapide d'abord, puis les moments forts (premier lancement, listes vides, objectif atteint, sauvegarde réussie, données restaurées), chacun avec son écran.
+- Dessinées pour kibuo, avec la pièce ambre et la menthe du logo, pour ce qui donne vie à l'application : les 5 choix du + avec la saisie rapide d'abord, puis les moments forts (premier lancement, listes vides, objectif atteint, sauvegarde réussie, données restaurées), chacun avec son écran.
 - Les icônes et petites réactions s'animent dans le code de l'application. Pour une animation sans interaction (une scène du premier lancement, par exemple), Lottie reste possible ; Rive sera réévalué si une scène doit réagir aux gestes.
 - Quand « Supprimer les animations » est actif sur le téléphone, tout change d'état sans bouger.
 - Écrans du code (créer, déverrouiller, attendre) : le titre et les cases en haut, une case par chiffre (deux cases en pointillés pour les 5ᵉ et 6ᵉ chiffres facultatifs à la création, la case suivante bordée de vert), un point dans chaque case remplie ; le clavier mélangé et « Valider » en bas, sous le pouce. Le déverrouillage montre le logo au-dessus du titre, puis « Utiliser l'empreinte » et « Code oublié ? » sous les cases. Pendant l'attente, cases et clavier sont grisés et le décompte s'affiche en ambre (« Réessayez dans 0:28. »).
-- Écran de démarrage Kibuo : le logo reste exactement à la place et à la taille de l'écran d'Android, la pièce glisse un peu dans la fente, puis « Kibuo » apparaît dessous en Space Grotesk ; l'Accueil arrive en fondu.
+- Écran de démarrage kibuo (canvas DemarrageE, avec la tirelire de DemarrageC) : le logo reste exactement à la place et à la taille de l'écran d'Android. La pièce tombe dans la fente avec un petit rebond (0 à 0,52 s) ; la tirelire s'aplatit un instant en la recevant, 3 % plus large et 4 % plus basse depuis sa base (0,4 à 0,68 s) ; puis le nom dessiné « kibuo » (la pièce en point du i, voir BRAND) apparaît dessous, en grandissant un peu et en resserrant ses lettres, avec un léger ressort (0,4 à 0,85 s). L'Accueil arrive en fondu. Tout reste immobile si le téléphone demande moins d'animations.
 - Une vibration discrète quand l'éventail du + s'ouvre, puis à chaque nouveau choix survolé. Aucune sur les onglets.
 
 ## Règles d'écran
@@ -104,7 +104,7 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 - Quand un objectif est atteint, une feuille le dit (« 300,00 $ mis de côté pour Voyage à Goma, 9 jours avant la date ») et demande « Et maintenant ? » : « Je l'ai dépensé » (on enregistre la dépense, le projet se termine), « Le garder de côté », ou « Le rendre disponible ».
 - Un réglage à choix unique s'ouvre en feuille par-dessus Réglages. La langue : une liste, la langue choisie cochée, choisie dès qu'on la touche. Le début du mois : une roue qui défile (« 1er », « 2 »… « 28 », « Dernier jour »), le jour choisi au centre sur fond gris, les autres de plus en plus pâles, puis ce que ça donne (« Novembre ira du 25 octobre au 24 novembre ») et « Enregistrer ».
 - Exporter en CSV est un écran d'action sans barre du bas : la période (avec le nombre d'opérations), les comptes, les brouillons et les notes à inclure, le rappel que ce fichier ne sert pas à restaurer, et « Exporter 38 opérations » collé en bas ; le fichier part par le partage du téléphone.
-- Aide et support : des questions fréquentes, puis « Nous écrire » par WhatsApp ou e-mail, envoyés depuis le téléphone ; Kibuo n'envoie aucune donnée. À propos : le logo, la version, une phrase sur Kibuo, puis Confidentialité, Conditions d'utilisation, Licences et Site web. Noter Kibuo : une feuille sur Plus avec cinq étoiles, « Continuer sur le Play Store », « Plus tard » et « Écrivez-nous ».
+- Aide et support : des questions fréquentes, puis « Nous écrire » par WhatsApp ou e-mail, envoyés depuis le téléphone ; kibuo n'envoie aucune donnée. À propos : le logo, la version, une phrase sur kibuo, puis Confidentialité, Conditions d'utilisation, Licences et Site web. Noter kibuo : une feuille sur Plus avec cinq étoiles, « Continuer sur le Play Store », « Plus tard » et « Écrivez-nous ».
 - Cas « À traiter » : dette en retard, créance à réclamer, budget dépassé, brouillons, échéance proche, budget presque atteint, sauvegarde ancienne, projet en retard sur son objectif, taux de change ancien.
 - Les blocs de l'accueil et de l'aperçu mènent chacun à leur espace (chevron à droite du titre du bloc).
 - L'accueil résume dettes et créances en deux blocs : montant, nombre, puis retard ou prochaine date. Le détail par personne est sur l'écran « Dettes et créances ».

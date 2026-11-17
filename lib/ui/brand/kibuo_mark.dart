@@ -10,11 +10,13 @@ import 'package:kibuo/ui/theme/kibuo_colors.dart';
 /// centre of the box.
 ///
 /// [coinDrop] moves the coin down into the slot, in logo units; the part that
-/// enters the slot is hidden by it.
+/// enters the slot is hidden by it. [squash] (0 to 1) flattens the piggy
+/// bank a little from its base, as when it takes the coin.
 class KibuoMarkPainter extends CustomPainter {
-  const KibuoMarkPainter({this.coinDrop = 0});
+  const KibuoMarkPainter({this.coinDrop = 0, this.squash = 0});
 
   final double coinDrop;
+  final double squash;
 
   static const _coinY = 27.0;
   static const _coinR = 10.0;
@@ -25,7 +27,13 @@ class KibuoMarkPainter extends CustomPainter {
     canvas
       ..save()
       ..scale(size.width / 96, size.height / 96)
-      ..drawCircle(const Offset(48, 48), 25, Paint()..color = KibuoColors.mint);
+      // Flattened from the base of the circle: 3 % wider, 4 % lower.
+      ..save()
+      ..translate(48, 73)
+      ..scale(1 + .03 * squash, 1 - .04 * squash)
+      ..translate(-48, -73)
+      ..drawCircle(const Offset(48, 48), 25, Paint()..color = KibuoColors.mint)
+      ..restore();
 
     final coinY = _coinY + coinDrop;
     final edge = Paint()
@@ -65,5 +73,6 @@ class KibuoMarkPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(KibuoMarkPainter old) => old.coinDrop != coinDrop;
+  bool shouldRepaint(KibuoMarkPainter old) =>
+      old.coinDrop != coinDrop || old.squash != squash;
 }
