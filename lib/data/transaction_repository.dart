@@ -12,6 +12,20 @@ export 'package:kibuo/domain/transactions/entry_total.dart';
 export 'package:kibuo/domain/transactions/transfer_total.dart';
 
 /// An expense, income or transfer as the screens show it.
+/// Where a recurrence's operation comes from: the rule, the day it fell
+/// on (yyyymmdd), and « done » or « draft ».
+class Occurrence {
+  const Occurrence({
+    required this.ruleId,
+    required this.day,
+    this.status = 'done',
+  });
+
+  final String ruleId;
+  final int day;
+  final String status;
+}
+
 class TransactionInfo {
   const TransactionInfo({
     required this.id,
@@ -26,6 +40,8 @@ class TransactionInfo {
     this.rate,
     this.rateTyped = false,
     this.note,
+    this.status = 'done',
+    this.recurringId,
   });
 
   final String id;
@@ -56,6 +72,14 @@ class TransactionInfo {
   final EntryTotal total;
   final DateTime date;
   final String? note;
+
+  /// « done », « draft » or « ignored » (GLOSSARY: Brouillon).
+  final String status;
+
+  /// The recurrence it comes from.
+  final String? recurringId;
+
+  bool get isDraft => status == 'draft';
 }
 
 /// The user's expenses and income. Every write carries the sync metadata of
@@ -88,15 +112,24 @@ class TransactionRepository {
       _db.accounts,
     )..where((a) => a.id.equals(accountId))).getSingle();
     final accountCurrency = await currencies.currency(account.currency);
-    final total = entryTotal(
-      kind: kind,
-      paid: paid,
-      account: accountCurrency,
-      rate: paid.currency == account.currency ? null : rate,
-      fees: fees,
-    );
+    // A recurrence's draft waiting for a rate (PRODUCT): nothing converted
+    // until it is validated with one.
+    final waitsForRate = paid.currency != account.currency && rate == null;
+    final total = waitsForRate
+        ? EntryTotal(
+            kind: kind,
+            converted: Money(0, account.currency),
+            fees: Money(fees, account.currency),
+          )
+        : entryTotal(
+            kind: kind,
+            paid: paid,
+            account: accountCurrency,
+            rate: paid.currency == account.currency ? null : rate,
+            fees: fees,
+          );
     await currencies.addCurrency(paid.currency);
-    final usesRate = paid.currency != account.currency;
+    final usesRate = paid.currency != account.currency && !waitsForRate;
     final clean = note?.trim();
     return TransactionsCompanion(
       kind: Value(kind.stored),
@@ -127,6 +160,7 @@ class TransactionRepository {
     ExchangeRate? rate,
     bool rateTyped = false,
     String? note,
+    Occurrence? occurrence,
   }) async {
     final id = const Uuid().v7();
     final columns = await _columns(
@@ -147,10 +181,21 @@ class TransactionRepository {
             id: Value(id),
             version: Value(await _nextVersion()),
             deviceId: Value(_db.deviceId),
+            status: Value(occurrence?.status ?? 'done'),
+            recurringId: Value(occurrence?.ruleId),
+            occurrence: Value(occurrence?.day),
           ),
         );
     return id;
   }
+
+  /// A draft becomes an operation that counts.
+  Future<void> validate(String id) =>
+      _write(id, const TransactionsCompanion(status: Value('done')));
+
+  /// A draft set aside: it stays at its date and counts nothing.
+  Future<void> ignore(String id) =>
+      _write(id, const TransactionsCompanion(status: Value('ignored')));
 
   Future<void> update(
     String id, {
@@ -229,6 +274,7 @@ class TransactionRepository {
     ExchangeRate? rate,
     bool rateTyped = false,
     String? note,
+    Occurrence? occurrence,
   }) async {
     final id = const Uuid().v7();
     final columns = await _transferColumns(
@@ -248,6 +294,9 @@ class TransactionRepository {
             id: Value(id),
             version: Value(await _nextVersion()),
             deviceId: Value(_db.deviceId),
+            status: Value(occurrence?.status ?? 'done'),
+            recurringId: Value(occurrence?.ruleId),
+            occurrence: Value(occurrence?.day),
           ),
         );
     return id;
@@ -292,11 +341,16 @@ class TransactionRepository {
     );
   }
 
-  /// Every operation, newest first.
-  Future<List<TransactionInfo>> all() async {
+  /// Every operation that counts, newest first; with [drafts], the drafts
+  /// and ignored ones of recurrences too.
+  Future<List<TransactionInfo>> all({bool drafts = false}) async {
     final rows =
         await (_db.select(_db.transactions)
-              ..where((t) => t.deleted.not())
+              ..where(
+                (t) => drafts
+                    ? t.deleted.not()
+                    : t.deleted.not() & t.status.equals('done'),
+              )
               ..orderBy([
                 (t) => OrderingTerm.desc(t.date),
                 (t) => OrderingTerm.desc(t.version),
@@ -363,6 +417,8 @@ class TransactionRepository {
       ),
       date: r.date.toUtc(),
       note: r.note,
+      status: r.status,
+      recurringId: r.recurringId,
     );
   }
 }

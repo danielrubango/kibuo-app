@@ -7,6 +7,7 @@ import 'package:kibuo/data/database.dart';
 
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
+import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -349,4 +350,41 @@ void main() {
       },
     );
   });
+
+  test(
+    'version 9 to 10 keeps the operations, done, and adds recurrences',
+    () async {
+      const op = v9.TransactionsData(
+        id: 'tx-1',
+        version: 95,
+        deviceId: 'phone-1',
+        deleted: 0,
+        kind: 'out',
+        accountId: 'acc-1',
+        categoryId: 'default-taxi',
+        amount: 1500,
+        currency: 'USD',
+        rateTyped: 0,
+        converted: 1500,
+        fees: 0,
+        date: 1794700000,
+      );
+
+      await verifier.testWithDataIntegrity(
+        oldVersion: 9,
+        newVersion: 10,
+        createOld: v9.DatabaseAtV9.new,
+        createNew: v10.DatabaseAtV10.new,
+        openTestedDatabase: _open,
+        createItems: (batch, oldDb) => batch.insert(oldDb.transactions, op),
+        validateItems: (newDb) async {
+          final kept = (await newDb.select(newDb.transactions).get()).single;
+          expect(kept.amount, 1500);
+          expect(kept.status, 'done', reason: 'existing operations count');
+          expect(kept.recurringId, equals(null));
+          expect(await newDb.select(newDb.recurringRules).get(), isEmpty);
+        },
+      );
+    },
+  );
 }

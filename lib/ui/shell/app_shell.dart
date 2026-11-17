@@ -13,6 +13,7 @@ import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/month_start_store.dart';
 import 'package:kibuo/data/preference_store.dart';
+import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/long_amounts.dart';
@@ -60,7 +61,7 @@ class AppShell extends StatefulWidget {
   State<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
+class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   _Tab _tab = _Tab.home;
   bool _fanOpen = false;
   bool _tip = false;
@@ -85,6 +86,7 @@ class _AppShellState extends State<AppShell> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     OperationsScreen.show.addListener(_showOperations);
   }
 
@@ -94,6 +96,7 @@ class _AppShellState extends State<AppShell> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     OperationsScreen.show.removeListener(_showOperations);
     _saved.dispose();
     _homeShown.dispose();
@@ -112,6 +115,20 @@ class _AppShellState extends State<AppShell> {
     _choiceRead = true;
     LongAmountsStore(db).read().then((c) => longAmountsChoice.value = c);
     MonthStartStore(db).read().then((d) => monthStartChoice.value = d);
+    _catchUp();
+  }
+
+  /// Recurrences' missed dates (PRODUCT): at every opening and return.
+  Future<void> _catchUp() async {
+    final db = KibuoData.maybeOf(context);
+    if (db == null) return;
+    final made = await RecurringRepository(db).catchUp(DateTime.now());
+    if (made > 0 && mounted) _saved.value++;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _catchUp();
   }
 
   void _show(_Tab tab) {
