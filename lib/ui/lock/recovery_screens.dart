@@ -15,9 +15,11 @@ import 'package:kibuo/ui/theme/kibuo_theme.dart';
 /// Shows a new [code], then asks to retype one group drawn at random.
 /// True once the user has proved they wrote it down.
 Future<bool> handOverRecoveryCode(BuildContext context, String code) async {
+  final lock = KibuoLock.maybeControllerOf(context);
   final proved = await Navigator.of(context).push<bool>(
     MaterialPageRoute(builder: (_) => RecoveryShowScreen(code: code)),
   );
+  if (proved ?? false) await lock?.markRecoveryVerified();
   return proved ?? false;
 }
 

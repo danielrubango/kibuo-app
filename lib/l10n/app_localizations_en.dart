@@ -287,6 +287,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetEditAction => 'Edit';
 
   @override
+  String confirmCategoryBudget(String amount) {
+    return 'Its $amount monthly budget is deleted too.';
+  }
+
+  @override
+  String get securityRecoveryUnverified => 'Not checked';
+
+  @override
   String get homeAvailable => 'Available';
 
   @override

@@ -11,6 +11,7 @@ import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/brand/kibuo_mark.dart';
 import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/choice_tile.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -442,35 +443,28 @@ class _ProtectionStepState extends State<_ProtectionStep> {
           text: l.firstProtectText,
         ),
         const SizedBox(height: 20),
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
-          decoration: BoxDecoration(
-            color: KibuoColors.surface,
-            borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l.firstLockTitle, style: KibuoType.itemName),
-                    const SizedBox(height: 4),
-                    Text(
-                      l.firstLockHelp,
-                      style: KibuoType.body.copyWith(
-                        height: 20 / 14,
-                        color: KibuoColors.inkSecondary,
-                      ),
-                    ),
-                  ],
+        Material(
+          color: KibuoColors.surface,
+          borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+          clipBehavior: Clip.antiAlias,
+          child: SwitchRow(
+            padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+            value: _lock,
+            onChanged: (on) => setState(() => _lock = on),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.firstLockTitle, style: KibuoType.itemName),
+                const SizedBox(height: 4),
+                Text(
+                  l.firstLockHelp,
+                  style: KibuoType.body.copyWith(
+                    height: 20 / 14,
+                    color: KibuoColors.inkSecondary,
+                  ),
                 ),
-              ),
-              Switch(
-                value: _lock,
-                onChanged: (on) => setState(() => _lock = on),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 16),
