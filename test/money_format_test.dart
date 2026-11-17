@@ -72,4 +72,50 @@ void main() {
     expect(plain(formatRate(r('3043.4782608'), 'fr')), '1 € = 3 043,48 \$');
     expect(plain(formatRate(r('0.000357'), 'fr')), '1 € = 0,0004 \$');
   });
+
+  group('short amounts (PRODUCT: Montants longs)', () {
+    String short(
+      String major,
+      CurrencyInfo c,
+      String lang, {
+      bool symbol = true,
+    }) =>
+        plain(formatShort(Money.fromMajor(major, c), c, lang, symbol: symbol));
+
+    test('k, M, Md, one decimal at most, no « ,0 »', () {
+      expect(short('128450300', cdf, 'fr'), '128,5 M FC');
+      expect(short('1245', cdf, 'fr'), '1,2 k FC');
+      expect(short('55000', cdf, 'fr'), '55 k FC');
+      expect(short('2100000000', cdf, 'fr'), '2,1 Md FC');
+      expect(short('707500', cdf, 'fr'), '707,5 k FC');
+      expect(short('-2412500', cdf, 'fr'), '−2,4 M FC');
+    });
+
+    test('rounding up to the next unit', () {
+      expect(short('999960', cdf, 'fr'), '1 M FC');
+      expect(short('999940', cdf, 'fr'), '999,9 k FC');
+    });
+
+    test('cents count, and small amounts stay whole', () {
+      expect(short('1234.56', usd, 'fr'), r'1,2 k $');
+      expect(short('950', usd, 'fr'), r'950,00 $');
+    });
+
+    test('in English: K, M, B, symbol before', () {
+      expect(short('128450300', cdf, 'en'), 'FC 128.5M');
+      expect(short('1245', usd, 'en'), r'$1.2K');
+      expect(short('2100000000', usd, 'en'), r'$2.1B');
+      expect(short('-2412500', usd, 'en'), r'−$2.4M');
+    });
+
+    test('without the currency, where it is said next to it', () {
+      expect(short('2412500', cdf, 'fr', symbol: false), '2,4 M');
+    });
+
+    test('« Toujours » shortens from 10 000 in the amount’s currency', () {
+      expect(isLong(Money.fromMajor('9999.99', usd)), isFalse);
+      expect(isLong(Money.fromMajor('10000', usd)), isTrue);
+      expect(isLong(Money.fromMajor('-10000', cdf)), isTrue);
+    });
+  });
 }

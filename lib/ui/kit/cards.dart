@@ -362,3 +362,47 @@ class IconRow extends StatelessWidget {
     );
   }
 }
+
+/// One choice of a sheet: its name, a line under it, and a check when it
+/// is the one (Affichage des comptes, Montants longs).
+class CheckChoice extends StatelessWidget {
+  const CheckChoice({
+    super.key,
+    required this.label,
+    required this.help,
+    required this.on,
+    required this.onTap,
+  });
+
+  final String label;
+  final String help;
+  final bool on;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: on,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(label, style: KibuoType.rowLabel),
+                    Text(help, style: KibuoType.caption),
+                  ],
+                ),
+              ),
+              if (on) const Icon(KibuoIcons.check, color: KibuoColors.accent),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -132,13 +132,18 @@ class OperationTile extends StatelessWidget {
 }
 
 /// « −5,11 $ » or « +49,50 $ »: what the operation did to its account.
-String signedTotal(BuildContext context, TransactionInfo t) {
+String signedTotal(
+  BuildContext context,
+  TransactionInfo t, {
+  bool short = false,
+}) {
   final lang = Localizations.localeOf(context).languageCode;
   final total = t.total.total;
-  final text = formatMoney(
+  final text = formatAmount(
     Money(total.minor.abs(), total.currency),
     currencyOf(total.currency),
     lang,
+    short: short,
   );
   return switch (t.kind) {
     EntryKind.expense => '−$text',

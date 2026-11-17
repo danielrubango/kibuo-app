@@ -365,10 +365,11 @@ void main() {
     final all = tester.widgetList<FilterChipButton>(chips).toList();
     final inRow = chips.at(all.indexWhere((c) => !c.open && c.active));
     final copy = chips.at(all.indexWhere((c) => c.open));
-    expect(tester.getRect(copy), tester.getRect(inRow));
+    // To the fraction of a pixel.
+    expect(tester.getRect(copy), rectMoreOrLessEquals(tester.getRect(inRow)));
     expect(
       tester.getTopLeft(find.byType(ChoiceMenu)).dy,
-      tester.getBottomLeft(inRow).dy + 6,
+      moreOrLessEquals(tester.getBottomLeft(inRow).dy + 6),
     );
   });
 

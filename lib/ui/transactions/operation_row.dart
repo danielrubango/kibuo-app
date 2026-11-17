@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/ui/money/fit_amount.dart';
+import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
@@ -76,9 +78,13 @@ class OperationRow extends StatelessWidget {
                           borderRadius: BorderRadius.circular(6),
                         )
                       : null,
-                  child: Text(
-                    signedTotal(context, t),
+                  child: FitAmount(
+                    long: isLong(t.total.total),
+                    alignment: Alignment.centerRight,
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.4,
                     style: KibuoType.buttonSmall.copyWith(color: ink),
+                    span: (short) =>
+                        TextSpan(text: signedTotal(context, t, short: short)),
                   ),
                 ),
               ],

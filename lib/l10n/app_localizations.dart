@@ -134,6 +134,54 @@ abstract class AppLocalizations {
   /// **'Aujourd’hui'**
   String get homeTitle;
 
+  /// Setting: how long amounts are written.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montants longs'**
+  String get longAmounts;
+
+  /// Long amounts: shortened only when they do not fit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Automatique'**
+  String get longAmountsAuto;
+
+  /// Long amounts: under Automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Raccourcit seulement ce qui ne tient pas'**
+  String get longAmountsAutoHelp;
+
+  /// Long amounts: shortened from 10 000.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toujours'**
+  String get longAmountsAlways;
+
+  /// Long amounts: under Toujours.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dès 10 000 : 1,2 M au lieu de 1 245 000'**
+  String get longAmountsAlwaysHelp;
+
+  /// Long amounts: always whole.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jamais'**
+  String get longAmountsNever;
+
+  /// Long amounts: under Jamais.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toujours en entier, plus petit s’il le faut'**
+  String get longAmountsNeverHelp;
+
+  /// Long amounts: under the choices.
+  ///
+  /// In fr, this message translates to:
+  /// **'La saisie, le détail d’une opération et les confirmations montrent toujours le montant entier.'**
+  String get longAmountsNote;
+
   /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:
