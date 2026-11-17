@@ -29,6 +29,7 @@ import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/long_amounts_sheet.dart';
@@ -162,6 +163,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         db,
         getApplicationSupportDirectory,
       ),
+      recurrences: RecurringRepository(db),
     );
   }
 
@@ -327,6 +329,18 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                 ),
               ),
             ),
+          ),
+        if (_entryData(context) case final data?)
+          SettingsRow(
+            label: AppLocalizations.of(context).recurrencesTitle,
+            // What it made may have reached the list.
+            onTap: () => Navigator.of(context)
+                .push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => RecurrencesScreen(data: data),
+                  ),
+                )
+                .then((_) => _saved.value++),
           ),
         if (db != null)
           SettingsRow(

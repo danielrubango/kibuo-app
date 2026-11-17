@@ -4,6 +4,7 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -18,6 +19,8 @@ import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/recurrences/repeat_screen.dart';
+import 'package:kibuo/ui/recurrences/rhythm_text.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -38,6 +41,7 @@ class EntryData {
     required this.attachments,
     this.picker = const DeviceAttachmentPicker(),
     this.opener = const DeviceAttachmentOpener(),
+    this.recurrences,
   });
 
   final AccountRepository accounts;
@@ -47,6 +51,9 @@ class EntryData {
   final AttachmentRepository attachments;
   final AttachmentPicker picker;
   final AttachmentOpener opener;
+
+  /// Where « Répéter » keeps its recurrences; without it, no « Répéter ».
+  final RecurringRepository? recurrences;
 }
 
 /// Opens [item] in the viewer.
@@ -78,6 +85,8 @@ class EntryScreen extends StatefulWidget {
     this.editing = false,
     this.now,
     this.accountId,
+    this.rule,
+    this.ruleOnly = false,
   });
 
   /// The account to start on (the one just created).
@@ -88,6 +97,12 @@ class EntryScreen extends StatefulWidget {
   final TransactionInfo? initial;
   final bool editing;
   final DateTime Function()? now;
+
+  /// Only a recurrence (« Nouvelle récurrence » from Récurrences, or its
+  /// « Modifier » with [rule]): « Date » becomes « Première fois », and
+  /// saving keeps the recurrence alone.
+  final bool ruleOnly;
+  final RecurringInfo? rule;
 
   @override
   State<EntryScreen> createState() => _EntryScreenState();
@@ -112,6 +127,7 @@ class _EntryScreenState extends State<EntryScreen> {
   bool _rateTyped = false;
   String _rateText = '';
   late DateTime _date;
+  RepeatChoice? _repeat;
   final _note = TextEditingController();
   bool _keypad = true;
   final _amountKey = GlobalKey();
@@ -133,6 +149,26 @@ class _EntryScreenState extends State<EntryScreen> {
     super.initState();
     final initial = widget.initial;
     _date = widget.editing && initial != null ? initial.date.toLocal() : _now();
+    final rule = widget.rule;
+    if (rule != null) {
+      final s = rule.schedule;
+      final next = rule.upcoming(_now(), count: 1);
+      _date = next.isEmpty ? s.start : next.first;
+      _repeat = RepeatChoice(
+        unit: s.unit,
+        start: _date,
+        every: s.every,
+        weekdays: s.weekdays,
+        end: s.count != null
+            ? RepeatEnd.count
+            : s.until != null
+            ? RepeatEnd.date
+            : RepeatEnd.never,
+        count: s.count ?? 6,
+        until: s.until,
+        asDraft: rule.asDraft ?? false,
+      );
+    }
     _note.text = initial?.note ?? '';
     _keypad = initial == null;
     _load();
@@ -408,7 +444,7 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   bool get _canSave =>
-      _refusal == null &&
+      (widget.ruleOnly ? _repeat != null : _refusal == null) &&
       (_paid?.minor ?? 0) > 0 &&
       _account != null &&
       (_transfer
@@ -558,8 +594,11 @@ class _EntryScreenState extends State<EntryScreen> {
     final day = await showDatePicker(
       context: context,
       initialDate: _date,
-      firstDate: DateTime(2000),
-      lastDate: now,
+      firstDate: widget.ruleOnly
+          ? DateTime(now.year, now.month, now.day)
+          : DateTime(2000),
+      // A recurrence may start later; an operation never does (PRODUCT).
+      lastDate: widget.ruleOnly ? DateTime(now.year + 5) : now,
     );
     if (day == null || !mounted) return;
     final time = await showTimePicker(
@@ -574,11 +613,100 @@ class _EntryScreenState extends State<EntryScreen> {
       time?.minute ?? _date.minute,
     );
     // No operation in the future (PRODUCT: planned ones come later).
-    if (picked.isAfter(now)) picked = now;
-    setState(() => _date = picked);
+    if (!widget.ruleOnly && picked.isAfter(now)) picked = now;
+    setState(() {
+      _date = picked;
+      _repeat = _repeat?.copyWith(start: picked);
+    });
+  }
+
+  /// « Répéter » (canvas RepeterA): opens « Nouvelle récurrence ».
+  Future<void> _chooseRepeat() async {
+    final l = AppLocalizations.of(context);
+    final paid = _paid;
+    final account = _account;
+    final answer = await Navigator.of(context).push<RepeatAnswer>(
+      MaterialPageRoute(
+        builder: (_) => RepeatScreen(
+          start: _date,
+          initial: _repeat,
+          facts: [
+            if (paid != null && paid.minor > 0) (l.entryAmount, _money(paid)),
+            if (account != null) (l.entryAccount, account.name),
+            if (_transfer && _to != null)
+              (l.transferTo, _to!.name)
+            else if (_category != null)
+              (l.entryCategory, categoryName(l, _category!)),
+          ],
+        ),
+      ),
+    );
+    if (answer != null && mounted) setState(() => _repeat = answer.choice);
+  }
+
+  /// Keeps « Répéter »'s recurrence: from this entry ([firstMade]), or on
+  /// its own.
+  Future<String> _saveRule({String? firstMade}) async {
+    final repo = widget.data.recurrences!;
+    final r = _repeat!;
+    final s = r.schedule;
+    final args = (
+      kind: _kind,
+      accountId: _account!.id,
+      toAccountId: _transfer ? _to?.id : null,
+      categoryId: _transfer ? null : _category?.id,
+      amount: _paid!,
+      fees: _feesMinor,
+      note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+    );
+    final rule = widget.rule;
+    if (rule != null) {
+      await repo.update(
+        rule.id,
+        kind: args.kind,
+        accountId: args.accountId,
+        toAccountId: args.toAccountId,
+        categoryId: args.categoryId,
+        amount: args.amount,
+        fees: args.fees,
+        note: args.note,
+        unit: s.unit,
+        every: s.every,
+        weekdays: s.weekdays,
+        start: _date,
+        endCount: s.count,
+        endDate: s.until,
+        asDraft: r.asDraft ? true : null,
+      );
+      return rule.id;
+    }
+    return repo.create(
+      kind: args.kind,
+      accountId: args.accountId,
+      toAccountId: args.toAccountId,
+      categoryId: args.categoryId,
+      amount: args.amount,
+      fees: args.fees,
+      note: args.note,
+      unit: s.unit,
+      every: s.every,
+      weekdays: s.weekdays,
+      start: _date,
+      endCount: s.count,
+      endDate: s.until,
+      asDraft: r.asDraft ? true : null,
+      firstMade: firstMade,
+    );
   }
 
   Future<void> _save() async {
+    if (widget.ruleOnly) {
+      final id = await _saveRule();
+      // A first time today or before is made at once.
+      await widget.data.recurrences!.catchUp(_now());
+      if (mounted) Navigator.of(context).pop(id);
+      return;
+    }
     final paid = _paid!;
     final repo = widget.data.transactions;
     final fees = _feesMinor;
@@ -635,6 +763,8 @@ class _EntryScreenState extends State<EntryScreen> {
         note: _note.text,
       );
     }
+    // « Répéter »: this operation is the recurrence's first time.
+    if (_repeat != null && !widget.editing) await _saveRule(firstMade: id);
     await _finish(id);
   }
 
@@ -734,14 +864,28 @@ class _EntryScreenState extends State<EntryScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final expense = _kind == EntryKind.expense;
-    final title = switch ((_kind, widget.editing)) {
-      (EntryKind.expense, false) => l.entryNewExpense,
-      (EntryKind.expense, true) => l.entryEditExpense,
-      (EntryKind.income, false) => l.entryNewIncome,
-      (EntryKind.income, true) => l.entryEditIncome,
-      (EntryKind.transfer, false) => l.entryNewTransfer,
-      (EntryKind.transfer, true) => l.entryEditTransfer,
-    };
+    final title = widget.ruleOnly
+        ? (widget.rule == null ? l.recurrenceNew : l.recurrenceEdit)
+        : switch ((_kind, widget.editing)) {
+            (EntryKind.expense, false) => l.entryNewExpense,
+            (EntryKind.expense, true) => l.entryEditExpense,
+            (EntryKind.income, false) => l.entryNewIncome,
+            (EntryKind.income, true) => l.entryEditIncome,
+            (EntryKind.transfer, false) => l.entryNewTransfer,
+            (EntryKind.transfer, true) => l.entryEditTransfer,
+          };
+    final repeatField = widget.data.recurrences == null || widget.editing
+        ? null
+        : EntryField(
+            icon: KibuoIcons.repeat,
+            label: l.repeatTitle,
+            value: _repeat == null
+                ? null
+                : rhythmText(l, _lang, _repeat!.schedule),
+            valueColor: KibuoColors.accent,
+            placeholder: l.repeatNever,
+            onTap: _chooseRepeat,
+          );
     final account = _account;
     final total = _total;
     final moved = _transferTotal;
@@ -866,7 +1010,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   const SizedBox(height: 12),
                   _FieldsCard(
                     children: _transfer
-                        ? _transferFields(l, account)
+                        ? [..._transferFields(l, account), ?repeatField]
                         : [
                             EntryField(
                               icon: account == null
@@ -896,7 +1040,9 @@ class _EntryScreenState extends State<EntryScreen> {
                             ),
                             EntryField(
                               icon: KibuoIcons.calendarBlank,
-                              label: l.entryDate,
+                              label: widget.ruleOnly
+                                  ? l.repeatFirst
+                                  : l.entryDate,
                               value: _dateText(l),
                               trailing: DateFormat.Hm(_lang).format(_date),
                               onTap: _chooseDate,
@@ -910,6 +1056,7 @@ class _EntryScreenState extends State<EntryScreen> {
                               placeholder: l.entryNone,
                               onTap: _chooseFees,
                             ),
+                            ?repeatField,
                           ],
                   ),
                   const SizedBox(height: 12),
@@ -979,7 +1126,9 @@ class _EntryScreenState extends State<EntryScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: KibuoButton(
-                  label: widget.editing ? l.entrySaveChanges : l.entrySave,
+                  label: widget.editing || widget.rule != null
+                      ? l.entrySaveChanges
+                      : l.entrySave,
                   onPressed: _canSave ? _save : null,
                 ),
               ),
@@ -1214,10 +1363,14 @@ class EntryField extends StatelessWidget {
     this.trailing,
     this.leading,
     this.onTap,
+    this.valueColor,
   });
 
   final IconData icon;
   final Widget? leading;
+
+  /// The value's colour once set (« Répéter » in green).
+  final Color? valueColor;
   final String label;
   final String? value;
   final String? placeholder;
@@ -1257,7 +1410,7 @@ class EntryField extends StatelessWidget {
                       fontVariations: value == null
                           ? null
                           : const [FontVariation.weight(600)],
-                      color: value == null ? KibuoColors.inkMuted : null,
+                      color: value == null ? KibuoColors.inkMuted : valueColor,
                     ),
                   ),
                 ],

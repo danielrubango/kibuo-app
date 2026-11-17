@@ -295,6 +295,280 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityRecoveryUnverified => 'Not checked';
 
   @override
+  String get rhythmDaily => 'Every day';
+
+  @override
+  String rhythmEveryDays(String n) {
+    return 'Every $n days';
+  }
+
+  @override
+  String rhythmWeekly(String days) {
+    return 'Every $days';
+  }
+
+  @override
+  String rhythmEveryOtherWeek(String days) {
+    return '$days, every other week';
+  }
+
+  @override
+  String rhythmEveryWeeks(String days, String n) {
+    return '$days, every $n weeks';
+  }
+
+  @override
+  String rhythmMonthly(String day) {
+    return 'On the $day of every month';
+  }
+
+  @override
+  String rhythmEveryMonths(String day, String n) {
+    return 'On the $day, every $n months';
+  }
+
+  @override
+  String rhythmYearly(String date) {
+    return 'Every $date';
+  }
+
+  @override
+  String rhythmEveryYears(String date, String n) {
+    return 'On $date, every $n years';
+  }
+
+  @override
+  String get rhythmEndNever => 'no end';
+
+  @override
+  String rhythmEndCount(String n) {
+    return '$n times in all';
+  }
+
+  @override
+  String rhythmEndDate(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String get rhythmAnd => 'and';
+
+  @override
+  String rhythmThe(String day) {
+    return '$day';
+  }
+
+  @override
+  String get recurrenceNew => 'New recurrence';
+
+  @override
+  String get recurrenceEdit => 'Edit recurrence';
+
+  @override
+  String get repeatTitle => 'Repeat';
+
+  @override
+  String get repeatDay => 'Day';
+
+  @override
+  String get repeatWeek => 'Week';
+
+  @override
+  String get repeatMonth => 'Month';
+
+  @override
+  String get repeatYear => 'Year';
+
+  @override
+  String repeatEveryDay(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Every $n days',
+      one: 'Every day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String repeatEveryWeek(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Every $n weeks',
+      one: 'Every week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String repeatEveryMonth(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Every $n months',
+      one: 'Every month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String repeatEveryYear(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Every $n years',
+      one: 'Every year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get repeatFirst => 'First time';
+
+  @override
+  String get repeatEnd => 'End';
+
+  @override
+  String get repeatEndNever => 'Never';
+
+  @override
+  String get repeatEndCount => 'After X times';
+
+  @override
+  String get repeatEndDate => 'On a date';
+
+  @override
+  String get repeatCount => 'Number of times';
+
+  @override
+  String get repeatLastDate => 'Last possible date';
+
+  @override
+  String get repeatEndNeverHelp => 'It goes on until you stop it.';
+
+  @override
+  String get repeatEndCountHelp =>
+      'Handy for a loan or instalments: it stops by itself.';
+
+  @override
+  String get repeatEndDateHelp => 'No operation will be made after this date.';
+
+  @override
+  String repeatNext(String dates) {
+    return 'Next dates: $dates';
+  }
+
+  @override
+  String get repeatEach => 'Each time';
+
+  @override
+  String get repeatModeSave => 'Save';
+
+  @override
+  String get repeatModeDraft => 'Prepare a draft';
+
+  @override
+  String get repeatModeSaveHelp =>
+      'The operation is added by itself on its date.';
+
+  @override
+  String get repeatModeDraftHelp =>
+      'A draft waits for your approval, handy when the amount varies.';
+
+  @override
+  String get repeatNever => 'Never';
+
+  @override
+  String get repeatStop => 'Stop repeating';
+
+  @override
+  String get repeatLess => 'Less';
+
+  @override
+  String get repeatMore => 'More';
+
+  @override
+  String get repeatSave => 'Save';
+
+  @override
+  String get entryAmount => 'Amount';
+
+  @override
+  String get recurrencesTitle => 'Recurrences';
+
+  @override
+  String get recurrencesExpenses => 'Expenses';
+
+  @override
+  String get recurrencesIncome => 'Income';
+
+  @override
+  String get recurrencesTransfers => 'Transfers';
+
+  @override
+  String get recurrencesEmptyTitle => 'No recurrences yet';
+
+  @override
+  String get recurrencesEmptyHelp =>
+      'Rent, salary, subscriptions: note them once, kibuo remembers.';
+
+  @override
+  String get recurrenceToValidate => 'To approve';
+
+  @override
+  String recurrenceNextOn(String date) {
+    return 'on $date';
+  }
+
+  @override
+  String get recurrenceTitle => 'Recurrence';
+
+  @override
+  String get recurrenceEditAction => 'Edit';
+
+  @override
+  String get recurrenceNextTimes => 'Next times';
+
+  @override
+  String get recurrencePast => 'Last times';
+
+  @override
+  String get recurrenceIgnored => 'Ignored';
+
+  @override
+  String get recurrenceDraft => 'Draft';
+
+  @override
+  String get recurrenceStop => 'Stop the recurrence';
+
+  @override
+  String recurrenceStopTitle(String name) {
+    return 'Stop the $name recurrence?';
+  }
+
+  @override
+  String get recurrenceStopText =>
+      'What was already made stays; drafts waiting are deleted.';
+
+  @override
+  String get recurrenceStopAction => 'Stop';
+
+  @override
+  String recurrenceToAccount(String name) {
+    return 'to $name';
+  }
+
+  @override
+  String get recurrenceAskDraft => 'Prepare a draft';
+
+  @override
+  String get recurrenceSaveDirect => 'Save';
+
+  @override
+  String get recurrenceNone => 'No next time';
+
+  @override
   String get homeAvailable => 'Available';
 
   @override
