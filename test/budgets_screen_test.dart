@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/budget_repository.dart';
@@ -21,6 +22,7 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/operations_list.dart';
 
 String plain(String s) => s.replaceAll(RegExp('[  ]'), ' ');
 
@@ -195,6 +197,8 @@ void main() {
     await start(tester);
     await tester.tap(find.text('Sorties'));
     await settle(tester);
+    await tester.tap(find.text('Modifier'));
+    await settle(tester);
     expect(find.text('Modifier le budget'), findsOneWidget);
     await tester.tap(find.text('Supprimer le budget'));
     await tester.pumpAndSettle();
@@ -204,6 +208,65 @@ void main() {
     await settle(tester);
     expect(find.text('Aucun budget pour l’instant'), findsOneWidget);
     expect(await budgets.budgets(), isEmpty);
+  });
+
+  testWidgets('the detail: summary with its state, the month by day', (
+    tester,
+  ) async {
+    await budgets.create(
+      categoryId: 'default-food',
+      amount: const Money(25000, 'USD'),
+      fromMonth: month,
+    );
+    await spend('default-restaurant', 20500);
+    await start(tester);
+    await tester.tap(find.text('Repas'));
+    await settle(tester);
+    expect(find.text('Presque atteint'), findsOneWidget);
+    expect(
+      textPlain(
+        'Novembre · budget 250,00 \$'.replaceFirst('Novembre', () {
+          final m = DateFormat.MMMM('fr').format(periodOf(now).month);
+          return m[0].toUpperCase() + m.substring(1);
+        }()),
+      ),
+      findsOneWidget,
+    );
+    expect(textPlain('45,00 \$ restants'), findsOneWidget);
+    expect(find.text('Au fil du mois'), findsOneWidget);
+    expect(find.text('Aujourd’hui'), findsOneWidget, reason: 'the day');
+    expect(find.text('Restaurant'), findsOneWidget);
+    expect(find.text('Repas · M-Pesa'), findsOneWidget);
+    // Rythme: the gap to the pace, at today.
+    await tester.tap(find.text('Rythme'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('d’avance'), findsOneWidget);
+  });
+
+  testWidgets('without any expense: said, and « Voir dans Opérations »', (
+    tester,
+  ) async {
+    await budgets.create(
+      categoryId: 'default-outings',
+      amount: const Money(10000, 'USD'),
+      fromMonth: month,
+    );
+    await start(tester);
+    await tester.tap(find.text('Sorties'));
+    await settle(tester);
+    expect(
+      find.text('Aucune dépense dans Sorties ce mois-ci.'),
+      findsOneWidget,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Voir dans Opérations'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Voir dans Opérations'));
+    await tester.pumpAndSettle();
+    expect(OperationsScreen.show.value?.category, 'default-outings');
+    expect(OperationsScreen.show.value?.month, periodOf(now).month);
   });
 }
 

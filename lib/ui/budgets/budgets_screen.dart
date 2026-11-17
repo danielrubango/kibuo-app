@@ -6,6 +6,7 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
+import 'package:kibuo/ui/budgets/budget_detail_screen.dart';
 import 'package:kibuo/ui/budgets/budget_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -94,6 +95,19 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       MaterialPageRoute(
         builder: (_) =>
             BudgetFormScreen(loader: widget.loader, book: _book!, line: line),
+      ),
+    );
+    if (changed ?? false) await _load();
+  }
+
+  Future<void> _detail(BudgetLine line) async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => BudgetDetailScreen(
+          loader: widget.loader,
+          month: _month,
+          budgetId: line.budget.id,
+        ),
       ),
     );
     if (changed ?? false) await _load();
@@ -306,7 +320,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             name: categoryName(l, line.category),
             money: _money,
             today: _current ? (DateTime.now(), _book!.period) : null,
-            onTap: () => _open(line),
+            onTap: () => _detail(line),
           ),
         );
         return Wrap(
@@ -377,7 +391,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                     name: categoryName(l, line.category),
                     money: _money,
                     today: _current ? (DateTime.now(), _book!.period) : null,
-                    onTap: () => _open(line),
+                    onTap: () => _detail(line),
                   ),
             ],
           ),

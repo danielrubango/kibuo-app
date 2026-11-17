@@ -15,6 +15,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/choice_menu.dart';
+import 'package:kibuo/ui/kit/day_header.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
 import 'package:kibuo/ui/kit/month_picker.dart';
@@ -71,6 +72,10 @@ class OperationsScreen extends StatefulWidget {
   /// Where « Recherches récentes » are kept.
   final SearchHistory? history;
 
+  /// « Voir dans Opérations » (a budget's detail): the month to show and
+  /// the one category to filter on. The shell brings the tab forward.
+  static final show = ValueNotifier<({DateTime month, String category})?>(null);
+
   /// Forgets the month, filters and folded days kept while the app runs.
   @visibleForTesting
   static void forget() => _OperationsScreenState.forget();
@@ -118,6 +123,21 @@ class _OperationsScreenState extends State<OperationsScreen> {
 
   bool get _isThisMonth => _month == _thisMonth();
 
+  /// Asked from elsewhere: [OperationsScreen.show]'s month, filtered on
+  /// its category alone.
+  void _shown() {
+    final asked = OperationsScreen.show.value;
+    if (asked == null) return;
+    setState(() {
+      _types.clear();
+      _accounts.clear();
+      _categories
+        ..clear()
+        ..add(asked.category);
+    });
+    _goTo(asked.month);
+  }
+
   /// « Début du mois » changed: the periods move, back to the current one.
   void _startChanged() {
     setState(() {
@@ -140,6 +160,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     widget.refresh?.addListener(_load);
     widget.thisMonth?.addListener(_backToThisMonth);
     monthStartChoice.addListener(_startChanged);
+    OperationsScreen.show.addListener(_shown);
     // Always on; it draws nothing while no layer is open.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _layer.show();
@@ -154,6 +175,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     widget.refresh?.removeListener(_load);
     widget.thisMonth?.removeListener(_backToThisMonth);
     monthStartChoice.removeListener(_startChanged);
+    OperationsScreen.show.removeListener(_shown);
     super.dispose();
   }
 
@@ -313,15 +335,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     await _load();
   }
 
-  String _dayLabel(DateTime day) {
-    final l = AppLocalizations.of(context);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    if (day == today) return l.entryToday;
-    if (day == today.subtract(const Duration(days: 1))) return l.entryYesterday;
-    final t = DateFormat.MMMMEEEEd(_lang).format(day);
-    return t[0].toUpperCase() + t.substring(1);
-  }
+  String _dayLabel(DateTime day) => dayLabel(context, day);
 
   @override
   Widget build(BuildContext context) {
@@ -895,67 +909,19 @@ class _OperationsScreenState extends State<OperationsScreen> {
   ) {
     final folded = _folded.contains(day);
     final t = _totals([for (final e in ops) e.$1]);
-    final net = t.rest;
     final onlyFreeTransfers = t.entries.minor == 0 && t.exits.minor == 0;
-    final color = net.minor > 0
-        ? KibuoColors.accent
-        : net.minor < 0
-        ? KibuoColors.debtInk
-        : KibuoColors.inkMuted;
-    String amount(bool short) => net.minor > 0
-        ? '+${_money(net, short: short)}'
-        : net.minor < 0
-        ? '−${_money(Money(-net.minor, net.currency), short: short)}'
-        : _money(net, short: short);
     return [
       const SizedBox(height: 6),
-      InkWell(
-        borderRadius: BorderRadius.circular(12),
+      DayHeader(
+        label: _dayLabel(day),
+        count: ops.length,
+        folded: folded,
+        net: onlyFreeTransfers ? null : t.rest,
+        approximate: t.approximate,
         onTap: () =>
             setState(() => folded ? _folded.remove(day) : _folded.add(day)),
-        child: SizedBox(
-          height: KibuoTheme.heightTouch,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: _dayLabel(day),
-                      children: [
-                        if (folded)
-                          TextSpan(
-                            text: ' · ${ops.length}',
-                            style: const TextStyle(color: KibuoColors.inkMuted),
-                          ),
-                      ],
-                    ),
-                    style: KibuoType.sectionTitle,
-                  ),
-                ),
-                if (!onlyFreeTransfers)
-                  FitAmount(
-                    long: isLong(net),
-                    alignment: Alignment.centerRight,
-                    maxWidth: MediaQuery.sizeOf(context).width * 0.45,
-                    style: KibuoType.sectionTitle.copyWith(color: color),
-                    span: (short) => TextSpan(
-                      text: '${t.approximate ? '≈ ' : ''}${amount(short)}',
-                    ),
-                  ),
-                const SizedBox(width: 8),
-                Icon(
-                  folded ? KibuoIcons.caretDown : KibuoIcons.caretUp,
-                  size: 16,
-                  color: KibuoColors.accent,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
-      if (!folded) const SizedBox(height: 4),
+      if (!folded) const SizedBox(height: 6),
       if (!folded)
         for (final (t, labels) in ops)
           Padding(

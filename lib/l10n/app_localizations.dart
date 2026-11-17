@@ -470,6 +470,114 @@ abstract class AppLocalizations {
   /// **'Pour supprimer le budget {name}'**
   String protectDeleteBudget(String name);
 
+  /// Budget detail: after the month.
+  ///
+  /// In fr, this message translates to:
+  /// **'budget {amount}'**
+  String budgetDetailBudget(String amount);
+
+  /// Budget state badge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépassé'**
+  String get budgetOver;
+
+  /// Budget state badge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Presque atteint'**
+  String get budgetNear;
+
+  /// Budget detail: chart title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au fil du mois'**
+  String get budgetChart;
+
+  /// Budget chart: running total.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total'**
+  String get budgetChartTotal;
+
+  /// Budget chart: against the regular pace.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rythme'**
+  String get budgetChartPace;
+
+  /// Budget chart: the budget's line.
+  ///
+  /// In fr, this message translates to:
+  /// **'Budget {amount}'**
+  String budgetChartBudget(String amount);
+
+  /// Budget chart legend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé'**
+  String get budgetLegendSpent;
+
+  /// Budget chart legend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors budget'**
+  String get budgetLegendOver;
+
+  /// Budget chart legend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rythme régulier'**
+  String get budgetLegendPace;
+
+  /// Budget chart legend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop vite'**
+  String get budgetLegendFast;
+
+  /// Budget chart legend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marge'**
+  String get budgetLegendSlow;
+
+  /// Budget pace: spending faster than the pace.
+  ///
+  /// In fr, this message translates to:
+  /// **'+{amount} d’avance'**
+  String budgetAhead(String amount);
+
+  /// Budget pace: spending slower than the pace.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} de marge'**
+  String budgetMargin(String amount);
+
+  /// Budget detail: the operations' title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Opérations du mois'**
+  String get budgetOps;
+
+  /// Budget detail: no expense.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune dépense dans {category} ce mois-ci.'**
+  String budgetNoOps(String category);
+
+  /// Budget detail: opens the list filtered.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir dans Opérations'**
+  String get budgetSeeInList;
+
+  /// Budget detail: opens the form.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get budgetEditAction;
+
   /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:
