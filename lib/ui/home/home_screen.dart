@@ -10,6 +10,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -271,24 +272,9 @@ class _MonthCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final lang = Localizations.localeOf(context).languageCode;
     final rest = totals.rest;
     final pre = totals.approximate ? '≈ ' : '';
-    // As in the list (PRODUCT): the bar is always there; full and in alert
-    // with exits and no entry.
-    final share = totals.spentPercent;
-    final outOnly = share == null && totals.exits.minor > 0;
-    final level = share ?? (outOnly ? 101 : 0);
-    final (barColor, shareColor) = level <= 80
-        ? (KibuoColors.inkMuted, KibuoColors.ink)
-        : level <= 100
-        ? (KibuoColors.warning, KibuoColors.warningInk)
-        : (KibuoColors.debtInk, KibuoColors.debtInk);
-    final bold = TextStyle(
-      fontWeight: FontWeight.w700,
-      fontVariations: const [FontVariation.weight(700)],
-      color: shareColor,
-    );
+    final spent = SpentLevel(totals);
     final exits = Money(-totals.exits.minor, totals.exits.currency);
     String restText(bool short) =>
         rest.minor > 0 ? '+${money(rest, short)}' : money(rest, short);
@@ -362,26 +348,12 @@ class _MonthCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 6),
-              _MonthBar(
-                spent: (level / 100).clamp(0, 1).toDouble(),
-                color: barColor,
-                today: monthElapsed(today),
-                todayLabel: DateFormat.MMMd(lang).format(today),
-              ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
+              SpentBar(spent: spent, today: today),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: outOnly ? l.listNoEntries : null),
-                        if (!outOnly) ..._percent(l.listSpent(level), bold),
-                      ],
-                    ),
-                    maxLines: 1,
-                    style: KibuoType.caption,
-                  ),
+                  SpentShare(spent: spent),
                   const SizedBox(width: 10),
                   Expanded(
                     child: FitAmount(
@@ -402,16 +374,6 @@ class _MonthCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// « 49 % » in bold, then « dépensés ».
-  static List<InlineSpan> _percent(String text, TextStyle bold) {
-    final cut = text.indexOf('%');
-    if (cut < 0) return [TextSpan(text: text)];
-    return [
-      TextSpan(text: text.substring(0, cut + 1), style: bold),
-      TextSpan(text: text.substring(cut + 1)),
-    ];
   }
 
   /// « −588,00 » in the debt colour, « sur », « +1 200,00 » in green.
@@ -448,82 +410,5 @@ class _MonthCard extends StatelessWidget {
       rest = rest.substring(i + 1);
     }
     return TextSpan(children: spans);
-  }
-}
-
-/// The bar: spent share on a track, and today as a mark with its date above.
-class _MonthBar extends StatelessWidget {
-  const _MonthBar({
-    required this.spent,
-    required this.color,
-    required this.today,
-    required this.todayLabel,
-  });
-
-  final double spent;
-  final Color color;
-  final double today;
-  final String todayLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 34,
-      child: LayoutBuilder(
-        builder: (context, box) {
-          final x = box.maxWidth * today;
-          final style = KibuoType.caption.copyWith(
-            fontSize: 10,
-            height: 1.2,
-            fontWeight: FontWeight.w600,
-            fontVariations: const [FontVariation.weight(600)],
-          );
-          final width = (TextPainter(
-            text: TextSpan(text: todayLabel, style: style),
-            textDirection: Directionality.of(context),
-            textScaler: MediaQuery.textScalerOf(context),
-            maxLines: 1,
-          )..layout()).width;
-          return Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 18,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: LinearProgressIndicator(
-                    value: spent,
-                    minHeight: 10,
-                    color: color,
-                    backgroundColor: KibuoColors.track,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: x - 1,
-                top: 14,
-                child: Container(
-                  width: 2,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: KibuoColors.ink,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
-              ),
-              // Centred on the mark, kept inside the card.
-              Positioned(
-                top: 0,
-                left: (x - width / 2).clamp(0, box.maxWidth - width).toDouble(),
-                child: Text(todayLabel, maxLines: 1, style: style),
-              ),
-            ],
-          );
-        },
-      ),
-    );
   }
 }
