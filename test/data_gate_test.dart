@@ -126,7 +126,7 @@ void main() {
 
     // The code is checked for real, outside the test's fake time.
     await tester.runAsync(() async {
-      await tester.tap(find.text('Ouvrir Kibuo'));
+      await tester.tap(find.text('Ouvrir kibuo'));
       for (var i = 0; i < 40; i++) {
         await Future<void>.delayed(const Duration(milliseconds: 50));
         await tester.pump();

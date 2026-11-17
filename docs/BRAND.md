@@ -1,6 +1,6 @@
 # Marque
 
-Nom retenu : **Kibuo**. Nom inventé, inspiré de *kibubu* (tirelire en swahili, sens non vérifié dans un dictionnaire).
+Nom retenu : **kibuo**, toujours en minuscules, y compris en début de phrase et sous l'icône du téléphone (validé le 17 novembre 2026). Nom inventé, inspiré de *kibubu* (tirelire en swahili, sens non vérifié dans un dictionnaire).
 
 ## Logo
 
@@ -8,7 +8,9 @@ Nom retenu : **Kibuo**. Nom inventé, inspiré de *kibubu* (tirelire en swahili,
 
 Icône Android adaptative : [fond](design/logos/kibuo-icon-background.svg) nuit plein, [premier plan](design/logos/kibuo-icon-foreground.svg) avec le dessin centré dans la zone sûre, et [version à une couleur](design/logos/kibuo-icon-monochrome.svg) pour les icônes à thème d'Android 13 et plus, où la fente et le bord de la pièce sont évidés. Le téléphone découpe l'icône en rond, en galet ou en carré arrondi ; le dessin reste lisible à 24 px.
 
-Écrans de démarrage : Android 12 et plus affiche d'abord son propre écran, le [logo agrandi](../android/app/src/main/res/drawable/splash_icon.xml) sur le fond clair de l'application, sans texte ; Android 8 à 11 affiche le même logo à la même place. L'écran Kibuo qui suit reprend le logo exactement au même endroit et à la même taille, puis ajoute le nom « Kibuo » dessous.
+Écrans de démarrage : Android 12 et plus affiche d'abord son propre écran, le [logo agrandi](../android/app/src/main/res/drawable/splash_icon.xml) sur le fond clair de l'application, sans texte ; Android 8 à 11 affiche le même logo à la même place. L'écran kibuo qui suit reprend le logo exactement au même endroit et à la même taille, puis ajoute le nom « kibuo » dessous.
+
+Le nom dessiné (canvas NomMinusculeB) : « kibuo » en Space Grotesk gras, lettres très légèrement resserrées, le point du « i » remplacé par la pièce ambre du logo avec son bord encre. Il sert sur l'écran de démarrage, l'écran verrouillé et partout où le nom est montré seul ; dans une phrase, le nom s'écrit simplement « kibuo ».
 
 ## Icônes
 

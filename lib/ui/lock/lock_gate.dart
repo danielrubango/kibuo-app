@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/brand/kibuo_mark.dart';
+import 'package:kibuo/ui/brand/kibuo_wordmark.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Shows the unlock screen over the app while it is locked, locks it again
 /// after the chosen absence, and covers the balances when Kibuo leaves the
@@ -98,16 +98,7 @@ class _Cover extends StatelessWidget {
                     child: CustomPaint(painter: KibuoMarkPainter()),
                   ),
                   SizedBox(height: 8),
-                  Text(
-                    'Kibuo',
-                    style: TextStyle(
-                      fontFamily: KibuoTheme.brandFont,
-                      fontVariations: [FontVariation.weight(700)],
-                      fontSize: 28,
-                      color: KibuoColors.ink,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
+                  KibuoWordmark(size: 28),
                 ],
               ),
             ),

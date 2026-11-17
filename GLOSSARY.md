@@ -1,4 +1,4 @@
-# Kibuo
+# kibuo
 
 Vocabulaire de l'application de gestion de budget personnelle. Le terme anglais entre parenthèses est le nom à utiliser dans le code.
 
@@ -126,7 +126,7 @@ Code remis à l'utilisateur pour retrouver l'accès sans son PIN.
 **Coffre** (`Vault`) :
 Espace à protection renforcée où sont gardées les cartes virtuelles.
 
-**Compte Kibuo** (`UserAccount`) :
+**Compte kibuo** (`UserAccount`) :
 Identité d'un utilisateur auprès du service en ligne. Toujours écrit en entier, pour le distinguer d'un compte.
 _Avoid_ : compte, seul, pour ce sens ; profil
 

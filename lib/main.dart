@@ -94,7 +94,7 @@ class KibuoApp extends StatelessWidget {
     final lock = this.lock;
     final erase = eraseAndStartOver;
     return MaterialApp(
-      title: 'Kibuo',
+      title: 'kibuo',
       navigatorKey: navigator,
       debugShowCheckedModeBanner: false,
       theme: KibuoTheme.light(),
