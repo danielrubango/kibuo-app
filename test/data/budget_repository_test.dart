@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/budget_repository.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
 import 'package:kibuo/domain/money/money.dart';
@@ -87,4 +88,21 @@ void main() {
     );
     expect((await budgets.budgets()).length, 2);
   });
+
+  test(
+    'removing its category deletes the budget (retro, 18 November)',
+    () async {
+      final categories = CategoryRepository(db);
+      final id = await categories.create(
+        kind: CategoryKind.out,
+        name: 'Voyages',
+        icon: 'airplane',
+      );
+      await budgets.create(categoryId: id, amount: d(5000), fromMonth: 202611);
+      expect(await budgets.ofCategory(id), d(5000));
+      await categories.remove(id);
+      expect(await budgets.budgets(), isEmpty);
+      expect(await budgets.ofCategory(id), isNull);
+    },
+  );
 }

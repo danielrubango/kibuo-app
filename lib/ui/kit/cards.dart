@@ -281,29 +281,79 @@ class SettingsRow extends StatelessWidget {
   }
 }
 
-/// A settings row with a switch.
+/// A row with a switch at its right (PRODUCT: touching the whole row
+/// flips it, as everywhere on Android).
+class SwitchRow extends StatelessWidget {
+  const SwitchRow({
+    super.key,
+    required this.child,
+    required this.value,
+    required this.onChanged,
+    this.padding = const EdgeInsets.fromLTRB(16, 8, 8, 8),
+  });
+
+  /// What the switch is about, at the left.
+  final Widget child;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final change = onChanged;
+    return MergeSemantics(
+      child: InkWell(
+        onTap: change == null ? null : () => change(!value),
+        child: Padding(
+          padding: padding,
+          child: Row(
+            children: [
+              Expanded(child: child),
+              Switch(value: value, onChanged: onChanged),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A settings row with a switch, and an optional line under its label.
 class SettingsSwitch extends StatelessWidget {
   const SettingsSwitch({
     super.key,
     required this.label,
     required this.value,
     required this.onChanged,
+    this.help,
   });
 
   final String label;
+  final String? help;
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: KibuoType.rowLabel)),
-          Switch(value: value, onChanged: onChanged),
-        ],
+    final help = this.help;
+    return SwitchRow(
+      value: value,
+      onChanged: onChanged,
+      padding: EdgeInsets.fromLTRB(
+        16,
+        help == null ? 4 : 8,
+        8,
+        help == null ? 4 : 8,
       ),
+      child: help == null
+          ? Text(label, style: KibuoType.rowLabel)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: KibuoType.rowLabel),
+                Text(help, style: KibuoType.caption),
+              ],
+            ),
     );
   }
 }

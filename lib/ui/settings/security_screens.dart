@@ -8,7 +8,6 @@ import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Réglages › Sécurité: Verrouillage and Confidentialité. The recovery code
 /// row joins at its own step.
@@ -54,6 +53,8 @@ class SecurityScreen extends StatelessWidget {
                   label: l.recoveryTitle,
                   value: lock.recoveryCreatedAt == null
                       ? l.securityNoCode
+                      : !lock.settings.recoveryVerified
+                      ? l.securityRecoveryUnverified
                       : l.securityRecoveryOn(
                           formatRecoveryDate(context, lock.recoveryCreatedAt!),
                         ),
@@ -167,33 +168,17 @@ class LockSettingsScreen extends StatelessWidget {
             const SizedBox(height: 24),
             SettingsCard(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(l.lockProtect, style: KibuoType.rowLabel),
-                            Text(l.lockProtectHelp, style: KibuoType.caption),
-                          ],
-                        ),
-                      ),
-                      Switch(
-                        value: s.protectActions,
-                        onChanged: (on) async {
-                          // Turning the protection off takes the code too.
-                          if (!on && !await _confirmCurrent(context, lock)) {
-                            return;
-                          }
-                          await lock.updateSettings(
-                            s.copyWith(protectActions: on),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                SettingsSwitch(
+                  label: l.lockProtect,
+                  help: l.lockProtectHelp,
+                  value: s.protectActions,
+                  onChanged: (on) async {
+                    // Turning the protection off takes the code too.
+                    if (!on && !await _confirmCurrent(context, lock)) {
+                      return;
+                    }
+                    await lock.updateSettings(s.copyWith(protectActions: on));
+                  },
                 ),
               ],
             ),
