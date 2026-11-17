@@ -578,6 +578,18 @@ abstract class AppLocalizations {
   /// **'Modifier'**
   String get budgetEditAction;
 
+  /// Category removal sheet: its budget goes too.
+  ///
+  /// In fr, this message translates to:
+  /// **'Son budget de {amount} par mois est supprimé aussi.'**
+  String confirmCategoryBudget(String amount);
+
+  /// Sécurité: a recovery code shown but never retyped.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non vérifié'**
+  String get securityRecoveryUnverified;
+
   /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:

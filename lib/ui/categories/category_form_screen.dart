@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/category_repository.dart';
+import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -9,6 +10,7 @@ import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
+import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -90,6 +92,9 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
     final l = AppLocalizations.of(context);
     final category = widget.category!;
     final name = categoryName(l, category);
+    final lang = Localizations.localeOf(context).languageCode;
+    final budget = await widget.categories.budgetOf(category.id);
+    if (!mounted) return;
     final sure = await confirmRemoval(
       context,
       title: l.confirmCategoryTitle(name),
@@ -100,7 +105,13 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
             ? null
             : [for (final s in category.subs) categoryName(l, s)].join(', '),
       ),
-      text: l.confirmCategoryHelp(name, category.subs.length),
+      text: [
+        l.confirmCategoryHelp(name, category.subs.length),
+        if (budget != null)
+          l.confirmCategoryBudget(
+            formatMoney(budget, currencyOf(budget.currency), lang),
+          ),
+      ].join(' '),
       action: l.confirmCategoryAction,
     );
     if (!sure || !mounted) return;

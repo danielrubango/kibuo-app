@@ -140,6 +140,25 @@ class BudgetRepository {
     }
   });
 
+  /// The amount of [categoryId]'s budget, its latest; none without one.
+  Future<Money?> ofCategory(String categoryId) async {
+    final b = (await budgets())
+        .where((b) => b.categoryId == categoryId)
+        .firstOrNull;
+    if (b == null || b.changes.isEmpty) return null;
+    return (b.changes.toList()
+          ..sort((x, y) => x.fromMonth.compareTo(y.fromMonth)))
+        .last
+        .amount;
+  }
+
+  /// With its category (retro, 18 November): the budget goes too.
+  Future<void> deleteOfCategory(String categoryId) async {
+    for (final b in await budgets()) {
+      if (b.categoryId == categoryId) await delete(b.id);
+    }
+  }
+
   Future<void> delete(String id) => _db.transaction(() async {
     final version = await _nextVersion();
     await (_db.update(_db.budgets)..where((b) => b.id.equals(id))).write(

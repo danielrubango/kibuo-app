@@ -11,6 +11,7 @@ class LockSettings {
     this.allowScreenshots = true,
     this.androidCopy = true,
     this.protectActions = false,
+    this.recoveryVerified = true,
   });
 
   final bool fingerprint;
@@ -27,6 +28,10 @@ class LockSettings {
   /// confirmation (PRODUCT); only with a code.
   final bool protectActions;
 
+  /// The current recovery code was retyped after it was shown (retro, 18
+  /// November): Sécurité says when it was not.
+  final bool recoveryVerified;
+
   LockSettings copyWith({
     bool? fingerprint,
     bool? shuffle,
@@ -35,6 +40,7 @@ class LockSettings {
     bool? allowScreenshots,
     bool? androidCopy,
     bool? protectActions,
+    bool? recoveryVerified,
   }) => LockSettings(
     fingerprint: fingerprint ?? this.fingerprint,
     shuffle: shuffle ?? this.shuffle,
@@ -43,6 +49,7 @@ class LockSettings {
     allowScreenshots: allowScreenshots ?? this.allowScreenshots,
     androidCopy: androidCopy ?? this.androidCopy,
     protectActions: protectActions ?? this.protectActions,
+    recoveryVerified: recoveryVerified ?? this.recoveryVerified,
   );
 }
 
@@ -58,6 +65,7 @@ class LockSettingsStore {
   static const _allowScreenshots = 'privacy_screenshots';
   static const _androidCopy = 'backup_android_copy';
   static const _protectActions = 'lock_protect_actions';
+  static const _recoveryVerified = 'recovery_verified';
 
   Future<LockSettings> load() async {
     const fallback = LockSettings();
@@ -82,6 +90,10 @@ class LockSettingsStore {
       ),
       androidCopy: await flag(_androidCopy, fallback.androidCopy),
       protectActions: await flag(_protectActions, fallback.protectActions),
+      recoveryVerified: await flag(
+        _recoveryVerified,
+        fallback.recoveryVerified,
+      ),
     );
   }
 
@@ -93,5 +105,6 @@ class LockSettingsStore {
     await _vault.write(_allowScreenshots, '${s.allowScreenshots}');
     await _vault.write(_androidCopy, '${s.androidCopy}');
     await _vault.write(_protectActions, '${s.protectActions}');
+    await _vault.write(_recoveryVerified, '${s.recoveryVerified}');
   }
 }

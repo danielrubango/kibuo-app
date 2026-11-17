@@ -436,29 +436,15 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l.overdraftAllow, style: KibuoType.rowLabel),
-                      Text(l.overdraftAllowHelp, style: KibuoType.caption),
-                    ],
-                  ),
-                ),
-                Switch(
-                  value: _overdraft,
-                  onChanged: (on) => setState(() {
-                    _overdraft = on;
-                    if (!on) _openingNegative = false;
-                    if (!on && _typingLimit) _keypad = false;
-                  }),
-                ),
-              ],
-            ),
+          SettingsSwitch(
+            label: l.overdraftAllow,
+            help: l.overdraftAllowHelp,
+            value: _overdraft,
+            onChanged: (on) => setState(() {
+              _overdraft = on;
+              if (!on) _openingNegative = false;
+              if (!on && _typingLimit) _keypad = false;
+            }),
           ),
           if (_overdraft) ...[
             const Divider(height: 1, color: KibuoColors.background),
