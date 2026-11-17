@@ -79,11 +79,14 @@ kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 ### Budgets
 
 - Un budget par catégorie et par période, en devise principale. Les opérations en autre devise comptent selon leur taux figé.
-- Le jour de début de période est réglable (par exemple le jour de paie).
+- Le jour de début de période est réglable (par exemple le jour de paie) : « Début du mois », une ligne de Plus (« Le 1er »), ouvre une feuille avec une roue de 1 à 28, une ligne qui dit la période (« Novembre ira du 25 octobre au 24 novembre. ») et « Enregistrer » ; fermer ne change rien. Une période porte le nom du mois où elle se termine. Le réglage vaut tout de suite pour la liste des opérations, l'accueil et le choix du mois, sans déplacer aucune opération. Quand le début n'est pas le 1er, la liste montre la période sous son titre (« du 25 oct. au 24 nov. ») ; l'accueil garde « ce mois-ci », et le trait du jour se place dans la période.
 - Pas de report du reste d'une période à l'autre.
 - Les budgets s'affichent en tuiles (par défaut) ou en liste, triés selon l'attention requise (les plus consommés d'abord) ou dans l'ordre de l'utilisateur ; ces deux choix se font dans la feuille d'affichage, pas sur la page.
 - Le détail d'un budget montre son évolution dans le mois (le total, ou au choix l'écart au rythme régulier), les opérations déjà prévues, et ses opérations rangées par jour.
 - À la création, la moyenne dépensée dans la catégorie sur les mois passés est proposée comme repère, et les alertes à 80 % et 100 % sont activées d'avance.
+- Un budget suit une catégorie de dépenses de premier niveau (ses sous-catégories comptent avec elle), un seul par catégorie. La moyenne proposée est celle des 3 derniers mois terminés (ou des mois disponibles s'il y en a moins), sans ligne s'il n'y a encore aucune dépense dans la catégorie. Changer le montant vaut à partir du mois en cours : les mois passés gardent le leur. On supprime un budget depuis « Modifier » (texte rouge en bas, puis une feuille : « Supprimer le budget Loisirs ? Les opérations ne changent pas. »), action protégée par le code quand ce réglage est activé. « Me prévenir » n'apparaît qu'avec les alertes de budget.
+- La page Budgets s'ouvre depuis Plus › Mes espaces. Son bilan est la même carte que le bilan du mois de l'accueil (arrondi 18, même barre « % dépensés », trait et date du jour) ; chaque tuile porte une version fine de cette barre (6 de haut, trait qui dépasse de 3, sans date), aux mêmes couleurs.
+- L'étape se livre en trois temps, validés chacun : Début du mois, puis la page Budgets (bilan, tuiles ou liste, ordre, création, modification, suppression), puis le détail d'un budget (bilan, « Au fil du mois » en Total et Rythme, opérations par jour). Les opérations prévues arrivent avec les récurrences.
 
 ### Récurrences
 
