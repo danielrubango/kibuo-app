@@ -14,6 +14,8 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/choice_menu.dart';
+import 'package:kibuo/ui/screens/placeholders.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operations_list.dart';
@@ -388,11 +390,17 @@ void main() {
     return t[0].toUpperCase() + t.substring(1);
   }
 
-  Finder titled(DateTime m) => find.byWidgetPredicate(
-    (w) =>
-        w is RichText &&
-        plain(w.text.toPlainText()).startsWith('${monthTitle(m)} ${m.year}'),
-  );
+  // The full month, or the short one when the full does not fit.
+  Finder titled(DateTime m) {
+    final short = DateFormat.MMM('fr').format(m);
+    final shortTitle = short[0].toUpperCase() + short.substring(1);
+    return find.byWidgetPredicate((w) {
+      if (w is! RichText) return false;
+      final t = plain(w.text.toPlainText());
+      return t.startsWith('${monthTitle(m)} ${m.year}') ||
+          t.startsWith('$shortTitle ${m.year}');
+    });
+  }
 
   testWidgets('the month before slides in under the finger', (tester) async {
     await start(tester);
@@ -422,5 +430,37 @@ void main() {
     await tester.pumpAndSettle();
     expect(titled(DateTime(now.year, now.month)), findsOneWidget);
     expect(find.text('Taxi'), findsOneWidget);
+  });
+
+  testWidgets('the magnifier opens the search', (tester) async {
+    await start(tester);
+    await tester.tap(find.byTooltip('Rechercher'));
+    await tester.pumpAndSettle();
+    expect(find.text('Libellé, catégorie, compte, montant'), findsOneWidget);
+  });
+
+  testWidgets('the month sits where the other tabs put their title', (
+    tester,
+  ) async {
+    await start(tester);
+    final month = find.byWidgetPredicate(
+      (w) => w is RichText && w.text.toPlainText().contains('${now.year}'),
+    );
+    final listTitle = tester.getRect(month.first);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: KibuoTheme.light(),
+        home: const Scaffold(
+          body: TabPlaceholder(
+            title: 'Accueil',
+            icon: KibuoIcons.house,
+            message: '…',
+          ),
+        ),
+      ),
+    );
+    final other = tester.getRect(find.text('Accueil'));
+    expect(listTitle.center.dy, closeTo(other.center.dy, 1));
+    expect(listTitle.left, closeTo(other.left, 1));
   });
 }

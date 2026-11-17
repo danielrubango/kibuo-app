@@ -11,3 +11,5 @@ Pour les détenteurs d'un Compte Kibuo. Fonction non prioritaire et non mise en 
 Décisions déjà prises : [données prêtes](../adr/0003-donnees-pretes-pour-la-synchro.md), [Laravel et PostgreSQL](../adr/0007-synchro-laravel-postgresql.md), [chiffrement de bout en bout](../adr/0008-chiffrement-de-bout-en-bout.md), [conflits par champ](../adr/0009-conflits-par-champ.md).
 
 À décider : mode de connexion, écran de résolution des conflits, gestion des appareils, journal détaillé des changements, hébergement.
+
+- Ce qui reste propre au téléphone ne se synchronise pas, même rangé dans la table des préférences : les astuces déjà vues (`hint_*`) et les recherches récentes (`search_recent`).
