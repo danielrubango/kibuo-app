@@ -26,7 +26,8 @@ void main() {
   late String bank;
   final now = DateTime.now();
   final thisMonth = DateTime(now.year, now.month);
-  final today = DateTime(now.year, now.month, now.day, 9);
+  // Midnight: early in the morning, 9 o’clock would still be ahead.
+  final today = DateTime(now.year, now.month, now.day);
   final lastMonth = DateTime(now.year, now.month - 1, 12, 9);
 
   Future<void> add(

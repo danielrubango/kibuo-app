@@ -223,6 +223,70 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String budgetDetailBudget(String amount) {
+    return 'budget $amount';
+  }
+
+  @override
+  String get budgetOver => 'Over';
+
+  @override
+  String get budgetNear => 'Nearly reached';
+
+  @override
+  String get budgetChart => 'Through the month';
+
+  @override
+  String get budgetChartTotal => 'Total';
+
+  @override
+  String get budgetChartPace => 'Pace';
+
+  @override
+  String budgetChartBudget(String amount) {
+    return 'Budget $amount';
+  }
+
+  @override
+  String get budgetLegendSpent => 'Spent';
+
+  @override
+  String get budgetLegendOver => 'Over budget';
+
+  @override
+  String get budgetLegendPace => 'Steady pace';
+
+  @override
+  String get budgetLegendFast => 'Too fast';
+
+  @override
+  String get budgetLegendSlow => 'Margin';
+
+  @override
+  String budgetAhead(String amount) {
+    return '$amount ahead';
+  }
+
+  @override
+  String budgetMargin(String amount) {
+    return '$amount to spare';
+  }
+
+  @override
+  String get budgetOps => 'This month’s operations';
+
+  @override
+  String budgetNoOps(String category) {
+    return 'No expense in $category this month.';
+  }
+
+  @override
+  String get budgetSeeInList => 'See in Operations';
+
+  @override
+  String get budgetEditAction => 'Edit';
+
+  @override
   String get homeAvailable => 'Available';
 
   @override

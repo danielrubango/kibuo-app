@@ -62,7 +62,7 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Phase 4 : Planification
 
-- [ ] Budgets et période réglable
+- [x] Budgets et période réglable
 - [ ] Récurrences, brouillons et rattrapage
 - [ ] Rappels
 - [ ] Alertes de budget
