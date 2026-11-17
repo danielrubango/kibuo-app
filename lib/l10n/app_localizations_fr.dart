@@ -30,8 +30,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeTitle => 'Aujourd’hui';
 
   @override
-  String get homePlaceholder =>
-      'Le disponible, le mois en cours et ce qui arrive viendront ici.';
+  String get homeAvailable => 'Disponible';
+
+  @override
+  String get homeAvailableHelp => 'à dépenser librement';
+
+  @override
+  String get homeOpenAccounts => 'Voir mes comptes';
+
+  @override
+  String get homeThisMonth => 'ce mois-ci';
+
+  @override
+  String get homeLeft => 'restants';
+
+  @override
+  String homeOutOfIn(String out, String income) {
+    return '$out sur $income';
+  }
 
   @override
   String get operationsPlaceholder => 'Les opérations du mois viendront ici.';

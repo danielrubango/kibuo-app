@@ -7,14 +7,17 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
+import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -56,11 +59,40 @@ class _AppShellState extends State<AppShell> {
   /// Tells the Opérations tab to reload after a save.
   final _saved = ValueNotifier<int>(0);
 
+  /// Tells Accueil to reload when it comes back into view.
+  final _homeShown = ValueNotifier<int>(0);
+
+  /// Tells Opérations to show this month (from Accueil's month).
+  final _thisMonth = ValueNotifier<int>(0);
+
+  late final _homeRefresh = Listenable.merge([_saved, _homeShown]);
+
   @override
   void dispose() {
     _saved.dispose();
+    _homeShown.dispose();
+    _thisMonth.dispose();
     super.dispose();
   }
+
+  void _show(_Tab tab) {
+    if (tab == _Tab.home && _tab != _Tab.home) _homeShown.value++;
+    setState(() => _tab = tab);
+  }
+
+  Future<void> _openAccounts(KibuoDatabase db) => Navigator.of(context)
+      .push(
+        MaterialPageRoute<void>(
+          builder: (_) => AccountsScreen(
+            accounts: AccountRepository(db),
+            currencies: CurrencyRepository(db),
+            categories: CategoryRepository(db),
+            transactions: TransactionRepository(db),
+          ),
+        ),
+      )
+      // A corrected balance adds an operation: the list follows.
+      .then((_) => _saved.value++);
 
   EntryData? _entryData(BuildContext context) {
     final db = KibuoData.maybeOf(context);
@@ -88,13 +120,8 @@ class _AppShellState extends State<AppShell> {
       canPop: _tab == _Tab.home && !_fanOpen,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
-        setState(() {
-          if (_fanOpen) {
-            _closeFan();
-          } else {
-            _tab = _Tab.home;
-          }
-        });
+        if (_fanOpen) return setState(_closeFan);
+        _show(_Tab.home);
       },
       child: Scaffold(
         body: Stack(
@@ -105,12 +132,32 @@ class _AppShellState extends State<AppShell> {
                 child: IndexedStack(
                   index: _tab.index,
                   children: [
-                    TabPlaceholder(
-                      key: const ValueKey('screen-home'),
-                      title: AppLocalizations.of(context).homeTitle,
-                      icon: PlaceholderIcons.home,
-                      message: AppLocalizations.of(context).homePlaceholder,
-                    ),
+                    if (_entryData(context) case final data?)
+                      HomeScreen(
+                        key: const ValueKey('screen-home'),
+                        data: data,
+                        refresh: _homeRefresh,
+                        onOpenAccounts: () =>
+                            _openAccounts(KibuoData.maybeOf(context)!),
+                        // The list, until the overview exists (PRODUCT).
+                        onOpenMonth: () {
+                          _thisMonth.value++;
+                          _show(_Tab.operations);
+                        },
+                      )
+                    else
+                      // Without data (some tests): the title alone.
+                      ListView(
+                        key: const ValueKey('screen-home'),
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          TabHeader(
+                            title: TabHeader.text(
+                              AppLocalizations.of(context).homeTitle,
+                            ),
+                          ),
+                        ],
+                      ),
                     if (_entryData(context) case final data?)
                       // A hidden tab keeps its place but not its animations.
                       TickerMode(
@@ -119,6 +166,7 @@ class _AppShellState extends State<AppShell> {
                         child: OperationsScreen(
                           data: data,
                           refresh: _saved,
+                          thisMonth: _thisMonth,
                           onAdd: () => _openEntry(AddChoice.expense),
                           hints: KibuoData.maybeOf(context) == null
                               ? null
@@ -157,7 +205,7 @@ class _AppShellState extends State<AppShell> {
             _BottomBar(
               current: _tab,
               plusKey: _plusKey,
-              onTab: (tab) => setState(() => _tab = tab),
+              onTab: _show,
               onPlusTap: _openSheet,
               onPlusHoldStart: _openFan,
               onPlusHoldMove: _hover,
@@ -207,19 +255,7 @@ class _AppShellState extends State<AppShell> {
         if (db != null)
           SettingsRow(
             label: AppLocalizations.of(context).accountsTitle,
-            // A corrected balance adds an operation: the list follows.
-            onTap: () => Navigator.of(context)
-                .push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => AccountsScreen(
-                      accounts: AccountRepository(db),
-                      currencies: CurrencyRepository(db),
-                      categories: CategoryRepository(db),
-                      transactions: TransactionRepository(db),
-                    ),
-                  ),
-                )
-                .then((_) => _saved.value++),
+            onTap: () => _openAccounts(db),
           ),
         if (db != null)
           SettingsRow(
