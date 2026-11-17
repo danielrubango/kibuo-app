@@ -1507,4 +1507,63 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get searchNoResultHelp =>
       'Vérifiez l’orthographe ou cherchez un montant.';
+
+  @override
+  String get firstWelcome => 'Bienvenue sur kibuo';
+
+  @override
+  String get firstWelcomeText =>
+      'Vos comptes, vos dettes et vos projets, au même endroit. Vos données restent sur votre téléphone.';
+
+  @override
+  String get firstLanguage => 'Choisissez votre langue';
+
+  @override
+  String get firstContinue => 'Continuer';
+
+  @override
+  String firstStep(int step, int count) {
+    return 'Étape $step sur $count';
+  }
+
+  @override
+  String get firstCurrencyTitle => 'Votre devise principale';
+
+  @override
+  String get firstCurrencyText =>
+      'Elle sert au suivi et aux rapports. Chaque compte gardera sa propre devise.';
+
+  @override
+  String get firstCurrencySearch => 'Rechercher une devise';
+
+  @override
+  String get firstCurrencySearchHint => 'Nom ou code';
+
+  @override
+  String get firstAccountTitle => 'Votre premier compte';
+
+  @override
+  String get firstAccountText =>
+      'Commencez par celui que vous utilisez le plus. Vous pourrez en ajouter d’autres ensuite.';
+
+  @override
+  String get firstProtectTitle => 'Protégez vos données';
+
+  @override
+  String get firstProtectText =>
+      'Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.';
+
+  @override
+  String get firstLockTitle => 'Verrouiller l’application';
+
+  @override
+  String get firstLockHelp =>
+      'PIN ou empreinte. Un code de récupération vous sera remis.';
+
+  @override
+  String get firstLater =>
+      'Vous pourrez changer ces choix à tout moment dans les réglages.';
+
+  @override
+  String get firstStart => 'Commencer';
 }

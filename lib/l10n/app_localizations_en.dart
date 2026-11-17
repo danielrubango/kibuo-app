@@ -1484,4 +1484,63 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get searchNoResultHelp =>
       'Check the spelling or search for an amount.';
+
+  @override
+  String get firstWelcome => 'Welcome to kibuo';
+
+  @override
+  String get firstWelcomeText =>
+      'Your accounts, debts and projects in one place. Your data stays on your phone.';
+
+  @override
+  String get firstLanguage => 'Choose your language';
+
+  @override
+  String get firstContinue => 'Continue';
+
+  @override
+  String firstStep(int step, int count) {
+    return 'Step $step of $count';
+  }
+
+  @override
+  String get firstCurrencyTitle => 'Your main currency';
+
+  @override
+  String get firstCurrencyText =>
+      'It is used for tracking and reports. Each account keeps its own currency.';
+
+  @override
+  String get firstCurrencySearch => 'Search for a currency';
+
+  @override
+  String get firstCurrencySearchHint => 'Name or code';
+
+  @override
+  String get firstAccountTitle => 'Your first account';
+
+  @override
+  String get firstAccountText =>
+      'Start with the one you use most. You can add others later.';
+
+  @override
+  String get firstProtectTitle => 'Protect your data';
+
+  @override
+  String get firstProtectText =>
+      'Your data stays on this phone. Without a backup, it is lost if you lose the phone.';
+
+  @override
+  String get firstLockTitle => 'Lock the app';
+
+  @override
+  String get firstLockHelp =>
+      'PIN or fingerprint. You will be given a recovery code.';
+
+  @override
+  String get firstLater =>
+      'You can change these choices at any time in the settings.';
+
+  @override
+  String get firstStart => 'Start';
 }

@@ -2532,6 +2532,108 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Vérifiez l’orthographe ou cherchez un montant.'**
   String get searchNoResultHelp;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue sur kibuo'**
+  String get firstWelcome;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos comptes, vos dettes et vos projets, au même endroit. Vos données restent sur votre téléphone.'**
+  String get firstWelcomeText;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez votre langue'**
+  String get firstLanguage;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get firstContinue;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape {step} sur {count}'**
+  String firstStep(int step, int count);
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre devise principale'**
+  String get firstCurrencyTitle;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle sert au suivi et aux rapports. Chaque compte gardera sa propre devise.'**
+  String get firstCurrencyText;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une devise'**
+  String get firstCurrencySearch;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom ou code'**
+  String get firstCurrencySearchHint;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre premier compte'**
+  String get firstAccountTitle;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencez par celui que vous utilisez le plus. Vous pourrez en ajouter d’autres ensuite.'**
+  String get firstAccountText;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Protégez vos données'**
+  String get firstProtectTitle;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.'**
+  String get firstProtectText;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouiller l’application'**
+  String get firstLockTitle;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'PIN ou empreinte. Un code de récupération vous sera remis.'**
+  String get firstLockHelp;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pourrez changer ces choix à tout moment dans les réglages.'**
+  String get firstLater;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get firstStart;
 }
 
 class _AppLocalizationsDelegate
