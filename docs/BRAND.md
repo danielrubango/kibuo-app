@@ -1,6 +1,6 @@
 # Marque
 
-Nom retenu : **kibuo**, toujours en minuscules, y compris en début de phrase et sous l'icône du téléphone (validé le 17 novembre 2026). Nom inventé, inspiré de *kibubu* (tirelire en swahili, sens non vérifié dans un dictionnaire).
+Nom retenu : **kibuo**, toujours en minuscules, y compris en début de phrase et sous l'icône du téléphone (validé le 17 novembre 2026). Nom inventé, inspiré de *kibubu*, la tirelire en swahili ; le sens est vérifié dans l'usage tanzanien, où il nomme aussi des produits d'épargne (Tigo Pesa Kibubu, comptes « Kibubu » de coopératives). Le 17 novembre 2026, kibuo a été gardé face à trois autres pistes (canvas NomChoix) : bombika (du lingala *kobomba*, garder), akibao (du swahili *akiba*, l'épargne) et tirelia (de « tirelire ») ; c'est le seul des quatre dont `.com` et `.app` sont libres et sans homonyme.
 
 ## Logo
 
@@ -25,7 +25,8 @@ Contrôlé le 9 novembre 2026 :
 | Application du même nom sur Google Play et l'App Store | Aucune trouvée |
 | `kibuo.com` | Aucun enregistrement |
 | `kibuo.app` | Aucun enregistrement |
-| Noms proches | Kibu et Kiboo, hors finance |
+| Noms proches | Kibu, Kiboo et Kibuu, hors finance ; une marque « kibubu » déposée aux États-Unis |
+| Revérifié le 17 novembre 2026 | `kibuo.com` et `kibuo.app` toujours libres ; aucune appli ni entreprise « kibuo » |
 
 ## À faire avant publication
 
