@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -33,16 +34,7 @@ class TabPlaceholder extends StatelessWidget {
       // Room for the floating bar and its fade.
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 112),
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: text.headlineLarge),
-              if (subtitle != null) Text(subtitle!, style: text.bodyMedium),
-            ],
-          ),
-        ),
+        TabHeader(title: TabHeader.text(title), subtitle: subtitle),
         const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),

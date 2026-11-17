@@ -87,17 +87,71 @@ class SheetHeader extends StatelessWidget {
   }
 }
 
-/// The title of a tab (Accueil, Opérations, Plus): no back arrow.
-class TabTitle extends StatelessWidget {
-  const TabTitle(this.text, {super.key});
+/// The top of a tab (canvas Aujourdhui, ApercuTuile, ListeOperations): a
+/// row 44 high, the title 4 inside the margin and centred in it, an
+/// optional line under it, and the tab's actions at the right. No back
+/// arrow.
+class TabHeader extends StatelessWidget {
+  const TabHeader({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.onTitleTap,
+    this.actions = const [],
+  });
 
-  final String text;
+  /// Usually a [Text] in [KibuoType.tabTitle]; the month's title is richer.
+  final Widget title;
+  final String? subtitle;
+
+  /// The title opens something (the month picker).
+  final VoidCallback? onTitleTap;
+
+  /// At the right; the last icon's touch area may run into the margin.
+  final List<Widget> actions;
+
+  /// A plain title.
+  static Widget text(String text) => Text(text, style: KibuoType.tabTitle);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Text(text, style: KibuoType.tabTitle),
+    final subtitle = this.subtitle;
+    Widget head = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DefaultTextStyle.merge(style: KibuoType.tabTitle, child: title),
+          if (subtitle != null)
+            Text(subtitle, style: KibuoType.help.copyWith(height: null)),
+        ],
+      ),
+    );
+    if (onTitleTap case final tap?) {
+      head = InkWell(
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+        onTap: tap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: KibuoTheme.heightTouch),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            widthFactor: 1,
+            child: head,
+          ),
+        ),
+      );
+    }
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: KibuoTheme.heightTouch),
+      child: Row(
+        children: [
+          Expanded(
+            child: Align(alignment: Alignment.centerLeft, child: head),
+          ),
+          ...actions,
+        ],
+      ),
     );
   }
 }

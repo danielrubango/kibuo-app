@@ -1427,4 +1427,84 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get listNoEntries => 'Aucune entrée';
+
+  @override
+  String get listSearch => 'Rechercher';
+
+  @override
+  String get searchHint => 'Libellé, catégorie, compte, montant';
+
+  @override
+  String get searchClose => 'Fermer la recherche';
+
+  @override
+  String get searchClear => 'Effacer la recherche';
+
+  @override
+  String get searchRecent => 'Recherches récentes';
+
+  @override
+  String get searchRecentClear => 'Effacer';
+
+  @override
+  String get searchBy => 'Chercher par';
+
+  @override
+  String get searchHelp =>
+      'La recherche porte sur tous les mois : libellé, catégorie, compte, note et montant.';
+
+  @override
+  String searchResults(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count résultats',
+      one: '1 résultat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchOthers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count autres résultats',
+      one: '1 autre résultat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchEarlierMonths => 'Dans les mois précédents';
+
+  @override
+  String get searchOtherMonths => 'Dans les autres mois';
+
+  @override
+  String searchEarlierFold(int count) {
+    return 'Mois précédents · $count';
+  }
+
+  @override
+  String searchOtherFold(int count) {
+    return 'Autres mois · $count';
+  }
+
+  @override
+  String get searchFold => 'Replier';
+
+  @override
+  String searchNothingInMonth(String month, String query) {
+    return 'Rien en $month pour « $query ».';
+  }
+
+  @override
+  String searchNoResultTitle(String query) {
+    return 'Aucun résultat pour « $query »';
+  }
+
+  @override
+  String get searchNoResultHelp =>
+      'Vérifiez l’orthographe ou cherchez un montant.';
 }
