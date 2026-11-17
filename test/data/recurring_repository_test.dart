@@ -148,4 +148,57 @@ void main() {
     );
     expect(await rules.catchUp(DateTime(2026, 11, 18)), 3);
   });
+
+  test(
+    'made from an entry: its operation is the first time, not made again',
+    () async {
+      final op = await transactions.create(
+        kind: EntryKind.expense,
+        accountId: mpesa,
+        categoryId: 'default-internet',
+        paid: const Money(3000, 'USD'),
+        fees: 0,
+        date: DateTime(2026, 11, 8, 9),
+      );
+      final id = await rules.create(
+        kind: EntryKind.expense,
+        accountId: mpesa,
+        categoryId: 'default-internet',
+        amount: const Money(3000, 'USD'),
+        unit: RepeatUnit.month,
+        start: DateTime(2026, 11, 8),
+        firstMade: op,
+      );
+      expect(await rules.catchUp(DateTime(2026, 11, 18)), 0);
+      expect((await transactions.get(op))!.recurringId, id);
+      expect(await rules.catchUp(DateTime(2026, 12, 8)), 1);
+    },
+  );
+
+  test('changed: the times to come follow, those made stay', () async {
+    final id = await internet();
+    await rules.catchUp(DateTime(2026, 10, 9));
+    await rules.update(
+      id,
+      kind: EntryKind.expense,
+      accountId: mpesa,
+      categoryId: 'default-internet',
+      amount: const Money(3500, 'USD'),
+      unit: RepeatUnit.month,
+      start: DateTime(2026, 9, 8),
+    );
+    await rules.catchUp(DateTime(2026, 11, 9));
+    final amounts = [for (final t in await transactions.all()) t.paid.minor];
+    expect(amounts, [3500, 3000, 3000]);
+  });
+
+  test('the next dates, after a day', () async {
+    await internet();
+    final rule = (await rules.rules()).single;
+    expect(rule.next(after: DateTime(2026, 11, 18), count: 3), [
+      DateTime(2026, 12, 8),
+      DateTime(2027, 1, 8),
+      DateTime(2027, 2, 8),
+    ]);
+  });
 }
