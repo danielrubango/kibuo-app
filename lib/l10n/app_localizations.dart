@@ -371,7 +371,7 @@ abstract class AppLocalizations {
   /// After the code is confirmed.
   ///
   /// In fr, this message translates to:
-  /// **'Kibuo demandera ce code à chaque ouverture.'**
+  /// **'kibuo demandera ce code à chaque ouverture.'**
   String get lockCreatedBody;
 
   /// Generic button to go on.
@@ -419,7 +419,7 @@ abstract class AppLocalizations {
   /// Offered right after creating the code.
   ///
   /// In fr, this message translates to:
-  /// **'Ouvrir Kibuo avec votre empreinte ?'**
+  /// **'Ouvrir kibuo avec votre empreinte ?'**
   String get fingerprintOfferTitle;
 
   /// Under the fingerprint offer.
@@ -443,7 +443,7 @@ abstract class AppLocalizations {
   /// Shown by Android in the fingerprint prompt.
   ///
   /// In fr, this message translates to:
-  /// **'Ouvrir Kibuo'**
+  /// **'Ouvrir kibuo'**
   String get fingerprintReason;
 
   /// Option in the forgotten-code sheet.
@@ -455,7 +455,7 @@ abstract class AppLocalizations {
   /// Warning before erasing.
   ///
   /// In fr, this message translates to:
-  /// **'Toutes les données de Kibuo sur ce téléphone seront effacées. Vous pourrez ensuite restaurer une sauvegarde, si vous en avez une.'**
+  /// **'Toutes les données de kibuo sur ce téléphone seront effacées. Vous pourrez ensuite restaurer une sauvegarde, si vous en avez une.'**
   String get forgotEraseBody;
 
   /// Button that erases after a long press.
@@ -581,13 +581,13 @@ abstract class AppLocalizations {
   /// Help under Remove the code.
   ///
   /// In fr, this message translates to:
-  /// **'Sans code, Kibuo s’ouvre directement. Vos données restent chiffrées.'**
+  /// **'Sans code, kibuo s’ouvre directement. Vos données restent chiffrées.'**
   String get lockRemoveHelp;
 
   /// Privacy switch.
   ///
   /// In fr, this message translates to:
-  /// **'Masquer Kibuo dans les applications récentes'**
+  /// **'Masquer kibuo dans les applications récentes'**
   String get privacyHideRecents;
 
   /// Privacy switch.
@@ -599,7 +599,7 @@ abstract class AppLocalizations {
   /// Help under the privacy switches.
   ///
   /// In fr, this message translates to:
-  /// **'Masqué, l’aperçu des applications récentes montre le logo de Kibuo au lieu de vos soldes.'**
+  /// **'Masqué, l’aperçu des applications récentes montre le logo de kibuo au lieu de vos soldes.'**
   String get privacyHelp;
 
   /// After a wrong code.
@@ -653,13 +653,13 @@ abstract class AppLocalizations {
   /// Under the new code.
   ///
   /// In fr, this message translates to:
-  /// **'Il rend l’accès à Kibuo si vous oubliez votre code et que l’empreinte ne marche pas, et il rouvre vos données sur un nouveau téléphone. Notez-le sur papier et gardez-le en lieu sûr.'**
+  /// **'Il rend l’accès à kibuo si vous oubliez votre code et que l’empreinte ne marche pas, et il rouvre vos données sur un nouveau téléphone. Notez-le sur papier et gardez-le en lieu sûr.'**
   String get recoveryShowBody;
 
   /// Warning under the new code.
   ///
   /// In fr, this message translates to:
-  /// **'Kibuo ne le garde pas : il ne pourra plus vous le montrer.'**
+  /// **'kibuo ne le garde pas : il ne pourra plus vous le montrer.'**
   String get recoveryShowWarning;
 
   /// Copies the recovery code.
@@ -725,7 +725,7 @@ abstract class AppLocalizations {
   /// Checks the recovery code.
   ///
   /// In fr, this message translates to:
-  /// **'Ouvrir Kibuo'**
+  /// **'Ouvrir kibuo'**
   String get recoveryOpen;
 
   /// In the forgotten-code sheet.
@@ -737,7 +737,7 @@ abstract class AppLocalizations {
   /// On the recovery settings page.
   ///
   /// In fr, this message translates to:
-  /// **'Kibuo ne le garde pas : vous seul le connaissez.'**
+  /// **'kibuo ne le garde pas : vous seul le connaissez.'**
   String get recoveryNotKept;
 
   /// Replaces the recovery code.
@@ -761,13 +761,13 @@ abstract class AppLocalizations {
   /// Why create a recovery code.
   ///
   /// In fr, this message translates to:
-  /// **'Sans code de récupération, un code oublié ou un nouveau téléphone obligent à repartir de zéro, et Android ne copie pas les données de Kibuo.'**
+  /// **'Sans code de récupération, un code oublié ou un nouveau téléphone obligent à repartir de zéro, et Android ne copie pas les données de kibuo.'**
   String get recoveryCreateHelp;
 
   /// Switch for Android backup and transfer.
   ///
   /// In fr, this message translates to:
-  /// **'Laisser Android copier Kibuo'**
+  /// **'Laisser Android copier kibuo'**
   String get recoveryAndroidCopy;
 
   /// Under the Android copy switch.
@@ -2092,7 +2092,7 @@ abstract class AppLocalizations {
   /// Account form: under Solde actuel
   ///
   /// In fr, this message translates to:
-  /// **'Dans Kibuo aujourd’hui : {balance}. Tapez ce que contient vraiment le compte.'**
+  /// **'Dans kibuo aujourd’hui : {balance}. Tapez ce que contient vraiment le compte.'**
   String accountCurrentHelp(String balance);
 
   /// Adjustment sheet title
@@ -2104,7 +2104,7 @@ abstract class AppLocalizations {
   /// Adjustment sheet: balance before
   ///
   /// In fr, this message translates to:
-  /// **'Dans Kibuo'**
+  /// **'Dans kibuo'**
   String get adjustInKibuo;
 
   /// Adjustment sheet: balance typed

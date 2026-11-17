@@ -32,6 +32,7 @@ import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
+import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
@@ -443,5 +444,28 @@ void main() {
     await show(tester, EntryScreen(data: data, kind: EntryKind.expense));
     await tester.tap(find.text('7').last);
     await snap(tester, 'SaisieNouvelle', settle: false);
+  });
+
+  testWidgets('Démarrage, image par image', (tester) async {
+    tester.view.physicalSize = const Size(780, 1688);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: KibuoTheme.light(),
+        home: const StartScreen(),
+      ),
+    );
+    await tester.pump();
+    var at = 0;
+    for (final ms in [300, 480, 620, 1000]) {
+      await tester.pump(Duration(milliseconds: ms - at));
+      at = ms;
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('screens_out/demarrage_$ms.png'),
+      );
+    }
   });
 }
