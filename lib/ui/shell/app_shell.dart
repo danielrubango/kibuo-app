@@ -83,7 +83,18 @@ class _AppShellState extends State<AppShell> {
   ]);
 
   @override
+  void initState() {
+    super.initState();
+    OperationsScreen.show.addListener(_showOperations);
+  }
+
+  void _showOperations() {
+    if (OperationsScreen.show.value != null) _show(_Tab.operations);
+  }
+
+  @override
   void dispose() {
+    OperationsScreen.show.removeListener(_showOperations);
     _saved.dispose();
     _homeShown.dispose();
     _thisMonth.dispose();

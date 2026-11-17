@@ -23,6 +23,7 @@ class MonthSummaryCard extends StatelessWidget {
     this.leftInAlert = false,
     this.today,
     this.trailing = KibuoIcons.caretRight,
+    this.badge,
     this.onTap,
   });
 
@@ -52,6 +53,9 @@ class MonthSummaryCard extends StatelessWidget {
 
   /// › to open something, ▾ to choose the month.
   final IconData trailing;
+
+  /// « Dépassé », in its tint, instead of [trailing] (a budget's state).
+  final ({String text, Color tint, Color ink})? badge;
   final VoidCallback? onTap;
 
   @override
@@ -101,11 +105,31 @@ class MonthSummaryCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Icon(
-                      trailing,
-                      size: 18,
-                      color: down ? KibuoColors.accent : KibuoColors.inkMuted,
-                    ),
+                    if (badge case final b?)
+                      Container(
+                        height: 24,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: b.tint,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          b.text,
+                          style: KibuoType.caption.copyWith(
+                            color: b.ink,
+                            fontWeight: FontWeight.w700,
+                            fontVariations: const [FontVariation.weight(700)],
+                          ),
+                        ),
+                      )
+                    // Nothing to open: no arrow.
+                    else if (onTap != null)
+                      Icon(
+                        trailing,
+                        size: 18,
+                        color: down ? KibuoColors.accent : KibuoColors.inkMuted,
+                      ),
                   ],
                 ),
               ),

@@ -10,14 +10,20 @@ class SegmentedTabs<T> extends StatelessWidget {
     required this.items,
     required this.value,
     required this.onPick,
+    this.compact = false,
   });
 
   final List<(T, String)> items;
   final T value;
   final ValueChanged<T> onPick;
 
+  /// Small, on a white card (canvas BudgetDetail « Total | Rythme »): 30
+  /// high, grey behind, as wide as its words.
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
+    if (compact) return _compact();
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -61,4 +67,47 @@ class SegmentedTabs<T> extends StatelessWidget {
       ),
     );
   }
+
+  Widget _compact() => Container(
+    padding: const EdgeInsets.all(3),
+    decoration: BoxDecoration(
+      color: KibuoColors.background,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final (i, (item, label)) in items.indexed) ...[
+          if (i > 0) const SizedBox(width: 2),
+          Semantics(
+            selected: item == value,
+            button: true,
+            child: Material(
+              color: item == value ? KibuoColors.ink : Colors.transparent,
+              borderRadius: BorderRadius.circular(9),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(9),
+                onTap: () => onPick(item),
+                child: Container(
+                  height: 30,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  alignment: Alignment.center,
+                  child: Text(
+                    label,
+                    style: KibuoType.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontVariations: const [FontVariation.weight(600)],
+                      color: item == value
+                          ? KibuoColors.surface
+                          : KibuoColors.inkSecondary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
 }
