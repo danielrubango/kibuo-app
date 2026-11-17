@@ -13,6 +13,9 @@ class SpentLevel {
     : outOnly = totals.spentPercent == null && totals.exits.minor > 0,
       percent = totals.spentPercent ?? 0;
 
+  /// A budget's share of its amount.
+  const SpentLevel.share(this.percent) : outOnly = false;
+
   /// Exits without any entry: the bar full, in alert.
   final bool outOnly;
   final int percent;
@@ -38,16 +41,24 @@ class SpentLevel {
 /// ListeOperations): 10 high, and in the current month a dark mark at
 /// today with its date above.
 class SpentBar extends StatelessWidget {
-  const SpentBar({super.key, required this.spent, this.today});
+  const SpentBar({
+    super.key,
+    required this.spent,
+    this.today,
+    this.thin = false,
+  });
 
   final SpentLevel spent;
 
   /// Today and its period, when the bar is the current period's.
   final (DateTime, BudgetPeriod)? today;
 
-  static const _bar = 10.0;
-  static const _over = 4.0;
-  static const _label = 14.0;
+  /// A budget tile's bar (PRODUCT): 6 high, the mark 3 over, no date.
+  final bool thin;
+
+  double get _bar => thin ? 6 : 10;
+  double get _over => thin ? 3 : 4;
+  double get _label => thin ? 0 : 14;
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +109,14 @@ class SpentBar extends StatelessWidget {
                 ),
               ),
               // Centred on the mark, kept inside the card.
-              Positioned(
-                top: 0,
-                left: (x - width / 2).clamp(0, box.maxWidth - width).toDouble(),
-                child: Text(label, maxLines: 1, style: style),
-              ),
+              if (!thin)
+                Positioned(
+                  top: 0,
+                  left: (x - width / 2)
+                      .clamp(0, box.maxWidth - width)
+                      .toDouble(),
+                  child: Text(label, maxLines: 1, style: style),
+                ),
             ],
           );
         },

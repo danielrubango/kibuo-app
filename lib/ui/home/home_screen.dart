@@ -9,6 +9,7 @@ import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/month_summary_card.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
@@ -274,105 +275,25 @@ class _MonthCard extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final rest = totals.rest;
     final pre = totals.approximate ? '≈ ' : '';
-    final spent = SpentLevel(totals);
     final exits = Money(-totals.exits.minor, totals.exits.currency);
-    String restText(bool short) =>
-        rest.minor > 0 ? '+${money(rest, short)}' : money(rest, short);
-    return Material(
-      color: KibuoColors.surface,
-      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 28,
-                child: Row(
-                  children: [
-                    const Icon(
-                      KibuoIcons.calendarBlank,
-                      size: 16,
-                      color: KibuoColors.accent,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
-                          text: name,
-                          children: [
-                            TextSpan(
-                              text: ' · ${l.homeThisMonth}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontVariations: [FontVariation.weight(500)],
-                                color: KibuoColors.inkSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        style: KibuoType.body.copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontVariations: const [FontVariation.weight(700)],
-                        ),
-                      ),
-                    ),
-                    const Icon(
-                      KibuoIcons.caretRight,
-                      size: 18,
-                      color: KibuoColors.inkMuted,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 6),
-              FitAmount(
-                long: isLong(rest),
-                span: (short) => TextSpan(
-                  text: '$pre${restText(short)}',
-                  style: KibuoType.tabTitle.copyWith(
-                    height: 1.2,
-                    color: rest.minor < 0 ? KibuoColors.debtInk : null,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: ' ${l.homeLeft}',
-                      style: KibuoType.help.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontVariations: const [FontVariation.weight(500)],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 4),
-              SpentBar(spent: spent, today: today),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  SpentShare(spent: spent),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FitAmount(
-                      long: isLong(exits) || isLong(totals.entries),
-                      alignment: Alignment.centerRight,
-                      style: KibuoType.caption,
-                      span: (short) => _outOfIn(
-                        l,
-                        '$pre${signed(exits, short)}',
-                        '$pre${signed(totals.entries, short)}',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+    return MonthSummaryCard(
+      month: name,
+      detail: l.homeThisMonth,
+      left: (short) =>
+          pre +
+          (rest.minor > 0 ? '+${money(rest, short)}' : money(rest, short)),
+      leftWord: l.homeLeft,
+      leftLong: isLong(rest),
+      leftInAlert: rest.minor < 0,
+      spent: SpentLevel(totals),
+      today: today,
+      line: (short) => _outOfIn(
+        l,
+        '$pre${signed(exits, short)}',
+        '$pre${signed(totals.entries, short)}',
       ),
+      lineLong: isLong(exits) || isLong(totals.entries),
+      onTap: onTap,
     );
   }
 

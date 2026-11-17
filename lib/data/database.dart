@@ -177,6 +177,31 @@ class Attachments extends Table with SyncColumns {
   IntColumn get position => integer()();
 }
 
+/// A planned amount for an expense category (GLOSSARY: Budget). Its
+/// amount lives in [BudgetAmounts], one row per change.
+@DataClassName('BudgetRow')
+class Budgets extends Table with SyncColumns {
+  /// A top-level expense category; its subcategories count with it.
+  TextColumn get categoryId => text()();
+
+  /// « Mon ordre ».
+  IntColumn get position => integer()();
+}
+
+/// A budget's amount from one period on (PRODUCT: a change holds from the
+/// current month, the months before keep theirs).
+@DataClassName('BudgetAmountRow')
+class BudgetAmounts extends Table with SyncColumns {
+  TextColumn get budgetId => text()();
+
+  /// The first period it holds for, as year × 100 + month (202611).
+  IntColumn get fromMonth => integer()();
+
+  /// In the currency's minor unit.
+  IntColumn get amount => integer()();
+  TextColumn get currency => text()();
+}
+
 @DriftDatabase(
   tables: [
     Devices,
@@ -188,6 +213,8 @@ class Attachments extends Table with SyncColumns {
     Categories,
     Transactions,
     Attachments,
+    Budgets,
+    BudgetAmounts,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -198,7 +225,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -234,6 +261,10 @@ class KibuoDatabase extends _$KibuoDatabase {
       from7To8: (m, schema) async {
         await m.addColumn(schema.accounts, schema.accounts.overdraftAllowed);
         await m.addColumn(schema.accounts, schema.accounts.overdraftLimit);
+      },
+      from8To9: (m, schema) async {
+        await m.createTable(schema.budgets);
+        await m.createTable(schema.budgetAmounts);
       },
     ),
     beforeOpen: (details) async {
