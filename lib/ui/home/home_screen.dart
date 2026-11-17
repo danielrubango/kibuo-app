@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/accounts/account_total.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -13,6 +13,7 @@ import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final now = DateTime.now();
     final month = [
       for (final t in ops)
-        if (_sameMonth(t, now)) t,
+        if (periodOf(now).contains(t.date.toLocal())) t,
     ];
     final rates = <String, ExchangeRate>{};
     final codes = {
@@ -105,11 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ], (code) => rates[code]);
       _month = flowTotals(main, month.map(flowOf), (code) => rates[code]);
     });
-  }
-
-  static bool _sameMonth(TransactionInfo t, DateTime now) {
-    final d = t.date.toLocal();
-    return d.year == now.year && d.month == now.month;
   }
 
   Future<void> _openCurrencies() async {
@@ -161,9 +157,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
           const SizedBox(height: 16),
           _MonthCard(
-            name: _capitalized(DateFormat.MMMM(lang).format(now)),
+            name: _capitalized(
+              DateFormat.MMMM(lang).format(periodOf(now).month),
+            ),
             totals: month,
-            today: now,
+            today: (now, periodOf(now)),
             money: (m, short) =>
                 (short ? formatShort : formatMoney)(m, main, lang),
             signed: (m, short) => short
@@ -264,7 +262,9 @@ class _MonthCard extends StatelessWidget {
 
   final String name;
   final FlowTotals totals;
-  final DateTime today;
+
+  /// Today and the period it is in.
+  final (DateTime, BudgetPeriod) today;
   final String Function(Money, bool short) money;
   final String Function(Money, bool short) signed;
   final VoidCallback? onTap;

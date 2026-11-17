@@ -11,9 +11,11 @@ import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/choice_menu.dart';
+import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -464,4 +466,30 @@ void main() {
     expect(listTitle.center.dy, closeTo(other.center.dy, 1));
     expect(listTitle.left, closeTo(other.left, 1));
   });
+
+  testWidgets(
+    'a month from the 2nd: its days, and the period under the title',
+    (tester) async {
+      monthStartChoice.value = 2;
+      final period = BudgetPeriod.containing(now, startDay: 2);
+      Future<void> taxi(int minor, DateTime day) => data.transactions.create(
+        kind: EntryKind.expense,
+        accountId: mpesa,
+        categoryId: 'default-taxi',
+        paid: Money(minor, 'USD'),
+        fees: 0,
+        date: day,
+      );
+      await taxi(333, period.first.add(const Duration(hours: 9)));
+      await taxi(777, period.first.subtract(const Duration(hours: 9)));
+      await start(tester);
+      expect(textPlain('−3,33 \$'), findsWidgets, reason: 'its first day');
+      expect(textPlain('−7,77 \$'), findsNothing, reason: 'the day before');
+      String d(DateTime x) => DateFormat.MMMd('fr').format(x);
+      expect(
+        find.text('du ${d(period.first)} au ${d(period.last)}'),
+        findsOneWidget,
+      );
+    },
+  );
 }

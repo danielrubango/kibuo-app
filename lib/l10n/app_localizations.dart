@@ -182,6 +182,42 @@ abstract class AppLocalizations {
   /// **'La saisie, le détail d’une opération et les confirmations montrent toujours le montant entier.'**
   String get longAmountsNote;
 
+  /// Under the list's title when the month does not start on the 1st.
+  ///
+  /// In fr, this message translates to:
+  /// **'du {first} au {last}'**
+  String listPeriod(String first, String last);
+
+  /// Setting: the day a month starts on.
+  ///
+  /// In fr, this message translates to:
+  /// **'Début du mois'**
+  String get monthStart;
+
+  /// Début du mois: under the title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le jour où votre mois commence, par exemple le jour de la paie.'**
+  String get monthStartHelp;
+
+  /// Début du mois: the value in Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'{day, plural, =1{Le 1er} other{Le {day}}}'**
+  String monthStartValue(int day);
+
+  /// Début du mois: what the current month will cover.
+  ///
+  /// In fr, this message translates to:
+  /// **'{month} ira du {first} au {last}.'**
+  String monthStartPreview(String month, String first, String last);
+
+  /// Début du mois: the button.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get monthStartSave;
+
   /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:
