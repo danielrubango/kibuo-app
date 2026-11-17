@@ -18,6 +18,18 @@ String formatMoney(Money amount, CurrencyInfo currency, String locale) {
   return _withSymbol(sign, number, currency.symbol, locale);
 }
 
+/// « −588,00 », « +1 200,00 »: the amount with its sign and without the
+/// currency, where the currency is said next to it.
+String formatSigned(Money amount, CurrencyInfo currency, String locale) {
+  final decimals = currency.usesDecimals ? currency.digits : 0;
+  final number = NumberFormat.decimalPatternDigits(
+    locale: locale,
+    decimalDigits: decimals,
+  ).format(amount.minor.abs() / _pow10(currency.digits));
+  if (amount.minor == 0) return number;
+  return '${amount.minor < 0 ? _minus : '+'}$number';
+}
+
 /// « 1 $ = 2 800 FC », the way the rate is written: at most 4 decimals and
 /// 6 digits, so a worked-out rate stays readable.
 String formatRate(ExchangeRate rate, String locale) {

@@ -8,7 +8,12 @@
   "tabMore": "More",
 
   "homeTitle": "Today",
-  "homePlaceholder": "Your available money, the current month and what’s coming up will be here.",
+  "homeAvailable": "Available",
+  "homeAvailableHelp": "free to spend",
+  "homeOpenAccounts": "See my accounts",
+  "homeThisMonth": "this month",
+  "homeLeft": "left",
+  "homeOutOfIn": "{out} of {income}",
   "operationsPlaceholder": "This month’s transactions will be here.",
   "overviewPlaceholder": "Charts and the items you follow will be here.",
   "morePlaceholder": "Your spaces and settings will be here.",
