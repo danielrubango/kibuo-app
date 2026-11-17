@@ -439,17 +439,29 @@ class _FeesSheetState extends State<_FeesSheet> {
 
 /// « Catégorie » (canvas SaisieCategorie): each category with a radio, its
 /// subcategories as chips under it, and a search. Returns the chosen one.
+///
+/// For a budget, [withSubs] is false (only top-level categories) and
+/// [unavailable] greys those that already have one, with [unavailableNote].
 Future<CategoryInfo?> pickCategory(
   BuildContext context, {
   required List<CategoryInfo> categories,
   String? current,
+  bool withSubs = true,
+  Set<String> unavailable = const {},
+  String? unavailableNote,
 }) {
   final l = AppLocalizations.of(context);
   return showKibuoSheet<CategoryInfo>(
     context,
     title: l.entryCategory,
-    builder: (_) =>
-        _CategorySheet(categories: categories, current: current, l: l),
+    builder: (_) => _CategorySheet(
+      categories: categories,
+      current: current,
+      l: l,
+      withSubs: withSubs,
+      unavailable: unavailable,
+      unavailableNote: unavailableNote,
+    ),
   );
 }
 
@@ -458,11 +470,17 @@ class _CategorySheet extends StatefulWidget {
     required this.categories,
     required this.current,
     required this.l,
+    required this.withSubs,
+    required this.unavailable,
+    required this.unavailableNote,
   });
 
   final List<CategoryInfo> categories;
   final String? current;
   final AppLocalizations l;
+  final bool withSubs;
+  final Set<String> unavailable;
+  final String? unavailableNote;
 
   @override
   State<_CategorySheet> createState() => _CategorySheetState();
@@ -507,29 +525,42 @@ class _CategorySheetState extends State<_CategorySheet> {
             children: [
               for (final c in shown) ...[
                 InkWell(
-                  onTap: () => Navigator.of(context).pop(c),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                    child: Row(
-                      children: [
-                        _Radio(on: c.id == widget.current),
-                        const SizedBox(width: 12),
-                        CategoryTile(category: c),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            categoryName(l, c),
-                            style: KibuoType.rowLabel.copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontVariations: const [FontVariation.weight(600)],
+                  onTap: widget.unavailable.contains(c.id)
+                      ? null
+                      : () => Navigator.of(context).pop(c),
+                  child: Opacity(
+                    opacity: widget.unavailable.contains(c.id) ? 0.45 : 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                      child: Row(
+                        children: [
+                          _Radio(on: c.id == widget.current),
+                          const SizedBox(width: 12),
+                          CategoryTile(category: c),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              categoryName(l, c),
+                              style: KibuoType.rowLabel.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontVariations: const [
+                                  FontVariation.weight(600),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          if (widget.unavailable.contains(c.id) &&
+                              widget.unavailableNote != null)
+                            Text(
+                              widget.unavailableNote!,
+                              style: KibuoType.caption,
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                if (c.subs.isNotEmpty)
+                if (widget.withSubs && c.subs.isNotEmpty)
                   Padding(
                     // Under the category's name: 16 + circle 22 + 12 +
                     // tile 28 + 8.

@@ -406,3 +406,98 @@ class CheckChoice extends StatelessWidget {
     );
   }
 }
+
+/// One choice of a display sheet (DIRECTION: feuille d'affichage; canvas
+/// BudgetsAffichage): its icon in a tile that turns green when the choice
+/// is on, the name, one line under it, and a round mark at the right.
+class DisplayChoice extends StatelessWidget {
+  const DisplayChoice({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.help,
+    required this.on,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final String help;
+  final bool on;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: on,
+      inMutuallyExclusiveGroup: true,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 7, 14, 7),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 40),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: on
+                        ? KibuoColors.accentTintStrong
+                        : KibuoColors.background,
+                    borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: on ? KibuoColors.accent : KibuoColors.inkSecondary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(label, style: KibuoType.rowLabel),
+                      const SizedBox(height: 2),
+                      Text(
+                        help,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: KibuoType.caption,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: on ? KibuoColors.accent : KibuoColors.line,
+                      width: 2,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: on
+                      ? Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            color: KibuoColors.accent,
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      : null,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

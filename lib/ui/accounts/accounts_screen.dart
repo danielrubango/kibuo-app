@@ -131,13 +131,15 @@ class _AccountsScreenState extends State<AccountsScreen> {
           SectionTitle(l.accountsDisplayAmounts),
           SettingsCard(
             children: [
-              CheckChoice(
+              DisplayChoice(
+                icon: KibuoIcons.wallet,
                 label: l.accountsDisplayEach,
                 help: l.accountsDisplayEachHelp,
                 on: !_allInMain,
                 onTap: () => Navigator.of(context).pop(false),
               ),
-              CheckChoice(
+              DisplayChoice(
+                icon: KibuoIcons.arrowsLeftRight,
                 label: l.accountsDisplayAll(
                   currencyName(context, main).toLowerCase(),
                   main.code,
