@@ -9,6 +9,7 @@ import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
@@ -20,6 +21,7 @@ import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -110,12 +112,19 @@ class _OperationsScreenState extends State<OperationsScreen> {
   final _chipKeys = {for (final f in _Filter.values) f: GlobalKey()};
   final _chipLinks = {for (final f in _Filter.values) f: LayerLink()};
 
-  static DateTime _thisMonth() {
-    final now = DateTime.now();
-    return DateTime(now.year, now.month);
-  }
+  /// The current period's name (« Début du mois » may push it ahead).
+  static DateTime _thisMonth() => periodOf(DateTime.now()).month;
 
   bool get _isThisMonth => _month == _thisMonth();
+
+  /// « Début du mois » changed: the periods move, back to the current one.
+  void _startChanged() {
+    setState(() {
+      _month = _thisMonth();
+      _keptMonth = _month;
+    });
+    if (_pages.hasClients) _pages.jumpToPage(0);
+  }
 
   void _backToThisMonth() {
     if (!_isThisMonth) _goTo(_thisMonth());
@@ -129,6 +138,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     super.initState();
     widget.refresh?.addListener(_load);
     widget.thisMonth?.addListener(_backToThisMonth);
+    monthStartChoice.addListener(_startChanged);
     // Always on; it draws nothing while no layer is open.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _layer.show();
@@ -142,6 +152,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     _pages.dispose();
     widget.refresh?.removeListener(_load);
     widget.thisMonth?.removeListener(_backToThisMonth);
+    monthStartChoice.removeListener(_startChanged);
     super.dispose();
   }
 
@@ -234,11 +245,8 @@ class _OperationsScreenState extends State<OperationsScreen> {
     _picker = false;
   });
 
-  bool _inMonth(TransactionInfo t, [DateTime? month]) {
-    final m = month ?? _month;
-    final d = t.date.toLocal();
-    return d.year == m.year && d.month == m.month;
-  }
+  bool _inMonth(TransactionInfo t, [DateTime? month]) =>
+      periodNamed(month ?? _month).contains(t.date.toLocal());
 
   /// A top-level category's id, for a category or one of its subcategories.
   String? _topCategory(String? id) {
@@ -367,7 +375,9 @@ class _OperationsScreenState extends State<OperationsScreen> {
                 if (_inMonth(e.$1, month)) e.$1,
             ]),
             money: _money,
-            today: month == _thisMonth() ? DateTime.now() : null,
+            today: month == _thisMonth()
+                ? (DateTime.now(), periodNamed(month))
+                : null,
           ),
         const SizedBox(height: 12),
         _filters(l, current: current),
@@ -493,10 +503,19 @@ class _OperationsScreenState extends State<OperationsScreen> {
             24 <=
         room;
     final name = fits ? full : short;
-    // A fixed 44: « Ce mois-ci » coming and going must not move the list.
+    // « du 25 oct. au 24 nov. » when the month does not start on the 1st.
+    final period = periodNamed(month);
+    final range = monthStartChoice.value == 1
+        ? null
+        : l.listPeriod(
+            DateFormat.MMMd(_lang).format(period.first),
+            DateFormat.MMMd(_lang).format(period.last),
+          );
+    // A fixed height: « Ce mois-ci » coming and going must not move the list.
     return SizedBox(
-      height: KibuoTheme.heightTouch,
+      height: KibuoTheme.heightTouch + (range == null ? 0 : 18),
       child: TabHeader(
+        subtitle: range,
         onTitleTap: () => setState(() => _picker = !_picker),
         title: Text.rich(
           maxLines: 1,
@@ -1008,8 +1027,9 @@ class _TotalsCard extends StatelessWidget {
 
   final FlowTotals totals;
 
-  /// Today, when the card is this month's: the mark on the bar.
-  final DateTime? today;
+  /// Today and its period, when the card is the current period's: the
+  /// mark on the bar.
+  final (DateTime, BudgetPeriod)? today;
   final String Function(Money, {bool short}) money;
 
   /// « +25,00 $ », « −106,00 $ », or « 0,00 $ » in grey; [short] writes
@@ -1216,7 +1236,7 @@ class _MonthPickerState extends State<_MonthPicker> {
   }
 
   Widget _monthCell(DateTime m, DateTime now, String lang) {
-    final future = m.isAfter(DateTime(now.year, now.month));
+    final future = m.isAfter(_OperationsScreenState._thisMonth());
     final current = m == widget.month;
     final name = DateFormat.MMMM(lang).format(m);
     return Material(

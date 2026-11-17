@@ -10,6 +10,7 @@ import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/long_amounts_store.dart';
+import 'package:kibuo/data/month_start_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/long_amounts.dart';
@@ -22,9 +23,11 @@ import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
+import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/long_amounts_sheet.dart';
+import 'package:kibuo/ui/settings/month_start_sheet.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/shell/add_sheet.dart';
@@ -69,7 +72,11 @@ class _AppShellState extends State<AppShell> {
   /// Tells Opérations to show this month (from Accueil's month).
   final _thisMonth = ValueNotifier<int>(0);
 
-  late final _homeRefresh = Listenable.merge([_saved, _homeShown]);
+  late final _homeRefresh = Listenable.merge([
+    _saved,
+    _homeShown,
+    monthStartChoice,
+  ]);
 
   @override
   void dispose() {
@@ -89,6 +96,7 @@ class _AppShellState extends State<AppShell> {
     if (_choiceRead || db == null) return;
     _choiceRead = true;
     LongAmountsStore(db).read().then((c) => longAmountsChoice.value = c);
+    MonthStartStore(db).read().then((d) => monthStartChoice.value = d);
   }
 
   void _show(_Tab tab) {
@@ -291,6 +299,15 @@ class _AppShellState extends State<AppShell> {
                 builder: (_) =>
                     CurrenciesScreen(repository: CurrencyRepository(db)),
               ),
+            ),
+          ),
+        if (db != null)
+          ValueListenableBuilder<int>(
+            valueListenable: monthStartChoice,
+            builder: (context, day, _) => SettingsRow(
+              label: AppLocalizations.of(context).monthStart,
+              value: AppLocalizations.of(context).monthStartValue(day),
+              onTap: () => showMonthStartSheet(context, MonthStartStore(db)),
             ),
           ),
         if (db != null)

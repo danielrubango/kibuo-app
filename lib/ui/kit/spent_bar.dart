@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -41,8 +42,8 @@ class SpentBar extends StatelessWidget {
 
   final SpentLevel spent;
 
-  /// Today, when the bar is this month's.
-  final DateTime? today;
+  /// Today and its period, when the bar is the current period's.
+  final (DateTime, BudgetPeriod)? today;
 
   static const _bar = 10.0;
   static const _over = 4.0;
@@ -57,8 +58,8 @@ class SpentBar extends StatelessWidget {
       backgroundColor: KibuoColors.track,
       borderRadius: BorderRadius.circular(_bar / 2),
     );
-    final today = this.today;
-    if (today == null) return bar;
+    if (this.today case null) return bar;
+    final (today, period) = this.today!;
     final lang = Localizations.localeOf(context).languageCode;
     final label = DateFormat.MMMd(lang).format(today);
     final style = KibuoType.caption.copyWith(
@@ -71,7 +72,7 @@ class SpentBar extends StatelessWidget {
       height: _label + _over + _bar + _over,
       child: LayoutBuilder(
         builder: (context, box) {
-          final x = box.maxWidth * monthElapsed(today);
+          final x = box.maxWidth * period.elapsed(today);
           final painter = TextPainter(
             text: TextSpan(text: label, style: style),
             textDirection: Directionality.of(context),
