@@ -3703,6 +3703,38 @@ class $TransactionsTable extends Transactions
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('done'),
+  );
+  static const VerificationMeta _recurringIdMeta = const VerificationMeta(
+    'recurringId',
+  );
+  @override
+  late final GeneratedColumn<String> recurringId = GeneratedColumn<String>(
+    'recurring_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _occurrenceMeta = const VerificationMeta(
+    'occurrence',
+  );
+  @override
+  late final GeneratedColumn<int> occurrence = GeneratedColumn<int>(
+    'occurrence',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3723,6 +3755,9 @@ class $TransactionsTable extends Transactions
     fees,
     date,
     note,
+    status,
+    recurringId,
+    occurrence,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3862,6 +3897,27 @@ class $TransactionsTable extends Transactions
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('recurring_id')) {
+      context.handle(
+        _recurringIdMeta,
+        recurringId.isAcceptableOrUnknown(
+          data['recurring_id']!,
+          _recurringIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('occurrence')) {
+      context.handle(
+        _occurrenceMeta,
+        occurrence.isAcceptableOrUnknown(data['occurrence']!, _occurrenceMeta),
+      );
+    }
     return context;
   }
 
@@ -3943,6 +3999,18 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      recurringId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recurring_id'],
+      ),
+      occurrence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}occurrence'],
+      ),
     );
   }
 
@@ -3992,6 +4060,15 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
   final int fees;
   final DateTime date;
   final String? note;
+
+  /// « done » counts; « draft » waits for validation and « ignored » was
+  /// set aside: neither touches balances nor totals (GLOSSARY: Brouillon).
+  final String status;
+
+  /// The recurrence it comes from, and the day it fell on (year × 10 000
+  /// + month × 100 + day): one occurrence per rule and day.
+  final String? recurringId;
+  final int? occurrence;
   const TransactionRow({
     required this.id,
     required this.version,
@@ -4011,6 +4088,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     required this.fees,
     required this.date,
     this.note,
+    required this.status,
+    this.recurringId,
+    this.occurrence,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4045,6 +4125,13 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || recurringId != null) {
+      map['recurring_id'] = Variable<String>(recurringId);
+    }
+    if (!nullToAbsent || occurrence != null) {
+      map['occurrence'] = Variable<int>(occurrence);
+    }
     return map;
   }
 
@@ -4078,6 +4165,13 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       fees: Value(fees),
       date: Value(date),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      status: Value(status),
+      recurringId: recurringId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recurringId),
+      occurrence: occurrence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(occurrence),
     );
   }
 
@@ -4105,6 +4199,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       fees: serializer.fromJson<int>(json['fees']),
       date: serializer.fromJson<DateTime>(json['date']),
       note: serializer.fromJson<String?>(json['note']),
+      status: serializer.fromJson<String>(json['status']),
+      recurringId: serializer.fromJson<String?>(json['recurringId']),
+      occurrence: serializer.fromJson<int?>(json['occurrence']),
     );
   }
   @override
@@ -4129,6 +4226,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       'fees': serializer.toJson<int>(fees),
       'date': serializer.toJson<DateTime>(date),
       'note': serializer.toJson<String?>(note),
+      'status': serializer.toJson<String>(status),
+      'recurringId': serializer.toJson<String?>(recurringId),
+      'occurrence': serializer.toJson<int?>(occurrence),
     };
   }
 
@@ -4151,6 +4251,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     int? fees,
     DateTime? date,
     Value<String?> note = const Value.absent(),
+    String? status,
+    Value<String?> recurringId = const Value.absent(),
+    Value<int?> occurrence = const Value.absent(),
   }) => TransactionRow(
     id: id ?? this.id,
     version: version ?? this.version,
@@ -4170,6 +4273,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     fees: fees ?? this.fees,
     date: date ?? this.date,
     note: note.present ? note.value : this.note,
+    status: status ?? this.status,
+    recurringId: recurringId.present ? recurringId.value : this.recurringId,
+    occurrence: occurrence.present ? occurrence.value : this.occurrence,
   );
   TransactionRow copyWithCompanion(TransactionsCompanion data) {
     return TransactionRow(
@@ -4195,6 +4301,13 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       fees: data.fees.present ? data.fees.value : this.fees,
       date: data.date.present ? data.date.value : this.date,
       note: data.note.present ? data.note.value : this.note,
+      status: data.status.present ? data.status.value : this.status,
+      recurringId: data.recurringId.present
+          ? data.recurringId.value
+          : this.recurringId,
+      occurrence: data.occurrence.present
+          ? data.occurrence.value
+          : this.occurrence,
     );
   }
 
@@ -4218,13 +4331,16 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           ..write('converted: $converted, ')
           ..write('fees: $fees, ')
           ..write('date: $date, ')
-          ..write('note: $note')
+          ..write('note: $note, ')
+          ..write('status: $status, ')
+          ..write('recurringId: $recurringId, ')
+          ..write('occurrence: $occurrence')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     version,
     deviceId,
@@ -4243,7 +4359,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     fees,
     date,
     note,
-  );
+    status,
+    recurringId,
+    occurrence,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4265,7 +4384,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           other.converted == this.converted &&
           other.fees == this.fees &&
           other.date == this.date &&
-          other.note == this.note);
+          other.note == this.note &&
+          other.status == this.status &&
+          other.recurringId == this.recurringId &&
+          other.occurrence == this.occurrence);
 }
 
 class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
@@ -4287,6 +4409,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
   final Value<int> fees;
   final Value<DateTime> date;
   final Value<String?> note;
+  final Value<String> status;
+  final Value<String?> recurringId;
+  final Value<int?> occurrence;
   final Value<int> rowid;
   const TransactionsCompanion({
     this.id = const Value.absent(),
@@ -4307,6 +4432,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.fees = const Value.absent(),
     this.date = const Value.absent(),
     this.note = const Value.absent(),
+    this.status = const Value.absent(),
+    this.recurringId = const Value.absent(),
+    this.occurrence = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TransactionsCompanion.insert({
@@ -4328,6 +4456,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.fees = const Value.absent(),
     required DateTime date,
     this.note = const Value.absent(),
+    this.status = const Value.absent(),
+    this.recurringId = const Value.absent(),
+    this.occurrence = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        version = Value(version),
@@ -4357,6 +4488,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Expression<int>? fees,
     Expression<DateTime>? date,
     Expression<String>? note,
+    Expression<String>? status,
+    Expression<String>? recurringId,
+    Expression<int>? occurrence,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4378,6 +4512,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       if (fees != null) 'fees': fees,
       if (date != null) 'date': date,
       if (note != null) 'note': note,
+      if (status != null) 'status': status,
+      if (recurringId != null) 'recurring_id': recurringId,
+      if (occurrence != null) 'occurrence': occurrence,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4401,6 +4538,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Value<int>? fees,
     Value<DateTime>? date,
     Value<String?>? note,
+    Value<String>? status,
+    Value<String?>? recurringId,
+    Value<int?>? occurrence,
     Value<int>? rowid,
   }) {
     return TransactionsCompanion(
@@ -4422,6 +4562,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       fees: fees ?? this.fees,
       date: date ?? this.date,
       note: note ?? this.note,
+      status: status ?? this.status,
+      recurringId: recurringId ?? this.recurringId,
+      occurrence: occurrence ?? this.occurrence,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4483,6 +4626,15 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (recurringId.present) {
+      map['recurring_id'] = Variable<String>(recurringId.value);
+    }
+    if (occurrence.present) {
+      map['occurrence'] = Variable<int>(occurrence.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4510,6 +4662,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
           ..write('fees: $fees, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
+          ..write('status: $status, ')
+          ..write('recurringId: $recurringId, ')
+          ..write('occurrence: $occurrence, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -6059,6 +6214,1153 @@ class BudgetAmountsCompanion extends UpdateCompanion<BudgetAmountRow> {
   }
 }
 
+class $RecurringRulesTable extends RecurringRules
+    with TableInfo<$RecurringRulesTable, RecurringRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecurringRulesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _toAccountIdMeta = const VerificationMeta(
+    'toAccountId',
+  );
+  @override
+  late final GeneratedColumn<String> toAccountId = GeneratedColumn<String>(
+    'to_account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _feesMeta = const VerificationMeta('fees');
+  @override
+  late final GeneratedColumn<int> fees = GeneratedColumn<int>(
+    'fees',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+    'unit',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _everyMeta = const VerificationMeta('every');
+  @override
+  late final GeneratedColumn<int> every = GeneratedColumn<int>(
+    'every',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _weekdaysMeta = const VerificationMeta(
+    'weekdays',
+  );
+  @override
+  late final GeneratedColumn<int> weekdays = GeneratedColumn<int>(
+    'weekdays',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _startMeta = const VerificationMeta('start');
+  @override
+  late final GeneratedColumn<DateTime> start = GeneratedColumn<DateTime>(
+    'start',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endCountMeta = const VerificationMeta(
+    'endCount',
+  );
+  @override
+  late final GeneratedColumn<int> endCount = GeneratedColumn<int>(
+    'end_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _endDateMeta = const VerificationMeta(
+    'endDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
+    'end_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _asDraftMeta = const VerificationMeta(
+    'asDraft',
+  );
+  @override
+  late final GeneratedColumn<bool> asDraft = GeneratedColumn<bool>(
+    'as_draft',
+    aliasedName,
+    true,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("as_draft" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _doneUntilMeta = const VerificationMeta(
+    'doneUntil',
+  );
+  @override
+  late final GeneratedColumn<DateTime> doneUntil = GeneratedColumn<DateTime>(
+    'done_until',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _stoppedMeta = const VerificationMeta(
+    'stopped',
+  );
+  @override
+  late final GeneratedColumn<bool> stopped = GeneratedColumn<bool>(
+    'stopped',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("stopped" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    kind,
+    accountId,
+    toAccountId,
+    categoryId,
+    amount,
+    currency,
+    fees,
+    note,
+    unit,
+    every,
+    weekdays,
+    start,
+    endCount,
+    endDate,
+    asDraft,
+    doneUntil,
+    stopped,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recurring_rules';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RecurringRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('to_account_id')) {
+      context.handle(
+        _toAccountIdMeta,
+        toAccountId.isAcceptableOrUnknown(
+          data['to_account_id']!,
+          _toAccountIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('fees')) {
+      context.handle(
+        _feesMeta,
+        fees.isAcceptableOrUnknown(data['fees']!, _feesMeta),
+      );
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unitMeta);
+    }
+    if (data.containsKey('every')) {
+      context.handle(
+        _everyMeta,
+        every.isAcceptableOrUnknown(data['every']!, _everyMeta),
+      );
+    }
+    if (data.containsKey('weekdays')) {
+      context.handle(
+        _weekdaysMeta,
+        weekdays.isAcceptableOrUnknown(data['weekdays']!, _weekdaysMeta),
+      );
+    }
+    if (data.containsKey('start')) {
+      context.handle(
+        _startMeta,
+        start.isAcceptableOrUnknown(data['start']!, _startMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startMeta);
+    }
+    if (data.containsKey('end_count')) {
+      context.handle(
+        _endCountMeta,
+        endCount.isAcceptableOrUnknown(data['end_count']!, _endCountMeta),
+      );
+    }
+    if (data.containsKey('end_date')) {
+      context.handle(
+        _endDateMeta,
+        endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta),
+      );
+    }
+    if (data.containsKey('as_draft')) {
+      context.handle(
+        _asDraftMeta,
+        asDraft.isAcceptableOrUnknown(data['as_draft']!, _asDraftMeta),
+      );
+    }
+    if (data.containsKey('done_until')) {
+      context.handle(
+        _doneUntilMeta,
+        doneUntil.isAcceptableOrUnknown(data['done_until']!, _doneUntilMeta),
+      );
+    }
+    if (data.containsKey('stopped')) {
+      context.handle(
+        _stoppedMeta,
+        stopped.isAcceptableOrUnknown(data['stopped']!, _stoppedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RecurringRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecurringRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      toAccountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}to_account_id'],
+      ),
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      fees: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}fees'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      every: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}every'],
+      )!,
+      weekdays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weekdays'],
+      )!,
+      start: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start'],
+      )!,
+      endCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}end_count'],
+      ),
+      endDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}end_date'],
+      ),
+      asDraft: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}as_draft'],
+      ),
+      doneUntil: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}done_until'],
+      ),
+      stopped: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}stopped'],
+      )!,
+    );
+  }
+
+  @override
+  $RecurringRulesTable createAlias(String alias) {
+    return $RecurringRulesTable(attachedDatabase, alias);
+  }
+}
+
+class RecurringRow extends DataClass implements Insertable<RecurringRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+
+  /// As in [Transactions]: « out », « in » or « move ».
+  final String kind;
+  final String accountId;
+  final String? toAccountId;
+  final String? categoryId;
+
+  /// What is paid each time, in [currency].
+  final int amount;
+  final String currency;
+  final int fees;
+  final String? note;
+
+  /// « day », « week », « month » or « year », every [every].
+  final String unit;
+  final int every;
+
+  /// For a week: Monday is 1, Sunday 64; at least one day.
+  final int weekdays;
+  final DateTime start;
+
+  /// The end: after [endCount] times, after [endDate], or never.
+  final int? endCount;
+  final DateTime? endDate;
+
+  /// True: always a draft; false: always saved; null: the global setting.
+  final bool? asDraft;
+
+  /// The last day already handled, from which catching up goes on.
+  final DateTime? doneUntil;
+  final bool stopped;
+  const RecurringRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.kind,
+    required this.accountId,
+    this.toAccountId,
+    this.categoryId,
+    required this.amount,
+    required this.currency,
+    required this.fees,
+    this.note,
+    required this.unit,
+    required this.every,
+    required this.weekdays,
+    required this.start,
+    this.endCount,
+    this.endDate,
+    this.asDraft,
+    this.doneUntil,
+    required this.stopped,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['kind'] = Variable<String>(kind);
+    map['account_id'] = Variable<String>(accountId);
+    if (!nullToAbsent || toAccountId != null) {
+      map['to_account_id'] = Variable<String>(toAccountId);
+    }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
+    map['amount'] = Variable<int>(amount);
+    map['currency'] = Variable<String>(currency);
+    map['fees'] = Variable<int>(fees);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    map['unit'] = Variable<String>(unit);
+    map['every'] = Variable<int>(every);
+    map['weekdays'] = Variable<int>(weekdays);
+    map['start'] = Variable<DateTime>(start);
+    if (!nullToAbsent || endCount != null) {
+      map['end_count'] = Variable<int>(endCount);
+    }
+    if (!nullToAbsent || endDate != null) {
+      map['end_date'] = Variable<DateTime>(endDate);
+    }
+    if (!nullToAbsent || asDraft != null) {
+      map['as_draft'] = Variable<bool>(asDraft);
+    }
+    if (!nullToAbsent || doneUntil != null) {
+      map['done_until'] = Variable<DateTime>(doneUntil);
+    }
+    map['stopped'] = Variable<bool>(stopped);
+    return map;
+  }
+
+  RecurringRulesCompanion toCompanion(bool nullToAbsent) {
+    return RecurringRulesCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      kind: Value(kind),
+      accountId: Value(accountId),
+      toAccountId: toAccountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(toAccountId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      amount: Value(amount),
+      currency: Value(currency),
+      fees: Value(fees),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      unit: Value(unit),
+      every: Value(every),
+      weekdays: Value(weekdays),
+      start: Value(start),
+      endCount: endCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endCount),
+      endDate: endDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endDate),
+      asDraft: asDraft == null && nullToAbsent
+          ? const Value.absent()
+          : Value(asDraft),
+      doneUntil: doneUntil == null && nullToAbsent
+          ? const Value.absent()
+          : Value(doneUntil),
+      stopped: Value(stopped),
+    );
+  }
+
+  factory RecurringRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecurringRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      kind: serializer.fromJson<String>(json['kind']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      toAccountId: serializer.fromJson<String?>(json['toAccountId']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
+      amount: serializer.fromJson<int>(json['amount']),
+      currency: serializer.fromJson<String>(json['currency']),
+      fees: serializer.fromJson<int>(json['fees']),
+      note: serializer.fromJson<String?>(json['note']),
+      unit: serializer.fromJson<String>(json['unit']),
+      every: serializer.fromJson<int>(json['every']),
+      weekdays: serializer.fromJson<int>(json['weekdays']),
+      start: serializer.fromJson<DateTime>(json['start']),
+      endCount: serializer.fromJson<int?>(json['endCount']),
+      endDate: serializer.fromJson<DateTime?>(json['endDate']),
+      asDraft: serializer.fromJson<bool?>(json['asDraft']),
+      doneUntil: serializer.fromJson<DateTime?>(json['doneUntil']),
+      stopped: serializer.fromJson<bool>(json['stopped']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'kind': serializer.toJson<String>(kind),
+      'accountId': serializer.toJson<String>(accountId),
+      'toAccountId': serializer.toJson<String?>(toAccountId),
+      'categoryId': serializer.toJson<String?>(categoryId),
+      'amount': serializer.toJson<int>(amount),
+      'currency': serializer.toJson<String>(currency),
+      'fees': serializer.toJson<int>(fees),
+      'note': serializer.toJson<String?>(note),
+      'unit': serializer.toJson<String>(unit),
+      'every': serializer.toJson<int>(every),
+      'weekdays': serializer.toJson<int>(weekdays),
+      'start': serializer.toJson<DateTime>(start),
+      'endCount': serializer.toJson<int?>(endCount),
+      'endDate': serializer.toJson<DateTime?>(endDate),
+      'asDraft': serializer.toJson<bool?>(asDraft),
+      'doneUntil': serializer.toJson<DateTime?>(doneUntil),
+      'stopped': serializer.toJson<bool>(stopped),
+    };
+  }
+
+  RecurringRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? kind,
+    String? accountId,
+    Value<String?> toAccountId = const Value.absent(),
+    Value<String?> categoryId = const Value.absent(),
+    int? amount,
+    String? currency,
+    int? fees,
+    Value<String?> note = const Value.absent(),
+    String? unit,
+    int? every,
+    int? weekdays,
+    DateTime? start,
+    Value<int?> endCount = const Value.absent(),
+    Value<DateTime?> endDate = const Value.absent(),
+    Value<bool?> asDraft = const Value.absent(),
+    Value<DateTime?> doneUntil = const Value.absent(),
+    bool? stopped,
+  }) => RecurringRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    kind: kind ?? this.kind,
+    accountId: accountId ?? this.accountId,
+    toAccountId: toAccountId.present ? toAccountId.value : this.toAccountId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+    fees: fees ?? this.fees,
+    note: note.present ? note.value : this.note,
+    unit: unit ?? this.unit,
+    every: every ?? this.every,
+    weekdays: weekdays ?? this.weekdays,
+    start: start ?? this.start,
+    endCount: endCount.present ? endCount.value : this.endCount,
+    endDate: endDate.present ? endDate.value : this.endDate,
+    asDraft: asDraft.present ? asDraft.value : this.asDraft,
+    doneUntil: doneUntil.present ? doneUntil.value : this.doneUntil,
+    stopped: stopped ?? this.stopped,
+  );
+  RecurringRow copyWithCompanion(RecurringRulesCompanion data) {
+    return RecurringRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      toAccountId: data.toAccountId.present
+          ? data.toAccountId.value
+          : this.toAccountId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      fees: data.fees.present ? data.fees.value : this.fees,
+      note: data.note.present ? data.note.value : this.note,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      every: data.every.present ? data.every.value : this.every,
+      weekdays: data.weekdays.present ? data.weekdays.value : this.weekdays,
+      start: data.start.present ? data.start.value : this.start,
+      endCount: data.endCount.present ? data.endCount.value : this.endCount,
+      endDate: data.endDate.present ? data.endDate.value : this.endDate,
+      asDraft: data.asDraft.present ? data.asDraft.value : this.asDraft,
+      doneUntil: data.doneUntil.present ? data.doneUntil.value : this.doneUntil,
+      stopped: data.stopped.present ? data.stopped.value : this.stopped,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecurringRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('kind: $kind, ')
+          ..write('accountId: $accountId, ')
+          ..write('toAccountId: $toAccountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('fees: $fees, ')
+          ..write('note: $note, ')
+          ..write('unit: $unit, ')
+          ..write('every: $every, ')
+          ..write('weekdays: $weekdays, ')
+          ..write('start: $start, ')
+          ..write('endCount: $endCount, ')
+          ..write('endDate: $endDate, ')
+          ..write('asDraft: $asDraft, ')
+          ..write('doneUntil: $doneUntil, ')
+          ..write('stopped: $stopped')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    version,
+    deviceId,
+    deleted,
+    kind,
+    accountId,
+    toAccountId,
+    categoryId,
+    amount,
+    currency,
+    fees,
+    note,
+    unit,
+    every,
+    weekdays,
+    start,
+    endCount,
+    endDate,
+    asDraft,
+    doneUntil,
+    stopped,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecurringRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.kind == this.kind &&
+          other.accountId == this.accountId &&
+          other.toAccountId == this.toAccountId &&
+          other.categoryId == this.categoryId &&
+          other.amount == this.amount &&
+          other.currency == this.currency &&
+          other.fees == this.fees &&
+          other.note == this.note &&
+          other.unit == this.unit &&
+          other.every == this.every &&
+          other.weekdays == this.weekdays &&
+          other.start == this.start &&
+          other.endCount == this.endCount &&
+          other.endDate == this.endDate &&
+          other.asDraft == this.asDraft &&
+          other.doneUntil == this.doneUntil &&
+          other.stopped == this.stopped);
+}
+
+class RecurringRulesCompanion extends UpdateCompanion<RecurringRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> kind;
+  final Value<String> accountId;
+  final Value<String?> toAccountId;
+  final Value<String?> categoryId;
+  final Value<int> amount;
+  final Value<String> currency;
+  final Value<int> fees;
+  final Value<String?> note;
+  final Value<String> unit;
+  final Value<int> every;
+  final Value<int> weekdays;
+  final Value<DateTime> start;
+  final Value<int?> endCount;
+  final Value<DateTime?> endDate;
+  final Value<bool?> asDraft;
+  final Value<DateTime?> doneUntil;
+  final Value<bool> stopped;
+  final Value<int> rowid;
+  const RecurringRulesCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.toAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.fees = const Value.absent(),
+    this.note = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.every = const Value.absent(),
+    this.weekdays = const Value.absent(),
+    this.start = const Value.absent(),
+    this.endCount = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.asDraft = const Value.absent(),
+    this.doneUntil = const Value.absent(),
+    this.stopped = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RecurringRulesCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String kind,
+    required String accountId,
+    this.toAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    required int amount,
+    required String currency,
+    this.fees = const Value.absent(),
+    this.note = const Value.absent(),
+    required String unit,
+    this.every = const Value.absent(),
+    this.weekdays = const Value.absent(),
+    required DateTime start,
+    this.endCount = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.asDraft = const Value.absent(),
+    this.doneUntil = const Value.absent(),
+    this.stopped = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       kind = Value(kind),
+       accountId = Value(accountId),
+       amount = Value(amount),
+       currency = Value(currency),
+       unit = Value(unit),
+       start = Value(start);
+  static Insertable<RecurringRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? kind,
+    Expression<String>? accountId,
+    Expression<String>? toAccountId,
+    Expression<String>? categoryId,
+    Expression<int>? amount,
+    Expression<String>? currency,
+    Expression<int>? fees,
+    Expression<String>? note,
+    Expression<String>? unit,
+    Expression<int>? every,
+    Expression<int>? weekdays,
+    Expression<DateTime>? start,
+    Expression<int>? endCount,
+    Expression<DateTime>? endDate,
+    Expression<bool>? asDraft,
+    Expression<DateTime>? doneUntil,
+    Expression<bool>? stopped,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (kind != null) 'kind': kind,
+      if (accountId != null) 'account_id': accountId,
+      if (toAccountId != null) 'to_account_id': toAccountId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (amount != null) 'amount': amount,
+      if (currency != null) 'currency': currency,
+      if (fees != null) 'fees': fees,
+      if (note != null) 'note': note,
+      if (unit != null) 'unit': unit,
+      if (every != null) 'every': every,
+      if (weekdays != null) 'weekdays': weekdays,
+      if (start != null) 'start': start,
+      if (endCount != null) 'end_count': endCount,
+      if (endDate != null) 'end_date': endDate,
+      if (asDraft != null) 'as_draft': asDraft,
+      if (doneUntil != null) 'done_until': doneUntil,
+      if (stopped != null) 'stopped': stopped,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RecurringRulesCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? kind,
+    Value<String>? accountId,
+    Value<String?>? toAccountId,
+    Value<String?>? categoryId,
+    Value<int>? amount,
+    Value<String>? currency,
+    Value<int>? fees,
+    Value<String?>? note,
+    Value<String>? unit,
+    Value<int>? every,
+    Value<int>? weekdays,
+    Value<DateTime>? start,
+    Value<int?>? endCount,
+    Value<DateTime?>? endDate,
+    Value<bool?>? asDraft,
+    Value<DateTime?>? doneUntil,
+    Value<bool>? stopped,
+    Value<int>? rowid,
+  }) {
+    return RecurringRulesCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      kind: kind ?? this.kind,
+      accountId: accountId ?? this.accountId,
+      toAccountId: toAccountId ?? this.toAccountId,
+      categoryId: categoryId ?? this.categoryId,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      fees: fees ?? this.fees,
+      note: note ?? this.note,
+      unit: unit ?? this.unit,
+      every: every ?? this.every,
+      weekdays: weekdays ?? this.weekdays,
+      start: start ?? this.start,
+      endCount: endCount ?? this.endCount,
+      endDate: endDate ?? this.endDate,
+      asDraft: asDraft ?? this.asDraft,
+      doneUntil: doneUntil ?? this.doneUntil,
+      stopped: stopped ?? this.stopped,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (toAccountId.present) {
+      map['to_account_id'] = Variable<String>(toAccountId.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (fees.present) {
+      map['fees'] = Variable<int>(fees.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (every.present) {
+      map['every'] = Variable<int>(every.value);
+    }
+    if (weekdays.present) {
+      map['weekdays'] = Variable<int>(weekdays.value);
+    }
+    if (start.present) {
+      map['start'] = Variable<DateTime>(start.value);
+    }
+    if (endCount.present) {
+      map['end_count'] = Variable<int>(endCount.value);
+    }
+    if (endDate.present) {
+      map['end_date'] = Variable<DateTime>(endDate.value);
+    }
+    if (asDraft.present) {
+      map['as_draft'] = Variable<bool>(asDraft.value);
+    }
+    if (doneUntil.present) {
+      map['done_until'] = Variable<DateTime>(doneUntil.value);
+    }
+    if (stopped.present) {
+      map['stopped'] = Variable<bool>(stopped.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecurringRulesCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('kind: $kind, ')
+          ..write('accountId: $accountId, ')
+          ..write('toAccountId: $toAccountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('fees: $fees, ')
+          ..write('note: $note, ')
+          ..write('unit: $unit, ')
+          ..write('every: $every, ')
+          ..write('weekdays: $weekdays, ')
+          ..write('start: $start, ')
+          ..write('endCount: $endCount, ')
+          ..write('endDate: $endDate, ')
+          ..write('asDraft: $asDraft, ')
+          ..write('doneUntil: $doneUntil, ')
+          ..write('stopped: $stopped, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$KibuoDatabase extends GeneratedDatabase {
   _$KibuoDatabase(QueryExecutor e) : super(e);
   $KibuoDatabaseManager get managers => $KibuoDatabaseManager(this);
@@ -6073,6 +7375,7 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
   late final $BudgetsTable budgets = $BudgetsTable(this);
   late final $BudgetAmountsTable budgetAmounts = $BudgetAmountsTable(this);
+  late final $RecurringRulesTable recurringRules = $RecurringRulesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -6089,6 +7392,7 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
     attachments,
     budgets,
     budgetAmounts,
+    recurringRules,
   ];
 }
 
@@ -7932,6 +9236,9 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       Value<int> fees,
       required DateTime date,
       Value<String?> note,
+      Value<String> status,
+      Value<String?> recurringId,
+      Value<int?> occurrence,
       Value<int> rowid,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
@@ -7954,6 +9261,9 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<int> fees,
       Value<DateTime> date,
       Value<String?> note,
+      Value<String> status,
+      Value<String?> recurringId,
+      Value<int?> occurrence,
       Value<int> rowid,
     });
 
@@ -8053,6 +9363,21 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get note => $composableBuilder(
     column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recurringId => $composableBuilder(
+    column: $table.recurringId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get occurrence => $composableBuilder(
+    column: $table.occurrence,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -8155,6 +9480,21 @@ class $$TransactionsTableOrderingComposer
     column: $table.note,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recurringId => $composableBuilder(
+    column: $table.recurringId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get occurrence => $composableBuilder(
+    column: $table.occurrence,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TransactionsTableAnnotationComposer
@@ -8223,6 +9563,19 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get recurringId => $composableBuilder(
+    column: $table.recurringId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get occurrence => $composableBuilder(
+    column: $table.occurrence,
+    builder: (column) => column,
+  );
 }
 
 class $$TransactionsTableTableManager
@@ -8274,6 +9627,9 @@ class $$TransactionsTableTableManager
                 Value<int> fees = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> recurringId = const Value.absent(),
+                Value<int?> occurrence = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
@@ -8294,6 +9650,9 @@ class $$TransactionsTableTableManager
                 fees: fees,
                 date: date,
                 note: note,
+                status: status,
+                recurringId: recurringId,
+                occurrence: occurrence,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -8316,6 +9675,9 @@ class $$TransactionsTableTableManager
                 Value<int> fees = const Value.absent(),
                 required DateTime date,
                 Value<String?> note = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> recurringId = const Value.absent(),
+                Value<int?> occurrence = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 id: id,
@@ -8336,6 +9698,9 @@ class $$TransactionsTableTableManager
                 fees: fees,
                 date: date,
                 note: note,
+                status: status,
+                recurringId: recurringId,
+                occurrence: occurrence,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -9175,6 +10540,525 @@ typedef $$BudgetAmountsTableProcessedTableManager =
       BudgetAmountRow,
       PrefetchHooks Function()
     >;
+typedef $$RecurringRulesTableCreateCompanionBuilder =
+    RecurringRulesCompanion Function({
+      required String id,
+      required int version,
+      required String deviceId,
+      Value<bool> deleted,
+      required String kind,
+      required String accountId,
+      Value<String?> toAccountId,
+      Value<String?> categoryId,
+      required int amount,
+      required String currency,
+      Value<int> fees,
+      Value<String?> note,
+      required String unit,
+      Value<int> every,
+      Value<int> weekdays,
+      required DateTime start,
+      Value<int?> endCount,
+      Value<DateTime?> endDate,
+      Value<bool?> asDraft,
+      Value<DateTime?> doneUntil,
+      Value<bool> stopped,
+      Value<int> rowid,
+    });
+typedef $$RecurringRulesTableUpdateCompanionBuilder =
+    RecurringRulesCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<String> deviceId,
+      Value<bool> deleted,
+      Value<String> kind,
+      Value<String> accountId,
+      Value<String?> toAccountId,
+      Value<String?> categoryId,
+      Value<int> amount,
+      Value<String> currency,
+      Value<int> fees,
+      Value<String?> note,
+      Value<String> unit,
+      Value<int> every,
+      Value<int> weekdays,
+      Value<DateTime> start,
+      Value<int?> endCount,
+      Value<DateTime?> endDate,
+      Value<bool?> asDraft,
+      Value<DateTime?> doneUntil,
+      Value<bool> stopped,
+      Value<int> rowid,
+    });
+
+class $$RecurringRulesTableFilterComposer
+    extends Composer<_$KibuoDatabase, $RecurringRulesTable> {
+  $$RecurringRulesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get toAccountId => $composableBuilder(
+    column: $table.toAccountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fees => $composableBuilder(
+    column: $table.fees,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get every => $composableBuilder(
+    column: $table.every,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get weekdays => $composableBuilder(
+    column: $table.weekdays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get start => $composableBuilder(
+    column: $table.start,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get endCount => $composableBuilder(
+    column: $table.endCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get endDate => $composableBuilder(
+    column: $table.endDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get asDraft => $composableBuilder(
+    column: $table.asDraft,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get doneUntil => $composableBuilder(
+    column: $table.doneUntil,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get stopped => $composableBuilder(
+    column: $table.stopped,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RecurringRulesTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $RecurringRulesTable> {
+  $$RecurringRulesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get toAccountId => $composableBuilder(
+    column: $table.toAccountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fees => $composableBuilder(
+    column: $table.fees,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get every => $composableBuilder(
+    column: $table.every,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get weekdays => $composableBuilder(
+    column: $table.weekdays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get start => $composableBuilder(
+    column: $table.start,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get endCount => $composableBuilder(
+    column: $table.endCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get endDate => $composableBuilder(
+    column: $table.endDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get asDraft => $composableBuilder(
+    column: $table.asDraft,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get doneUntil => $composableBuilder(
+    column: $table.doneUntil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get stopped => $composableBuilder(
+    column: $table.stopped,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RecurringRulesTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $RecurringRulesTable> {
+  $$RecurringRulesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<String> get toAccountId => $composableBuilder(
+    column: $table.toAccountId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<int> get fees =>
+      $composableBuilder(column: $table.fees, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
+
+  GeneratedColumn<int> get every =>
+      $composableBuilder(column: $table.every, builder: (column) => column);
+
+  GeneratedColumn<int> get weekdays =>
+      $composableBuilder(column: $table.weekdays, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get start =>
+      $composableBuilder(column: $table.start, builder: (column) => column);
+
+  GeneratedColumn<int> get endCount =>
+      $composableBuilder(column: $table.endCount, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get endDate =>
+      $composableBuilder(column: $table.endDate, builder: (column) => column);
+
+  GeneratedColumn<bool> get asDraft =>
+      $composableBuilder(column: $table.asDraft, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get doneUntil =>
+      $composableBuilder(column: $table.doneUntil, builder: (column) => column);
+
+  GeneratedColumn<bool> get stopped =>
+      $composableBuilder(column: $table.stopped, builder: (column) => column);
+}
+
+class $$RecurringRulesTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $RecurringRulesTable,
+          RecurringRow,
+          $$RecurringRulesTableFilterComposer,
+          $$RecurringRulesTableOrderingComposer,
+          $$RecurringRulesTableAnnotationComposer,
+          $$RecurringRulesTableCreateCompanionBuilder,
+          $$RecurringRulesTableUpdateCompanionBuilder,
+          (
+            RecurringRow,
+            BaseReferences<_$KibuoDatabase, $RecurringRulesTable, RecurringRow>,
+          ),
+          RecurringRow,
+          PrefetchHooks Function()
+        > {
+  $$RecurringRulesTableTableManager(
+    _$KibuoDatabase db,
+    $RecurringRulesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RecurringRulesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RecurringRulesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RecurringRulesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<String?> toAccountId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<int> fees = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<String> unit = const Value.absent(),
+                Value<int> every = const Value.absent(),
+                Value<int> weekdays = const Value.absent(),
+                Value<DateTime> start = const Value.absent(),
+                Value<int?> endCount = const Value.absent(),
+                Value<DateTime?> endDate = const Value.absent(),
+                Value<bool?> asDraft = const Value.absent(),
+                Value<DateTime?> doneUntil = const Value.absent(),
+                Value<bool> stopped = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RecurringRulesCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                kind: kind,
+                accountId: accountId,
+                toAccountId: toAccountId,
+                categoryId: categoryId,
+                amount: amount,
+                currency: currency,
+                fees: fees,
+                note: note,
+                unit: unit,
+                every: every,
+                weekdays: weekdays,
+                start: start,
+                endCount: endCount,
+                endDate: endDate,
+                asDraft: asDraft,
+                doneUntil: doneUntil,
+                stopped: stopped,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String kind,
+                required String accountId,
+                Value<String?> toAccountId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                required int amount,
+                required String currency,
+                Value<int> fees = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                required String unit,
+                Value<int> every = const Value.absent(),
+                Value<int> weekdays = const Value.absent(),
+                required DateTime start,
+                Value<int?> endCount = const Value.absent(),
+                Value<DateTime?> endDate = const Value.absent(),
+                Value<bool?> asDraft = const Value.absent(),
+                Value<DateTime?> doneUntil = const Value.absent(),
+                Value<bool> stopped = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RecurringRulesCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                kind: kind,
+                accountId: accountId,
+                toAccountId: toAccountId,
+                categoryId: categoryId,
+                amount: amount,
+                currency: currency,
+                fees: fees,
+                note: note,
+                unit: unit,
+                every: every,
+                weekdays: weekdays,
+                start: start,
+                endCount: endCount,
+                endDate: endDate,
+                asDraft: asDraft,
+                doneUntil: doneUntil,
+                stopped: stopped,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$RecurringRulesTable, RecurringRow>(table),
+                  BaseReferences<
+                    _$KibuoDatabase,
+                    $RecurringRulesTable,
+                    RecurringRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RecurringRulesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $RecurringRulesTable,
+      RecurringRow,
+      $$RecurringRulesTableFilterComposer,
+      $$RecurringRulesTableOrderingComposer,
+      $$RecurringRulesTableAnnotationComposer,
+      $$RecurringRulesTableCreateCompanionBuilder,
+      $$RecurringRulesTableUpdateCompanionBuilder,
+      (
+        RecurringRow,
+        BaseReferences<_$KibuoDatabase, $RecurringRulesTable, RecurringRow>,
+      ),
+      RecurringRow,
+      PrefetchHooks Function()
+    >;
 
 class $KibuoDatabaseManager {
   final _$KibuoDatabase _db;
@@ -9201,4 +11085,6 @@ class $KibuoDatabaseManager {
       $$BudgetsTableTableManager(_db, _db.budgets);
   $$BudgetAmountsTableTableManager get budgetAmounts =>
       $$BudgetAmountsTableTableManager(_db, _db.budgetAmounts);
+  $$RecurringRulesTableTableManager get recurringRules =>
+      $$RecurringRulesTableTableManager(_db, _db.recurringRules);
 }

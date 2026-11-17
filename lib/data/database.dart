@@ -157,6 +157,51 @@ class Transactions extends Table with SyncColumns {
 
   DateTimeColumn get date => dateTime()();
   TextColumn get note => text().nullable()();
+
+  /// « done » counts; « draft » waits for validation and « ignored » was
+  /// set aside: neither touches balances nor totals (GLOSSARY: Brouillon).
+  TextColumn get status => text().withDefault(const Constant('done'))();
+
+  /// The recurrence it comes from, and the day it fell on (year × 10 000
+  /// + month × 100 + day): one occurrence per rule and day.
+  TextColumn get recurringId => text().nullable()();
+  IntColumn get occurrence => integer().nullable()();
+}
+
+/// A rule that makes an operation at regular intervals (GLOSSARY:
+/// Récurrence); its occurrences are rows of [Transactions].
+@DataClassName('RecurringRow')
+class RecurringRules extends Table with SyncColumns {
+  /// As in [Transactions]: « out », « in » or « move ».
+  TextColumn get kind => text()();
+  TextColumn get accountId => text()();
+  TextColumn get toAccountId => text().nullable()();
+  TextColumn get categoryId => text().nullable()();
+
+  /// What is paid each time, in [currency].
+  IntColumn get amount => integer()();
+  TextColumn get currency => text()();
+  IntColumn get fees => integer().withDefault(const Constant(0))();
+  TextColumn get note => text().nullable()();
+
+  /// « day », « week », « month » or « year », every [every].
+  TextColumn get unit => text()();
+  IntColumn get every => integer().withDefault(const Constant(1))();
+
+  /// For a week: Monday is 1, Sunday 64; at least one day.
+  IntColumn get weekdays => integer().withDefault(const Constant(0))();
+  DateTimeColumn get start => dateTime()();
+
+  /// The end: after [endCount] times, after [endDate], or never.
+  IntColumn get endCount => integer().nullable()();
+  DateTimeColumn get endDate => dateTime().nullable()();
+
+  /// True: always a draft; false: always saved; null: the global setting.
+  BoolColumn get asDraft => boolean().nullable()();
+
+  /// The last day already handled, from which catching up goes on.
+  DateTimeColumn get doneUntil => dateTime().nullable()();
+  BoolColumn get stopped => boolean().withDefault(const Constant(false))();
 }
 
 /// Files attached to an operation (ADR 0011): the file itself lives
@@ -215,6 +260,7 @@ class BudgetAmounts extends Table with SyncColumns {
     Attachments,
     Budgets,
     BudgetAmounts,
+    RecurringRules,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -225,7 +271,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -265,6 +311,12 @@ class KibuoDatabase extends _$KibuoDatabase {
       from8To9: (m, schema) async {
         await m.createTable(schema.budgets);
         await m.createTable(schema.budgetAmounts);
+      },
+      from9To10: (m, schema) async {
+        await m.addColumn(schema.transactions, schema.transactions.status);
+        await m.addColumn(schema.transactions, schema.transactions.recurringId);
+        await m.addColumn(schema.transactions, schema.transactions.occurrence);
+        await m.createTable(schema.recurringRules);
       },
     ),
     beforeOpen: (details) async {
