@@ -8,6 +8,7 @@ import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/hint_store.dart';
+import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
@@ -122,6 +123,9 @@ class _AppShellState extends State<AppShell> {
                           hints: KibuoData.maybeOf(context) == null
                               ? null
                               : HintStore(KibuoData.maybeOf(context)!),
+                          history: KibuoData.maybeOf(context) == null
+                              ? null
+                              : SearchHistory(KibuoData.maybeOf(context)!),
                         ),
                       )
                     else

@@ -2424,6 +2424,114 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune entrée'**
   String get listNoEntries;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher'**
+  String get listSearch;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Libellé, catégorie, compte, montant'**
+  String get searchHint;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer la recherche'**
+  String get searchClose;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer la recherche'**
+  String get searchClear;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherches récentes'**
+  String get searchRecent;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer'**
+  String get searchRecentClear;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Chercher par'**
+  String get searchBy;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'La recherche porte sur tous les mois : libellé, catégorie, compte, note et montant.'**
+  String get searchHelp;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 résultat} other{{count} résultats}}'**
+  String searchResults(int count);
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 autre résultat} other{{count} autres résultats}}'**
+  String searchOthers(int count);
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans les mois précédents'**
+  String get searchEarlierMonths;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans les autres mois'**
+  String get searchOtherMonths;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Mois précédents · {count}'**
+  String searchEarlierFold(int count);
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres mois · {count}'**
+  String searchOtherFold(int count);
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Replier'**
+  String get searchFold;
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien en {month} pour « {query} ».'**
+  String searchNothingInMonth(String month, String query);
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat pour « {query} »'**
+  String searchNoResultTitle(String query);
+
+  /// Operations search
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifiez l’orthographe ou cherchez un montant.'**
+  String get searchNoResultHelp;
 }
 
 class _AppLocalizationsDelegate

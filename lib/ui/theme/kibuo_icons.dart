@@ -41,6 +41,8 @@ abstract final class KibuoIcons {
   static const key = IconData(0xe2d6, fontFamily: _regular);
   static const fingerprint = IconData(0xe23e, fontFamily: _regular);
   static const magnifyingGlass = IconData(0xe30c, fontFamily: _regular);
+  static const clockCounterClockwise = IconData(0xe1a0, fontFamily: _regular);
+  static const arrowUpLeft = IconData(0xe090, fontFamily: _regular);
   static const wallet = IconData(0xe68a, fontFamily: _regular);
   static const bank = IconData(0xe0b4, fontFamily: _regular);
   static const deviceMobile = IconData(0xe1e0, fontFamily: _regular);

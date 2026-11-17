@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/hint_store.dart';
+import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -13,7 +14,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/choice_menu.dart';
-import 'package:kibuo/ui/kit/dashed_border.dart';
+import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -22,7 +23,9 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/operation_row.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
+import 'package:kibuo/ui/transactions/search_screen.dart';
 
 /// What an operation brings in or takes out (PRODUCT): an expense with its
 /// fees out, an income less its fees in, only a transfer's fees out.
@@ -42,6 +45,7 @@ class OperationsScreen extends StatefulWidget {
     this.refresh,
     this.onAdd,
     this.hints,
+    this.history,
   });
 
   final EntryData data;
@@ -54,6 +58,9 @@ class OperationsScreen extends StatefulWidget {
 
   /// Where the month swipe is remembered as shown.
   final HintStore? hints;
+
+  /// Where « Recherches récentes » are kept.
+  final SearchHistory? history;
 
   /// Forgets the month, filters and folded days kept while the app runs.
   @visibleForTesting
@@ -267,6 +274,23 @@ class _OperationsScreenState extends State<OperationsScreen> {
     await _load();
   }
 
+  Future<void> _openSearch(DateTime month) async {
+    setState(() {
+      _menu = null;
+      _picker = false;
+    });
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => SearchScreen(
+          data: widget.data,
+          month: month,
+          history: widget.history,
+        ),
+      ),
+    );
+    await _load();
+  }
+
   String _dayLabel(DateTime day) {
     final l = AppLocalizations.of(context);
     final now = DateTime.now();
@@ -431,58 +455,82 @@ class _OperationsScreenState extends State<OperationsScreen> {
   }
 
   Widget _header(AppLocalizations l, DateTime month) {
-    final name = DateFormat.MMMM(_lang).format(month);
-    // Fixed height: « Ce mois-ci » coming and going must not move the list.
+    // Canvas ListeOperations: the short month (« Sept. ») when the full one
+    // would not fit on one line.
+    String cap(String t) => t[0].toUpperCase() + t.substring(1);
+    final full = cap(DateFormat.MMMM(_lang).format(month));
+    final short = cap(DateFormat.MMM(_lang).format(month));
+    final room =
+        MediaQuery.sizeOf(context).width -
+        32 -
+        8 -
+        KibuoTheme.heightTouch -
+        (month != _thisMonth() ? 110 : 0);
+    final fits =
+        (TextPainter(
+              text: TextSpan(
+                text: '$full ${month.year} ',
+                style: KibuoType.tabTitle,
+              ),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+              maxLines: 1,
+            )..layout()).width +
+            24 <=
+        room;
+    final name = fits ? full : short;
+    // A fixed 44: « Ce mois-ci » coming and going must not move the list.
     return SizedBox(
       height: KibuoTheme.heightTouch,
-      child: Row(
-        children: [
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
-                onTap: () => setState(() => _picker = !_picker),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 4,
-                  ),
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: name[0].toUpperCase() + name.substring(1),
-                        ),
-                        TextSpan(
-                          text: ' ${month.year} ',
-                          style: const TextStyle(
-                            color: KibuoColors.inkSecondary,
-                            fontWeight: FontWeight.w500,
-                            fontVariations: [FontVariation.weight(500)],
-                          ),
-                        ),
-                        const WidgetSpan(
-                          alignment: PlaceholderAlignment.middle,
-                          child: Icon(
-                            KibuoIcons.caretDown,
-                            size: 18,
-                            color: KibuoColors.accent,
-                          ),
-                        ),
-                      ],
-                    ),
-                    style: KibuoType.tabTitle,
-                  ),
+      child: TabHeader(
+        onTitleTap: () => setState(() => _picker = !_picker),
+        title: Text.rich(
+          maxLines: 1,
+          softWrap: false,
+          TextSpan(
+            children: [
+              TextSpan(text: name),
+              TextSpan(
+                text: ' ${month.year} ',
+                style: const TextStyle(
+                  color: KibuoColors.inkSecondary,
+                  fontWeight: FontWeight.w500,
+                  fontVariations: [FontVariation.weight(500)],
                 ),
               ),
-            ),
+              const WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: Icon(
+                  KibuoIcons.caretDown,
+                  size: 18,
+                  color: KibuoColors.accent,
+                ),
+              ),
+            ],
           ),
+        ),
+        actions: [
           if (month != _thisMonth())
             TextAction(
               label: l.listThisMonth,
               onPressed: () => _goTo(_thisMonth()),
             ),
+          // Canvas ListeOperations: the magnifier, at the right edge.
+          Transform.translate(
+            offset: const Offset(10, 0),
+            child: SizedBox.square(
+              dimension: KibuoTheme.heightTouch,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                tooltip: l.listSearch,
+                onPressed: () => _openSearch(month),
+                icon: const Icon(
+                  KibuoIcons.magnifyingGlass,
+                  color: KibuoColors.ink,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -873,7 +921,17 @@ class _OperationsScreenState extends State<OperationsScreen> {
         for (final (t, labels) in ops)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _Line(t: t, labels: labels, onTap: () => _open(t)),
+            child: OperationRow(
+              t: t,
+              labels: labels,
+              title: (labels.categoryPath.split(' › ').last, null),
+              subtitle: (
+                '${labels.account} · '
+                    '${DateFormat.Hm(_lang).format(t.date.toLocal())}',
+                null,
+              ),
+              onTap: () => _open(t),
+            ),
           ),
     ];
   }
@@ -904,76 +962,12 @@ class _OperationsScreenState extends State<OperationsScreen> {
             l.entryNewExpense,
             widget.onAdd,
           );
-    // Canvas ListeOperations: white, dashed, the icon in a grey circle,
-    // then a grey button.
-    return DashedBorder(
-      radius: KibuoTheme.radiusCard,
-      color: KibuoColors.line,
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: KibuoColors.surface,
-          borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-        ),
-        padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
-        child: Column(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: const BoxDecoration(
-                color: KibuoColors.background,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                KibuoIcons.list,
-                size: 26,
-                color: KibuoColors.inkSecondary,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: KibuoType.cardTitle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              help,
-              style: KibuoType.body.copyWith(
-                color: KibuoColors.inkSecondary,
-                height: 20 / 14,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            if (onAction != null) ...[
-              const SizedBox(height: 16),
-              Material(
-                color: KibuoColors.background,
-                borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-                  onTap: onAction,
-                  child: Container(
-                    height: KibuoTheme.heightTouch,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Center(
-                      widthFactor: 1,
-                      child: Text(
-                        action,
-                        style: KibuoType.body.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontVariations: const [FontVariation.weight(600)],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
+    return EmptyCard(
+      icon: KibuoIcons.list,
+      title: title,
+      help: help,
+      action: action,
+      onAction: onAction,
     );
   }
 }
@@ -986,73 +980,6 @@ class AccountRowInfo {
 
   final String id;
   final String name;
-}
-
-/// One operation of the list (canvas ListeOperations): white, 16 round,
-/// its 44 tile, name and « account · time », then the amount.
-class _Line extends StatelessWidget {
-  const _Line({required this.t, required this.labels, required this.onTap});
-
-  final TransactionInfo t;
-  final OperationLabels labels;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final lang = Localizations.localeOf(context).languageCode;
-    return Material(
-      color: KibuoColors.surface,
-      borderRadius: BorderRadius.circular(16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 64),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 14, 10),
-            child: Row(
-              children: [
-                OperationTile(
-                  kind: t.kind,
-                  labels: labels,
-                  size: KibuoTheme.heightTouch,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        labels.categoryPath.split(' › ').last,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: KibuoType.rowLabel,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${labels.account} · '
-                        '${DateFormat.Hm(lang).format(t.date.toLocal())}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: KibuoType.help.copyWith(height: 1.2),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  signedTotal(context, t),
-                  style: KibuoType.buttonSmall.copyWith(
-                    color: kindColors(t.kind).ink,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 /// Entries, exits, « 49 % dépensés » and what is left (canvas
