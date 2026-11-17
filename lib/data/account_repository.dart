@@ -167,7 +167,8 @@ class AccountRepository {
     ];
   }
 
-  /// What the operations dated from each account's starting date changed,
+  /// What the operations dated from each account's starting date changed
+  /// (drafts and ignored ones aside),
   /// by account: income less fees, expenses plus fees, a transfer's amount
   /// plus fees from the sending account and what arrived to the other.
   Future<Map<String, int>> _balanceChanges() async {
@@ -179,11 +180,11 @@ class AccountRepository {
           'WHEN t.kind = \'move\' THEN -(t.amount + t.fees) '
           'ELSE -(t.converted + t.fees) END AS change '
           'FROM transactions t JOIN accounts a ON a.id = t.account_id '
-          'WHERE t.deleted = 0 AND t.date >= a.opening_date '
+          'WHERE t.deleted = 0 AND t.status = \'done\' AND t.date >= a.opening_date '
           'UNION ALL '
           'SELECT t.to_account_id AS account, t.converted AS change '
           'FROM transactions t JOIN accounts a ON a.id = t.to_account_id '
-          'WHERE t.deleted = 0 AND t.kind = \'move\' '
+          'WHERE t.deleted = 0 AND t.status = \'done\' AND t.kind = \'move\' '
           'AND t.date >= a.opening_date'
           ') GROUP BY account',
           readsFrom: {_db.transactions, _db.accounts},
