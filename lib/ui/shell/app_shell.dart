@@ -5,17 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
+import 'package:kibuo/data/budget_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/month_start_store.dart';
+import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
+import 'package:kibuo/ui/budgets/budget_book.dart';
+import 'package:kibuo/ui/budgets/budgets_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
@@ -280,6 +284,21 @@ class _AppShellState extends State<AppShell> {
           SettingsRow(
             label: AppLocalizations.of(context).accountsTitle,
             onTap: () => _openAccounts(db),
+          ),
+        if (db != null && _entryData(context) != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).budgetsTitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => BudgetsScreen(
+                  loader: BudgetLoader(
+                    _entryData(context)!,
+                    BudgetRepository(db),
+                  ),
+                  prefs: PreferenceStore(db),
+                ),
+              ),
+            ),
           ),
         if (db != null)
           SettingsRow(
