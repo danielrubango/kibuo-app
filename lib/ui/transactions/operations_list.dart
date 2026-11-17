@@ -17,6 +17,7 @@ import 'package:kibuo/ui/kit/choice_menu.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -366,6 +367,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
                 if (_inMonth(e.$1, month)) e.$1,
             ]),
             money: _money,
+            today: month == _thisMonth() ? DateTime.now() : null,
           ),
         const SizedBox(height: 12),
         _filters(l, current: current),
@@ -1002,9 +1004,12 @@ class AccountRowInfo {
 /// Entries, exits, « 49 % dépensés » and what is left (canvas
 /// ListeOperations, EtatBarre).
 class _TotalsCard extends StatelessWidget {
-  const _TotalsCard({required this.totals, required this.money});
+  const _TotalsCard({required this.totals, required this.money, this.today});
 
   final FlowTotals totals;
+
+  /// Today, when the card is this month's: the mark on the bar.
+  final DateTime? today;
   final String Function(Money, {bool short}) money;
 
   /// « +25,00 $ », « −106,00 $ », or « 0,00 $ » in grey; [short] writes
@@ -1029,15 +1034,7 @@ class _TotalsCard extends StatelessWidget {
     final pre = totals.approximate ? '≈ ' : '';
     // The bar is always there (PRODUCT): empty and grey with nothing in or
     // out, full and peach with exits but no entry, as when over 100 %.
-    final share = totals.spentPercent;
-    final outOnly = share == null && totals.exits.minor > 0;
-    final level = share ?? (outOnly ? 101 : 0);
-    final calm = level <= 80;
-    final (barColor, shareColor) = calm
-        ? (KibuoColors.inkMuted, KibuoColors.inkSecondary)
-        : level <= 100
-        ? (KibuoColors.warning, KibuoColors.warningInk)
-        : (KibuoColors.debtInk, KibuoColors.debtInk);
+    final spent = SpentLevel(totals);
     final (inText, inColor) = _signed(totals.entries, out: false, pre: pre);
     final (outText, outColor) = _signed(totals.exits, out: true, pre: pre);
     final (restText, restColor) = _signed(totals.rest, out: false);
@@ -1087,35 +1084,18 @@ class _TotalsCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          LinearProgressIndicator(
-            value: (level / 100).clamp(0, 1).toDouble(),
-            minHeight: 12,
-            color: barColor,
-            backgroundColor: KibuoColors.track,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
+          SpentBar(spent: spent, today: today),
+          const SizedBox(height: 8),
           Row(
             children: [
-              Expanded(
-                child: Text(
-                  outOnly ? l.listNoEntries : l.listSpent(level),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: KibuoType.help.copyWith(
-                    color: shareColor,
-                    fontWeight: calm ? FontWeight.w500 : FontWeight.w700,
-                    fontVariations: [FontVariation.weight(calm ? 500 : 700)],
-                  ),
-                ),
-              ),
+              SpentShare(spent: spent),
               const SizedBox(width: 10),
               Expanded(
                 child: FitAmount(
                   long: isLong(totals.rest),
                   alignment: Alignment.centerRight,
-                  style: KibuoType.help,
+                  style: KibuoType.caption,
                   span: (short) => TextSpan(
                     text: '${l.listRest} ',
                     children: [
