@@ -30,6 +30,7 @@ class BudgetBook {
     required this.lines,
     required this.categories,
     required this.budgets,
+    this.rates = const {},
   });
 
   final CurrencyInfo main;
@@ -43,6 +44,9 @@ class BudgetBook {
 
   /// Every budget, even one made after the period.
   final List<BudgetInfo> budgets;
+
+  /// Today's rates to [main], for expenses in another currency.
+  final Map<String, ExchangeRate> rates;
 
   Money get amount =>
       Money(lines.fold(0, (s, l) => s + l.status.amount.minor), main.code);
@@ -157,6 +161,7 @@ class BudgetLoader {
       lines: lines,
       categories: base.categories,
       budgets: all,
+      rates: base.rates,
     );
   }
 
