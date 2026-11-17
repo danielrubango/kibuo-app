@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
+import 'package:kibuo/data/budget_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/categories/default_categories.dart';
+import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/sync/hybrid_clock.dart';
 import 'package:uuid/uuid.dart';
 
@@ -260,10 +262,18 @@ class CategoryRepository {
 
   /// Takes the category, and its subcategories, out of the choices. Their
   /// operations keep them.
-  Future<void> remove(String id) => _write(
-    _db.categories.id.equals(id) | _db.categories.parentId.equals(id),
-    const CategoriesCompanion(removed: Value(true)),
-  );
+  /// The amount of [id]'s budget, said in the removal sheet.
+  Future<Money?> budgetOf(String id) => BudgetRepository(_db).ofCategory(id);
+
+  /// Takes [id] and its subcategories out of the choices; its budget, if
+  /// any, is deleted with it.
+  Future<void> remove(String id) => _db.transaction(() async {
+    await _write(
+      _db.categories.id.equals(id) | _db.categories.parentId.equals(id),
+      const CategoriesCompanion(removed: Value(true)),
+    );
+    await BudgetRepository(_db).deleteOfCategory(id);
+  });
 
   Future<void> _write(
     Expression<bool> which,

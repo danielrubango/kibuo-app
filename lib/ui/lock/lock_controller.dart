@@ -227,6 +227,9 @@ class LockController extends ChangeNotifier {
   Future<String> newRecoveryCode() async {
     final code = await recovery!.createCode();
     _recoveryCreatedAt = await recovery!.createdAt();
+    // Until it is retyped (retro, 18 November).
+    _settings = _settings.copyWith(recoveryVerified: false);
+    await _settingsStore.save(_settings);
     try {
       await _applyPrivacy();
     } on MissingPluginException {
@@ -235,6 +238,10 @@ class LockController extends ChangeNotifier {
     notifyListeners();
     return code;
   }
+
+  /// The new recovery code was retyped.
+  Future<void> markRecoveryVerified() =>
+      updateSettings(_settings.copyWith(recoveryVerified: true));
 
   /// Android may copy Kibuo only when the copy can be reopened.
   Future<void> _applyPrivacy() => privacy.apply(

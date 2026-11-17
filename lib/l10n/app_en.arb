@@ -82,6 +82,8 @@
   "budgetNoOps": "No expense in {category} this month.",
   "budgetSeeInList": "See in Operations",
   "budgetEditAction": "Edit",
+  "confirmCategoryBudget": "Its {amount} monthly budget is deleted too.",
+  "securityRecoveryUnverified": "Not checked",
   "homeAvailable": "Available",
   "homeAvailableHelp": "free to spend",
   "homeOpenAccounts": "See my accounts",
