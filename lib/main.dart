@@ -10,6 +10,7 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
 import 'package:kibuo/ui/shell/app_shell.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
+import 'package:kibuo/ui/start/first_launch.dart';
 import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:path_provider/path_provider.dart';
@@ -93,30 +94,36 @@ class KibuoApp extends StatelessWidget {
     final opening = this.opening;
     final lock = this.lock;
     final erase = eraseAndStartOver;
-    return MaterialApp(
-      title: 'kibuo',
-      navigatorKey: navigator,
-      debugShowCheckedModeBanner: false,
-      theme: KibuoTheme.light(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: appLanguages,
-      localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-      home: StartGate(
-        ready: ready ?? opening,
-        child: opening == null || erase == null
-            ? const AppShell()
-            : DataGate(
-                opening: opening,
-                eraseAndStartOver: erase,
-                onRecovered: onRecovered,
-                builder: (eraseAll) => lock == null
-                    ? const AppShell()
-                    : LockGate(
-                        controller: lock,
-                        eraseAll: eraseAll,
-                        child: const AppShell(),
-                      ),
-              ),
+    // The language chosen in kibuo, else the phone's (PRODUCT).
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: appLanguageChoice,
+      builder: (context, language, _) => MaterialApp(
+        locale: language,
+        title: 'kibuo',
+        navigatorKey: navigator,
+        debugShowCheckedModeBanner: false,
+        theme: KibuoTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: appLanguages,
+        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+        home: StartGate(
+          ready: ready ?? opening,
+          child: opening == null || erase == null
+              ? const AppShell()
+              : DataGate(
+                  opening: opening,
+                  eraseAndStartOver: erase,
+                  onRecovered: onRecovered,
+                  // On a new app, the guided first launch comes first.
+                  builder: (eraseAll) => lock == null
+                      ? const FirstLaunchGate(child: AppShell())
+                      : LockGate(
+                          controller: lock,
+                          eraseAll: eraseAll,
+                          child: const FirstLaunchGate(child: AppShell()),
+                        ),
+                ),
+        ),
       ),
     );
   }

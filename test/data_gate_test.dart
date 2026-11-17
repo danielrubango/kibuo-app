@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/open_database.dart';
+import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/main.dart';
 
 class _MemoryVault implements KeyVault {
@@ -64,7 +65,28 @@ void main() {
     return result;
   }
 
-  testWidgets('with readable data, Accueil opens', (tester) async {
+  testWidgets('with readable data, a new app opens on its first launch', (
+    tester,
+  ) async {
+    final result = await start(tester);
+
+    expect(find.text('Bienvenue sur kibuo'), findsOneWidget);
+    await tester.runAsync(() async => (result as Opened).database.close());
+  });
+
+  testWidgets('with readable data and an account, Accueil opens', (
+    tester,
+  ) async {
+    await tester.runAsync(() async {
+      final db = ((await open()) as Opened).database;
+      await AccountRepository(db).create(
+        name: 'M-Pesa',
+        type: AccountType.mobile,
+        opening: const Money(0, 'USD'),
+        openingDate: DateTime.utc(2026, 11, 1),
+      );
+      await db.close();
+    });
     final result = await start(tester);
 
     expect(find.text('Aujourd’hui'), findsOneWidget);
@@ -72,7 +94,7 @@ void main() {
   });
 
   testWidgets(
-    'with a lost key, the screen explains and starting over opens Accueil',
+    'with a lost key, the screen explains and starting over opens a new app',
     (tester) async {
       await tester.runAsync(() async {
         await ((await open()) as Opened).database.close();
@@ -96,7 +118,7 @@ void main() {
       });
       await tester.pumpAndSettle();
 
-      expect(find.text('Aujourd’hui'), findsOneWidget);
+      expect(find.text('Bienvenue sur kibuo'), findsOneWidget);
     },
   );
 
@@ -134,6 +156,7 @@ void main() {
     });
     await tester.pumpAndSettle();
 
-    expect(find.text('Aujourd’hui'), findsOneWidget);
+    // The data reopened, still without an account: its first launch.
+    expect(find.text('Bienvenue sur kibuo'), findsOneWidget);
   });
 }
