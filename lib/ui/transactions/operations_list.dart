@@ -43,6 +43,7 @@ class OperationsScreen extends StatefulWidget {
     super.key,
     required this.data,
     this.refresh,
+    this.thisMonth,
     this.onAdd,
     this.hints,
     this.history,
@@ -52,6 +53,9 @@ class OperationsScreen extends StatefulWidget {
 
   /// Bumped by the shell after a save, to reload.
   final Listenable? refresh;
+
+  /// Bumped to bring the list back to this month.
+  final Listenable? thisMonth;
 
   /// « Ajouter » from an empty month.
   final VoidCallback? onAdd;
@@ -111,6 +115,10 @@ class _OperationsScreenState extends State<OperationsScreen> {
 
   bool get _isThisMonth => _month == _thisMonth();
 
+  void _backToThisMonth() {
+    if (!_isThisMonth) _goTo(_thisMonth());
+  }
+
   bool get _filtered =>
       _types.isNotEmpty || _accounts.isNotEmpty || _categories.isNotEmpty;
 
@@ -118,6 +126,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
   void initState() {
     super.initState();
     widget.refresh?.addListener(_load);
+    widget.thisMonth?.addListener(_backToThisMonth);
     // Always on; it draws nothing while no layer is open.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _layer.show();
@@ -130,6 +139,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
   void dispose() {
     _pages.dispose();
     widget.refresh?.removeListener(_load);
+    widget.thisMonth?.removeListener(_backToThisMonth);
     super.dispose();
   }
 

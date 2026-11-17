@@ -63,3 +63,8 @@ FlowTotals flowTotals(
     approximate: approximate,
   );
 }
+
+/// How far into its month [day] is, today included: 11 November is 11/30
+/// (where the home's month bar puts today).
+double monthElapsed(DateTime day) =>
+    day.day / DateTime(day.year, day.month + 1, 0).day;
