@@ -55,6 +55,30 @@ class AppLocalizationsEn extends AppLocalizations {
       'Entry, an operation’s details and confirmations always show the whole amount.';
 
   @override
+  String listPeriod(String first, String last) {
+    return '$first to $last';
+  }
+
+  @override
+  String get monthStart => 'Start of the month';
+
+  @override
+  String get monthStartHelp => 'The day your month starts, for example payday.';
+
+  @override
+  String monthStartValue(int day) {
+    return 'Day $day';
+  }
+
+  @override
+  String monthStartPreview(String month, String first, String last) {
+    return '$month will run from $first to $last.';
+  }
+
+  @override
+  String get monthStartSave => 'Save';
+
+  @override
   String get homeAvailable => 'Available';
 
   @override

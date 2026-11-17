@@ -56,6 +56,37 @@ class AppLocalizationsFr extends AppLocalizations {
       'La saisie, le détail d’une opération et les confirmations montrent toujours le montant entier.';
 
   @override
+  String listPeriod(String first, String last) {
+    return 'du $first au $last';
+  }
+
+  @override
+  String get monthStart => 'Début du mois';
+
+  @override
+  String get monthStartHelp =>
+      'Le jour où votre mois commence, par exemple le jour de la paie.';
+
+  @override
+  String monthStartValue(int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      day,
+      locale: localeName,
+      other: 'Le $day',
+      one: 'Le 1er',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String monthStartPreview(String month, String first, String last) {
+    return '$month ira du $first au $last.';
+  }
+
+  @override
+  String get monthStartSave => 'Enregistrer';
+
+  @override
   String get homeAvailable => 'Disponible';
 
   @override
