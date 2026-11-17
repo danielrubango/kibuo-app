@@ -134,11 +134,41 @@ abstract class AppLocalizations {
   /// **'Aujourd’hui'**
   String get homeTitle;
 
-  /// Temporary text on the home screen until it is built.
+  /// Home: what can be spent freely, all accounts together.
   ///
   /// In fr, this message translates to:
-  /// **'Le disponible, le mois en cours et ce qui arrive viendront ici.'**
-  String get homePlaceholder;
+  /// **'Disponible'**
+  String get homeAvailable;
+
+  /// Home: the line under the available amount.
+  ///
+  /// In fr, this message translates to:
+  /// **'à dépenser librement'**
+  String get homeAvailableHelp;
+
+  /// Home: what touching the available amount does, for screen readers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir mes comptes'**
+  String get homeOpenAccounts;
+
+  /// Home: after the month's name in the month card.
+  ///
+  /// In fr, this message translates to:
+  /// **'ce mois-ci'**
+  String get homeThisMonth;
+
+  /// Home: after what is left of the month's income.
+  ///
+  /// In fr, this message translates to:
+  /// **'restants'**
+  String get homeLeft;
+
+  /// Home: the month's exits out of its entries.
+  ///
+  /// In fr, this message translates to:
+  /// **'{out} sur {income}'**
+  String homeOutOfIn(String out, String income);
 
   /// Temporary text on the transactions screen until it is built.
   ///
