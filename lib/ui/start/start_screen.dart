@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:kibuo/ui/brand/kibuo_mark.dart';
+import 'package:kibuo/ui/brand/kibuo_wordmark.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Shown when Kibuo really starts, right after Android's own start screen.
 ///
@@ -75,7 +75,7 @@ class _StartScreenState extends State<StartScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 750),
+    duration: const Duration(milliseconds: 900),
   );
   bool _started = false;
 
@@ -105,7 +105,7 @@ class _StartScreenState extends State<StartScreen>
     final centre = size.center(Offset.zero);
     const box = StartScreen.logoBox;
     return Semantics(
-      label: 'Kibuo',
+      label: 'kibuo',
       container: true,
       excludeSemantics: true,
       child: Material(
@@ -113,13 +113,21 @@ class _StartScreenState extends State<StartScreen>
         child: AnimatedBuilder(
           animation: _controller,
           builder: (context, _) {
-            final t = _controller.value;
-            // The coin slips 3 units into the slot over the first 450 ms.
-            final drop = Curves.easeInOut.transform((t / .6).clamp(0.0, 1.0));
-            // The name fades in from 250 ms to 750 ms.
-            final name = Curves.easeOut.transform(
-              ((t - 1 / 3) / (2 / 3)).clamp(0.0, 1.0),
-            );
+            // Canvas DemarrageE with C's piggy bank, in seconds.
+            final sec = _controller.value * .9;
+            double part(double from, double to, [Curve c = Curves.easeInOut]) =>
+                c.transform(((sec - from) / (to - from)).clamp(0.0, 1.0));
+            // The coin falls 4 units, bounces back to 2.4, settles at 3.
+            final drop = sec < .30
+                ? 4 * part(0, .30)
+                : sec < .42
+                ? 4 - 1.6 * part(.30, .42)
+                : 2.4 + .6 * part(.42, .52);
+            // The piggy bank takes the coin: flattened, then round again.
+            final squash = sec < .52 ? part(.40, .52) : 1 - part(.52, .68);
+            // The name grows a little and closes up its letters.
+            final grow = part(.40, .85, const Cubic(.34, 1.56, .64, 1));
+            final seen = part(.40, .85, Curves.linear);
             return Stack(
               children: [
                 Positioned(
@@ -128,7 +136,7 @@ class _StartScreenState extends State<StartScreen>
                   width: box,
                   height: box,
                   child: CustomPaint(
-                    painter: KibuoMarkPainter(coinDrop: 3 * drop),
+                    painter: KibuoMarkPainter(coinDrop: drop, squash: squash),
                   ),
                 ),
                 Positioned(
@@ -137,19 +145,11 @@ class _StartScreenState extends State<StartScreen>
                   // Under the circle, whose bottom is 25 units below centre.
                   top: centre.dy + box / 96 * 25 + 28,
                   child: Opacity(
-                    opacity: name,
-                    child: Transform.translate(
-                      offset: Offset(0, 8 * (1 - name)),
-                      child: const Text(
-                        'Kibuo',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: KibuoTheme.brandFont,
-                          fontVariations: [FontVariation.weight(700)],
-                          fontSize: 40,
-                          letterSpacing: -0.5,
-                          color: KibuoColors.ink,
-                        ),
+                    opacity: seen,
+                    child: Transform.scale(
+                      scale: .85 + .15 * grow,
+                      child: Center(
+                        child: KibuoWordmark(letterSpacing: 8 - 8.5 * grow),
                       ),
                     ),
                   ),

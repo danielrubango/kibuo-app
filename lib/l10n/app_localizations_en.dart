@@ -151,7 +151,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lockCreatedBody =>
-      'Kibuo will ask for this code each time it opens.';
+      'kibuo will ask for this code each time it opens.';
 
   @override
   String get continueAction => 'Continue';
@@ -175,7 +175,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keypadDelete => 'Delete';
 
   @override
-  String get fingerprintOfferTitle => 'Open Kibuo with your fingerprint?';
+  String get fingerprintOfferTitle => 'Open kibuo with your fingerprint?';
 
   @override
   String get fingerprintOfferBody =>
@@ -188,14 +188,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get later => 'Not now';
 
   @override
-  String get fingerprintReason => 'Open Kibuo';
+  String get fingerprintReason => 'Open kibuo';
 
   @override
   String get forgotErase => 'Erase and start over';
 
   @override
   String get forgotEraseBody =>
-      'All of Kibuo’s data on this phone will be erased. You can then restore a backup, if you have one.';
+      'All of kibuo’s data on this phone will be erased. You can then restore a backup, if you have one.';
 
   @override
   String get forgotHold => 'Hold to erase';
@@ -261,17 +261,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lockRemoveHelp =>
-      'Without a code, Kibuo opens directly. Your data stays encrypted.';
+      'Without a code, kibuo opens directly. Your data stays encrypted.';
 
   @override
-  String get privacyHideRecents => 'Hide Kibuo in recent apps';
+  String get privacyHideRecents => 'Hide kibuo in recent apps';
 
   @override
   String get privacyScreenshots => 'Allow screenshots';
 
   @override
   String get privacyHelp =>
-      'When hidden, the recent apps preview shows Kibuo’s logo instead of your balances.';
+      'When hidden, the recent apps preview shows kibuo’s logo instead of your balances.';
 
   @override
   String lockWrong(int count) {
@@ -305,11 +305,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoveryShowBody =>
-      'It gets you back into Kibuo if you forget your code and the fingerprint doesn’t work, and it reopens your data on a new phone. Write it on paper and keep it somewhere safe.';
+      'It gets you back into kibuo if you forget your code and the fingerprint doesn’t work, and it reopens your data on a new phone. Write it on paper and keep it somewhere safe.';
 
   @override
   String get recoveryShowWarning =>
-      'Kibuo doesn’t keep it, so it can’t show it to you again.';
+      'kibuo doesn’t keep it, so it can’t show it to you again.';
 
   @override
   String get recoveryCopy => 'Copy the code';
@@ -343,13 +343,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recoveryWrong => 'Wrong code. Check each group and try again.';
 
   @override
-  String get recoveryOpen => 'Open Kibuo';
+  String get recoveryOpen => 'Open kibuo';
 
   @override
   String get recoveryUse => 'Use the recovery code';
 
   @override
-  String get recoveryNotKept => 'Kibuo doesn’t keep it: only you know it.';
+  String get recoveryNotKept => 'kibuo doesn’t keep it: only you know it.';
 
   @override
   String get recoveryNew => 'Get a new code';
@@ -362,10 +362,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoveryCreateHelp =>
-      'Without a recovery code, a forgotten code or a new phone means starting over, and Android doesn’t copy Kibuo’s data.';
+      'Without a recovery code, a forgotten code or a new phone means starting over, and Android doesn’t copy kibuo’s data.';
 
   @override
-  String get recoveryAndroidCopy => 'Let Android copy Kibuo';
+  String get recoveryAndroidCopy => 'Let Android copy kibuo';
 
   @override
   String get recoveryAndroidCopyHelp =>
@@ -1175,7 +1175,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String accountCurrentHelp(String balance) {
-    return 'In Kibuo today: $balance. Type what the account really holds.';
+    return 'In kibuo today: $balance. Type what the account really holds.';
   }
 
   @override
@@ -1184,7 +1184,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get adjustInKibuo => 'In Kibuo';
+  String get adjustInKibuo => 'In kibuo';
 
   @override
   String get adjustReal => 'Real balance';

@@ -297,7 +297,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField).first, 'kb7q-4m2x-9tpa-h3wx');
     await tester.pump();
-    await tester.tap(find.text('Ouvrir Kibuo'));
+    await tester.tap(find.text('Ouvrir kibuo'));
     await tester.pumpAndSettle();
     expect(
       find.text('Code incorrect. Vérifiez chaque groupe et réessayez.'),
@@ -306,7 +306,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField).first, 'kb7q-4m2x-9tpa-h3wd');
     await tester.pump();
-    await tester.tap(find.text('Ouvrir Kibuo'));
+    await tester.tap(find.text('Ouvrir kibuo'));
     await tester.pumpAndSettle();
 
     expect(find.text('Choisissez votre code'), findsOneWidget);

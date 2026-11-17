@@ -361,7 +361,7 @@ class _DesignSystemScreenState extends State<DesignSystemScreen> {
             onChanged: (v) => setState(() => _fingerprint = v),
           ),
           SettingsSwitch(
-            label: 'Masquer Kibuo dans les applications récentes',
+            label: 'Masquer kibuo dans les applications récentes',
             value: _privacy,
             onChanged: (v) => setState(() => _privacy = v),
           ),
