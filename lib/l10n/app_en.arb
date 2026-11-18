@@ -658,5 +658,15 @@
   "draftsSheetNoRate": "Rate missing: confirm it alone",
   "draftsSheetFloor": "Would go below the floor: confirm it alone",
   "draftsSheetLine": "{kind} · {day} · {account}",
-  "draftsValidated": "{count, plural, =1{1 draft confirmed} other{{count} drafts confirmed}}"
+  "draftsValidated": "{count, plural, =1{1 draft confirmed} other{{count} drafts confirmed}}",
+  "typesTitle": "Account types",
+  "typesProvided": "Provided by kibuo",
+  "typesYours": "Yours",
+  "typesProvidedHelp": "Provided types can’t be changed.",
+  "typeEditTitle": "Edit the type",
+  "typeDelete": "Delete this type",
+  "typeInUse": "{count, plural, =1{1 account is of this type: change it first.} other{{count} accounts are of this type: change them first.}}",
+  "typeDeleteTitle": "Delete the type {name}?",
+  "typeDeleteText": "It leaves the list of types; no account uses it.",
+  "typeDeleteAction": "Delete"
 }

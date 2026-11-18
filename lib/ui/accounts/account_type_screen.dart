@@ -3,29 +3,43 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// « Nouveau type » (canvas: TypeCompte): a name and an icon among about
-/// twenty. Pops the new type's id.
+/// twenty. Pops the new type's id. With [type], « Modifier le type »: the
+/// same form, and « Supprimer ce type » while no account uses it.
 class AccountTypeScreen extends StatefulWidget {
-  const AccountTypeScreen({super.key, required this.accounts});
+  const AccountTypeScreen({super.key, required this.accounts, this.type});
 
   final AccountRepository accounts;
+  final CustomAccountType? type;
 
   @override
   State<AccountTypeScreen> createState() => _AccountTypeScreenState();
 }
 
 class _AccountTypeScreenState extends State<AccountTypeScreen> {
-  final _name = TextEditingController();
-  String _icon = customTypeIcons.keys.first;
+  late final _name = TextEditingController(text: widget.type?.name);
+  late String _icon = widget.type?.icon ?? customTypeIcons.keys.first;
+
+  /// How many accounts use the type being changed.
+  int? _use;
 
   @override
   void initState() {
     super.initState();
     _name.addListener(() => setState(() {}));
+    if (widget.type case final type?) {
+      widget.accounts.typeUse(type.id).then((n) {
+        if (mounted) setState(() => _use = n);
+      });
+    }
   }
 
   @override
@@ -35,15 +49,45 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
   }
 
   Future<void> _save() async {
-    final id = await widget.accounts.createType(name: _name.text, icon: _icon);
+    final type = widget.type;
+    final String id;
+    if (type == null) {
+      id = await widget.accounts.createType(name: _name.text, icon: _icon);
+    } else {
+      id = type.id;
+      await widget.accounts.updateType(id, name: _name.text, icon: _icon);
+    }
     if (mounted) Navigator.of(context).pop(id);
+  }
+
+  Future<void> _delete() async {
+    final l = AppLocalizations.of(context);
+    final type = widget.type!;
+    final sure = await confirmRemoval(
+      context,
+      title: l.typeDeleteTitle(type.name),
+      summary: Row(
+        children: [
+          Icon(customTypeIcons[type.icon] ?? KibuoIcons.wallet, size: 20),
+          const SizedBox(width: 12),
+          Expanded(child: Text(type.name, style: KibuoType.rowLabel)),
+        ],
+      ),
+      text: l.typeDeleteText,
+      action: l.typeDeleteAction,
+    );
+    if (!sure) return;
+    await widget.accounts.removeType(type.id);
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l.typeNewTitle)),
+      appBar: AppBar(
+        title: Text(widget.type == null ? l.typeNewTitle : l.typeEditTitle),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
@@ -60,6 +104,17 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
             chosen: _icon,
             onPick: (name) => setState(() => _icon = name),
           ),
+          if (widget.type != null && _use != null) ...[
+            const SizedBox(height: 16),
+            Center(
+              child: TextAction(
+                label: l.typeDelete,
+                color: KibuoColors.danger,
+                onPressed: _use == 0 ? _delete : null,
+              ),
+            ),
+            if (_use! > 0) HelpText(l.typeInUse(_use!)),
+          ],
         ],
       ),
       bottomNavigationBar: BottomAction(

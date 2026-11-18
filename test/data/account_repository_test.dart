@@ -126,6 +126,38 @@ void main() {
     expect((await repo.accounts()).single.type, AccountType.custom(tontine));
   });
 
+  test('a type of one’s own: renamed, new icon', () async {
+    final id = await repo.createType(name: 'Tontine', icon: 'users');
+    await repo.updateType(id, name: ' Likelemba ', icon: 'coins');
+    final type = (await repo.types()).single;
+    expect(type.name, 'Likelemba');
+    expect(type.icon, 'coins');
+  });
+
+  test('a type is removed only once no account uses it', () async {
+    final id = await repo.createType(name: 'Tontine', icon: 'users');
+    final account = await repo.create(
+      name: 'Tontine du quartier',
+      type: AccountType.custom(id),
+      opening: const Money(0, 'CDF'),
+      openingDate: day,
+    );
+    expect(await repo.typeUse(id), 1);
+    // Archived, the account still counts.
+    await repo.archive(account);
+    expect(await repo.typeUse(id), 1);
+    expect(() => repo.removeType(id), throwsStateError);
+    expect(await repo.types(), hasLength(1));
+    await repo.update(
+      account,
+      name: 'Tontine du quartier',
+      type: AccountType.cash,
+    );
+    expect(await repo.typeUse(id), 0);
+    await repo.removeType(id);
+    expect(await repo.types(), isEmpty);
+  });
+
   test('the display choice is kept', () async {
     expect(await repo.allInMain(), isFalse);
     await repo.setAllInMain(true);

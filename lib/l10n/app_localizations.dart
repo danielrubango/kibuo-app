@@ -3990,6 +3990,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, =1{1 brouillon validé} other{{count} brouillons validés}}'**
   String draftsValidated(int count);
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Types de compte'**
+  String get typesTitle;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fournis par kibuo'**
+  String get typesProvided;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les vôtres'**
+  String get typesYours;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les types fournis ne se modifient pas.'**
+  String get typesProvidedHelp;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le type'**
+  String get typeEditTitle;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce type'**
+  String get typeDelete;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 compte est de ce type : changez-le d’abord.} other{{count} comptes sont de ce type : changez-les d’abord.}}'**
+  String typeInUse(int count);
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le type {name} ?'**
+  String typeDeleteTitle(String name);
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il disparaît de la liste des types ; aucun compte ne l’utilise.'**
+  String get typeDeleteText;
+
+  /// Account types management.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get typeDeleteAction;
 }
 
 class _AppLocalizationsDelegate
