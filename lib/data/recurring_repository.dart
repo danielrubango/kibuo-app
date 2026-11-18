@@ -63,6 +63,14 @@ class RecurringInfo {
   }
 }
 
+/// One date a recurrence will make, not made yet.
+class Planned {
+  const Planned(this.rule, this.day);
+
+  final RecurringInfo rule;
+  final DateTime day;
+}
+
 /// The user's recurrences, and catching up on their dates (PRODUCT:
 /// Récurrences). Every write carries the sync metadata of ADR 0003.
 class RecurringRepository {
@@ -76,6 +84,8 @@ class RecurringRepository {
   HybridClock? _clock;
 
   static const _askKey = 'recurrence_always_ask';
+  static const _onTopKey = 'recurrence_drafts_on_top';
+  static const _plannedKey = 'recurrence_show_planned';
 
   Future<int> _nextVersion() async {
     _clock ??= HybridClock(last: await _db.lastVersion());
@@ -87,6 +97,39 @@ class RecurringRepository {
   Future<bool> alwaysAsk() async => await _prefs.read(_askKey) == 'true';
 
   Future<void> setAlwaysAsk(bool on) => _prefs.write(_askKey, '$on');
+
+  /// « Groupés en haut »: drafts late or due today sit above the days.
+  Future<bool> draftsOnTop() async => await _prefs.read(_onTopKey) == 'true';
+
+  Future<void> setDraftsOnTop(bool on) => _prefs.write(_onTopKey, '$on');
+
+  /// Whether the list shows the month's planned operations (on by default).
+  Future<bool> showPlanned() async => await _prefs.read(_plannedKey) != 'false';
+
+  Future<void> setShowPlanned(bool on) => _prefs.write(_plannedKey, '$on');
+
+  /// The dates still to come, from tomorrow on [now] to [until] included,
+  /// of every active recurrence, in date order (PRODUCT: opérations
+  /// prévues). They count in no total.
+  Future<List<Planned>> planned({
+    required DateTime now,
+    required DateTime until,
+  }) async {
+    final today = DateTime(now.year, now.month, now.day);
+    final last = DateTime(until.year, until.month, until.day);
+    final list = <Planned>[];
+    for (final rule in await rules()) {
+      if (rule.stopped) continue;
+      final done = rule.doneUntil;
+      final after = done != null && done.isAfter(today) ? done : today;
+      for (final day in rule.schedule.dates()) {
+        if (day.isAfter(last)) break;
+        if (day.isAfter(after)) list.add(Planned(rule, day));
+      }
+    }
+    list.sort((a, b) => a.day.compareTo(b.day));
+    return list;
+  }
 
   static int _weekdayBits(Set<int> days) =>
       days.fold(0, (bits, d) => bits | (1 << (d - 1)));

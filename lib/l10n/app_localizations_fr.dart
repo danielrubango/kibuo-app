@@ -2130,4 +2130,176 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get firstStart => 'Commencer';
+
+  @override
+  String get draftLabel => 'Brouillon';
+
+  @override
+  String get draftIgnore => 'Ignorer';
+
+  @override
+  String get draftValidate => 'Valider';
+
+  @override
+  String get plannedTag => 'Prévu';
+
+  @override
+  String draftValidated(String name) {
+    return 'Validé : $name, compté dans le mois';
+  }
+
+  @override
+  String draftIgnoredToast(String name) {
+    return 'Ignoré : $name. Validez-le depuis son détail.';
+  }
+
+  @override
+  String draftsToValidate(String count) {
+    return 'À valider · $count';
+  }
+
+  @override
+  String draftFromRecurrence(String account) {
+    return 'Récurrence · $account';
+  }
+
+  @override
+  String draftStatus(String status, String unit) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'ignored': 'Ignoré',
+      'other': 'Brouillon',
+    });
+    String _temp1 = intl.Intl.selectLogic(unit, {
+      'day': 'quotidienne',
+      'week': 'hebdomadaire',
+      'year': 'annuelle',
+      'other': 'mensuelle',
+    });
+    return '$_temp0 · récurrence $_temp1';
+  }
+
+  @override
+  String draftDueToday(String date) {
+    return 'Prévu aujourd’hui, $date';
+  }
+
+  @override
+  String draftDueYesterday(String date) {
+    return 'Prévu hier, $date';
+  }
+
+  @override
+  String draftDueOn(String date) {
+    return 'Prévu le $date';
+  }
+
+  @override
+  String get draftNotice =>
+      'Cette opération attend votre accord. Vérifiez le montant, il varie parfois, puis validez pour l’ajouter au compte.';
+
+  @override
+  String get ignoredNotice =>
+      'Vous l’avez ignorée pour cette fois : elle ne compte pas dans le compte. Si elle a bien eu lieu, validez-la ici.';
+
+  @override
+  String get draftValidateAction => 'Valider l’opération';
+
+  @override
+  String get draftChangeAmount => 'Changer le montant';
+
+  @override
+  String get draftIgnoreOnce => 'Ignorer cette fois';
+
+  @override
+  String draftNoRate(String currency) {
+    return 'Il manque le taux du $currency : donnez-le avec « Changer le montant ».';
+  }
+
+  @override
+  String get listDisplay => 'Affichage de la liste';
+
+  @override
+  String get displayWhenDue => 'Quand une récurrence arrive à sa date';
+
+  @override
+  String get displayAuto => 'Valider automatiquement';
+
+  @override
+  String get displayAutoHelp => 'Créée et comptée à sa date.';
+
+  @override
+  String get displayAsk => 'Toujours demander';
+
+  @override
+  String get displayAskHelp => 'Arrive en brouillon, à valider.';
+
+  @override
+  String get displayDrafts => 'Brouillons à valider';
+
+  @override
+  String get displayAtDate => 'À leur date';
+
+  @override
+  String get displayAtDateHelp => 'Au jour prévu, dans la liste.';
+
+  @override
+  String get displayOnTop => 'Groupés en haut';
+
+  @override
+  String get displayOnTopHelp => 'En retard et du jour, en haut.';
+
+  @override
+  String get displayPlanned => 'Opérations prévues ce mois-ci';
+
+  @override
+  String get displayPlannedHelp => 'En pointillés, marquées « Prévu ».';
+
+  @override
+  String get displayHidden => 'Masquées';
+
+  @override
+  String get displayHiddenHelp => 'Visibles une fois la date arrivée.';
+
+  @override
+  String get displayFoot =>
+      'Aussi dans Réglages. Une récurrence peut toujours demander sa validation.';
+
+  @override
+  String get displayDone => 'Terminé';
+
+  @override
+  String get settingsRecurrences => 'Récurrences et brouillons';
+
+  @override
+  String get displayAutoLong =>
+      'L’opération est créée et comptée, sauf pour les récurrences qui demandent une validation.';
+
+  @override
+  String get displayAskLong =>
+      'Chaque opération arrive en brouillon et attend votre accord.';
+
+  @override
+  String get displayAtDateLong => 'Chaque brouillon reste au jour prévu.';
+
+  @override
+  String get displayOnTopLong =>
+      'Ceux en retard et du jour sont réunis en haut de la liste.';
+
+  @override
+  String get displayPlannedLong =>
+      'Elles restent au jour prévu, en pointillés, marquées « Prévu ».';
+
+  @override
+  String get displayHiddenLong =>
+      'Elles n’apparaissent qu’une fois leur date arrivée.';
+
+  @override
+  String get settingsRecurrencesFoot =>
+      'Ces choix se retrouvent dans l’affichage de la liste des opérations. Chaque récurrence peut demander sa propre validation, dans sa fiche.';
+
+  @override
+  String get displayAutoShort => 'Automatique';
+
+  @override
+  String get draftsLateAndToday => 'En retard et du jour';
 }

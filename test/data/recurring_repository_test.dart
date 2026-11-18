@@ -201,4 +201,47 @@ void main() {
       DateTime(2027, 2, 8),
     ]);
   });
+
+  test('planned: from tomorrow to the end of the period, not made', () async {
+    await internet();
+    await rules.create(
+      kind: EntryKind.expense,
+      accountId: mpesa,
+      categoryId: 'default-transport',
+      amount: const Money(500, 'USD'),
+      unit: RepeatUnit.week,
+      start: DateTime(2026, 11, 2),
+    );
+    await rules.catchUp(DateTime(2026, 11, 18));
+    final planned = await rules.planned(
+      now: DateTime(2026, 11, 18, 15),
+      until: DateTime(2026, 11, 30),
+    );
+    expect(
+      [for (final p in planned) p.day],
+      [DateTime(2026, 11, 23), DateTime(2026, 11, 30)],
+    );
+    expect(planned.first.rule.amount.minor, 500);
+  });
+
+  test('planned: none for a stopped recurrence', () async {
+    final id = await internet();
+    await rules.stop(id);
+    expect(
+      await rules.planned(
+        now: DateTime(2026, 11, 1),
+        until: DateTime(2026, 12, 31),
+      ),
+      isEmpty,
+    );
+  });
+
+  test('the list display choices, kept', () async {
+    expect(await rules.draftsOnTop(), isFalse);
+    expect(await rules.showPlanned(), isTrue);
+    await rules.setDraftsOnTop(true);
+    await rules.setShowPlanned(false);
+    expect(await rules.draftsOnTop(), isTrue);
+    expect(await rules.showPlanned(), isFalse);
+  });
 }

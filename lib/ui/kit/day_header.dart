@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// « Aujourd'hui », « Hier », « Mardi 10 novembre ».
@@ -21,10 +21,9 @@ String dayLabel(BuildContext context, DateTime day) {
   return t[0].toUpperCase() + t.substring(1);
 }
 
-/// A day of operations (canvas ListeOperations, BudgetDetail): its date,
-/// set low in its 44 with 6 to the cards under it,
-/// « · 3 » once folded, the day's total in colour, and ˄ or ˅; touching it
-/// folds the day.
+/// A day of operations (canvas ListeOperations, BudgetDetail): a group
+/// title (DIRECTION: Groupes) with the date, « · 3 » once folded, the
+/// day's total in colour, and ˄ or ˅; touching it folds the day.
 class DayHeader extends StatelessWidget {
   const DayHeader({
     super.key,
@@ -71,51 +70,20 @@ class DayHeader extends StatelessWidget {
         : net.minor > 0
         ? KibuoColors.accent
         : KibuoColors.debtInk;
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
+    return GroupTitle(
+      title: label,
+      count: folded ? '$count' : null,
+      folded: folded,
       onTap: onTap,
-      child: SizedBox(
-        height: KibuoTheme.heightTouch,
-        // The date sits low in its 44, about ten from its cards; the white
-        // goes above, between two days (DIRECTION, canvas BudgetDetail).
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    text: label,
-                    children: [
-                      if (folded)
-                        TextSpan(
-                          text: ' · $count',
-                          style: const TextStyle(color: KibuoColors.inkMuted),
-                        ),
-                    ],
-                  ),
-                  style: KibuoType.sectionTitle,
-                ),
-              ),
-              if (net != null)
-                FitAmount(
-                  long: isLong(net),
-                  alignment: Alignment.centerRight,
-                  maxWidth: MediaQuery.sizeOf(context).width * 0.45,
-                  style: KibuoType.sectionTitle.copyWith(color: color),
-                  span: (short) => TextSpan(text: amount(short)),
-                ),
-              const SizedBox(width: 8),
-              Icon(
-                folded ? KibuoIcons.caretDown : KibuoIcons.caretUp,
-                size: 16,
-                color: KibuoColors.accent,
-              ),
-            ],
-          ),
-        ),
-      ),
+      trailing: net == null
+          ? null
+          : FitAmount(
+              long: isLong(net),
+              alignment: Alignment.centerRight,
+              maxWidth: MediaQuery.sizeOf(context).width * 0.45,
+              style: KibuoType.sectionTitle.copyWith(color: color),
+              span: (short) => TextSpan(text: amount(short)),
+            ),
     );
   }
 }

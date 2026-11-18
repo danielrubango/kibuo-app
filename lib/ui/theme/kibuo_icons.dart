@@ -86,6 +86,13 @@ abstract final class KibuoIcons {
   static const repeat = IconData(0xe3f6, fontFamily: _regular);
   static const calendarBlank = IconData(0xe10a, fontFamily: _regular);
   static const slidersHorizontal = IconData(0xe434, fontFamily: _regular);
+  static const checkCircle = IconData(0xe184, fontFamily: _regular);
+  static const warningCircle = IconData(0xe4e2, fontFamily: _regular);
+  static const arrowLineUp = IconData(0xe066, fontFamily: _regular);
+  static const eye = IconData(0xe220, fontFamily: _regular);
+  static const eyeSlash = IconData(0xe224, fontFamily: _regular);
+  static const pencilSimple = IconData(0xe3b4, fontFamily: _regular);
+  static const info = IconData(0xe2ce, fontFamily: _regular);
   static const caretUp = IconData(0xe13c, fontFamily: _regular);
   static const briefcase = IconData(0xe0ee, fontFamily: _regular);
   static const storefront = IconData(0xe470, fontFamily: _regular);
