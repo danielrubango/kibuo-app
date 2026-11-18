@@ -4230,6 +4230,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Il manque {missing} sur {account}'**
   String todoShortfallSub(String missing, String account);
+
+  /// Entry dated later.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prévue le {date} : elle arrivera ce jour-là.'**
+  String entryPlannedToast(String date);
 }
 
 class _AppLocalizationsDelegate

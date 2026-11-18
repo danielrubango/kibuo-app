@@ -1384,5 +1384,7 @@
   "todoShortfall": "{name} · le {date}",
   "@todoShortfall": {"description": "Due-date reminders.", "placeholders": {"name": {"type": "String"}, "date": {"type": "String"}}},
   "todoShortfallSub": "Il manque {missing} sur {account}",
-  "@todoShortfallSub": {"description": "Due-date reminders.", "placeholders": {"missing": {"type": "String"}, "account": {"type": "String"}}}
+  "@todoShortfallSub": {"description": "Due-date reminders.", "placeholders": {"missing": {"type": "String"}, "account": {"type": "String"}}},
+  "entryPlannedToast": "Prévue le {date} : elle arrivera ce jour-là.",
+  "@entryPlannedToast": {"description": "Entry dated later.", "placeholders": {"date": {"type": "String"}}}
 }

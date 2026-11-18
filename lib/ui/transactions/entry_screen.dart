@@ -10,6 +10,7 @@ import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/recurrences/schedule.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
@@ -19,6 +20,7 @@ import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
+import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/recurrences/repeat_screen.dart';
 import 'package:kibuo/ui/recurrences/rhythm_text.dart';
@@ -60,6 +62,10 @@ class EntryData {
   /// The reminders' settings: a recurrence's own « Rappel ».
   final ReminderStore? reminders;
 }
+
+/// What the entry pops when it planned instead of saving (PRODUCT): not
+/// an operation's id.
+String plannedResult(String ruleId) => 'planned:$ruleId';
 
 /// Opens [item] in the viewer.
 Future<void> viewAttachment(
@@ -399,6 +405,8 @@ class _EntryScreenState extends State<EntryScreen> {
   /// When the change would take an account below its floor (PRODUCT:
   /// Découvert), what to say.
   OverdraftRefusal? get _refusal {
+    // Planned: the floor is checked on the day itself (PRODUCT).
+    if (_later) return null;
     final account = _account;
     final paid = _paid;
     if (account == null || paid == null || paid.minor == 0) return null;
@@ -597,6 +605,23 @@ class _EntryScreenState extends State<EntryScreen> {
     if (fees != null) setState(() => _fees = fees == '0' ? '' : fees);
   }
 
+  /// A new operation may be dated later: it is then planned, a
+  /// recurrence of a single time (PRODUCT: À reprendre).
+  bool get _canPlan =>
+      !widget.ruleOnly && !widget.editing && widget.data.recurrences != null;
+
+  /// Dated after today: planned, not saved as an operation.
+  bool get _later {
+    if (!_canPlan) return false;
+    final now = _now();
+    final today = DateTime(now.year, now.month, now.day);
+    return !DateTime(
+      _date.year,
+      _date.month,
+      _date.day,
+    ).isBefore(today.add(const Duration(days: 1)));
+  }
+
   Future<void> _chooseDate() async {
     final now = _now();
     final day = await showDatePicker(
@@ -605,8 +630,8 @@ class _EntryScreenState extends State<EntryScreen> {
       firstDate: widget.ruleOnly
           ? DateTime(now.year, now.month, now.day)
           : DateTime(2000),
-      // A recurrence may start later; an operation never does (PRODUCT).
-      lastDate: widget.ruleOnly ? DateTime(now.year + 5) : now,
+      // A recurrence may start later, and a new operation be planned.
+      lastDate: widget.ruleOnly || _canPlan ? DateTime(now.year + 5) : now,
     );
     if (day == null || !mounted) return;
     final time = await showTimePicker(
@@ -620,8 +645,8 @@ class _EntryScreenState extends State<EntryScreen> {
       time?.hour ?? _date.hour,
       time?.minute ?? _date.minute,
     );
-    // No operation in the future (PRODUCT: planned ones come later).
-    if (!widget.ruleOnly && picked.isAfter(now)) picked = now;
+    // A saved operation never moves into the future.
+    if (!widget.ruleOnly && !_canPlan && picked.isAfter(now)) picked = now;
     setState(() {
       _date = picked;
       _repeat = _repeat?.copyWith(start: picked);
@@ -715,6 +740,7 @@ class _EntryScreenState extends State<EntryScreen> {
       if (mounted) Navigator.of(context).pop(id);
       return;
     }
+    if (_later) return _plan();
     final paid = _paid!;
     final repo = widget.data.transactions;
     final fees = _feesMinor;
@@ -778,6 +804,35 @@ class _EntryScreenState extends State<EntryScreen> {
       await repo.validate(id);
     }
     await _finish(id);
+  }
+
+  /// Dated later: a recurrence (one time, or as « Répéter » says), shown
+  /// « Prévu » until its day, when it arrives like any recurrence.
+  Future<void> _plan() async {
+    final l = AppLocalizations.of(context);
+    final String rule;
+    if (_repeat != null) {
+      rule = await _saveRule();
+    } else {
+      rule = await widget.data.recurrences!.create(
+        kind: _kind,
+        accountId: _account!.id,
+        toAccountId: _transfer ? _to?.id : null,
+        categoryId: _transfer ? null : _category?.id,
+        amount: _paid!,
+        fees: _feesMinor,
+        note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+        unit: RepeatUnit.day,
+        start: _date,
+        endCount: 1,
+      );
+    }
+    if (!mounted) return;
+    showKibuoToast(
+      context,
+      l.entryPlannedToast(DateFormat.MMMMd(_lang).format(_date)),
+    );
+    Navigator.of(context).pop(plannedResult(rule));
   }
 
   /// Gives the attachments to the saved operation [id], then closes.
@@ -1071,20 +1126,22 @@ class _EntryScreenState extends State<EntryScreen> {
                             ?repeatField,
                           ],
                   ),
-                  const SizedBox(height: 12),
-                  AttachmentsCard(
-                    items: _attachments,
-                    preview: widget.data.attachments.read,
-                    selected: _chosen,
-                    onToggle: (id) => setState(
-                      () => _chosen.contains(id)
-                          ? _chosen.remove(id)
-                          : _chosen.add(id),
+                  // A planned operation has no attachment until its day.
+                  if (!_later) const SizedBox(height: 12),
+                  if (!_later)
+                    AttachmentsCard(
+                      items: _attachments,
+                      preview: widget.data.attachments.read,
+                      selected: _chosen,
+                      onToggle: (id) => setState(
+                        () => _chosen.contains(id)
+                            ? _chosen.remove(id)
+                            : _chosen.add(id),
+                      ),
+                      onAdd: _addAttachment,
+                      onOpen: (a) => viewAttachment(context, widget.data, a),
+                      error: _attachError,
                     ),
-                    onAdd: _addAttachment,
-                    onOpen: (a) => viewAttachment(context, widget.data, a),
-                    error: _attachError,
-                  ),
                   const SizedBox(height: 12),
                   _NoteCard(
                     label: l.entryNote,
