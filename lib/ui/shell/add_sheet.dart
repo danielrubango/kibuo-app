@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -35,7 +35,7 @@ Future<Object?> showAddSheet(
     context: context,
     isScrollControlled: true,
     barrierColor: KibuoColors.ink.withValues(alpha: 0.42),
-    builder: (context) => _AddSheet(redo: redo),
+    builder: (context) => withSheetHandle(_AddSheet(redo: redo)),
   );
 }
 

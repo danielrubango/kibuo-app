@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
@@ -14,8 +15,9 @@ Future<void> showForgotSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    builder: (sheetContext) =>
-        _ForgotSheet(controller: lock.notifier!, eraseAll: lock.eraseAll),
+    builder: (sheetContext) => withSheetHandle(
+      _ForgotSheet(controller: lock.notifier!, eraseAll: lock.eraseAll),
+    ),
   );
 }
 

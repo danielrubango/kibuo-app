@@ -72,6 +72,10 @@ void main() {
               .first,
         )
         .height;
+    // The title about 32 from the sheet's edge (canvas PlusBtnB1).
+    final sheetTop = tester.getTopLeft(find.byType(BottomSheet)).dy;
+    final titleTop = tester.getTopLeft(find.text('Ajouter')).dy;
+    expect(titleTop - sheetTop, inInclusiveRange(28, 36));
     expect(height('Dépense'), 72);
     expect(height('Revenu'), 64);
     expect(height('Transfert'), 64);

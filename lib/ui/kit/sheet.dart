@@ -23,6 +23,7 @@ Future<T?> showKibuoSheet<T>(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SheetHandle(),
             SheetHeader(title: title),
             const SizedBox(height: 12),
             builder(context),
@@ -67,6 +68,38 @@ class BottomAction extends StatelessWidget {
     );
   }
 }
+
+/// A sheet's handle (canvas PlusBtnB1): 10 from the top, 40 × 4, then 8
+/// to the title, whose row is 44 high: the title sits about 32 from the
+/// sheet's edge.
+class SheetHandle extends StatelessWidget {
+  const SheetHandle({super.key});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 10, bottom: 8),
+    child: Center(
+      child: Container(
+        width: 40,
+        height: 4,
+        decoration: BoxDecoration(
+          color: KibuoColors.line,
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+    ),
+  );
+}
+
+/// What a sheet opened on its own shows: the handle, then [child].
+Widget withSheetHandle(Widget child) => Column(
+  mainAxisSize: MainAxisSize.min,
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [
+    const SheetHandle(),
+    Flexible(child: child),
+  ],
+);
 
 /// A sheet's title, with ✕ to close it.
 class SheetHeader extends StatelessWidget {
