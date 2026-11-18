@@ -144,9 +144,11 @@ class _RecurrencesScreenState extends State<RecurrencesScreen> {
   }
 
   Future<void> _load() async {
+    // Those finished (a planned operation made, an end reached) leave.
+    final now = DateTime.now();
     final rules = [
       for (final r in await _repo.rules())
-        if (!r.stopped) r,
+        if (!r.stopped && r.upcoming(now, count: 1).isNotEmpty) r,
     ];
     final names = await _Names.load(widget.data);
     if (!mounted) return;
