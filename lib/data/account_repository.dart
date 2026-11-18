@@ -256,6 +256,46 @@ class AccountRepository {
     return id;
   }
 
+  /// A type of the user's own, renamed or with another icon.
+  Future<void> updateType(
+    String id, {
+    required String name,
+    required String icon,
+  }) async {
+    await (_db.update(_db.accountTypes)..where((t) => t.id.equals(id))).write(
+      AccountTypesCompanion(
+        name: Value(_cleanName(name)),
+        icon: Value(icon),
+        version: Value(await _nextVersion()),
+        deviceId: Value(_db.deviceId),
+      ),
+    );
+  }
+
+  /// How many accounts, archived ones included, are of type [id].
+  Future<int> typeUse(String id) async {
+    final key = AccountType.custom(id).key;
+    final rows = await (_db.select(
+      _db.accounts,
+    )..where((a) => a.deleted.not() & a.type.equals(key))).get();
+    return rows.length;
+  }
+
+  /// Removes a type of the user's own; never one an account still uses
+  /// (PRODUCT: « changez-les d'abord »).
+  Future<void> removeType(String id) async {
+    if (await typeUse(id) > 0) {
+      throw StateError('accounts still use type $id');
+    }
+    await (_db.update(_db.accountTypes)..where((t) => t.id.equals(id))).write(
+      AccountTypesCompanion(
+        deleted: const Value(true),
+        version: Value(await _nextVersion()),
+        deviceId: Value(_db.deviceId),
+      ),
+    );
+  }
+
   /// The user's own types, in the order they were created.
   Future<List<CustomAccountType>> types() async {
     final rows =

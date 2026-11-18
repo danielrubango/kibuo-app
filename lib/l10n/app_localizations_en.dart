@@ -2422,4 +2422,45 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get typesTitle => 'Account types';
+
+  @override
+  String get typesProvided => 'Provided by kibuo';
+
+  @override
+  String get typesYours => 'Yours';
+
+  @override
+  String get typesProvidedHelp => 'Provided types can’t be changed.';
+
+  @override
+  String get typeEditTitle => 'Edit the type';
+
+  @override
+  String get typeDelete => 'Delete this type';
+
+  @override
+  String typeInUse(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts are of this type: change them first.',
+      one: '1 account is of this type: change it first.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String typeDeleteTitle(String name) {
+    return 'Delete the type $name?';
+  }
+
+  @override
+  String get typeDeleteText =>
+      'It leaves the list of types; no account uses it.';
+
+  @override
+  String get typeDeleteAction => 'Delete';
 }
