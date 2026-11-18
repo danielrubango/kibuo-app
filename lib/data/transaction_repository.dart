@@ -80,6 +80,14 @@ class TransactionInfo {
   final String? recurringId;
 
   bool get isDraft => status == 'draft';
+
+  bool get isIgnored => status == 'ignored';
+
+  /// One of a recurrence's dates still to come, shown in the list only.
+  bool get isPlanned => status == 'planned';
+
+  /// Only what was done counts in balances and totals (PRODUCT).
+  bool get counts => status == 'done';
 }
 
 /// The user's expenses and income. Every write carries the sync metadata of

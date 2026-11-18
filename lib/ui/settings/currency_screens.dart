@@ -9,6 +9,7 @@ import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
@@ -274,7 +275,7 @@ class _CurrenciesScreenState extends State<CurrenciesScreen> {
                   ),
                 ),
                 if (_rows.isNotEmpty) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: GroupTitle.gap),
                   SectionTitle(l.currenciesRates),
                   for (final row in _rows) ...[
                     if (_editing)
@@ -464,7 +465,7 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
             ),
           for (final (title, currencies) in _showAll ? groups : groups.take(1))
             if (currencies.isNotEmpty) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: GroupTitle.gap),
               SectionTitle(title),
               for (final c in currencies) ...[
                 _CurrencyTile(
