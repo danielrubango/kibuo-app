@@ -39,6 +39,8 @@ class _RemindersScreenState extends State<RemindersScreen>
     with WidgetsBindingObserver {
   bool? _on;
   int _minute = ReminderStore.defaultEntryMinute;
+  bool _dueOn = false;
+  int _dueDays = ReminderStore.defaultDueDays;
   bool _blocked = false;
 
   @override
@@ -64,10 +66,15 @@ class _RemindersScreenState extends State<RemindersScreen>
     final on = await widget.store.entryOn();
     final minute = await widget.store.entryMinute();
     final allowed = await widget.notifier.allowed();
+    final dueOn = await widget.store.dueOn();
+    final dueDays = await widget.store.dueDays();
     if (!mounted) return;
     setState(() {
       _on = on && allowed;
       _minute = minute;
+      // On by default, but only once Android allows it.
+      _dueOn = dueOn && allowed;
+      _dueDays = dueDays;
       _blocked = _blocked && !allowed;
     });
   }
@@ -87,6 +94,47 @@ class _RemindersScreenState extends State<RemindersScreen>
         _blocked = false;
       });
     }
+    await widget.onChanged();
+  }
+
+  Future<void> _switchDue(bool on) async {
+    if (on && !await widget.notifier.allowed()) {
+      final yes = await widget.notifier.ask();
+      if (!yes) {
+        if (mounted) setState(() => _blocked = true);
+        return;
+      }
+    }
+    await widget.store.setDueOn(on);
+    if (mounted) {
+      setState(() {
+        _dueOn = on;
+        _blocked = false;
+      });
+    }
+    await widget.onChanged();
+  }
+
+  Future<void> _pickDelay() async {
+    final l = AppLocalizations.of(context);
+    final picked = await showKibuoSheet<int>(
+      context,
+      title: l.remindersDelay,
+      builder: (context) => SettingsCard(
+        children: [
+          for (final days in ReminderStore.dueChoices)
+            CheckChoice(
+              label: l.daysBefore(days),
+              help: '',
+              on: days == _dueDays,
+              onTap: () => Navigator.of(context).pop(days),
+            ),
+        ],
+      ),
+    );
+    if (picked == null || picked == _dueDays) return;
+    await widget.store.setDueDays(picked);
+    if (mounted) setState(() => _dueDays = picked);
     await widget.onChanged();
   }
 
@@ -136,6 +184,28 @@ class _RemindersScreenState extends State<RemindersScreen>
                       ),
                   ],
                 ),
+                const SizedBox(height: GroupTitle.before),
+                GroupTitle(title: l.remindersDueGroup),
+                SettingsCard(
+                  children: [
+                    SettingsSwitch(
+                      label: l.remindersDue,
+                      help: _dueOn
+                          ? l.remindersDueHelp(_dueDays)
+                          : l.remindersDueOffHelp,
+                      value: _dueOn,
+                      onChanged: _switchDue,
+                    ),
+                    if (_dueOn)
+                      SettingsRow(
+                        label: l.remindersDelay,
+                        value: l.daysBefore(_dueDays),
+                        onTap: _pickDelay,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                HelpText(l.remindersRuleNote),
                 if (_blocked) ...[
                   const SizedBox(height: 4),
                   Align(
