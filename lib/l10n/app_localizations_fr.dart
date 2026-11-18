@@ -2538,4 +2538,100 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get reminderEntryBody =>
       'Rien n’est noté aujourd’hui. Une dépense, un revenu ?';
+
+  @override
+  String reminderDueSoon(String amount, int days, String account) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours',
+      one: '1 jour',
+    );
+    return '$amount dans $_temp0, $account';
+  }
+
+  @override
+  String reminderDueShort(int days, String missing, String account) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours',
+      one: '1 jour',
+    );
+    return 'Dans $_temp0 : il manque $missing sur $account';
+  }
+
+  @override
+  String reminderDueToday(String amount, String account) {
+    return '$amount aujourd’hui, $account';
+  }
+
+  @override
+  String reminderDueTodayShort(String missing, String account) {
+    return 'Aujourd’hui : il manque $missing sur $account';
+  }
+
+  @override
+  String get remindersDueGroup => 'Échéances';
+
+  @override
+  String get remindersDue => 'Rappeler avant une échéance';
+
+  @override
+  String remindersDueHelp(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours avant chaque échéance',
+      one: '1 jour avant chaque échéance',
+      zero: 'Le jour même de chaque échéance',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get remindersDueOffHelp => 'Aucun rappel avant les échéances';
+
+  @override
+  String get remindersDelay => 'Délai';
+
+  @override
+  String daysBefore(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours avant',
+      one: '1 jour avant',
+      zero: 'Le jour même',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get remindersRuleNote =>
+      'Chaque récurrence peut avoir son propre rappel, réglé dans sa fiche.';
+
+  @override
+  String get reminderRule => 'Rappel';
+
+  @override
+  String reminderRuleDefault(String when) {
+    return 'Par défaut ($when)';
+  }
+
+  @override
+  String get reminderRuleNone => 'Aucun';
+
+  @override
+  String get reminderRuleOff => 'Aucun (rappels éteints)';
+
+  @override
+  String todoShortfall(String name, String date) {
+    return '$name · le $date';
+  }
+
+  @override
+  String todoShortfallSub(String missing, String account) {
+    return 'Il manque $missing sur $account';
+  }
 }

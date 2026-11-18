@@ -4128,6 +4128,108 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Rien n’est noté aujourd’hui. Une dépense, un revenu ?'**
   String get reminderEntryBody;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} dans {days, plural, =1{1 jour} other{{days} jours}}, {account}'**
+  String reminderDueSoon(String amount, int days, String account);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans {days, plural, =1{1 jour} other{{days} jours}} : il manque {missing} sur {account}'**
+  String reminderDueShort(int days, String missing, String account);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} aujourd’hui, {account}'**
+  String reminderDueToday(String amount, String account);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui : il manque {missing} sur {account}'**
+  String reminderDueTodayShort(String missing, String account);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échéances'**
+  String get remindersDueGroup;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappeler avant une échéance'**
+  String get remindersDue;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =0{Le jour même de chaque échéance} =1{1 jour avant chaque échéance} other{{days} jours avant chaque échéance}}'**
+  String remindersDueHelp(int days);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun rappel avant les échéances'**
+  String get remindersDueOffHelp;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délai'**
+  String get remindersDelay;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =0{Le jour même} =1{1 jour avant} other{{days} jours avant}}'**
+  String daysBefore(int days);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque récurrence peut avoir son propre rappel, réglé dans sa fiche.'**
+  String get remindersRuleNote;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel'**
+  String get reminderRule;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par défaut ({when})'**
+  String reminderRuleDefault(String when);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun'**
+  String get reminderRuleNone;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun (rappels éteints)'**
+  String get reminderRuleOff;
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · le {date}'**
+  String todoShortfall(String name, String date);
+
+  /// Due-date reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il manque {missing} sur {account}'**
+  String todoShortfallSub(String missing, String account);
 }
 
 class _AppLocalizationsDelegate

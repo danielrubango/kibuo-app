@@ -5,6 +5,7 @@ import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
+import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -42,6 +43,7 @@ class EntryData {
     this.picker = const DeviceAttachmentPicker(),
     this.opener = const DeviceAttachmentOpener(),
     this.recurrences,
+    this.reminders,
   });
 
   final AccountRepository accounts;
@@ -54,6 +56,9 @@ class EntryData {
 
   /// Where « Répéter » keeps its recurrences; without it, no « Répéter ».
   final RecurringRepository? recurrences;
+
+  /// The reminders' settings: a recurrence's own « Rappel ».
+  final ReminderStore? reminders;
 }
 
 /// Opens [item] in the viewer.

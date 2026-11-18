@@ -139,6 +139,19 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     if (!mounted) return;
     if (payload == ReminderPlanner.entryPayload) {
       _openEntry(AddChoice.expense);
+    } else if (payload == ReminderPlanner.homePayload) {
+      _show(_Tab.home);
+    } else if (payload.startsWith('rule:')) {
+      final data = _entryData(context);
+      if (data == null) return;
+      Navigator.of(context)
+          .push(
+            MaterialPageRoute<void>(
+              builder: (_) =>
+                  RecurrenceScreen(data: data, ruleId: payload.substring(5)),
+            ),
+          )
+          .then((_) => _saved.value++);
     }
   }
 
@@ -152,6 +165,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       store: ReminderStore(db),
       notifier: notifier,
       transactions: TransactionRepository(db),
+      data: _entryData(context),
     ).refresh(l, DateTime.now());
   }
 
@@ -204,6 +218,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         getApplicationSupportDirectory,
       ),
       recurrences: RecurringRepository(db),
+      reminders: ReminderStore(db),
     );
   }
 
