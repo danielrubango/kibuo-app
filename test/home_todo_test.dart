@@ -67,8 +67,8 @@ void main() {
     }
   }
 
-  Future<void> start(WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1080, 2400);
+  Future<void> start(WidgetTester tester, {double height = 2400}) async {
+    tester.view.physicalSize = Size(1080, height);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.reset);
     tester.platformDispatcher.localesTestValue = const [Locale('fr')];
@@ -267,7 +267,30 @@ void main() {
     );
     await start(tester);
     expect(find.text('À venir'), findsOneWidget);
-    expect(find.text('Prévu'), findsNWidgets(2));
+    // Once, at its next date, with its rhythm.
+    expect(find.text('Prévu'), findsOneWidget);
+    expect(find.textContaining('Chaque '), findsOneWidget);
+  });
+
+  testWidgets('« À venir »: a daily recurrence once, 5 lines at most', (
+    tester,
+  ) async {
+    final tomorrow = DateTime(today.year, today.month, today.day + 1);
+    for (var i = 0; i < 6; i++) {
+      await rules.create(
+        kind: EntryKind.expense,
+        accountId: mpesa,
+        categoryId: 'default-taxi',
+        amount: Money(500 + i, 'USD'),
+        unit: RepeatUnit.day,
+        start: tomorrow.add(Duration(days: i)),
+      );
+    }
+    // Room for the whole section.
+    await start(tester, height: 4800);
+    expect(find.text('Prévu'), findsNWidgets(5));
+    expect(find.text('Chaque jour'), findsNWidgets(5));
+    expect(find.text('Tout voir · 6'), findsOneWidget);
   });
 
   testWidgets('an old rate: a reminder, 30 days on', (tester) async {
