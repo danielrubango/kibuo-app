@@ -45,20 +45,27 @@ EdgeInsets sheetPadding(BuildContext context, {double top = 0}) =>
     );
 
 /// The main action at the bottom of a screen: 8 above it, and 24 above
-/// the phone's own bar (DIRECTION).
+/// the phone's own bar (DIRECTION); it rides above an open keyboard.
 class BottomAction extends StatelessWidget {
   const BottomAction({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-    top: false,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      child: child,
-    ),
-  );
+  Widget build(BuildContext context) {
+    // Above the keyboard when it is open, 8 from it (owner, 18 November).
+    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: keyboard),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 8, 16, keyboard > 0 ? 8 : 24),
+          child: child,
+        ),
+      ),
+    );
+  }
 }
 
 /// A sheet's title, with ✕ to close it.

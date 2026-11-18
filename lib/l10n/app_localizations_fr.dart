@@ -2455,4 +2455,45 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get typesTitle => 'Types de compte';
+
+  @override
+  String get typesProvided => 'Fournis par kibuo';
+
+  @override
+  String get typesYours => 'Les vôtres';
+
+  @override
+  String get typesProvidedHelp => 'Les types fournis ne se modifient pas.';
+
+  @override
+  String get typeEditTitle => 'Modifier le type';
+
+  @override
+  String get typeDelete => 'Supprimer ce type';
+
+  @override
+  String typeInUse(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comptes sont de ce type : changez-les d’abord.',
+      one: '1 compte est de ce type : changez-le d’abord.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String typeDeleteTitle(String name) {
+    return 'Supprimer le type $name ?';
+  }
+
+  @override
+  String get typeDeleteText =>
+      'Il disparaît de la liste des types ; aucun compte ne l’utilise.';
+
+  @override
+  String get typeDeleteAction => 'Supprimer';
 }
