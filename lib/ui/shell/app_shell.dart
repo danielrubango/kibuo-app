@@ -19,6 +19,7 @@ import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
@@ -360,6 +361,16 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
               MaterialPageRoute<void>(
                 builder: (_) =>
                     CategoriesScreen(categories: CategoryRepository(db)),
+              ),
+            ),
+          ),
+        if (db != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).typesTitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    AccountTypesScreen(accounts: AccountRepository(db)),
               ),
             ),
           ),

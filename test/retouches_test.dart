@@ -3,9 +3,11 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/accounts/account_type_screen.dart';
 import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
@@ -143,5 +145,17 @@ void main() {
     await settle(tester);
     expect(await accounts.types(), isEmpty);
     expect(find.text('Les vôtres'), findsNothing);
+  });
+
+  testWidgets('the account form: « Gérer » opens the types', (tester) async {
+    await CurrencyRepository(db).ensurePrimaryCurrency('US');
+    await show(
+      tester,
+      AccountFormScreen(accounts: accounts, currencies: CurrencyRepository(db)),
+    );
+    await tester.tap(find.text('Gérer'));
+    await settle(tester);
+    expect(find.text('Types de compte'), findsOneWidget);
+    expect(find.text('Fournis par kibuo'), findsOneWidget);
   });
 }
