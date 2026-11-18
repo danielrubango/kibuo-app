@@ -2505,4 +2505,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderEntryBody => 'Nothing noted today. An expense, an income?';
+
+  @override
+  String reminderDueSoon(String amount, int days, String account) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$amount in $_temp0, $account';
+  }
+
+  @override
+  String reminderDueShort(int days, String missing, String account) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'In $_temp0: $missing short on $account';
+  }
+
+  @override
+  String reminderDueToday(String amount, String account) {
+    return '$amount today, $account';
+  }
+
+  @override
+  String reminderDueTodayShort(String missing, String account) {
+    return 'Today: $missing short on $account';
+  }
+
+  @override
+  String get remindersDueGroup => 'Due dates';
+
+  @override
+  String get remindersDue => 'Remind before a due date';
+
+  @override
+  String remindersDueHelp(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days before each due date',
+      one: '1 day before each due date',
+      zero: 'On each due date',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get remindersDueOffHelp => 'No reminder before due dates';
+
+  @override
+  String get remindersDelay => 'Notice';
+
+  @override
+  String daysBefore(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days before',
+      one: '1 day before',
+      zero: 'On the day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get remindersRuleNote =>
+      'Each recurrence can have its own reminder, set in its card.';
+
+  @override
+  String get reminderRule => 'Reminder';
+
+  @override
+  String reminderRuleDefault(String when) {
+    return 'Default ($when)';
+  }
+
+  @override
+  String get reminderRuleNone => 'None';
+
+  @override
+  String get reminderRuleOff => 'None (reminders off)';
+
+  @override
+  String todoShortfall(String name, String date) {
+    return '$name · on $date';
+  }
+
+  @override
+  String todoShortfallSub(String missing, String account) {
+    return '$missing short on $account';
+  }
 }

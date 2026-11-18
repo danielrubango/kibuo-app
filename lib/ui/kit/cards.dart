@@ -444,7 +444,7 @@ class CheckChoice extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(label, style: KibuoType.rowLabel),
-                    Text(help, style: KibuoType.caption),
+                    if (help.isNotEmpty) Text(help, style: KibuoType.caption),
                   ],
                 ),
               ),

@@ -8,6 +8,7 @@ enum TodoKind {
   budgetOver(TodoGroup.urgent),
   recovery(TodoGroup.urgent),
   drafts(TodoGroup.week),
+  shortfall(TodoGroup.week),
   budgetNear(TodoGroup.week),
   oldRate(TodoGroup.reminders);
 

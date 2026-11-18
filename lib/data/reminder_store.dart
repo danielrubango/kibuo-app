@@ -22,4 +22,29 @@ class ReminderStore {
 
   Future<void> setEntryMinute(int minute) =>
       _prefs.write(_entryMinute, '$minute');
+
+  static const _dueOn = 'reminder_due_on';
+  static const _dueDays = 'reminder_due_days';
+  static const defaultDueDays = 3;
+
+  /// The days a reminder may come before a date (PRODUCT).
+  static const dueChoices = [0, 1, 2, 3, 7];
+
+  /// « Rappeler avant une échéance »: on by default.
+  Future<bool> dueOn() async => await _prefs.read(_dueOn) != 'false';
+
+  Future<void> setDueOn(bool on) => _prefs.write(_dueOn, '$on');
+
+  Future<int> dueDays() async =>
+      int.tryParse(await _prefs.read(_dueDays) ?? '') ?? defaultDueDays;
+
+  Future<void> setDueDays(int days) => _prefs.write(_dueDays, '$days');
+
+  /// A recurrence's own reminder: null follows the default, -1 is none,
+  /// otherwise the days before.
+  Future<int?> ruleDays(String ruleId) async =>
+      int.tryParse(await _prefs.read('reminder_rule_$ruleId') ?? '');
+
+  Future<void> setRuleDays(String ruleId, int? days) =>
+      _prefs.write('reminder_rule_$ruleId', days == null ? '' : '$days');
 }
