@@ -698,5 +698,6 @@
   "reminderRuleNone": "None",
   "reminderRuleOff": "None (reminders off)",
   "todoShortfall": "{name} · on {date}",
-  "todoShortfallSub": "{missing} short on {account}"
+  "todoShortfallSub": "{missing} short on {account}",
+  "entryPlannedToast": "Planned for {date}: it will arrive that day."
 }

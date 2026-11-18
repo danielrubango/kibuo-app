@@ -65,7 +65,7 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Budgets et période réglable
 - [x] Récurrences, brouillons et rattrapage
 - [x] Retouches avant les rappels (décidées le 18 novembre 2026, voir PRODUCT « À reprendre ») : feuille + à la planche, « Enregistrer » au-dessus du clavier pour un type de compte, gestion des types de compte
-- [ ] Rappels, avec les opérations datées plus tard et l'alerte de solde insuffisant trois jours avant
+- [x] Rappels, avec les opérations datées plus tard et l'alerte de solde insuffisant trois jours avant
 - [ ] Alertes de budget
 
 ## Phase 5 : Dettes, créances et projets

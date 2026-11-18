@@ -2601,4 +2601,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String todoShortfallSub(String missing, String account) {
     return '$missing short on $account';
   }
+
+  @override
+  String entryPlannedToast(String date) {
+    return 'Planned for $date: it will arrive that day.';
+  }
 }

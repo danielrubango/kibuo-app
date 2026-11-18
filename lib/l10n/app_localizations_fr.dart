@@ -2634,4 +2634,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String todoShortfallSub(String missing, String account) {
     return 'Il manque $missing sur $account';
   }
+
+  @override
+  String entryPlannedToast(String date) {
+    return 'Prévue le $date : elle arrivera ce jour-là.';
+  }
 }
