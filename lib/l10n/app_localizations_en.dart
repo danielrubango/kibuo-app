@@ -2098,4 +2098,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstStart => 'Start';
+
+  @override
+  String get draftLabel => 'Draft';
+
+  @override
+  String get draftIgnore => 'Ignore';
+
+  @override
+  String get draftValidate => 'Confirm';
+
+  @override
+  String get plannedTag => 'Planned';
+
+  @override
+  String draftValidated(String name) {
+    return 'Confirmed: $name, counted in the month';
+  }
+
+  @override
+  String draftIgnoredToast(String name) {
+    return 'Ignored: $name. Confirm it from its details.';
+  }
+
+  @override
+  String draftsToValidate(String count) {
+    return 'To confirm · $count';
+  }
+
+  @override
+  String draftFromRecurrence(String account) {
+    return 'Recurrence · $account';
+  }
+
+  @override
+  String draftStatus(String status, String unit) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'ignored': 'Ignored',
+      'other': 'Draft',
+    });
+    String _temp1 = intl.Intl.selectLogic(unit, {
+      'day': 'daily',
+      'week': 'weekly',
+      'year': 'yearly',
+      'other': 'monthly',
+    });
+    return '$_temp0 · $_temp1 recurrence';
+  }
+
+  @override
+  String draftDueToday(String date) {
+    return 'Due today, $date';
+  }
+
+  @override
+  String draftDueYesterday(String date) {
+    return 'Due yesterday, $date';
+  }
+
+  @override
+  String draftDueOn(String date) {
+    return 'Due on $date';
+  }
+
+  @override
+  String get draftNotice =>
+      'This operation is waiting for your go-ahead. Check the amount, it sometimes changes, then confirm to add it to the account.';
+
+  @override
+  String get ignoredNotice =>
+      'You ignored it this time: it doesn’t count in the account. If it did happen, confirm it here.';
+
+  @override
+  String get draftValidateAction => 'Confirm the operation';
+
+  @override
+  String get draftChangeAmount => 'Change the amount';
+
+  @override
+  String get draftIgnoreOnce => 'Ignore this time';
+
+  @override
+  String draftNoRate(String currency) {
+    return 'The $currency rate is missing: give it with “Change the amount”.';
+  }
+
+  @override
+  String get listDisplay => 'List display';
+
+  @override
+  String get displayWhenDue => 'When a recurrence reaches its date';
+
+  @override
+  String get displayAuto => 'Confirm automatically';
+
+  @override
+  String get displayAutoHelp => 'Made and counted on its date.';
+
+  @override
+  String get displayAsk => 'Always ask';
+
+  @override
+  String get displayAskHelp => 'Arrives as a draft, to confirm.';
+
+  @override
+  String get displayDrafts => 'Drafts to confirm';
+
+  @override
+  String get displayAtDate => 'On their date';
+
+  @override
+  String get displayAtDateHelp => 'On their day, in the list.';
+
+  @override
+  String get displayOnTop => 'Grouped at the top';
+
+  @override
+  String get displayOnTopHelp => 'Late and today’s, at the top.';
+
+  @override
+  String get displayPlanned => 'Planned operations this month';
+
+  @override
+  String get displayPlannedHelp => 'Dashed, marked “Planned”.';
+
+  @override
+  String get displayHidden => 'Hidden';
+
+  @override
+  String get displayHiddenHelp => 'Shown once their date comes.';
+
+  @override
+  String get displayFoot =>
+      'Also in Settings. A recurrence can always ask for confirmation.';
+
+  @override
+  String get displayDone => 'Done';
+
+  @override
+  String get settingsRecurrences => 'Recurrences and drafts';
+
+  @override
+  String get displayAutoLong =>
+      'The operation is made and counted, except for recurrences that ask for confirmation.';
+
+  @override
+  String get displayAskLong =>
+      'Each operation arrives as a draft and waits for your go-ahead.';
+
+  @override
+  String get displayAtDateLong => 'Each draft stays on its day.';
+
+  @override
+  String get displayOnTopLong =>
+      'Late ones and today’s are gathered at the top of the list.';
+
+  @override
+  String get displayPlannedLong =>
+      'They stay on their day, dashed, marked “Planned”.';
+
+  @override
+  String get displayHiddenLong => 'They only show once their date comes.';
+
+  @override
+  String get settingsRecurrencesFoot =>
+      'These choices are also in the operations list display. Each recurrence can ask for its own confirmation, in its card.';
+
+  @override
+  String get displayAutoShort => 'Automatic';
+
+  @override
+  String get draftsLateAndToday => 'Late and today';
 }

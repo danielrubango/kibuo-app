@@ -62,10 +62,18 @@ IconData categoryIcon(CategoryInfo c) =>
 
 /// The tinted tile of a category's icon.
 class CategoryTile extends StatelessWidget {
-  const CategoryTile({super.key, required this.category, this.size = 28});
+  const CategoryTile({
+    super.key,
+    required this.category,
+    this.size = 28,
+    this.muted = false,
+  });
 
   final CategoryInfo category;
   final double size;
+
+  /// Grey: an operation ignored or still to come.
+  final bool muted;
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +82,14 @@ class CategoryTile extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: colors.tint,
+        color: muted ? KibuoColors.background : colors.tint,
         borderRadius: BorderRadius.circular(size * 0.32),
       ),
-      child: Icon(categoryIcon(category), size: size * 0.6, color: colors.ink),
+      child: Icon(
+        categoryIcon(category),
+        size: size * 0.6,
+        color: muted ? KibuoColors.inkMuted : colors.ink,
+      ),
     );
   }
 }

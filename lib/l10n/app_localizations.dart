@@ -3534,6 +3534,276 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Commencer'**
   String get firstStart;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get draftLabel;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ignorer'**
+  String get draftIgnore;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get draftValidate;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prévu'**
+  String get plannedTag;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validé : {name}, compté dans le mois'**
+  String draftValidated(String name);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ignoré : {name}. Validez-le depuis son détail.'**
+  String draftIgnoredToast(String name);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'À valider · {count}'**
+  String draftsToValidate(String count);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récurrence · {account}'**
+  String draftFromRecurrence(String account);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'{status, select, ignored{Ignoré} other{Brouillon}} · récurrence {unit, select, day{quotidienne} week{hebdomadaire} year{annuelle} other{mensuelle}}'**
+  String draftStatus(String status, String unit);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prévu aujourd’hui, {date}'**
+  String draftDueToday(String date);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prévu hier, {date}'**
+  String draftDueYesterday(String date);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prévu le {date}'**
+  String draftDueOn(String date);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette opération attend votre accord. Vérifiez le montant, il varie parfois, puis validez pour l’ajouter au compte.'**
+  String get draftNotice;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous l’avez ignorée pour cette fois : elle ne compte pas dans le compte. Si elle a bien eu lieu, validez-la ici.'**
+  String get ignoredNotice;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l’opération'**
+  String get draftValidateAction;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le montant'**
+  String get draftChangeAmount;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ignorer cette fois'**
+  String get draftIgnoreOnce;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il manque le taux du {currency} : donnez-le avec « Changer le montant ».'**
+  String draftNoRate(String currency);
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage de la liste'**
+  String get listDisplay;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quand une récurrence arrive à sa date'**
+  String get displayWhenDue;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider automatiquement'**
+  String get displayAuto;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créée et comptée à sa date.'**
+  String get displayAutoHelp;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toujours demander'**
+  String get displayAsk;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrive en brouillon, à valider.'**
+  String get displayAskHelp;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillons à valider'**
+  String get displayDrafts;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'À leur date'**
+  String get displayAtDate;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au jour prévu, dans la liste.'**
+  String get displayAtDateHelp;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Groupés en haut'**
+  String get displayOnTop;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard et du jour, en haut.'**
+  String get displayOnTopHelp;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Opérations prévues ce mois-ci'**
+  String get displayPlanned;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'En pointillés, marquées « Prévu ».'**
+  String get displayPlannedHelp;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquées'**
+  String get displayHidden;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visibles une fois la date arrivée.'**
+  String get displayHiddenHelp;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aussi dans Réglages. Une récurrence peut toujours demander sa validation.'**
+  String get displayFoot;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get displayDone;
+
+  /// Drafts in the list and their card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récurrences et brouillons'**
+  String get settingsRecurrences;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’opération est créée et comptée, sauf pour les récurrences qui demandent une validation.'**
+  String get displayAutoLong;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque opération arrive en brouillon et attend votre accord.'**
+  String get displayAskLong;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque brouillon reste au jour prévu.'**
+  String get displayAtDateLong;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ceux en retard et du jour sont réunis en haut de la liste.'**
+  String get displayOnTopLong;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elles restent au jour prévu, en pointillés, marquées « Prévu ».'**
+  String get displayPlannedLong;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elles n’apparaissent qu’une fois leur date arrivée.'**
+  String get displayHiddenLong;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ces choix se retrouvent dans l’affichage de la liste des opérations. Chaque récurrence peut demander sa propre validation, dans sa fiche.'**
+  String get settingsRecurrencesFoot;
+
+  /// Recurrences and drafts settings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Automatique'**
+  String get displayAutoShort;
+
+  /// Drafts grouped on top of the list.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard et du jour'**
+  String get draftsLateAndToday;
 }
 
 class _AppLocalizationsDelegate

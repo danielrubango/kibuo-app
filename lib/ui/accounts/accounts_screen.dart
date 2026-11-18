@@ -12,6 +12,7 @@ import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -240,15 +241,17 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(height: 16),
+                // Each group brings its own gap (DIRECTION: Groupes).
                 if (_chip == null)
                   for (final t in types) ..._group(l, labels, t)
-                else
-                  for (final a in shown) ...[
+                else ...[
+                  const SizedBox(height: 16),
+                  for (final (i, a) in shown.indexed) ...[
+                    if (i > 0) const SizedBox(height: 8),
                     _card(l, a),
-                    const SizedBox(height: 8),
                   ],
-                const SizedBox(height: 4),
+                ],
+                const SizedBox(height: 16),
                 KibuoButton(
                   label: l.accountsAdd,
                   kind: ButtonKind.create,
@@ -270,21 +273,35 @@ class _AccountsScreenState extends State<AccountsScreen> {
   ) {
     final accounts = _list.where((a) => a.type == type).toList();
     final folded = _folded.contains(type);
+    final total = _total(accounts).amount;
     return [
-      _GroupHeader(
-        icon: labels.icon(type),
-        name: labels.name(type),
+      const SizedBox(height: GroupTitle.before),
+      GroupTitle(
+        title: labels.name(type),
         count: folded ? l.accountsCount(accounts.length) : null,
-        long: isLong(_total(accounts).amount),
-        total: (short) => _money(_total(accounts).amount, short: short),
-        negative: _total(accounts).amount.minor < 0,
+        leading: Icon(
+          labels.icon(type),
+          size: 18,
+          color: KibuoColors.inkSecondary,
+        ),
+        trailing: FitAmount(
+          long: isLong(total),
+          alignment: Alignment.centerRight,
+          maxWidth: MediaQuery.sizeOf(context).width * 0.45,
+          style: KibuoType.sectionTitle.copyWith(
+            color: total.minor < 0 ? KibuoColors.danger : KibuoColors.ink,
+          ),
+          span: (short) => TextSpan(text: _money(total, short: short)),
+        ),
         folded: folded,
         onTap: () =>
             setState(() => folded ? _folded.remove(type) : _folded.add(type)),
       ),
       if (!folded)
-        for (final a in accounts) ...[_card(l, a), const SizedBox(height: 8)],
-      const SizedBox(height: 8),
+        for (final (i, a) in accounts.indexed) ...[
+          if (i > 0) const SizedBox(height: 8),
+          _card(l, a),
+        ],
     ];
   }
 
@@ -441,90 +458,6 @@ class _TotalCard extends StatelessWidget {
             span: (short) => TextSpan(text: amount(short)),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _GroupHeader extends StatelessWidget {
-  const _GroupHeader({
-    required this.icon,
-    required this.name,
-    required this.total,
-    required this.long,
-    required this.folded,
-    required this.onTap,
-    this.count,
-    this.negative = false,
-  });
-
-  final IconData icon;
-  final String name;
-  final String? count;
-  final String Function(bool short) total;
-  final bool long;
-
-  /// The group's total below zero: in red.
-  final bool negative;
-  final bool folded;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      expanded: !folded,
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox(
-          height: KibuoTheme.heightTouch,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              children: [
-                Icon(icon, size: 18, color: KibuoColors.inkSecondary),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: name,
-                      children: [
-                        if (count != null)
-                          TextSpan(
-                            text: ' · $count',
-                            style: KibuoType.sectionTitle.copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontVariations: const [FontVariation.weight(500)],
-                              color: KibuoColors.inkMuted,
-                            ),
-                          ),
-                      ],
-                    ),
-                    style: KibuoType.sectionTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                FitAmount(
-                  long: long,
-                  alignment: Alignment.centerRight,
-                  maxWidth: MediaQuery.sizeOf(context).width * 0.45,
-                  style: KibuoType.sectionTitle.copyWith(
-                    color: negative ? KibuoColors.danger : KibuoColors.ink,
-                  ),
-                  span: (short) => TextSpan(text: total(short)),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  folded ? KibuoIcons.caretDown : KibuoIcons.caretUp,
-                  size: 16,
-                  color: KibuoColors.accent,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

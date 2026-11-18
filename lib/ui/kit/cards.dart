@@ -468,6 +468,7 @@ class DisplayChoice extends StatelessWidget {
     required this.help,
     required this.on,
     required this.onTap,
+    this.helpLines = 1,
   });
 
   final IconData icon;
@@ -475,6 +476,9 @@ class DisplayChoice extends StatelessWidget {
   final String help;
   final bool on;
   final VoidCallback onTap;
+
+  /// One line in a sheet; a settings page gives the whole sentence.
+  final int? helpLines;
 
   @override
   Widget build(BuildContext context) {
@@ -513,9 +517,11 @@ class DisplayChoice extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         help,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: KibuoType.caption,
+                        maxLines: helpLines,
+                        overflow: helpLines == null
+                            ? null
+                            : TextOverflow.ellipsis,
+                        style: KibuoType.caption.copyWith(height: 16 / 12),
                       ),
                     ],
                   ),

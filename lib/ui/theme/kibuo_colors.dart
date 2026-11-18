@@ -34,6 +34,9 @@ abstract final class KibuoColors {
   /// An opened category's toggle.
   static const accentTintOpen = Color(0xFFCDEFE0);
 
+  /// A draft income's dashes (its card is [accentTint]).
+  static const accentDash = Color(0xFF7FCBA8);
+
   // Meaning: what I owe, money going out.
   static const debtInk = Color(0xFF8A4B12);
   static const debtTint = Color(0xFFFFE6D3);
@@ -41,6 +44,10 @@ abstract final class KibuoColors {
 
   /// The edge of an expense's amount card.
   static const debtEdge = Color(0xFFF2CFB3);
+
+  /// A draft expense's card and its dashes (canvas BrouillonA3).
+  static const debtDraft = Color(0xFFFFF4EC);
+  static const debtDash = Color(0xFFE3A97A);
 
   // Meaning: projects, money set aside.
   static const projectInk = Color(0xFF33528A);
@@ -51,10 +58,17 @@ abstract final class KibuoColors {
   static const transferTint = Color(0xFFEEF2FA);
   static const transferEdge = Color(0xFFC6D3EC);
 
+  /// A draft transfer's dashes (its card is [transferTint]).
+  static const transferDash = Color(0xFF9DB2DD);
+
   // Meaning: warning (budget at 80 %).
   static const warning = Color(0xFFD99A1C);
   static const warningInk = Color(0xFF8A5A00);
   static const warningTint = Color(0xFFFCEFD2);
+
+  /// A note asking for attention (canvas OperationCarteBrouillon).
+  static const warningSoft = Color(0xFFFFF8E8);
+  static const warningSoftInk = Color(0xFF6B4A00);
 
   // Meaning: late or over budget.
   static const danger = Color(0xFFB3321A);
