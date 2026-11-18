@@ -2302,4 +2302,157 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get draftsLateAndToday => 'En retard et du jour';
+
+  @override
+  String get todoTitle => 'À traiter';
+
+  @override
+  String todoSeeAll(String count) {
+    return 'Tout voir · $count';
+  }
+
+  @override
+  String todoListHelp(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count choses',
+      one: '1 chose',
+    );
+    return '$_temp0, les plus urgentes d’abord';
+  }
+
+  @override
+  String get todoUrgent => 'Urgent';
+
+  @override
+  String get todoWeek => 'Cette semaine';
+
+  @override
+  String get todoReminders => 'Rappels';
+
+  @override
+  String get todoBudgetOverSub => 'Budget dépassé';
+
+  @override
+  String todoBudgetNearSub(String amount) {
+    return 'Budget · $amount restants';
+  }
+
+  @override
+  String get todoSee => 'Voir';
+
+  @override
+  String todoDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count brouillons',
+      one: '1 brouillon',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get todoValidate => 'Valider';
+
+  @override
+  String get todoRecovery => 'Code de récupération';
+
+  @override
+  String get todoRecoverySub => 'Non vérifié';
+
+  @override
+  String get todoRecoveryAction => 'Vérifier';
+
+  @override
+  String todoRate(String currency) {
+    return 'Taux du $currency';
+  }
+
+  @override
+  String todoRateSub(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Il y a $days jours',
+      one: 'Il y a 1 jour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get todoRateAction => 'Modifier';
+
+  @override
+  String get todoLater => 'Plus tard';
+
+  @override
+  String todoPutOff(String name) {
+    return 'Reporté à demain : $name';
+  }
+
+  @override
+  String get toastUndo => 'Annuler';
+
+  @override
+  String get upcomingTitle => 'À venir';
+
+  @override
+  String get upcomingSeeAll => 'Tout voir';
+
+  @override
+  String draftsSheetTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count brouillons à valider',
+      one: 'Valider ce brouillon ?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get draftsSheetHelp =>
+      'Touchez un brouillon pour le modifier ou le valider seul.';
+
+  @override
+  String draftsSheetValidate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Valider les $count',
+      one: 'Valider le brouillon',
+      zero: 'Rien à valider',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get draftsSheetValidateOne => 'Valider';
+
+  @override
+  String get draftsSheetLater => 'Plus tard';
+
+  @override
+  String get draftsSheetNoRate => 'Taux manquant : à valider seul';
+
+  @override
+  String get draftsSheetFloor => 'Passerait sous le plancher : à valider seul';
+
+  @override
+  String draftsSheetLine(String kind, String day, String account) {
+    return '$kind · $day · $account';
+  }
+
+  @override
+  String draftsValidated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count brouillons validés',
+      one: '1 brouillon validé',
+    );
+    return '$_temp0';
+  }
 }

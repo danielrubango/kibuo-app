@@ -93,6 +93,9 @@ abstract final class KibuoIcons {
   static const eyeSlash = IconData(0xe224, fontFamily: _regular);
   static const pencilSimple = IconData(0xe3b4, fontFamily: _regular);
   static const info = IconData(0xe2ce, fontFamily: _regular);
+  static const chartPieSlice = IconData(0xe15a, fontFamily: _regular);
+  static const clock = IconData(0xe19a, fontFamily: _regular);
+  static const checkBold = IconData(0xe182, fontFamily: _bold);
   static const caretUp = IconData(0xe13c, fontFamily: _regular);
   static const briefcase = IconData(0xe0ee, fontFamily: _regular);
   static const storefront = IconData(0xe470, fontFamily: _regular);

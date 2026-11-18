@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/data/todo_store.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/accounts/account_total.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -7,24 +9,33 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/budgets/budget_book.dart';
+import 'package:kibuo/ui/home/todo.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/day_header.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/month_summary_card.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
+import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/recurrences/planned_operation.dart';
+import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/operation_row.dart';
 import 'package:kibuo/ui/transactions/operations_list.dart';
 
 /// The « Accueil » tab (canvas Aujourdhui, Total_sansprojet): today's date,
-/// what is available, and the month so far. Debts, « À traiter » and
-/// « À venir » join it with their modules (PRODUCT).
+/// what is available, the month so far, « À traiter » and « À venir ».
+/// Debts join it with their module (PRODUCT).
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
@@ -32,9 +43,22 @@ class HomeScreen extends StatefulWidget {
     this.refresh,
     this.onOpenAccounts,
     this.onOpenMonth,
+    this.budgets,
+    this.todos,
+    this.onChanged,
   });
 
+  /// Something done from here (a draft, a recurrence) may change other
+  /// tabs: the shell reloads them all, this one included.
+  final VoidCallback? onChanged;
+
   final EntryData data;
+
+  /// For the budgets of « À traiter ».
+  final BudgetLoader? budgets;
+
+  /// Where « Plus tard » is kept.
+  final TodoStore? todos;
 
   /// Bumped by the shell when something may have changed.
   final Listenable? refresh;
@@ -53,6 +77,31 @@ class _HomeScreenState extends State<HomeScreen> {
   CurrencyInfo? _main;
   AccountTotal? _available;
   FlowTotals? _month;
+  List<HomeTodo> _todo = const [];
+
+  /// The next 14 days' planned operations, by day.
+  List<(TransactionInfo, OperationLabels)> _coming = const [];
+
+  TodoLoader _loader(BuildContext context) => TodoLoader(
+    data: widget.data,
+    budgets: widget.budgets,
+    store: widget.todos,
+    lock: KibuoLock.maybeControllerOf(context),
+  );
+
+  TodoActions _actions(BuildContext context) => TodoActions(
+    data: widget.data,
+    budgets: widget.budgets,
+    store: widget.todos,
+    lock: KibuoLock.maybeControllerOf(context),
+    reload: _changed,
+  );
+
+  Future<void> _changed() async {
+    final changed = widget.onChanged;
+    if (changed == null) return _load();
+    changed();
+  }
 
   @override
   void initState() {
@@ -100,7 +149,24 @@ class _HomeScreenState extends State<HomeScreen> {
       if (rate != null) rates[code] = rate.rate;
     }
     if (!mounted) return;
+    final todo = await _loader(context).load(context, now);
+    final today = DateTime(now.year, now.month, now.day);
+    final planned =
+        await data.recurrences?.planned(
+          now: now,
+          until: today.add(const Duration(days: 14)),
+        ) ??
+        const [];
+    final coming = <(TransactionInfo, OperationLabels)>[];
+    for (final p in planned) {
+      if (!mounted) return;
+      final t = plannedOperation(p);
+      coming.add((t, await OperationLabels.of(context, data, t)));
+    }
+    if (!mounted) return;
     setState(() {
+      _todo = todo;
+      _coming = coming;
       _main = main;
       _available = totalIn(main, [
         for (final a in accounts) a.balance,
@@ -172,8 +238,64 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: widget.onOpenMonth,
           ),
         ],
+        if (_todo.isNotEmpty)
+          TodoSection(
+            items: _todo,
+            actions: _actions(context),
+            onSeeAll: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => TodoListScreen(
+                  loader: _loader(context),
+                  actions: _actions(context),
+                ),
+              ),
+            ),
+          ),
+        if (_coming.isNotEmpty) ..._upcoming(l),
       ],
     );
+  }
+
+  /// « À venir » (canvas Aujourdhui): the recurrences of the next 14 days,
+  /// as the list's planned operations, under their date (PRODUCT).
+  List<Widget> _upcoming(AppLocalizations l) {
+    final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
+    for (final e in _coming) {
+      final d = e.$1.date.toLocal();
+      (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
+    }
+    return [
+      const SizedBox(height: GroupTitle.before),
+      GroupTitle(
+        title: l.upcomingTitle,
+        trailing: SeeAll(l.upcomingSeeAll),
+        onTap: widget.onOpenMonth,
+      ),
+      for (final (i, MapEntry(key: day, value: ops))
+          in days.entries.indexed) ...[
+        if (i > 0) const SizedBox(height: GroupTitle.before),
+        GroupTitle(title: dayLabel(context, day)),
+        for (final (j, (t, labels)) in ops.indexed) ...[
+          if (j > 0) const SizedBox(height: 8),
+          OperationRow(
+            t: t,
+            labels: labels,
+            title: (labels.categoryPath.split(' › ').last, null),
+            subtitle: (l.recurrenceTitle, null),
+            tag: l.plannedTag,
+            onTap: () async {
+              await Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (_) =>
+                      RecurrenceScreen(data: widget.data, ruleId: t.id),
+                ),
+              );
+              await _changed();
+            },
+          ),
+        ],
+      ],
+    ];
   }
 
   static String _capitalized(String s) =>
