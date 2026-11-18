@@ -6,17 +6,51 @@ import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// The label above a field.
 class FieldLabel extends StatelessWidget {
-  const FieldLabel(this.text, {super.key});
+  const FieldLabel(this.text, {super.key, this.action, this.onAction});
 
   final String text;
 
+  /// A green link at the right (« Gérer »).
+  final String? action;
+  final VoidCallback? onAction;
+
   @override
   Widget build(BuildContext context) {
+    final label = Text(
+      text,
+      style: KibuoType.sectionTitle.copyWith(color: KibuoColors.ink),
+    );
+    final action = this.action;
+    if (action == null) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 4, bottom: 8),
+        child: label,
+      );
+    }
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
-      child: Text(
-        text,
-        style: KibuoType.sectionTitle.copyWith(color: KibuoColors.ink),
+      padding: const EdgeInsets.only(left: 4, bottom: 4),
+      child: Row(
+        children: [
+          Expanded(child: label),
+          // Its own button for TalkBack, apart from the label.
+          Semantics(
+            container: true,
+            button: true,
+            child: InkWell(
+              onTap: onAction,
+              borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 4, 4),
+                child: Text(
+                  action,
+                  style: KibuoType.sectionTitle.copyWith(
+                    color: KibuoColors.accent,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

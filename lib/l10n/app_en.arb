@@ -668,5 +668,6 @@
   "typeInUse": "{count, plural, =1{1 account is of this type: change it first.} other{{count} accounts are of this type: change them first.}}",
   "typeDeleteTitle": "Delete the type {name}?",
   "typeDeleteText": "It leaves the list of types; no account uses it.",
-  "typeDeleteAction": "Delete"
+  "typeDeleteAction": "Delete",
+  "typesManage": "Manage"
 }

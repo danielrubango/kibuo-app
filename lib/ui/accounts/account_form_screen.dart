@@ -9,6 +9,7 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_type_screen.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
+import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -274,6 +275,24 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     }
   }
 
+  Future<void> _manageTypes() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => AccountTypesScreen(accounts: widget.accounts),
+      ),
+    );
+    final custom = await widget.accounts.types();
+    if (!mounted) return;
+    setState(() {
+      _custom = custom;
+      // The type chosen here was removed: back to the first one.
+      if (!AccountType.provided.contains(_type) &&
+          !custom.any((c) => c.type == _type)) {
+        _type = AccountType.provided.first;
+      }
+    });
+  }
+
   Future<void> _newType() async {
     final id = await Navigator.of(context).push<String>(
       MaterialPageRoute(
@@ -520,7 +539,13 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     intro,
                     const SizedBox(height: 18),
                   ],
-                  FieldLabel(l.accountTypeLabel),
+                  // « Gérer » where types are met (PRODUCT); never in the
+                  // first launch, before there is anything to manage.
+                  FieldLabel(
+                    l.accountTypeLabel,
+                    action: widget._firstLaunch ? null : l.typesManage,
+                    onAction: _manageTypes,
+                  ),
                   _TypeGrid(
                     labels: labels,
                     chosen: _type,
