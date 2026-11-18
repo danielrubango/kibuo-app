@@ -10,6 +10,7 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/accounts/account_types.dart';
+import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
@@ -120,43 +121,72 @@ class _AccountsScreenState extends State<AccountsScreen> {
     if (changed ?? false) await _load();
   }
 
+  /// Accounts in more than one currency, or another than the main one.
+  bool get _several =>
+      {for (final a in _list) a.currency}.length > 1 ||
+      _list.any((a) => a.currency != _main?.code);
+
+  /// « Types de compte », chosen in the display sheet.
+  static const _types = #types;
+
   Future<void> _openDisplay() async {
     final l = AppLocalizations.of(context);
     final main = _main!;
-    final choice = await showKibuoSheet<bool>(
+    final choice = await showKibuoSheet<Object>(
       context,
       title: l.accountsDisplay,
       builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SectionTitle(l.accountsDisplayAmounts),
+          if (_several) ...[
+            SectionTitle(l.accountsDisplayAmounts),
+            SettingsCard(
+              children: [
+                DisplayChoice(
+                  icon: KibuoIcons.wallet,
+                  label: l.accountsDisplayEach,
+                  help: l.accountsDisplayEachHelp,
+                  on: !_allInMain,
+                  onTap: () => Navigator.of(context).pop(false),
+                ),
+                DisplayChoice(
+                  icon: KibuoIcons.arrowsLeftRight,
+                  label: l.accountsDisplayAll(
+                    currencyName(context, main).toLowerCase(),
+                    main.code,
+                  ),
+                  help: l.accountsDisplayAllHelp,
+                  on: _allInMain,
+                  onTap: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            HelpText(l.accountsDisplayNote),
+            const SizedBox(height: 16),
+          ],
           SettingsCard(
             children: [
-              DisplayChoice(
-                icon: KibuoIcons.wallet,
-                label: l.accountsDisplayEach,
-                help: l.accountsDisplayEachHelp,
-                on: !_allInMain,
-                onTap: () => Navigator.of(context).pop(false),
-              ),
-              DisplayChoice(
-                icon: KibuoIcons.arrowsLeftRight,
-                label: l.accountsDisplayAll(
-                  currencyName(context, main).toLowerCase(),
-                  main.code,
-                ),
-                help: l.accountsDisplayAllHelp,
-                on: _allInMain,
-                onTap: () => Navigator.of(context).pop(true),
+              SettingsRow(
+                label: l.typesTitle,
+                onTap: () => Navigator.of(context).pop(_types),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          HelpText(l.accountsDisplayNote),
         ],
       ),
     );
-    if (choice == null || choice == _allInMain) return;
+    if (choice == _types) {
+      if (!mounted) return;
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => AccountTypesScreen(accounts: widget.accounts),
+        ),
+      );
+      await _load();
+      return;
+    }
+    if (choice is! bool || choice == _allInMain) return;
     await widget.accounts.setAllInMain(choice);
     await _load();
   }
@@ -175,9 +205,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final l = AppLocalizations.of(context);
     final main = _main;
     final labels = AccountTypeLabels(l, _custom);
-    final several =
-        {for (final a in _list) a.currency}.length > 1 ||
-        _list.any((a) => a.currency != main?.code);
     final shown = _chip == null
         ? _list
         : _list.where((a) => a.type == _chip).toList();
@@ -189,7 +216,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
       appBar: AppBar(
         title: Text(l.accountsTitle),
         actions: [
-          if (several && main != null)
+          // Always: « Types de compte » is in its sheet (PRODUCT).
+          if (main != null)
             IconButton(
               tooltip: l.accountsDisplay,
               color: KibuoColors.accent,

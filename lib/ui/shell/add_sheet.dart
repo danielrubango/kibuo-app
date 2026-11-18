@@ -78,21 +78,24 @@ class _AddSheet extends StatelessWidget {
             const SizedBox(height: 8),
             _ExpenseCard(onTap: () => _pick(context, AddChoice.expense)),
             const SizedBox(height: 8),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 2.4,
-              children: [
-                for (final choice in others)
-                  _ChoiceTile(
-                    choice: choice,
-                    onTap: () => _pick(context, choice),
-                  ),
-              ],
-            ),
+            // Two by two, 64 high whatever the screen's width (canvas
+            // PlusBtnB1).
+            for (var i = 0; i < others.length; i += 2) ...[
+              if (i > 0) const SizedBox(height: 8),
+              Row(
+                children: [
+                  for (final (j, choice) in others.skip(i).take(2).indexed) ...[
+                    if (j > 0) const SizedBox(width: 8),
+                    Expanded(
+                      child: _ChoiceTile(
+                        choice: choice,
+                        onTap: () => _pick(context, choice),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
             FutureBuilder(
               future: redo,
               builder: (context, snap) => _redoSection(context, snap.data),
@@ -146,7 +149,6 @@ class _ExpenseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
     const choice = AddChoice.expense;
     return Material(
       color: KibuoColors.mint,
@@ -155,7 +157,8 @@ class _ExpenseCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          // 72 high (canvas PlusBtnB1).
+          padding: const EdgeInsets.all(14),
           child: Row(
             children: [
               const _IconTile(
@@ -171,11 +174,16 @@ class _ExpenseCard extends StatelessWidget {
                   children: [
                     Text(
                       choice.label(AppLocalizations.of(context)),
-                      style: text.titleMedium,
+                      style: KibuoType.itemName.copyWith(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        fontVariations: const [FontVariation.weight(700)],
+                      ),
                     ),
+                    const SizedBox(height: 1),
                     Text(
                       choice.hint(AppLocalizations.of(context)),
-                      style: text.bodyMedium?.copyWith(
+                      style: KibuoType.help.copyWith(
                         color: KibuoColors.accentDeep,
                       ),
                     ),
@@ -199,40 +207,50 @@ class _ChoiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
     return Material(
       color: KibuoColors.surface,
       borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
       child: InkWell(
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              _IconTile(icon: choice.icon, tint: choice.tint, ink: choice.ink),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      choice.label(AppLocalizations.of(context)),
-                      style: text.titleSmall,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      choice.hint(AppLocalizations.of(context)),
-                      style: text.bodySmall,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                _IconTile(
+                  icon: choice.icon,
+                  tint: choice.tint,
+                  ink: choice.ink,
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        choice.label(AppLocalizations.of(context)),
+                        style: KibuoType.rowLabel.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontVariations: const [FontVariation.weight(700)],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        choice.hint(AppLocalizations.of(context)),
+                        style: KibuoType.caption,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
