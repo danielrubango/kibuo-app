@@ -409,7 +409,10 @@ class _EntryScreenState extends State<EntryScreen> {
       if (total == null) return null;
       after = {account.id: total.balanceChange};
     }
-    final initial = widget.editing ? widget.initial : null;
+    // A draft counted nothing yet: there is nothing to undo.
+    final initial = widget.editing && widget.initial?.counts == true
+        ? widget.initial
+        : null;
     return checkOverdraft(
       accounts: _accounts,
       after: after,
@@ -765,6 +768,10 @@ class _EntryScreenState extends State<EntryScreen> {
     }
     // « Répéter »: this operation is the recurrence's first time.
     if (_repeat != null && !widget.editing) await _saveRule(firstMade: id);
+    // A draft's entry: saving validates it too (PRODUCT).
+    if (widget.editing && initial != null && !initial.counts) {
+      await repo.validate(id);
+    }
     await _finish(id);
   }
 

@@ -29,6 +29,7 @@ import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -380,6 +381,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
               onTap: () => showLongAmountsSheet(context, LongAmountsStore(db)),
             ),
           ),
+        if (db != null)
+          RecurrencesSettingsRow(recurrences: RecurringRepository(db)),
         if (lock != null)
           SettingsRow(
             label: AppLocalizations.of(context).securityTitle,

@@ -11,6 +11,7 @@ import 'package:kibuo/ui/budgets/budget_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/day_header.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/month_summary_card.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
@@ -195,7 +196,7 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
                     )
                   else
                     ..._days(),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Center(
                     child: TextAction(
                       label: l.budgetSeeInList,
@@ -455,7 +456,7 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
     }
     return [
       for (final MapEntry(key: day, value: ops) in byDay.entries) ...[
-        const SizedBox(height: 6),
+        const SizedBox(height: GroupTitle.before),
         DayHeader(
           label: dayLabel(context, day),
           count: ops.length,
@@ -482,10 +483,9 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
           ),
         ),
         if (!_folded.contains(day)) ...[
-          const SizedBox(height: 6),
-          for (final (t, labels) in ops)
+          for (final (i, (t, labels)) in ops.indexed)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: EdgeInsets.only(top: i > 0 ? 8 : 0),
               child: OperationRow(
                 t: t,
                 labels: labels,

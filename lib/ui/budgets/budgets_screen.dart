@@ -12,6 +12,7 @@ import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/month_picker.dart';
 import 'package:kibuo/ui/kit/month_summary_card.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -161,7 +162,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: GroupTitle.gap),
               SectionTitle(l.budgetsOrder),
               SettingsCard(
                 children: [
@@ -264,10 +265,11 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                 },
                         ),
                       ],
-                      const SizedBox(height: 16),
-                      if (_layout == _Layout.tiles)
-                        _tiles(l)
-                      else
+                      // Each group brings its own gap (DIRECTION: Groupes).
+                      if (_layout == _Layout.tiles) ...[
+                        const SizedBox(height: 16),
+                        _tiles(l),
+                      ] else
                         ..._groups(l),
                       const SizedBox(height: 16),
                       KibuoButton(
@@ -376,12 +378,16 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     return [
       for (final (state, title, dot) in groups)
         if (lines.any((x) => x.status.state == state)) ...[
-          _GroupTitle(
+          const SizedBox(height: GroupTitle.before),
+          GroupTitle(
             title: title,
-            count: lines.where((x) => x.status.state == state).length,
-            dot: dot,
+            count: '${lines.where((x) => x.status.state == state).length}',
+            leading: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+            ),
           ),
-          const SizedBox(height: 6),
           SettingsCard(
             children: [
               for (final line in lines)
@@ -395,7 +401,6 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   ),
             ],
           ),
-          const SizedBox(height: 14),
         ],
     ];
   }
@@ -632,47 +637,3 @@ class _BudgetRow extends StatelessWidget {
 }
 
 /// « ● Dépassés · 1 ».
-class _GroupTitle extends StatelessWidget {
-  const _GroupTitle({
-    required this.title,
-    required this.count,
-    required this.dot,
-  });
-
-  final String title;
-  final int count;
-  final Color dot;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 8),
-          Text.rich(
-            TextSpan(
-              text: title,
-              children: [
-                TextSpan(
-                  text: ' · $count',
-                  style: KibuoType.sectionTitle.copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontVariations: const [FontVariation.weight(500)],
-                    color: KibuoColors.inkMuted,
-                  ),
-                ),
-              ],
-            ),
-            style: KibuoType.sectionTitle,
-          ),
-        ],
-      ),
-    );
-  }
-}

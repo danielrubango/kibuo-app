@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/hint_store.dart';
+import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
@@ -18,15 +19,19 @@ import 'package:kibuo/ui/kit/choice_menu.dart';
 import 'package:kibuo/ui/kit/day_header.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/month_picker.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/recurrences/list_display.dart';
+import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/draft_screen.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_row.dart';
@@ -102,6 +107,12 @@ class _OperationsScreenState extends State<OperationsScreen> {
 
   late DateTime _month = _keptMonth ?? _thisMonth();
   List<(TransactionInfo, OperationLabels)> _all = const [];
+
+  /// The current month's planned operations, from tomorrow on (PRODUCT).
+  List<(TransactionInfo, OperationLabels)> _planned = const [];
+
+  /// « Groupés en haut »: drafts late or due today above the days.
+  bool _onTop = false;
   List<AccountRowInfo> _accountChoices = const [];
   List<CategoryInfo> _categoryChoices = const [];
   CurrencyInfo? _main;
@@ -192,7 +203,16 @@ class _OperationsScreenState extends State<OperationsScreen> {
 
   Future<void> _load() async {
     final data = widget.data;
-    final all = await data.transactions.all();
+    // Drafts and ignored ones show in the list; only done ones count.
+    final all = await data.transactions.all(drafts: true);
+    final recurrences = data.recurrences;
+    final onTop = await recurrences?.draftsOnTop() ?? false;
+    final planned = recurrences == null || !await recurrences.showPlanned()
+        ? const <Planned>[]
+        : await recurrences.planned(
+            now: DateTime.now(),
+            until: periodNamed(_thisMonth()).last,
+          );
     final accounts = [
       ...await data.accounts.accounts(),
       ...await data.accounts.accounts(archived: true),
@@ -217,9 +237,17 @@ class _OperationsScreenState extends State<OperationsScreen> {
       if (!mounted) return;
       list.add((t, await OperationLabels.of(context, data, t)));
     }
+    final coming = <(TransactionInfo, OperationLabels)>[];
+    for (final p in planned) {
+      if (!mounted) return;
+      final t = _plannedOperation(p);
+      coming.add((t, await OperationLabels.of(context, data, t)));
+    }
     if (!mounted) return;
     setState(() {
       _all = list;
+      _planned = coming;
+      _onTop = onTop;
       _accountChoices = [
         for (final a in accounts) AccountRowInfo(a.id, a.name),
       ];
@@ -227,6 +255,30 @@ class _OperationsScreenState extends State<OperationsScreen> {
       _main = main;
       _rates = rates;
     });
+  }
+
+  /// A planned date as the list shows it: an operation that is not one
+  /// yet, carrying its recurrence's id.
+  static TransactionInfo _plannedOperation(Planned p) {
+    final rule = p.rule;
+    return TransactionInfo(
+      id: rule.id,
+      kind: rule.kind,
+      accountId: rule.accountId,
+      toAccountId: rule.toAccountId,
+      categoryId: rule.categoryId,
+      paid: rule.amount,
+      arrived: rule.kind == EntryKind.transfer ? rule.amount : null,
+      total: EntryTotal(
+        kind: rule.kind,
+        converted: rule.amount,
+        fees: Money(rule.fees, rule.amount.currency),
+      ),
+      date: DateTime(p.day.year, p.day.month, p.day.day, 12),
+      note: rule.note,
+      status: 'planned',
+      recurringId: rule.id,
+    );
   }
 
   /// Months are pages: 0 is this month, 1 the month before, and so on.
@@ -301,8 +353,12 @@ class _OperationsScreenState extends State<OperationsScreen> {
     return true;
   }
 
-  FlowTotals _totals(Iterable<TransactionInfo> ops) =>
-      flowTotals(_main!, ops.map(flowOf), (code) => _rates[code]);
+  /// Drafts, ignored and planned operations count in no total (PRODUCT).
+  FlowTotals _totals(Iterable<TransactionInfo> ops) => flowTotals(
+    _main!,
+    ops.where((t) => t.counts).map(flowOf),
+    (code) => _rates[code],
+  );
 
   String _money(Money m, {bool short = false}) =>
       formatAmount(m, currencyOf(m.currency), _lang, short: short);
@@ -366,15 +422,31 @@ class _OperationsScreenState extends State<OperationsScreen> {
   /// One month: its title, totals, filters and days.
   Widget _page(AppLocalizations l, DateTime month, {required bool current}) {
     final main = _main;
-    final shown = [
-      for (final e in _all)
-        if (_inMonth(e.$1, month) && _passes(e.$1)) e,
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime dayOf(TransactionInfo t) {
+      final d = t.date.toLocal();
+      return DateTime(d.year, d.month, d.day);
+    }
+
+    // « Groupés en haut »: drafts late or due today, above the days.
+    final waiting = <(TransactionInfo, OperationLabels)>[];
+    final shown = <(TransactionInfo, OperationLabels)>[
+      // Planned ones only in the current month (PRODUCT).
+      if (month == _thisMonth())
+        for (final e in _planned)
+          if (_passes(e.$1)) e,
     ];
+    for (final e in _all) {
+      if (!_inMonth(e.$1, month) || !_passes(e.$1)) continue;
+      final late = e.$1.isDraft && !dayOf(e.$1).isAfter(today);
+      (_onTop && late ? waiting : shown).add(e);
+    }
+    shown.sort((a, b) => b.$1.date.compareTo(a.$1.date));
     // Days, newest first, each with its operations.
     final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
     for (final e in shown) {
-      final d = e.$1.date.toLocal();
-      (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
+      (days[dayOf(e.$1)] ??= []).add(e);
     }
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 140),
@@ -396,7 +468,15 @@ class _OperationsScreenState extends State<OperationsScreen> {
           ),
         const SizedBox(height: 12),
         _filters(l, current: current),
-        if (days.isEmpty)
+        if (waiting.isNotEmpty) ...[
+          const SizedBox(height: GroupTitle.before),
+          GroupTitle(
+            title: l.draftsToValidate('${waiting.length}'),
+            trailing: GroupNote(l.draftsLateAndToday),
+          ),
+          ..._rows(l, waiting),
+        ],
+        if (days.isEmpty && waiting.isEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 16),
             child: _empty(l, month),
@@ -563,20 +643,42 @@ class _OperationsScreenState extends State<OperationsScreen> {
               label: l.listThisMonth,
               onPressed: () => _goTo(_thisMonth()),
             ),
-          // Canvas ListeOperations: the magnifier, at the right edge.
+          // Canvas BrouillonA3: « Affichage de la liste », then the
+          // magnifier at the right edge.
           Transform.translate(
             offset: const Offset(10, 0),
-            child: SizedBox.square(
-              dimension: KibuoTheme.heightTouch,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                tooltip: l.listSearch,
-                onPressed: () => _openSearch(month),
-                icon: const Icon(
-                  KibuoIcons.magnifyingGlass,
-                  color: KibuoColors.ink,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.data.recurrences case final recurrences?)
+                  SizedBox.square(
+                    dimension: KibuoTheme.heightTouch,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      tooltip: l.listDisplay,
+                      onPressed: () async {
+                        await showListDisplaySheet(context, recurrences);
+                        await _load();
+                      },
+                      icon: const Icon(
+                        KibuoIcons.slidersHorizontal,
+                        color: KibuoColors.accent,
+                      ),
+                    ),
+                  ),
+                SizedBox.square(
+                  dimension: KibuoTheme.heightTouch,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    tooltip: l.listSearch,
+                    onPressed: () => _openSearch(month),
+                    icon: const Icon(
+                      KibuoIcons.magnifyingGlass,
+                      color: KibuoColors.ink,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -911,7 +1013,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     final t = _totals([for (final e in ops) e.$1]);
     final onlyFreeTransfers = t.entries.minor == 0 && t.exits.minor == 0;
     return [
-      const SizedBox(height: 6),
+      const SizedBox(height: GroupTitle.before),
       DayHeader(
         label: _dayLabel(day),
         count: ops.length,
@@ -921,24 +1023,82 @@ class _OperationsScreenState extends State<OperationsScreen> {
         onTap: () =>
             setState(() => folded ? _folded.remove(day) : _folded.add(day)),
       ),
-      if (!folded) const SizedBox(height: 6),
-      if (!folded)
-        for (final (t, labels) in ops)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: OperationRow(
-              t: t,
-              labels: labels,
-              title: (labels.categoryPath.split(' › ').last, null),
-              subtitle: (
-                '${labels.account} · '
-                    '${DateFormat.Hm(_lang).format(t.date.toLocal())}',
-                null,
-              ),
-              onTap: () => _open(t),
-            ),
-          ),
+      if (!folded) ..._rows(AppLocalizations.of(context), ops),
     ];
+  }
+
+  /// A group's operations, 8 apart (DIRECTION: Groupes).
+  List<Widget> _rows(
+    AppLocalizations l,
+    List<(TransactionInfo, OperationLabels)> ops,
+  ) => [
+    for (final (i, (t, labels)) in ops.indexed) ...[
+      if (i > 0) const SizedBox(height: 8),
+      _row(l, t, labels),
+    ],
+  ];
+
+  /// One operation: a draft's card, an ignored or planned row, or a row.
+  Widget _row(AppLocalizations l, TransactionInfo t, OperationLabels labels) {
+    final title = (labels.categoryPath.split(' › ').last, null);
+    final Widget child;
+    if (t.isDraft) {
+      child = DraftCard(
+        t: t,
+        labels: labels,
+        title: title,
+        subtitle: (l.draftFromRecurrence(labels.account), null),
+        onTap: () => _openDraft(t),
+        onIgnore: () => _ignore(t, labels),
+        onValidate: () => _validate(t, labels),
+      );
+    } else if (t.isIgnored || t.isPlanned) {
+      child = OperationRow(
+        t: t,
+        labels: labels,
+        title: title,
+        subtitle: (labels.account, null),
+        tag: t.isIgnored ? l.recurrenceIgnored : l.plannedTag,
+        onTap: () => t.isPlanned ? _openRecurrence(t) : _openDraft(t),
+      );
+    } else {
+      child = OperationRow(
+        t: t,
+        labels: labels,
+        title: title,
+        subtitle: (
+          '${labels.account} · '
+              '${DateFormat.Hm(_lang).format(t.date.toLocal())}',
+          null,
+        ),
+        onTap: () => _open(t),
+      );
+    }
+    return child;
+  }
+
+  Future<void> _validate(TransactionInfo t, OperationLabels labels) async {
+    await validateFromList(context, widget.data, t, labels);
+    await _load();
+  }
+
+  Future<void> _ignore(TransactionInfo t, OperationLabels labels) async {
+    await ignoreFromList(context, widget.data, t, labels);
+    await _load();
+  }
+
+  Future<void> _openDraft(TransactionInfo t) async {
+    await openDraft(context, widget.data, t);
+    await _load();
+  }
+
+  Future<void> _openRecurrence(TransactionInfo t) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => RecurrenceScreen(data: widget.data, ruleId: t.id),
+      ),
+    );
+    await _load();
   }
 
   Widget _empty(AppLocalizations l, DateTime month) {

@@ -11,6 +11,7 @@ import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -177,7 +178,8 @@ class _RecurrencesScreenState extends State<RecurrencesScreen> {
       body: rules == null || names == null
           ? const SizedBox.shrink()
           : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+              // The first group brings its own gap under the title bar.
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
               children: rules.isEmpty
                   ? [
                       EmptyCard(
@@ -195,29 +197,13 @@ class _RecurrencesScreenState extends State<RecurrencesScreen> {
                         (EntryKind.transfer, l.recurrencesTransfers),
                       ])
                         if (rules.any((r) => r.kind == kind)) ...[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Text.rich(
-                              TextSpan(
-                                text: title,
-                                children: [
-                                  TextSpan(
-                                    text:
-                                        ' · ${rules.where((r) => r.kind == kind).length}',
-                                    style: KibuoType.sectionTitle.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontVariations: const [
-                                        FontVariation.weight(500),
-                                      ],
-                                      color: KibuoColors.inkMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              style: KibuoType.sectionTitle,
-                            ),
+                          // Its own gap above (DIRECTION: Groupes).
+                          const SizedBox(height: GroupTitle.before),
+                          GroupTitle(
+                            title: title,
+                            count:
+                                '${rules.where((r) => r.kind == kind).length}',
                           ),
-                          const SizedBox(height: 6),
                           SettingsCard(
                             children: [
                               for (final r in rules)
@@ -229,8 +215,8 @@ class _RecurrencesScreenState extends State<RecurrencesScreen> {
                                   ),
                             ],
                           ),
-                          const SizedBox(height: 16),
                         ],
+                      const SizedBox(height: 16),
                       KibuoButton(
                         label: l.recurrenceNew,
                         kind: ButtonKind.create,
@@ -496,7 +482,7 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
                     ],
                   ),
                   if (_past.isNotEmpty) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: GroupTitle.gap),
                     SectionTitle(l.recurrencePast),
                     SettingsCard(
                       children: [

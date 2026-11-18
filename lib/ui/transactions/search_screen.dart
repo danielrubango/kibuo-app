@@ -10,9 +10,11 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
+import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/draft_screen.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_row.dart';
@@ -89,7 +91,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _load() async {
     final data = widget.data;
     final l = AppLocalizations.of(context);
-    final all = await data.transactions.all();
+    // Drafts and ignored ones are found too, with their card (PRODUCT).
+    final all = await data.transactions.all(drafts: true);
     final accounts = [
       ...await data.accounts.accounts(),
       ...await data.accounts.accounts(archived: true),
@@ -126,13 +129,15 @@ class _SearchScreenState extends State<SearchScreen> {
     final now = DateTime.now();
     final topCats = mostUsed([
       for (final t in all)
-        if (topOf(t.categoryId) case final c?) (c, t.date.toLocal()),
+        if (t.counts)
+          if (topOf(t.categoryId) case final c?) (c, t.date.toLocal()),
     ], now: now);
     final topAccounts = mostUsed([
       for (final t in all)
-        if (accounts.where((a) => a.id == t.accountId).firstOrNull
-            case final a?)
-          (a, t.date.toLocal()),
+        if (t.counts)
+          if (accounts.where((a) => a.id == t.accountId).firstOrNull
+              case final a?)
+            (a, t.date.toLocal()),
     ], now: now);
     if (!mounted) return;
     setState(() {
@@ -172,11 +177,25 @@ class _SearchScreenState extends State<SearchScreen> {
       if (mounted) setState(() => _recent = recent);
     }
     if (!mounted) return;
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => OperationDetailScreen(data: widget.data, id: t.id),
-      ),
-    );
+    if (t.counts) {
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => OperationDetailScreen(data: widget.data, id: t.id),
+        ),
+      );
+    } else {
+      await openDraft(context, widget.data, t);
+    }
+    await _load();
+  }
+
+  Future<void> _validate(_Item i) async {
+    await validateFromList(context, widget.data, i.t, i.labels);
+    await _load();
+  }
+
+  Future<void> _ignore(_Item i) async {
+    await ignoreFromList(context, widget.data, i.t, i.labels);
     await _load();
   }
 
@@ -233,8 +252,13 @@ class _SearchScreenState extends State<SearchScreen> {
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             _header(l),
-            const SizedBox(height: 16),
-            if (q.isEmpty) ..._start(l) else ..._results(l, q),
+            if (q.isEmpty) ...[
+              const SizedBox(height: 16),
+              ..._start(l),
+            ] else
+              // Results are groups: each brings its own gap (DIRECTION:
+              // Groupes).
+              ..._results(l, q),
           ],
         ),
       ),
@@ -468,6 +492,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final found = [for (final i in _items) ?_match(q, i)];
     if (found.isEmpty) {
       return [
+        const SizedBox(height: 16),
         EmptyCard(
           icon: KibuoIcons.magnifyingGlass,
           title: l.searchNoResultTitle(_field.text.trim()),
@@ -489,7 +514,8 @@ class _SearchScreenState extends State<SearchScreen> {
     // The others open by themselves when the shown month has nothing.
     final open = _othersOpen || split.shown.isEmpty;
     return [
-      if (split.shown.isEmpty)
+      if (split.shown.isEmpty) ...[
+        const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
@@ -499,19 +525,20 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             style: KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
           ),
-        )
-      else
+        ),
+      ] else
         ..._group(l, widget.month, split.shown),
       if (others.isNotEmpty) ...[
-        const SizedBox(height: 16),
-        if (!open)
+        if (!open) ...[
+          const SizedBox(height: 16),
           _OthersCard(
             title: l.searchOthers(others.length),
             subtitle: earlierOnly ? l.searchEarlierMonths : l.searchOtherMonths,
             onTap: () => setState(() => _othersOpen = true),
-          )
-        else ...[
+          ),
+        ] else ...[
           if (split.shown.isNotEmpty) ...[
+            const SizedBox(height: 16),
             _FoldLine(
               label: earlierOnly
                   ? l.searchEarlierFold(others.length)
@@ -519,12 +546,8 @@ class _SearchScreenState extends State<SearchScreen> {
               fold: l.searchFold,
               onFold: () => setState(() => _othersOpen = false),
             ),
-            const SizedBox(height: 8),
           ],
-          for (final (i, g) in split.others.indexed) ...[
-            if (i > 0) const SizedBox(height: 16),
-            ..._group(l, g.month, g.items),
-          ],
+          for (final g in split.others) ..._group(l, g.month, g.items),
         ],
       ],
     ];
@@ -533,34 +556,34 @@ class _SearchScreenState extends State<SearchScreen> {
   /// A month's results: its title and number, then its operations.
   List<Widget> _group(AppLocalizations l, DateTime month, List<_Found> list) =>
       [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(_monthTitle(month), style: KibuoType.sectionTitle),
-              ),
-              Text(
-                l.searchResults(list.length),
-                style: KibuoType.sectionTitle.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontVariations: const [FontVariation.weight(500)],
-                ),
-              ),
-            ],
-          ),
+        const SizedBox(height: GroupTitle.before),
+        GroupTitle(
+          title: _monthTitle(month),
+          trailing: GroupNote(l.searchResults(list.length)),
         ),
-        const SizedBox(height: 8),
         for (final (i, f) in list.indexed) ...[
           if (i > 0) const SizedBox(height: 8),
-          OperationRow(
-            t: f.item.t,
-            labels: f.item.labels,
-            title: f.title,
-            subtitle: f.subtitle,
-            amountMarked: f.amount,
-            onTap: () => _open(f.item.t),
-          ),
+          if (f.item.t.isDraft)
+            DraftCard(
+              t: f.item.t,
+              labels: f.item.labels,
+              title: f.title,
+              subtitle: f.subtitle,
+              amountMarked: f.amount,
+              onTap: () => _open(f.item.t),
+              onIgnore: () => _ignore(f.item),
+              onValidate: () => _validate(f.item),
+            )
+          else
+            OperationRow(
+              t: f.item.t,
+              labels: f.item.labels,
+              title: f.title,
+              subtitle: f.subtitle,
+              amountMarked: f.amount,
+              tag: f.item.t.isIgnored ? l.recurrenceIgnored : null,
+              onTap: () => _open(f.item.t),
+            ),
         ],
       ];
 }

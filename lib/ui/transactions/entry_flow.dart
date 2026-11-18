@@ -94,6 +94,22 @@ class OperationLabels {
       ),
     };
 
+/// A draft's card and its dashes (canvas BrouillonA3).
+({Color card, Color dash}) draftColors(EntryKind kind) => switch (kind) {
+  EntryKind.expense => (
+    card: KibuoColors.debtDraft,
+    dash: KibuoColors.debtDash,
+  ),
+  EntryKind.income => (
+    card: KibuoColors.accentTint,
+    dash: KibuoColors.accentDash,
+  ),
+  EntryKind.transfer => (
+    card: KibuoColors.transferTint,
+    dash: KibuoColors.transferDash,
+  ),
+};
+
 /// An operation's tile: its category's, or ⇄ for a transfer.
 class OperationTile extends StatelessWidget {
   const OperationTile({
@@ -101,11 +117,15 @@ class OperationTile extends StatelessWidget {
     required this.kind,
     required this.labels,
     required this.size,
+    this.muted = false,
   });
 
   final EntryKind kind;
   final OperationLabels labels;
   final double size;
+
+  /// Grey: an operation ignored or still to come.
+  final bool muted;
 
   @override
   Widget build(BuildContext context) {
@@ -114,20 +134,20 @@ class OperationTile extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: KibuoColors.projectTint,
+          color: muted ? KibuoColors.background : KibuoColors.projectTint,
           borderRadius: BorderRadius.circular(size * 0.3),
         ),
         child: Icon(
           KibuoIcons.arrowsLeftRight,
           size: size * 0.5,
-          color: KibuoColors.projectInk,
+          color: muted ? KibuoColors.inkMuted : KibuoColors.projectInk,
         ),
       );
     }
     final category = labels.category;
     return category == null
         ? SizedBox.square(dimension: size)
-        : CategoryTile(category: category, size: size);
+        : CategoryTile(category: category, size: size, muted: muted);
   }
 }
 
