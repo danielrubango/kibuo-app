@@ -105,9 +105,8 @@ abstract final class KibuoTheme {
         backgroundColor: KibuoColors.background,
         surfaceTintColor: Colors.transparent,
         modalBarrierColor: KibuoColors.scrim,
-        showDragHandle: true,
-        dragHandleColor: KibuoColors.line,
-        dragHandleSize: Size(40, 4),
+        // Our own handle, 22 high (canvas PlusBtnB1): Android's takes 48.
+        showDragHandle: false,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(radiusSheet),
