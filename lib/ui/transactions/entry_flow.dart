@@ -348,47 +348,51 @@ Future<bool> _firstSheet(
     context: context,
     useSafeArea: true,
     isScrollControlled: true,
-    builder: (context) => Padding(
-      padding: sheetPadding(context),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: KibuoColors.accentTint,
-                borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
+    builder: (context) => withSheetHandle(
+      Padding(
+        padding: sheetPadding(context),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: KibuoColors.accentTint,
+                  borderRadius: BorderRadius.circular(
+                    KibuoTheme.radiusFeatured,
+                  ),
+                ),
+                child: Icon(icon, size: 34, color: KibuoColors.accent),
               ),
-              child: Icon(icon, size: 34, color: KibuoColors.accent),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: KibuoType.screenTitle,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: KibuoType.help.copyWith(fontSize: 14, height: 20 / 14),
-          ),
-          const SizedBox(height: 16),
-          KibuoButton(
-            label: action,
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-          const SizedBox(height: 8),
-          KibuoButton(
-            label: l.entryLater,
-            kind: ButtonKind.secondary,
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: KibuoType.screenTitle,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: KibuoType.help.copyWith(fontSize: 14, height: 20 / 14),
+            ),
+            const SizedBox(height: 16),
+            KibuoButton(
+              label: action,
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+            const SizedBox(height: 8),
+            KibuoButton(
+              label: l.entryLater,
+              kind: ButtonKind.secondary,
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -409,7 +413,7 @@ Future<SavedAction?> showSavedSheet(
     context: context,
     useSafeArea: true,
     isScrollControlled: true,
-    builder: (_) => _SavedSheet(saved: saved, labels: labels),
+    builder: (_) => withSheetHandle(_SavedSheet(saved: saved, labels: labels)),
   );
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
@@ -268,47 +269,51 @@ Future<AutoLockDelay?> showDelaySheet(
   final l = AppLocalizations.of(context);
   return showModalBottomSheet<AutoLockDelay>(
     context: context,
-    builder: (sheetContext) => SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 12),
-              child: Text(
-                l.lockAfter,
-                style: Theme.of(sheetContext).textTheme.titleLarge,
+    builder: (sheetContext) => withSheetHandle(
+      SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 4, bottom: 12),
+                child: Text(
+                  l.lockAfter,
+                  style: Theme.of(sheetContext).textTheme.titleLarge,
+                ),
               ),
-            ),
-            SettingsCard(
-              children: [
-                for (final delay in AutoLockDelay.values)
-                  InkWell(
-                    onTap: () => Navigator.of(sheetContext).pop(delay),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 52),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              delayLabel(l, delay),
-                              style: Theme.of(sheetContext).textTheme.bodyLarge,
+              SettingsCard(
+                children: [
+                  for (final delay in AutoLockDelay.values)
+                    InkWell(
+                      onTap: () => Navigator.of(sheetContext).pop(delay),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 52),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                delayLabel(l, delay),
+                                style: Theme.of(sheetContext)
+                                    .textTheme
+                                    .bodyLarge,
+                              ),
                             ),
-                          ),
-                          if (delay == current)
-                            const Icon(
-                              KibuoIcons.check,
-                              color: KibuoColors.accent,
-                            ),
-                        ],
+                            if (delay == current)
+                              const Icon(
+                                KibuoIcons.check,
+                                color: KibuoColors.accent,
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ),
