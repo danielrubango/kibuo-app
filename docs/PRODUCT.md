@@ -171,3 +171,16 @@ Graphiques simples. Détail d'affichage : [design/DIRECTION.md](design/DIRECTION
 ## Après la V1
 
 Voir [docs/backlog/](backlog/).
+
+## À reprendre (décidé le 18 novembre 2026)
+
+Décisions validées, à construire plus tard ; la règle d'ensemble est la cohérence avec l'existant.
+
+- Une opération peut être datée plus tard : elle est enregistrée comme une opération prévue (une récurrence d'une seule fois), en pointillés « Prévu » dans la liste et dans « À venir », sans compter nulle part. Le jour venu, elle arrive comme une récurrence : comptée, ou en brouillon avec « Toujours demander ».
+- Rien n'est bloqué par le découvert pour une date à venir, opération unique ou récurrence ; le plancher n'est vérifié que le jour venu (brouillon avec la ligne rouge habituelle). Seule l'opération du jour reste bloquée.
+- Trois jours avant une échéance, kibuo calcule le solde du compte à cette date (solde du jour, plus les revenus prévus, moins les dépenses prévues d'ici là). Si la dépense ferait passer le compte sous son plancher, « À traiter » (Cette semaine) le dit : « Loyer · le 25 », « Il manque 12 000 FC sur M-Pesa » en ambre, « Voir › ». La notification vient avec les Rappels.
+- La feuille + suit sa planche (PlusBtnB1) : « Dépense » 72 de haut, les quatre autres 64, sans grandir avec la largeur de l'écran.
+- Dans « Nouveau type de compte », « Enregistrer » remonte au-dessus du clavier, comme dans la saisie.
+- Les types de compte se gèrent depuis une ligne « Types de compte » de la feuille « Affichage des comptes » : les quatre fournis ne se modifient ni ne se suppriment ; un type créé change de nom et d'icône, ou se supprime, ce qui reste grisé tant que des comptes l'utilisent (« 3 comptes sont de ce type : changez-les d'abord »).
+- Ordre : les trois retouches juste avant les Rappels ; l'opération datée plus tard et l'alerte de solde avec les Rappels. Les couleurs des comptes viennent après la V1.
+
