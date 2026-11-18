@@ -2639,4 +2639,41 @@ class AppLocalizationsFr extends AppLocalizations {
   String entryPlannedToast(String date) {
     return 'Prévue le $date : elle arrivera ce jour-là.';
   }
+
+  @override
+  String plannedStatus(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'income': 'Revenu prévu',
+      'transfer': 'Transfert prévu',
+      'other': 'Dépense prévue',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String plannedOn(String date) {
+    return 'Prévue le $date';
+  }
+
+  @override
+  String get plannedNotice =>
+      'Elle ne compte pas encore. Le jour venu, elle arrivera comme les autres : comptée, ou en brouillon à valider.';
+
+  @override
+  String get plannedCancel => 'Annuler l’opération prévue';
+
+  @override
+  String get plannedCancelTitle => 'Annuler l’opération prévue ?';
+
+  @override
+  String get plannedCancelText =>
+      'Elle disparaît des opérations prévues ; rien n’a encore été compté.';
+
+  @override
+  String get plannedCancelAction => 'Annuler l’opération';
+
+  @override
+  String plannedCancelled(String name) {
+    return 'Opération prévue annulée : $name';
+  }
 }

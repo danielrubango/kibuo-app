@@ -1070,11 +1070,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
   }
 
   Future<void> _openRecurrence(TransactionInfo t) async {
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => RecurrenceScreen(data: widget.data, ruleId: t.id),
-      ),
-    );
+    await openRuleCard(context, widget.data, t.id);
     await _load();
   }
 
