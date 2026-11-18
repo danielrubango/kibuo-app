@@ -2466,4 +2466,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typesManage => 'Manage';
+
+  @override
+  String get remindersTitle => 'Reminders and alerts';
+
+  @override
+  String get remindersEntryGroup => 'Entries';
+
+  @override
+  String get remindersEntry => 'Note my operations';
+
+  @override
+  String remindersEntryHelp(String time) {
+    return 'Every day at $time';
+  }
+
+  @override
+  String get remindersEntryOffHelp =>
+      'An evening reminder, if nothing was noted';
+
+  @override
+  String get remindersTime => 'Time';
+
+  @override
+  String get remindersBlocked => 'Notifications blocked';
+
+  @override
+  String get remindersOpenSettings => 'Open the phone’s settings';
+
+  @override
+  String get remindersTimeTitle => 'Reminder time';
+
+  @override
+  String get remindersTimeSave => 'Save';
+
+  @override
+  String get reminderEntryTitle => 'Note my operations';
+
+  @override
+  String get reminderEntryBody => 'Nothing noted today. An expense, an income?';
 }

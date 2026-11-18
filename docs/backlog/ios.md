@@ -34,7 +34,7 @@ Le code Flutter reste compilable pour iOS, mais iOS n'est ni testé ni publié a
 |---|---|
 | Biométrie | Face ID et Touch ID, avec la mention d'usage requise |
 | Stockage de la clé | Trousseau iOS, en excluant la synchronisation iCloud |
-| Rappels | Limite du nombre de notifications programmées à vérifier |
+| Rappels | `flutter_local_notifications` (récepteurs Android, désucrage Java) : sur iOS, autorisation à demander via `DarwinInitializationSettings`, limite de 64 notifications programmées, à vérifier ; fuseau via `flutter_timezone` |
 | Sauvegardes | Sélecteur de fichiers et dossier iCloud ou local |
 | Serveur web local | Fonctionne uniquement application ouverte, comme accepté |
 | Modèle d'IA système | iPhone 15 Pro ou plus récent, si l'IA embarquée est retenue |

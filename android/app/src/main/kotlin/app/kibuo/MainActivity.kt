@@ -9,6 +9,8 @@ import android.telephony.TelephonyManager
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import android.content.Intent
+import android.provider.Settings
 import io.flutter.plugin.common.MethodChannel
 
 // FragmentActivity: needed by local_auth for the fingerprint prompt.
@@ -29,6 +31,15 @@ class MainActivity : FlutterFragmentActivity() {
                         return@setMethodCallHandler result.success(true)
                     }
                     return@setMethodCallHandler result.success(false)
+                }
+                // « Ouvrir les réglages du téléphone » when notifications are
+                // blocked (PRODUCT: Rappels).
+                if (call.method == "notificationSettings") {
+                    startActivity(
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                            .putExtra(Settings.EXTRA_APP_PACKAGE, packageName),
+                    )
+                    return@setMethodCallHandler result.success(true)
                 }
                 if (call.method != "country") return@setMethodCallHandler result.notImplemented()
                 val phone = getSystemService(TELEPHONY_SERVICE) as? TelephonyManager

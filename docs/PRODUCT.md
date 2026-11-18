@@ -93,7 +93,7 @@ kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 ### Récurrences
 
 - Une récurrence crée directement l'opération par défaut. Un réglage global fixe ce comportement, et chaque récurrence peut le remplacer pour rester en brouillon.
-- Si l'application n'a pas été ouverte le jour prévu, les occurrences manquées sont créées à leur date d'origine, avec une notification.
+- Si l'application n'a pas été ouverte le jour prévu, les occurrences manquées sont créées à leur date d'origine, à l'ouverture suivante ; le jour même, une notification programmée d'avance l'annonce (voir Rappels).
 - Modifier une récurrence ne change que les occurrences futures.
 - Rythme : chaque jour, semaine, mois ou année, avec un intervalle (par exemple toutes les 2 semaines). Fin au choix : jamais, après un nombre de fois, ou à une date.
 - L'affichage de la liste des opérations (aussi dans Réglages, « Récurrences et brouillons ») règle trois choses : valider automatiquement ou toujours demander ; laisser les brouillons à leur date ou grouper en haut ceux en retard et du jour ; montrer à leur date ou masquer les opérations prévues du mois, qui ne sont jamais groupées.
@@ -133,6 +133,16 @@ Notifications locales uniquement :
 - délai par défaut avant une échéance, réglé dans Réglages ;
 - rappel propre à chaque dette, créance, projet et récurrence, réglé dans sa fiche ;
 - pour réclamer un remboursement, un message pré-rempli que l'utilisateur envoie lui-même par SMS ou WhatsApp.
+
+Décidé le 19 novembre 2026 :
+
+- L'étape se livre en trois temps validés : le socle (notifications, autorisation, écran « Rappels et alertes », rappel de saisie), les échéances (rappel avant chaque récurrence, par défaut et dans sa fiche, alerte de solde insuffisant), puis l'opération datée plus tard. Les interrupteurs des budgets arrivent avec « Alertes de budget ».
+- « Rappels et alertes » est une ligne de la carte de Plus, à côté de « Récurrences et brouillons ».
+- L'autorisation d'Android est demandée au premier interrupteur allumé, jamais au démarrage. Refusée, l'interrupteur reste éteint et la ligne dit « Notifications bloquées », avec « Ouvrir les réglages du téléphone ».
+- Le rappel de saisie est éteint par défaut ; son heure (20:00 au départ) se choisit dans une feuille à roue ; il ne sonne pas si une opération a déjà été notée ce jour-là. Le toucher ouvre la saisie d'une dépense.
+- Un seul délai avant une échéance, 3 jours par défaut (le jour même, 1, 2, 3 ou 7 jours), notification à 9:00 : « Loyer · 250 000 FC dans 3 jours, M-Pesa », ou, si le solde ne suffira pas, « Loyer dans 3 jours : il manque 12 000 FC sur M-Pesa » ; jamais deux notifications pour la même échéance. Chaque récurrence a sa ligne « Rappel » dans sa fiche (« Par défaut (3 jours avant) », Aucun, le jour même, 1, 2, 3, 7 jours). Toucher le rappel ouvre la fiche de la récurrence ; le jour d'échéance (« Internet · 10 000 FC aujourd'hui »), il ouvre l'Accueil.
+- Pas de travail en arrière-plan pour la V1 : à chaque ouverture ou changement, kibuo programme d'avance les notifications des 30 prochains jours ; les opérations du jour se créent à l'ouverture. Fonctionner en arrière-plan (rattrapage et notifications sans ouvrir kibuo) viendra plus tard.
+- Le guide des marques reste en phase 7 ; son lien n'apparaît qu'avec lui.
 
 Certaines marques Android retardent les notifications pour économiser la batterie : prévoir un guide de réglage et des tests sur ces appareils.
 
