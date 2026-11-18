@@ -1386,5 +1386,21 @@
   "todoShortfallSub": "Il manque {missing} sur {account}",
   "@todoShortfallSub": {"description": "Due-date reminders.", "placeholders": {"missing": {"type": "String"}, "account": {"type": "String"}}},
   "entryPlannedToast": "Prévue le {date} : elle arrivera ce jour-là.",
-  "@entryPlannedToast": {"description": "Entry dated later.", "placeholders": {"date": {"type": "String"}}}
+  "@entryPlannedToast": {"description": "Entry dated later.", "placeholders": {"date": {"type": "String"}}},
+  "plannedStatus": "{kind, select, income{Revenu prévu} transfer{Transfert prévu} other{Dépense prévue}}",
+  "@plannedStatus": {"description": "A planned operation's card.", "placeholders": {"kind": {"type": "String"}}},
+  "plannedOn": "Prévue le {date}",
+  "@plannedOn": {"description": "A planned operation's card.", "placeholders": {"date": {"type": "String"}}},
+  "plannedNotice": "Elle ne compte pas encore. Le jour venu, elle arrivera comme les autres : comptée, ou en brouillon à valider.",
+  "@plannedNotice": {"description": "A planned operation's card."},
+  "plannedCancel": "Annuler l’opération prévue",
+  "@plannedCancel": {"description": "A planned operation's card."},
+  "plannedCancelTitle": "Annuler l’opération prévue ?",
+  "@plannedCancelTitle": {"description": "A planned operation's card."},
+  "plannedCancelText": "Elle disparaît des opérations prévues ; rien n’a encore été compté.",
+  "@plannedCancelText": {"description": "A planned operation's card."},
+  "plannedCancelAction": "Annuler l’opération",
+  "@plannedCancelAction": {"description": "A planned operation's card."},
+  "plannedCancelled": "Opération prévue annulée : {name}",
+  "@plannedCancelled": {"description": "A planned operation's card.", "placeholders": {"name": {"type": "String"}}}
 }
