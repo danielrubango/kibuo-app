@@ -8,6 +8,7 @@ import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
+import 'package:kibuo/ui/reminders/notifier.dart';
 import 'package:kibuo/ui/shell/app_shell.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/start/first_launch.dart';
@@ -63,6 +64,10 @@ void main() {
 
 /// Kibuo speaks the phone's language when it is French or English, and
 /// French otherwise. Choosing it inside the app comes with the settings.
+
+/// The phone's notifications (PRODUCT: Rappels), one for the whole app.
+final _notifier = LocalNotifier();
+
 class KibuoApp extends StatelessWidget {
   const KibuoApp({
     super.key,
@@ -116,11 +121,13 @@ class KibuoApp extends StatelessWidget {
                   onRecovered: onRecovered,
                   // On a new app, the guided first launch comes first.
                   builder: (eraseAll) => lock == null
-                      ? const FirstLaunchGate(child: AppShell())
+                      ? FirstLaunchGate(child: AppShell(notifier: _notifier))
                       : LockGate(
                           controller: lock,
                           eraseAll: eraseAll,
-                          child: const FirstLaunchGate(child: AppShell()),
+                          child: FirstLaunchGate(
+                            child: AppShell(notifier: _notifier),
+                          ),
                         ),
                 ),
         ),

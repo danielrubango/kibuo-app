@@ -98,6 +98,8 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Après la V1
 
+- [ ] Fonctionner en arrière-plan : rattrapage des récurrences et notifications sans ouvrir kibuo
+
 - [ ] Couleurs des comptes, au choix dans une petite palette (carte du compte, filtres)
 
 Sujets détaillés dans [backlog/](backlog/), à ordonner après la publication.
