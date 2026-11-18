@@ -2499,4 +2499,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get typesManage => 'Gérer';
+
+  @override
+  String get remindersTitle => 'Rappels et alertes';
+
+  @override
+  String get remindersEntryGroup => 'Saisie';
+
+  @override
+  String get remindersEntry => 'Noter mes opérations';
+
+  @override
+  String remindersEntryHelp(String time) {
+    return 'Chaque jour à $time';
+  }
+
+  @override
+  String get remindersEntryOffHelp => 'Un rappel le soir, si rien n’est noté';
+
+  @override
+  String get remindersTime => 'Heure';
+
+  @override
+  String get remindersBlocked => 'Notifications bloquées';
+
+  @override
+  String get remindersOpenSettings => 'Ouvrir les réglages du téléphone';
+
+  @override
+  String get remindersTimeTitle => 'Heure du rappel';
+
+  @override
+  String get remindersTimeSave => 'Enregistrer';
+
+  @override
+  String get reminderEntryTitle => 'Noter mes opérations';
+
+  @override
+  String get reminderEntryBody =>
+      'Rien n’est noté aujourd’hui. Une dépense, un revenu ?';
 }
