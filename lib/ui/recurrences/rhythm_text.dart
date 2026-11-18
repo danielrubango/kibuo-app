@@ -25,7 +25,10 @@ String rhythmOnly(AppLocalizations l, String lang, Schedule s) {
       return n == 1 ? l.rhythmDaily : l.rhythmEveryDays('$n');
     case RepeatUnit.week:
       final names = [
-        for (final d in s.weekdays.toList()..sort())
+        // Without days chosen, the first time's.
+        for (final d
+            in (s.weekdays.isEmpty ? {s.start.weekday} : s.weekdays).toList()
+              ..sort())
           DateFormat.EEEE(lang).format(DateTime(2026, 11, 15 + d)),
       ];
       if (n == 1) return l.rhythmWeekly(joinAnd(l, names));

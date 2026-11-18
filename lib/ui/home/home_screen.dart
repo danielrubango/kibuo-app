@@ -6,6 +6,7 @@ import 'package:kibuo/domain/accounts/account_total.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/recurrences/schedule.dart';
 import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -24,6 +25,7 @@ import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/recurrences/planned_operation.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
+import 'package:kibuo/ui/recurrences/rhythm_text.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -79,8 +81,14 @@ class _HomeScreenState extends State<HomeScreen> {
   FlowTotals? _month;
   List<HomeTodo> _todo = const [];
 
-  /// The next 14 days' planned operations, by day.
-  List<(TransactionInfo, OperationLabels)> _coming = const [];
+  /// Each recurrence due in the next 14 days, once, at its next date:
+  /// the 5 nearest (PRODUCT).
+  List<(TransactionInfo, OperationLabels, Schedule)> _coming = const [];
+
+  /// How many recurrences are due in those 14 days.
+  int _comingCount = 0;
+
+  static const _comingShown = 5;
 
   TodoLoader _loader(BuildContext context) => TodoLoader(
     data: widget.data,
@@ -157,16 +165,27 @@ class _HomeScreenState extends State<HomeScreen> {
           until: today.add(const Duration(days: 14)),
         ) ??
         const [];
-    final coming = <(TransactionInfo, OperationLabels)>[];
-    for (final p in planned) {
+    // In date order: the first date of a recurrence is its next.
+    final seen = <String>{};
+    final next = [
+      for (final p in planned)
+        if (seen.add(p.rule.id)) p,
+    ];
+    final coming = <(TransactionInfo, OperationLabels, Schedule)>[];
+    for (final p in next.take(_comingShown)) {
       if (!mounted) return;
       final t = plannedOperation(p);
-      coming.add((t, await OperationLabels.of(context, data, t)));
+      coming.add((
+        t,
+        await OperationLabels.of(context, data, t),
+        p.rule.schedule,
+      ));
     }
     if (!mounted) return;
     setState(() {
       _todo = todo;
       _coming = coming;
+      _comingCount = next.length;
       _main = main;
       _available = totalIn(main, [
         for (final a in accounts) a.balance,
@@ -259,7 +278,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// « À venir » (canvas Aujourdhui): the recurrences of the next 14 days,
   /// as the list's planned operations, under their date (PRODUCT).
   List<Widget> _upcoming(AppLocalizations l) {
-    final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
+    final lang = Localizations.localeOf(context).languageCode;
+    final days =
+        <DateTime, List<(TransactionInfo, OperationLabels, Schedule)>>{};
     for (final e in _coming) {
       final d = e.$1.date.toLocal();
       (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
@@ -268,20 +289,24 @@ class _HomeScreenState extends State<HomeScreen> {
       const SizedBox(height: GroupTitle.before),
       GroupTitle(
         title: l.upcomingTitle,
-        trailing: SeeAll(l.upcomingSeeAll),
+        trailing: SeeAll(
+          _comingCount > _comingShown
+              ? l.todoSeeAll('$_comingCount')
+              : l.upcomingSeeAll,
+        ),
         onTap: widget.onOpenMonth,
       ),
       for (final (i, MapEntry(key: day, value: ops))
           in days.entries.indexed) ...[
         if (i > 0) const SizedBox(height: GroupTitle.before),
         GroupTitle(title: dayLabel(context, day)),
-        for (final (j, (t, labels)) in ops.indexed) ...[
+        for (final (j, (t, labels, schedule)) in ops.indexed) ...[
           if (j > 0) const SizedBox(height: 8),
           OperationRow(
             t: t,
             labels: labels,
             title: (labels.categoryPath.split(' › ').last, null),
-            subtitle: (l.recurrenceTitle, null),
+            subtitle: (rhythmOnly(l, lang, schedule), null),
             tag: l.plannedTag,
             onTap: () async {
               await Navigator.of(context).push<void>(
