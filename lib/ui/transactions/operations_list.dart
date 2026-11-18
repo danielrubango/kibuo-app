@@ -27,6 +27,7 @@ import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/recurrences/list_display.dart';
+import 'package:kibuo/ui/recurrences/planned_operation.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -240,7 +241,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
     final coming = <(TransactionInfo, OperationLabels)>[];
     for (final p in planned) {
       if (!mounted) return;
-      final t = _plannedOperation(p);
+      final t = plannedOperation(p);
       coming.add((t, await OperationLabels.of(context, data, t)));
     }
     if (!mounted) return;
@@ -255,30 +256,6 @@ class _OperationsScreenState extends State<OperationsScreen> {
       _main = main;
       _rates = rates;
     });
-  }
-
-  /// A planned date as the list shows it: an operation that is not one
-  /// yet, carrying its recurrence's id.
-  static TransactionInfo _plannedOperation(Planned p) {
-    final rule = p.rule;
-    return TransactionInfo(
-      id: rule.id,
-      kind: rule.kind,
-      accountId: rule.accountId,
-      toAccountId: rule.toAccountId,
-      categoryId: rule.categoryId,
-      paid: rule.amount,
-      arrived: rule.kind == EntryKind.transfer ? rule.amount : null,
-      total: EntryTotal(
-        kind: rule.kind,
-        converted: rule.amount,
-        fees: Money(rule.fees, rule.amount.currency),
-      ),
-      date: DateTime(p.day.year, p.day.month, p.day.day, 12),
-      note: rule.note,
-      status: 'planned',
-      recurringId: rule.id,
-    );
   }
 
   /// Months are pages: 0 is this month, 1 the month before, and so on.

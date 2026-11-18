@@ -3804,6 +3804,192 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En retard et du jour'**
   String get draftsLateAndToday;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'À traiter'**
+  String get todoTitle;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir · {count}'**
+  String todoSeeAll(String count);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 chose} other{{count} choses}}, les plus urgentes d’abord'**
+  String todoListHelp(int count);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Urgent'**
+  String get todoUrgent;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette semaine'**
+  String get todoWeek;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappels'**
+  String get todoReminders;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Budget dépassé'**
+  String get todoBudgetOverSub;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Budget · {amount} restants'**
+  String todoBudgetNearSub(String amount);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir'**
+  String get todoSee;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 brouillon} other{{count} brouillons}}'**
+  String todoDrafts(int count);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get todoValidate;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code de récupération'**
+  String get todoRecovery;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non vérifié'**
+  String get todoRecoverySub;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifier'**
+  String get todoRecoveryAction;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux du {currency}'**
+  String todoRate(String currency);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =1{Il y a 1 jour} other{Il y a {days} jours}}'**
+  String todoRateSub(int days);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get todoRateAction;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get todoLater;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reporté à demain : {name}'**
+  String todoPutOff(String name);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get toastUndo;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'À venir'**
+  String get upcomingTitle;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir'**
+  String get upcomingSeeAll;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Valider ce brouillon ?} other{{count} brouillons à valider}}'**
+  String draftsSheetTitle(int count);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez un brouillon pour le modifier ou le valider seul.'**
+  String get draftsSheetHelp;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Rien à valider} =1{Valider le brouillon} other{Valider les {count}}}'**
+  String draftsSheetValidate(int count);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get draftsSheetValidateOne;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get draftsSheetLater;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taux manquant : à valider seul'**
+  String get draftsSheetNoRate;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passerait sous le plancher : à valider seul'**
+  String get draftsSheetFloor;
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{kind} · {day} · {account}'**
+  String draftsSheetLine(String kind, String day, String account);
+
+  /// Home: À traiter, À venir, drafts sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 brouillon validé} other{{count} brouillons validés}}'**
+  String draftsValidated(int count);
 }
 
 class _AppLocalizationsDelegate

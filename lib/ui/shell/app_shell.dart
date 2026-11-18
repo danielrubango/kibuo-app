@@ -15,6 +15,7 @@ import 'package:kibuo/data/month_start_store.dart';
 import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/search_history.dart';
+import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -196,6 +197,15 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                         key: const ValueKey('screen-home'),
                         data: data,
                         refresh: _homeRefresh,
+                        onChanged: () => _saved.value++,
+                        budgets: switch (KibuoData.maybeOf(context)) {
+                          final db? => BudgetLoader(data, BudgetRepository(db)),
+                          null => null,
+                        },
+                        todos: switch (KibuoData.maybeOf(context)) {
+                          final db? => TodoStore(db),
+                          null => null,
+                        },
                         onOpenAccounts: () =>
                             _openAccounts(KibuoData.maybeOf(context)!),
                         // The list, until the overview exists (PRODUCT).
