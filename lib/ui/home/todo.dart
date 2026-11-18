@@ -192,12 +192,7 @@ class TodoActions {
       case TodoKind.recovery:
         await renewRecoveryCode(context, lock!);
       case TodoKind.shortfall:
-        await Navigator.of(context).push<void>(
-          MaterialPageRoute(
-            builder: (_) =>
-                RecurrenceScreen(data: data, ruleId: item.due!.planned.rule.id),
-          ),
-        );
+        await openRuleCard(context, data, item.due!.planned.rule.id);
       case TodoKind.oldRate:
         await Navigator.of(context).push<void>(
           MaterialPageRoute(

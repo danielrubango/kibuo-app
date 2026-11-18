@@ -4236,6 +4236,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Prévue le {date} : elle arrivera ce jour-là.'**
   String entryPlannedToast(String date);
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'{kind, select, income{Revenu prévu} transfer{Transfert prévu} other{Dépense prévue}}'**
+  String plannedStatus(String kind);
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prévue le {date}'**
+  String plannedOn(String date);
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle ne compte pas encore. Le jour venu, elle arrivera comme les autres : comptée, ou en brouillon à valider.'**
+  String get plannedNotice;
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler l’opération prévue'**
+  String get plannedCancel;
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler l’opération prévue ?'**
+  String get plannedCancelTitle;
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle disparaît des opérations prévues ; rien n’a encore été compté.'**
+  String get plannedCancelText;
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler l’opération'**
+  String get plannedCancelAction;
+
+  /// A planned operation's card.
+  ///
+  /// In fr, this message translates to:
+  /// **'Opération prévue annulée : {name}'**
+  String plannedCancelled(String name);
 }
 
 class _AppLocalizationsDelegate

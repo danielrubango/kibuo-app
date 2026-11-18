@@ -144,14 +144,11 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     } else if (payload.startsWith('rule:')) {
       final data = _entryData(context);
       if (data == null) return;
-      Navigator.of(context)
-          .push(
-            MaterialPageRoute<void>(
-              builder: (_) =>
-                  RecurrenceScreen(data: data, ruleId: payload.substring(5)),
-            ),
-          )
-          .then((_) => _saved.value++);
+      openRuleCard(
+        context,
+        data,
+        payload.substring(5),
+      ).then((_) => _saved.value++);
     }
   }
 

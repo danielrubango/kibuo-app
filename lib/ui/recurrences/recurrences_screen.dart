@@ -11,9 +11,11 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/recurrences/rhythm_text.dart';
@@ -163,12 +165,7 @@ class _RecurrencesScreenState extends State<RecurrencesScreen> {
   }
 
   Future<void> _open(RecurringInfo r) async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => RecurrenceScreen(data: widget.data, ruleId: r.id),
-      ),
-    );
-    if (changed ?? false) await _load();
+    if (await openRuleCard(context, widget.data, r.id)) await _load();
   }
 
   @override
@@ -364,11 +361,6 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
   List<TransactionInfo> _past = const [];
   bool _changed = false;
 
-  /// Its own reminder (null: the default, -1: none), and the default.
-  int? _remind;
-  bool _dueOn = true;
-  int _dueDays = 3;
-
   @override
   void initState() {
     super.initState();
@@ -384,61 +376,12 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
       for (final t in await widget.data.transactions.all(drafts: true))
         if (t.recurringId == widget.ruleId) t,
     ].take(5).toList();
-    final reminders = widget.data.reminders;
-    final remind = await reminders?.ruleDays(widget.ruleId);
-    final dueOn = await reminders?.dueOn() ?? true;
-    final dueDays = await reminders?.dueDays() ?? 3;
     if (!mounted) return;
     setState(() {
       _rule = rule;
       _names = names;
       _past = past;
-      _remind = remind;
-      _dueOn = dueOn;
-      _dueDays = dueDays;
     });
-  }
-
-  String _remindText(AppLocalizations l) => switch (_remind) {
-    null when _dueOn => l.reminderRuleDefault(l.daysBefore(_dueDays)),
-    null => l.reminderRuleOff,
-    -1 => l.reminderRuleNone,
-    final int days => l.daysBefore(days),
-  };
-
-  /// « Rappel » (PRODUCT: Rappels): the default, none, or its own delay.
-  Future<void> _chooseReminder() async {
-    final l = AppLocalizations.of(context);
-    const asDefault = -2;
-    final picked = await showKibuoSheet<int>(
-      context,
-      title: l.reminderRule,
-      builder: (context) => SettingsCard(
-        children: [
-          for (final value in [asDefault, -1, ...ReminderStore.dueChoices])
-            CheckChoice(
-              label: switch (value) {
-                asDefault =>
-                  _dueOn
-                      ? l.reminderRuleDefault(l.daysBefore(_dueDays))
-                      : l.reminderRuleOff,
-                -1 => l.reminderRuleNone,
-                _ => l.daysBefore(value),
-              },
-              help: '',
-              on: (_remind ?? asDefault) == value,
-              onTap: () => Navigator.of(context).pop(value),
-            ),
-        ],
-      ),
-    );
-    if (picked == null) return;
-    await widget.data.reminders?.setRuleDays(
-      widget.ruleId,
-      picked == asDefault ? null : picked,
-    );
-    _changed = true;
-    await _load();
   }
 
   Future<void> _edit() async {
@@ -536,13 +479,8 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
                             ? l.recurrenceAskDraft
                             : l.recurrenceSaveDirect,
                       ),
-                      if (widget.data.reminders != null)
-                        EntryField(
-                          icon: KibuoIcons.clock,
-                          label: l.reminderRule,
-                          value: _remindText(l),
-                          onTap: _chooseReminder,
-                        ),
+                      if (widget.data.reminders case final store?)
+                        RuleReminderField(store: store, ruleId: rule.id),
                     ],
                   ),
                   if (_past.isNotEmpty) ...[
@@ -677,6 +615,354 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
                         ),
                       ),
                   ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// « Rappel » of a recurrence or a planned operation (PRODUCT: Rappels):
+/// the default, none, or its own delay, chosen in a sheet.
+class RuleReminderField extends StatefulWidget {
+  const RuleReminderField({
+    super.key,
+    required this.store,
+    required this.ruleId,
+  });
+
+  final ReminderStore store;
+  final String ruleId;
+
+  @override
+  State<RuleReminderField> createState() => _RuleReminderFieldState();
+}
+
+class _RuleReminderFieldState extends State<RuleReminderField> {
+  /// Its own reminder (null: the default, -1: none), and the default.
+  int? _remind;
+  bool _dueOn = true;
+  int _dueDays = ReminderStore.defaultDueDays;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final remind = await widget.store.ruleDays(widget.ruleId);
+    final dueOn = await widget.store.dueOn();
+    final dueDays = await widget.store.dueDays();
+    if (!mounted) return;
+    setState(() {
+      _remind = remind;
+      _dueOn = dueOn;
+      _dueDays = dueDays;
+    });
+  }
+
+  String _text(AppLocalizations l) => switch (_remind) {
+    null when _dueOn => l.reminderRuleDefault(l.daysBefore(_dueDays)),
+    null => l.reminderRuleOff,
+    -1 => l.reminderRuleNone,
+    final int days => l.daysBefore(days),
+  };
+
+  Future<void> _choose() async {
+    final l = AppLocalizations.of(context);
+    const asDefault = -2;
+    final picked = await showKibuoSheet<int>(
+      context,
+      title: l.reminderRule,
+      builder: (context) => SettingsCard(
+        children: [
+          for (final value in [asDefault, -1, ...ReminderStore.dueChoices])
+            CheckChoice(
+              label: switch (value) {
+                asDefault =>
+                  _dueOn
+                      ? l.reminderRuleDefault(l.daysBefore(_dueDays))
+                      : l.reminderRuleOff,
+                -1 => l.reminderRuleNone,
+                _ => l.daysBefore(value),
+              },
+              help: '',
+              on: (_remind ?? asDefault) == value,
+              onTap: () => Navigator.of(context).pop(value),
+            ),
+        ],
+      ),
+    );
+    if (picked == null) return;
+    await widget.store.setRuleDays(
+      widget.ruleId,
+      picked == asDefault ? null : picked,
+    );
+    await _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return EntryField(
+      icon: KibuoIcons.clock,
+      label: l.reminderRule,
+      value: _text(l),
+      onTap: _choose,
+    );
+  }
+}
+
+/// A recurrence's card, or a planned operation's when it is only one time
+/// (PRODUCT: À reprendre). True when something changed.
+Future<bool> openRuleCard(
+  BuildContext context,
+  EntryData data,
+  String ruleId,
+) async {
+  final rule = (await data.recurrences?.rules())
+      ?.where((r) => r.id == ruleId)
+      .firstOrNull;
+  if (rule == null || !context.mounted) return false;
+  final changed = await Navigator.of(context).push<bool>(
+    MaterialPageRoute(
+      builder: (_) => rule.schedule.count == 1
+          ? PlannedScreen(data: data, ruleId: ruleId)
+          : RecurrenceScreen(data: data, ruleId: ruleId),
+    ),
+  );
+  return changed ?? false;
+}
+
+/// « Dépense prévue »: an operation dated later, not one yet (PRODUCT: À
+/// reprendre). Grey and dashed like its « Prévu » row; its date, account,
+/// category and reminder; « Annuler l'opération prévue ».
+class PlannedScreen extends StatefulWidget {
+  const PlannedScreen({super.key, required this.data, required this.ruleId});
+
+  final EntryData data;
+  final String ruleId;
+
+  @override
+  State<PlannedScreen> createState() => _PlannedScreenState();
+}
+
+class _PlannedScreenState extends State<PlannedScreen> {
+  RecurringInfo? _rule;
+  _Names? _names;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final rule = (await widget.data.recurrences!.rules())
+        .where((r) => r.id == widget.ruleId)
+        .firstOrNull;
+    final names = await _Names.load(widget.data);
+    if (!mounted) return;
+    setState(() {
+      _rule = rule;
+      _names = names;
+    });
+  }
+
+  Future<void> _cancel() async {
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final rule = _rule!;
+    final name = _names!.title(l, rule);
+    final sure = await confirmRemoval(
+      context,
+      title: l.plannedCancelTitle,
+      summary: RemovalSummary(
+        leading: _tile(rule, _names!, 36),
+        title: name,
+        subtitle: l.plannedOn(
+          DateFormat.MMMMEEEEd(lang).format(rule.schedule.start),
+        ),
+        trailing: _signed(rule, lang),
+      ),
+      text: l.plannedCancelText,
+      action: l.plannedCancelAction,
+    );
+    if (!sure) return;
+    await widget.data.recurrences!.stop(rule.id);
+    if (!mounted) return;
+    showKibuoToast(context, l.plannedCancelled(name));
+    Navigator.of(context).pop(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final rule = _rule;
+    final names = _names;
+    if (rule == null || names == null) {
+      return const Scaffold(body: SizedBox.shrink());
+    }
+    final category = names.category(rule.categoryId);
+    final account = names.accounts
+        .where((a) => a.id == rule.accountId)
+        .firstOrNull;
+    return Scaffold(
+      appBar: AppBar(),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 2, 16, 32),
+        children: [
+          DashedBorder(
+            radius: KibuoTheme.radiusFeatured,
+            color: KibuoColors.line,
+            width: 2,
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: KibuoColors.surface,
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      if (category != null && rule.kind != EntryKind.transfer)
+                        CategoryTile(category: category, size: 44, muted: true)
+                      else
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: KibuoColors.background,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(
+                            KibuoIcons.arrowsLeftRight,
+                            size: 22,
+                            color: KibuoColors.inkMuted,
+                          ),
+                        ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              names.title(l, rule),
+                              style: KibuoType.body.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                fontVariations: const [
+                                  FontVariation.weight(600),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              l.plannedStatus(rule.kind.name),
+                              style: KibuoType.help,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _signed(rule, lang),
+                    style: KibuoType.bigAmount.copyWith(
+                      fontSize: 42,
+                      height: 48 / 42,
+                      color: KibuoColors.inkSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0x0F0E1320),
+                      borderRadius: BorderRadius.circular(
+                        KibuoTheme.radiusPill,
+                      ),
+                    ),
+                    child: Text(
+                      l.plannedOn(
+                        DateFormat.MMMMEEEEd(lang).format(rule.schedule.start),
+                      ),
+                      style: KibuoType.help.copyWith(color: KibuoColors.ink),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: KibuoColors.surface,
+              borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  KibuoIcons.clock,
+                  size: 20,
+                  color: KibuoColors.inkSecondary,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l.plannedNotice,
+                    style: KibuoType.body.copyWith(
+                      height: 20 / 14,
+                      color: KibuoColors.inkSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Material(
+            color: KibuoColors.surface,
+            borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                EntryField(
+                  icon: KibuoIcons.wallet,
+                  label: l.entryAccount,
+                  value: rule.kind == EntryKind.transfer
+                      ? '${account?.name ?? ''} → '
+                            '${names.account(rule.toAccountId)}'
+                      : account?.name ?? '',
+                  trailing: account?.currency,
+                ),
+                if (rule.kind != EntryKind.transfer && category != null)
+                  EntryField(
+                    icon: KibuoIcons.tag,
+                    label: l.entryCategory,
+                    value: categoryName(l, category),
+                  ),
+                if (widget.data.reminders case final store?)
+                  RuleReminderField(store: store, ruleId: rule.id),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+          Center(
+            child: TextAction(
+              label: l.plannedCancel,
+              color: KibuoColors.danger,
+              onPressed: _cancel,
+            ),
           ),
         ],
       ),

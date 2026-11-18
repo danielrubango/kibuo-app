@@ -2606,4 +2606,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String entryPlannedToast(String date) {
     return 'Planned for $date: it will arrive that day.';
   }
+
+  @override
+  String plannedStatus(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'income': 'Planned income',
+      'transfer': 'Planned transfer',
+      'other': 'Planned expense',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String plannedOn(String date) {
+    return 'Planned for $date';
+  }
+
+  @override
+  String get plannedNotice =>
+      'It doesn’t count yet. On its day, it arrives like the others: counted, or as a draft to confirm.';
+
+  @override
+  String get plannedCancel => 'Cancel the planned operation';
+
+  @override
+  String get plannedCancelTitle => 'Cancel the planned operation?';
+
+  @override
+  String get plannedCancelText =>
+      'It leaves the planned operations; nothing was counted yet.';
+
+  @override
+  String get plannedCancelAction => 'Cancel the operation';
+
+  @override
+  String plannedCancelled(String name) {
+    return 'Planned operation cancelled: $name';
+  }
 }

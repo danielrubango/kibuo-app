@@ -699,5 +699,13 @@
   "reminderRuleOff": "None (reminders off)",
   "todoShortfall": "{name} · on {date}",
   "todoShortfallSub": "{missing} short on {account}",
-  "entryPlannedToast": "Planned for {date}: it will arrive that day."
+  "entryPlannedToast": "Planned for {date}: it will arrive that day.",
+  "plannedStatus": "{kind, select, income{Planned income} transfer{Planned transfer} other{Planned expense}}",
+  "plannedOn": "Planned for {date}",
+  "plannedNotice": "It doesn’t count yet. On its day, it arrives like the others: counted, or as a draft to confirm.",
+  "plannedCancel": "Cancel the planned operation",
+  "plannedCancelTitle": "Cancel the planned operation?",
+  "plannedCancelText": "It leaves the planned operations; nothing was counted yet.",
+  "plannedCancelAction": "Cancel the operation",
+  "plannedCancelled": "Planned operation cancelled: {name}"
 }
