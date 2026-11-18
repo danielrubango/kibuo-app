@@ -681,5 +681,22 @@
   "remindersTimeTitle": "Reminder time",
   "remindersTimeSave": "Save",
   "reminderEntryTitle": "Note my operations",
-  "reminderEntryBody": "Nothing noted today. An expense, an income?"
+  "reminderEntryBody": "Nothing noted today. An expense, an income?",
+  "reminderDueSoon": "{amount} in {days, plural, =1{1 day} other{{days} days}}, {account}",
+  "reminderDueShort": "In {days, plural, =1{1 day} other{{days} days}}: {missing} short on {account}",
+  "reminderDueToday": "{amount} today, {account}",
+  "reminderDueTodayShort": "Today: {missing} short on {account}",
+  "remindersDueGroup": "Due dates",
+  "remindersDue": "Remind before a due date",
+  "remindersDueHelp": "{days, plural, =0{On each due date} =1{1 day before each due date} other{{days} days before each due date}}",
+  "remindersDueOffHelp": "No reminder before due dates",
+  "remindersDelay": "Notice",
+  "daysBefore": "{days, plural, =0{On the day} =1{1 day before} other{{days} days before}}",
+  "remindersRuleNote": "Each recurrence can have its own reminder, set in its card.",
+  "reminderRule": "Reminder",
+  "reminderRuleDefault": "Default ({when})",
+  "reminderRuleNone": "None",
+  "reminderRuleOff": "None (reminders off)",
+  "todoShortfall": "{name} · on {date}",
+  "todoShortfallSub": "{missing} short on {account}"
 }

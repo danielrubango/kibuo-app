@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
+import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
@@ -361,6 +362,11 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
   List<TransactionInfo> _past = const [];
   bool _changed = false;
 
+  /// Its own reminder (null: the default, -1: none), and the default.
+  int? _remind;
+  bool _dueOn = true;
+  int _dueDays = 3;
+
   @override
   void initState() {
     super.initState();
@@ -376,12 +382,61 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
       for (final t in await widget.data.transactions.all(drafts: true))
         if (t.recurringId == widget.ruleId) t,
     ].take(5).toList();
+    final reminders = widget.data.reminders;
+    final remind = await reminders?.ruleDays(widget.ruleId);
+    final dueOn = await reminders?.dueOn() ?? true;
+    final dueDays = await reminders?.dueDays() ?? 3;
     if (!mounted) return;
     setState(() {
       _rule = rule;
       _names = names;
       _past = past;
+      _remind = remind;
+      _dueOn = dueOn;
+      _dueDays = dueDays;
     });
+  }
+
+  String _remindText(AppLocalizations l) => switch (_remind) {
+    null when _dueOn => l.reminderRuleDefault(l.daysBefore(_dueDays)),
+    null => l.reminderRuleOff,
+    -1 => l.reminderRuleNone,
+    final int days => l.daysBefore(days),
+  };
+
+  /// « Rappel » (PRODUCT: Rappels): the default, none, or its own delay.
+  Future<void> _chooseReminder() async {
+    final l = AppLocalizations.of(context);
+    const asDefault = -2;
+    final picked = await showKibuoSheet<int>(
+      context,
+      title: l.reminderRule,
+      builder: (context) => SettingsCard(
+        children: [
+          for (final value in [asDefault, -1, ...ReminderStore.dueChoices])
+            CheckChoice(
+              label: switch (value) {
+                asDefault =>
+                  _dueOn
+                      ? l.reminderRuleDefault(l.daysBefore(_dueDays))
+                      : l.reminderRuleOff,
+                -1 => l.reminderRuleNone,
+                _ => l.daysBefore(value),
+              },
+              help: '',
+              on: (_remind ?? asDefault) == value,
+              onTap: () => Navigator.of(context).pop(value),
+            ),
+        ],
+      ),
+    );
+    if (picked == null) return;
+    await widget.data.reminders?.setRuleDays(
+      widget.ruleId,
+      picked == asDefault ? null : picked,
+    );
+    _changed = true;
+    await _load();
   }
 
   Future<void> _edit() async {
@@ -479,6 +534,13 @@ class _RecurrenceScreenState extends State<RecurrenceScreen> {
                             ? l.recurrenceAskDraft
                             : l.recurrenceSaveDirect,
                       ),
+                      if (widget.data.reminders != null)
+                        EntryField(
+                          icon: KibuoIcons.clock,
+                          label: l.reminderRule,
+                          value: _remindText(l),
+                          onTap: _chooseReminder,
+                        ),
                     ],
                   ),
                   if (_past.isNotEmpty) ...[

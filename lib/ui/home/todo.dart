@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
@@ -16,6 +17,8 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
+import 'package:kibuo/ui/reminders/due_forecast.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -30,6 +33,8 @@ class HomeTodo extends TodoItem {
     : drafts = const [],
       currency = null,
       rateDays = 0,
+      due = null,
+      dueName = '',
       super(
         kind: over ? TodoKind.budgetOver : TodoKind.budgetNear,
         key: 'budget:${budget?.budget.id}',
@@ -39,6 +44,8 @@ class HomeTodo extends TodoItem {
     : budget = null,
       currency = null,
       rateDays = 0,
+      due = null,
+      dueName = '',
       super(kind: TodoKind.drafts, key: 'drafts');
 
   HomeTodo.recovery()
@@ -46,12 +53,27 @@ class HomeTodo extends TodoItem {
       drafts = const [],
       currency = null,
       rateDays = 0,
+      due = null,
+      dueName = '',
       super(kind: TodoKind.recovery, key: 'recovery');
 
   HomeTodo.rate(this.currency, this.rateDays)
     : budget = null,
       drafts = const [],
+      due = null,
+      dueName = '',
       super(kind: TodoKind.oldRate, key: 'rate:${currency?.code}');
+
+  /// A date to come that would leave its account short (PRODUCT).
+  HomeTodo.shortfall(DueItem this.due, this.dueName)
+    : budget = null,
+      drafts = const [],
+      currency = null,
+      rateDays = 0,
+      super(kind: TodoKind.shortfall, key: due.key);
+
+  final DueItem? due;
+  final String dueName;
 
   final BudgetLine? budget;
   final List<(TransactionInfo, OperationLabels)> drafts;
@@ -92,6 +114,18 @@ class TodoLoader {
             (t, await OperationLabels.of(context, data, t)),
         ]),
       );
+    }
+    // Short in the next three days (PRODUCT: Rappels).
+    final soon = [
+      for (final d in await dueForecast(data, now, days: 3))
+        if (d.missing != null) d,
+    ];
+    if (soon.isNotEmpty) {
+      if (!context.mounted) return const [];
+      final name = await dueNames(data, AppLocalizations.of(context));
+      for (final d in soon) {
+        items.add(HomeTodo.shortfall(d, name(d)));
+      }
     }
     final lock = this.lock;
     if (lock != null &&
@@ -157,6 +191,13 @@ class TodoActions {
         await showDraftsSheet(context, data, item.drafts);
       case TodoKind.recovery:
         await renewRecoveryCode(context, lock!);
+      case TodoKind.shortfall:
+        await Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) =>
+                RecurrenceScreen(data: data, ruleId: item.due!.planned.rule.id),
+          ),
+        );
       case TodoKind.oldRate:
         await Navigator.of(context).push<void>(
           MaterialPageRoute(
@@ -198,7 +239,11 @@ class TodoLook {
     required this.action,
     required this.name,
     this.dashed = false,
+    this.subColor,
   });
+
+  /// The second line's colour, when it is not the group's.
+  final Color? subColor;
 
   final IconData icon;
   final Color tint;
@@ -248,6 +293,25 @@ class TodoLook {
           action: l.todoValidate,
           name: title,
           dashed: true,
+        );
+      case TodoKind.shortfall:
+        final due = item.due!;
+        final missing = due.missing!;
+        return TodoLook._(
+          icon: KibuoIcons.warning,
+          tint: KibuoColors.warningTint,
+          ink: KibuoColors.warningInk,
+          title: l.todoShortfall(
+            item.dueName,
+            DateFormat.MMMd(lang).format(due.planned.day),
+          ),
+          subtitle: l.todoShortfallSub(
+            formatMoney(missing, currencyOf(missing.currency), lang),
+            due.account.name,
+          ),
+          action: l.todoSee,
+          name: item.dueName,
+          subColor: KibuoColors.warningInk,
         );
       case TodoKind.recovery:
         return TodoLook._(
@@ -390,9 +454,11 @@ class _TodoRow extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: KibuoType.caption.copyWith(
-                        color: urgent
-                            ? KibuoColors.danger
-                            : KibuoColors.inkSecondary,
+                        color:
+                            look.subColor ??
+                            (urgent
+                                ? KibuoColors.danger
+                                : KibuoColors.inkSecondary),
                       ),
                     ),
                   ],
