@@ -4050,6 +4050,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get typeDeleteAction;
+
+  /// Account form: opens Types de compte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer'**
+  String get typesManage;
 }
 
 class _AppLocalizationsDelegate
