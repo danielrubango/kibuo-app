@@ -14,6 +14,7 @@ import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/month_start_store.dart';
 import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/data/recurring_repository.dart';
+import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -33,6 +34,9 @@ import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
+import 'package:kibuo/ui/reminders/notifier.dart';
+import 'package:kibuo/ui/reminders/reminder_planner.dart';
+import 'package:kibuo/ui/reminders/reminders_screen.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/long_amounts_sheet.dart';
@@ -59,7 +63,10 @@ enum _Tab { home, operations, overview, more }
 /// Tap + for the « Ajouter » sheet; hold it for the fan, slide to a choice
 /// and lift the finger. Back from another tab returns to Accueil.
 class AppShell extends StatefulWidget {
-  const AppShell({super.key});
+  const AppShell({super.key, this.notifier});
+
+  /// The phone's notifications; none in most tests.
+  final Notifier? notifier;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -102,6 +109,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     OperationsScreen.show.removeListener(_showOperations);
+    _saved.removeListener(_reschedule);
     _saved.dispose();
     _homeShown.dispose();
     _thisMonth.dispose();
@@ -120,6 +128,31 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     LongAmountsStore(db).read().then((c) => longAmountsChoice.value = c);
     MonthStartStore(db).read().then((d) => monthStartChoice.value = d);
     _catchUp();
+    _saved.addListener(_reschedule);
+    widget.notifier
+        ?.start(_onNotice)
+        .then((payload) => payload == null ? null : _onNotice(payload));
+  }
+
+  /// A notification touched (PRODUCT: Rappels).
+  void _onNotice(String payload) {
+    if (!mounted) return;
+    if (payload == ReminderPlanner.entryPayload) {
+      _openEntry(AddChoice.expense);
+    }
+  }
+
+  /// The next 30 days' reminders, again.
+  Future<void> _reschedule() async {
+    final notifier = widget.notifier;
+    final db = KibuoData.maybeOf(context);
+    if (notifier == null || db == null || !mounted) return;
+    final l = AppLocalizations.of(context);
+    await ReminderPlanner(
+      store: ReminderStore(db),
+      notifier: notifier,
+      transactions: TransactionRepository(db),
+    ).refresh(l, DateTime.now());
   }
 
   /// Recurrences' missed dates (PRODUCT): at every opening and return.
@@ -127,7 +160,11 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     final db = KibuoData.maybeOf(context);
     if (db == null) return;
     final made = await RecurringRepository(db).catchUp(DateTime.now());
-    if (made > 0 && mounted) _saved.value++;
+    if (made > 0 && mounted) {
+      _saved.value++;
+    } else {
+      await _reschedule();
+    }
   }
 
   @override
@@ -404,6 +441,19 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
           ),
         if (db != null)
           RecurrencesSettingsRow(recurrences: RecurringRepository(db)),
+        if (db != null && widget.notifier != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).remindersTitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => RemindersScreen(
+                  store: ReminderStore(db),
+                  notifier: widget.notifier!,
+                  onChanged: _reschedule,
+                ),
+              ),
+            ),
+          ),
         if (lock != null)
           SettingsRow(
             label: AppLocalizations.of(context).securityTitle,

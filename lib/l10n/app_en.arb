@@ -669,5 +669,17 @@
   "typeDeleteTitle": "Delete the type {name}?",
   "typeDeleteText": "It leaves the list of types; no account uses it.",
   "typeDeleteAction": "Delete",
-  "typesManage": "Manage"
+  "typesManage": "Manage",
+  "remindersTitle": "Reminders and alerts",
+  "remindersEntryGroup": "Entries",
+  "remindersEntry": "Note my operations",
+  "remindersEntryHelp": "Every day at {time}",
+  "remindersEntryOffHelp": "An evening reminder, if nothing was noted",
+  "remindersTime": "Time",
+  "remindersBlocked": "Notifications blocked",
+  "remindersOpenSettings": "Open the phone’s settings",
+  "remindersTimeTitle": "Reminder time",
+  "remindersTimeSave": "Save",
+  "reminderEntryTitle": "Note my operations",
+  "reminderEntryBody": "Nothing noted today. An expense, an income?"
 }

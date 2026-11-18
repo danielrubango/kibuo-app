@@ -4056,6 +4056,78 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Gérer'**
   String get typesManage;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappels et alertes'**
+  String get remindersTitle;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisie'**
+  String get remindersEntryGroup;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Noter mes opérations'**
+  String get remindersEntry;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque jour à {time}'**
+  String remindersEntryHelp(String time);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un rappel le soir, si rien n’est noté'**
+  String get remindersEntryOffHelp;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heure'**
+  String get remindersTime;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications bloquées'**
+  String get remindersBlocked;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir les réglages du téléphone'**
+  String get remindersOpenSettings;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heure du rappel'**
+  String get remindersTimeTitle;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get remindersTimeSave;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Noter mes opérations'**
+  String get reminderEntryTitle;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien n’est noté aujourd’hui. Une dépense, un revenu ?'**
+  String get reminderEntryBody;
 }
 
 class _AppLocalizationsDelegate
