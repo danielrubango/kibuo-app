@@ -2496,4 +2496,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get typeDeleteAction => 'Supprimer';
+
+  @override
+  String get typesManage => 'Gérer';
 }

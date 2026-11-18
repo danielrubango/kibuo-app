@@ -1324,5 +1324,7 @@
   "typeDeleteText": "Il disparaît de la liste des types ; aucun compte ne l’utilise.",
   "@typeDeleteText": {"description": "Account types management."},
   "typeDeleteAction": "Supprimer",
-  "@typeDeleteAction": {"description": "Account types management."}
+  "@typeDeleteAction": {"description": "Account types management."},
+  "typesManage": "Gérer",
+  "@typesManage": {"description": "Account form: opens Types de compte."}
 }

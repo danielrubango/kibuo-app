@@ -106,12 +106,10 @@ class TodoLoader {
         ..remove(main);
       for (final code in codes) {
         final rate = await data.currencies.latestRate(main, code);
-        if (rate == null || !rateIsOld(rate.setOn, now)) continue;
-        final from = DateTime(
-          rate.setOn.year,
-          rate.setOn.month,
-          rate.setOn.day,
-        );
+        // In the phone's own days, not universal time's.
+        final setOn = rate?.setOn.toLocal();
+        if (setOn == null || !rateIsOld(setOn, now)) continue;
+        final from = DateTime(setOn.year, setOn.month, setOn.day);
         final today = DateTime(now.year, now.month, now.day);
         items.add(
           HomeTodo.rate(
