@@ -23,6 +23,28 @@ Future<bool> handOverRecoveryCode(BuildContext context, String code) async {
   return proved ?? false;
 }
 
+/// A new recovery code to write down, then its proof; the code is asked
+/// first when there is one (Sécurité, « À traiter »).
+Future<void> renewRecoveryCode(
+  BuildContext context,
+  LockController lock,
+) async {
+  if (lock.hasPin) {
+    final ok = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (routeContext) => UnlockScreen(
+          controller: lock,
+          confirmOnly: true,
+          onUnlocked: () => Navigator.of(routeContext).pop(true),
+        ),
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+  }
+  final code = await lock.newRecoveryCode();
+  if (context.mounted) await handOverRecoveryCode(context, code);
+}
+
 /// « Notez votre code de récupération ».
 class RecoveryShowScreen extends StatelessWidget {
   const RecoveryShowScreen({super.key, required this.code});
@@ -501,22 +523,8 @@ class RecoverySettingsScreen extends StatelessWidget {
 
   final LockController lock;
 
-  Future<void> _newCode(BuildContext context) async {
-    if (lock.hasPin) {
-      final ok = await Navigator.of(context).push<bool>(
-        MaterialPageRoute(
-          builder: (routeContext) => UnlockScreen(
-            controller: lock,
-            confirmOnly: true,
-            onUnlocked: () => Navigator.of(routeContext).pop(true),
-          ),
-        ),
-      );
-      if (ok != true || !context.mounted) return;
-    }
-    final code = await lock.newRecoveryCode();
-    if (context.mounted) await handOverRecoveryCode(context, code);
-  }
+  Future<void> _newCode(BuildContext context) =>
+      renewRecoveryCode(context, lock);
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(

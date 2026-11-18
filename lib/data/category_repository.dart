@@ -59,7 +59,15 @@ class CategoryRepository {
   /// Adds the provided categories once. Their ids are fixed (« default-
   /// food »), so two phones that start apart do not end up with two « Repas »
   /// once synced.
-  Future<void> _ensureProvided() async {
+  ///
+  /// Two screens may ask at once (the home and the list, at start): they
+  /// share the same setup instead of writing it twice.
+  Future<void> _ensureProvided() =>
+      _providing[_db] ??= _provide().whenComplete(() => _providing[_db] = null);
+
+  static final _providing = Expando<Future<void>>();
+
+  Future<void> _provide() async {
     final flag = await (_db.select(
       _db.preferences,
     )..where((p) => p.name.equals(_seeded))).getSingleOrNull();
@@ -112,7 +120,12 @@ class CategoryRepository {
 
   /// « Régularisation » came after the first categories: added once, at the
   /// end of each list, for new and older data alike.
-  Future<void> _ensureAdjustments() async {
+  Future<void> _ensureAdjustments() =>
+      _adjusting[_db] ??= _adjust().whenComplete(() => _adjusting[_db] = null);
+
+  static final _adjusting = Expando<Future<void>>();
+
+  Future<void> _adjust() async {
     final flag = await (_db.select(
       _db.preferences,
     )..where((p) => p.name.equals(_adjustSeeded))).getSingleOrNull();

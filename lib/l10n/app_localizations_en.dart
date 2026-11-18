@@ -2269,4 +2269,157 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get draftsLateAndToday => 'Late and today';
+
+  @override
+  String get todoTitle => 'To do';
+
+  @override
+  String todoSeeAll(String count) {
+    return 'See all · $count';
+  }
+
+  @override
+  String todoListHelp(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count things',
+      one: '1 thing',
+    );
+    return '$_temp0, most urgent first';
+  }
+
+  @override
+  String get todoUrgent => 'Urgent';
+
+  @override
+  String get todoWeek => 'This week';
+
+  @override
+  String get todoReminders => 'Reminders';
+
+  @override
+  String get todoBudgetOverSub => 'Budget exceeded';
+
+  @override
+  String todoBudgetNearSub(String amount) {
+    return 'Budget · $amount left';
+  }
+
+  @override
+  String get todoSee => 'See';
+
+  @override
+  String todoDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts',
+      one: '1 draft',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get todoValidate => 'Confirm';
+
+  @override
+  String get todoRecovery => 'Recovery code';
+
+  @override
+  String get todoRecoverySub => 'Not checked';
+
+  @override
+  String get todoRecoveryAction => 'Check';
+
+  @override
+  String todoRate(String currency) {
+    return '$currency rate';
+  }
+
+  @override
+  String todoRateSub(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get todoRateAction => 'Edit';
+
+  @override
+  String get todoLater => 'Later';
+
+  @override
+  String todoPutOff(String name) {
+    return 'Put off until tomorrow: $name';
+  }
+
+  @override
+  String get toastUndo => 'Undo';
+
+  @override
+  String get upcomingTitle => 'Coming up';
+
+  @override
+  String get upcomingSeeAll => 'See all';
+
+  @override
+  String draftsSheetTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to confirm',
+      one: 'Confirm this draft?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get draftsSheetHelp =>
+      'Touch a draft to change it or confirm it alone.';
+
+  @override
+  String draftsSheetValidate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Confirm the $count',
+      one: 'Confirm the draft',
+      zero: 'Nothing to confirm',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get draftsSheetValidateOne => 'Confirm';
+
+  @override
+  String get draftsSheetLater => 'Later';
+
+  @override
+  String get draftsSheetNoRate => 'Rate missing: confirm it alone';
+
+  @override
+  String get draftsSheetFloor => 'Would go below the floor: confirm it alone';
+
+  @override
+  String draftsSheetLine(String kind, String day, String account) {
+    return '$kind · $day · $account';
+  }
+
+  @override
+  String draftsValidated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts confirmed',
+      one: '1 draft confirmed',
+    );
+    return '$_temp0';
+  }
 }

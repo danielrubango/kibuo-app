@@ -140,4 +140,14 @@ void main() {
     expect(out2.last.key, 'adjustExpense');
     expect(out2.where((c) => c.key == 'adjustExpense'), hasLength(1));
   });
+
+  test('two screens asking at once: the categories are made once', () async {
+    final other = CategoryRepository(db);
+    final both = await Future.wait([
+      repo.categories(CategoryKind.out),
+      other.categories(CategoryKind.out),
+    ]);
+    expect(both[0].length, both[1].length);
+    expect((await repo.categories(CategoryKind.out)).length, both[0].length);
+  });
 }
