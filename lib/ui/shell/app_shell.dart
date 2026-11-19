@@ -22,6 +22,7 @@ import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
+import 'package:kibuo/ui/budgets/budget_alerts.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
@@ -110,6 +111,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     OperationsScreen.show.removeListener(_showOperations);
     _saved.removeListener(_reschedule);
+
     _saved.dispose();
     _homeShown.dispose();
     _thisMonth.dispose();
@@ -127,11 +129,35 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     _choiceRead = true;
     LongAmountsStore(db).read().then((c) => longAmountsChoice.value = c);
     MonthStartStore(db).read().then((d) => monthStartChoice.value = d);
-    _catchUp();
+    _open();
     _saved.addListener(_reschedule);
+
     widget.notifier
         ?.start(_onNotice)
         .then((payload) => payload == null ? null : _onNotice(payload));
+  }
+
+  /// At opening: thresholds already crossed are said in silence, then the
+  /// recurrences arrive (and may cross one, said).
+  Future<void> _open() async {
+    await _budgetAlerts()?.settle(DateTime.now());
+    await _catchUp();
+  }
+
+  BudgetAlerts? _budgetAlerts() {
+    final db = KibuoData.maybeOf(context);
+    final data = _entryData(context);
+    if (db == null || data == null) return null;
+    return BudgetAlerts(
+      loader: BudgetLoader(data, BudgetRepository(db)),
+      store: ReminderStore(db),
+    );
+  }
+
+  /// After a save or a recurrence's arrival (PRODUCT: Alertes de budget).
+  Future<void> _checkBudgets() async {
+    if (!mounted) return;
+    await _budgetAlerts()?.check(context, DateTime.now());
   }
 
   /// A notification touched (PRODUCT: Rappels).
@@ -173,6 +199,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     final made = await RecurringRepository(db).catchUp(DateTime.now());
     if (made > 0 && mounted) {
       _saved.value++;
+      await _checkBudgets();
     } else {
       await _reschedule();
     }
@@ -591,7 +618,13 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       _ => null,
     };
     if (data != null && kind != null) {
-      return runEntry(context, data, kind: kind, onSaved: _afterSave);
+      // The alert once the saved sheet is gone (PRODUCT: Alertes).
+      return runEntry(
+        context,
+        data,
+        kind: kind,
+        onSaved: _afterSave,
+      ).then((_) => _checkBudgets());
     }
     return Navigator.of(context).push(
       MaterialPageRoute<void>(

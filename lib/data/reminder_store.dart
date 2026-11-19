@@ -47,4 +47,32 @@ class ReminderStore {
 
   Future<void> setRuleDays(String ruleId, int? days) =>
       _prefs.write('reminder_rule_$ruleId', days == null ? '' : '$days');
+
+  static const _at80 = 'budget_alert_80';
+  static const _at100 = 'budget_alert_100';
+  static const _alerted = 'budget_alerted';
+
+  /// « À 80 % du budget », « À 100 % du budget »: on by default.
+  Future<bool> budgetAt80() async => await _prefs.read(_at80) != 'false';
+  Future<bool> budgetAt100() async => await _prefs.read(_at100) != 'false';
+  Future<void> setBudgetAt80(bool on) => _prefs.write(_at80, '$on');
+  Future<void> setBudgetAt100(bool on) => _prefs.write(_at100, '$on');
+
+  /// The thresholds already said (« budget:id:202611:80 »).
+  Future<Set<String>> budgetAlerted() async =>
+      (await _prefs.read(_alerted) ?? '')
+          .split(',')
+          .where((k) => k.isNotEmpty)
+          .toSet();
+
+  /// Keeps [keys] said, and forgets the months before [month].
+  Future<void> addBudgetAlerted(Iterable<String> keys, int month) async {
+    final kept = {
+      for (final k in await budgetAlerted())
+        if ((int.tryParse(k.split(':').elementAtOrNull(2) ?? '') ?? 0) >= month)
+          k,
+      ...keys,
+    };
+    await _prefs.write(_alerted, kept.join(','));
+  }
 }

@@ -1402,5 +1402,21 @@
   "plannedCancelAction": "Annuler l’opération",
   "@plannedCancelAction": {"description": "A planned operation's card."},
   "plannedCancelled": "Opération prévue annulée : {name}",
-  "@plannedCancelled": {"description": "A planned operation's card.", "placeholders": {"name": {"type": "String"}}}
+  "@plannedCancelled": {"description": "A planned operation's card.", "placeholders": {"name": {"type": "String"}}},
+  "budgetAlertNear": "{name} à {percent} % du budget · {left} restants",
+  "@budgetAlertNear": {"description": "Budget alerts.", "placeholders": {"name": {"type": "String"}, "percent": {"type": "String"}, "left": {"type": "String"}}},
+  "budgetAlertFull": "{name} à 100 % du budget",
+  "@budgetAlertFull": {"description": "Budget alerts.", "placeholders": {"name": {"type": "String"}}},
+  "budgetAlertOver": "{name} dépassé de {over}",
+  "@budgetAlertOver": {"description": "Budget alerts.", "placeholders": {"name": {"type": "String"}, "over": {"type": "String"}}},
+  "budgetAlertSee": "Voir",
+  "@budgetAlertSee": {"description": "Budget alerts."},
+  "remindersBudgetGroup": "Budgets",
+  "@remindersBudgetGroup": {"description": "Budget alerts."},
+  "remindersAt80": "À 80 % du budget",
+  "@remindersAt80": {"description": "Budget alerts."},
+  "remindersAt100": "À 100 % du budget",
+  "@remindersAt100": {"description": "Budget alerts."},
+  "remindersBudgetHelp": "Une alerte par catégorie",
+  "@remindersBudgetHelp": {"description": "Budget alerts."}
 }

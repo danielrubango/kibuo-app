@@ -707,5 +707,13 @@
   "plannedCancelTitle": "Cancel the planned operation?",
   "plannedCancelText": "It leaves the planned operations; nothing was counted yet.",
   "plannedCancelAction": "Cancel the operation",
-  "plannedCancelled": "Planned operation cancelled: {name}"
+  "plannedCancelled": "Planned operation cancelled: {name}",
+  "budgetAlertNear": "{name} at {percent}% of its budget · {left} left",
+  "budgetAlertFull": "{name} at 100% of its budget",
+  "budgetAlertOver": "{name} over by {over}",
+  "budgetAlertSee": "See",
+  "remindersBudgetGroup": "Budgets",
+  "remindersAt80": "At 80% of the budget",
+  "remindersAt100": "At 100% of the budget",
+  "remindersBudgetHelp": "One alert per category"
 }
