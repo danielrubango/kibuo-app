@@ -40,6 +40,8 @@ class _RemindersScreenState extends State<RemindersScreen>
   bool? _on;
   int _minute = ReminderStore.defaultEntryMinute;
   bool _dueOn = false;
+  bool _at80 = true;
+  bool _at100 = true;
   int _dueDays = ReminderStore.defaultDueDays;
   bool _blocked = false;
 
@@ -68,6 +70,8 @@ class _RemindersScreenState extends State<RemindersScreen>
     final allowed = await widget.notifier.allowed();
     final dueOn = await widget.store.dueOn();
     final dueDays = await widget.store.dueDays();
+    final at80 = await widget.store.budgetAt80();
+    final at100 = await widget.store.budgetAt100();
     if (!mounted) return;
     setState(() {
       _on = on && allowed;
@@ -75,6 +79,8 @@ class _RemindersScreenState extends State<RemindersScreen>
       // On by default, but only once Android allows it.
       _dueOn = dueOn && allowed;
       _dueDays = dueDays;
+      _at80 = at80;
+      _at100 = at100;
       _blocked = _blocked && !allowed;
     });
   }
@@ -206,6 +212,31 @@ class _RemindersScreenState extends State<RemindersScreen>
                 ),
                 const SizedBox(height: 8),
                 HelpText(l.remindersRuleNote),
+                // Messages in kibuo, not notifications: no leave to ask.
+                const SizedBox(height: GroupTitle.before),
+                GroupTitle(title: l.remindersBudgetGroup),
+                SettingsCard(
+                  children: [
+                    SettingsSwitch(
+                      label: l.remindersAt80,
+                      help: l.remindersBudgetHelp,
+                      value: _at80,
+                      onChanged: (on) async {
+                        await widget.store.setBudgetAt80(on);
+                        if (mounted) setState(() => _at80 = on);
+                      },
+                    ),
+                    SettingsSwitch(
+                      label: l.remindersAt100,
+                      help: l.remindersBudgetHelp,
+                      value: _at100,
+                      onChanged: (on) async {
+                        await widget.store.setBudgetAt100(on);
+                        if (mounted) setState(() => _at100 = on);
+                      },
+                    ),
+                  ],
+                ),
                 if (_blocked) ...[
                   const SizedBox(height: 4),
                   Align(
