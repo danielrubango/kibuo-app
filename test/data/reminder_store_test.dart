@@ -35,4 +35,15 @@ void main() {
     expect(await store.dueDays(), 7);
     expect(await store.dueOn(), isFalse);
   });
+
+  test('budget alerts: on, and what was said this month only', () async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+    addTearDown(db.close);
+    final store = ReminderStore(db);
+    expect(await store.budgetAt80(), isTrue);
+    expect(await store.budgetAt100(), isTrue);
+    await store.addBudgetAlerted(['budget:r:202610:80'], 202610);
+    await store.addBudgetAlerted(['budget:r:202611:80'], 202611);
+    expect(await store.budgetAlerted(), {'budget:r:202611:80'});
+  });
 }
