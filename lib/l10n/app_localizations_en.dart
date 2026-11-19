@@ -2643,4 +2643,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String plannedCancelled(String name) {
     return 'Planned operation cancelled: $name';
   }
+
+  @override
+  String budgetAlertNear(String name, String percent, String left) {
+    return '$name at $percent% of its budget · $left left';
+  }
+
+  @override
+  String budgetAlertFull(String name) {
+    return '$name at 100% of its budget';
+  }
+
+  @override
+  String budgetAlertOver(String name, String over) {
+    return '$name over by $over';
+  }
+
+  @override
+  String get budgetAlertSee => 'See';
+
+  @override
+  String get remindersBudgetGroup => 'Budgets';
+
+  @override
+  String get remindersAt80 => 'At 80% of the budget';
+
+  @override
+  String get remindersAt100 => 'At 100% of the budget';
+
+  @override
+  String get remindersBudgetHelp => 'One alert per category';
 }

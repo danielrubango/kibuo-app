@@ -4284,6 +4284,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Opération prévue annulée : {name}'**
   String plannedCancelled(String name);
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} à {percent} % du budget · {left} restants'**
+  String budgetAlertNear(String name, String percent, String left);
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} à 100 % du budget'**
+  String budgetAlertFull(String name);
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} dépassé de {over}'**
+  String budgetAlertOver(String name, String over);
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir'**
+  String get budgetAlertSee;
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Budgets'**
+  String get remindersBudgetGroup;
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'À 80 % du budget'**
+  String get remindersAt80;
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'À 100 % du budget'**
+  String get remindersAt100;
+
+  /// Budget alerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une alerte par catégorie'**
+  String get remindersBudgetHelp;
 }
 
 class _AppLocalizationsDelegate
