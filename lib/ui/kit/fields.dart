@@ -70,7 +70,11 @@ class KibuoTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.sentences,
     this.onFocus,
     this.focusNode,
+    this.lines = 1,
   });
+
+  /// More than one: a message, that grows to this many lines.
+  final int lines;
 
   final String? label;
   final String? hint;
@@ -107,6 +111,8 @@ class KibuoTextField extends StatelessWidget {
           child: TextField(
             controller: controller,
             focusNode: focusNode,
+            minLines: lines > 1 ? 3 : null,
+            maxLines: lines,
             onChanged: onChanged,
             autofocus: autofocus,
             textCapitalization: textCapitalization,

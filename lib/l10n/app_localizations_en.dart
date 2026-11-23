@@ -3156,4 +3156,114 @@ class AppLocalizationsEn extends AppLocalizations {
   String debtLeftOf(String left, String total) {
     return '$left left of $total';
   }
+
+  @override
+  String get debtForgive => 'Settle without payment';
+
+  @override
+  String debtForgiveText(String amount) {
+    return 'What is left ($amount) will be given up. Nothing moves on your accounts, and it can\'t be taken back.';
+  }
+
+  @override
+  String debtForgivenOn(String date, String amount) {
+    return 'Settled without payment on $date: $amount given up';
+  }
+
+  @override
+  String debtForgivenNote(String date, String amount) {
+    return 'Settled without payment on $date, given up: $amount';
+  }
+
+  @override
+  String get debtNoRepaymentForgiven =>
+      'No repayment: settled without payment.';
+
+  @override
+  String debtsCountOwe(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count debts',
+      one: '1 debt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtsCountOwed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count owed to me',
+      one: '1 owed to me',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtsNothing => 'Nothing';
+
+  @override
+  String debtClaimTitle(String name) {
+    return 'Claim from $name';
+  }
+
+  @override
+  String debtClaimOwes(String name, String amount) {
+    return '$name owes you $amount';
+  }
+
+  @override
+  String get debtClaimMessageLabel => 'Message';
+
+  @override
+  String debtClaimMessage(String name, String amount) {
+    return 'Hi $name, a small reminder about the $amount you owe me. Thanks!';
+  }
+
+  @override
+  String debtClaimMessageDue(String name, String amount, String date) {
+    return 'Hi $name, a small reminder about the $amount you were to give back on $date. Thanks!';
+  }
+
+  @override
+  String get debtClaimSend => 'Send';
+
+  @override
+  String get debtClaimAction => 'Claim';
+
+  @override
+  String debtComingOwe(String name) {
+    return 'Pay back $name';
+  }
+
+  @override
+  String debtComingOwed(String name) {
+    return '$name pays me back';
+  }
+
+  @override
+  String reminderDebtOwe(String name, String amount, String day) {
+    return 'Pay back $name: $amount, due $day';
+  }
+
+  @override
+  String reminderDebtOwed(String name, String amount, String day) {
+    return '$name is to pay you back $amount on $day';
+  }
+
+  @override
+  String get reminderDebtToday => 'It\'s today.';
+
+  @override
+  String reminderDebtSoon(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'In $days days.',
+      one: 'It\'s tomorrow.',
+    );
+    return '$_temp0';
+  }
 }

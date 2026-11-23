@@ -254,4 +254,50 @@ void main() {
       expect(await balance(), const Money(10000, 'USD'));
     });
   });
+
+  test(
+    'settled without payment: nothing moves, a note on its operation',
+    () async {
+      final id = await debts.create(
+        direction: DebtDirection.owe,
+        person: 'Patrick',
+        amount: const Money(20000, 'USD'),
+        openedOn: DateTime(2026, 11, 1),
+        accountId: mpesa,
+      );
+      await debts.repay(
+        id,
+        amount: const Money(5000, 'USD'),
+        accountId: mpesa,
+        date: DateTime(2026, 11, 10),
+      );
+      await debts.settleWithoutPayment(
+        id,
+        on: DateTime(2026, 11, 23),
+        note: 'Soldée sans paiement',
+      );
+      final line = (await debts.debts()).single;
+      expect(line.settled, isTrue);
+      expect(line.left, const Money(0, 'USD'));
+      expect(line.forgiven, const Money(15000, 'USD'));
+      expect(line.settledOn, DateTime(2026, 11, 23));
+      // 100 + 200 borrowed − 50 repaid: nothing more moved.
+      expect(await balance(), const Money(25000, 'USD'));
+      final opening = (await transactions.all()).firstWhere(
+        (t) => t.kind == EntryKind.income,
+      );
+      expect(opening.note, contains('Soldée sans paiement'));
+      expect(opening.note, startsWith('Patrick'));
+      // Given up for good: no repayment any more.
+      expect(
+        () => debts.repay(
+          id,
+          amount: const Money(100, 'USD'),
+          accountId: mpesa,
+          date: DateTime(2026, 11, 24),
+        ),
+        throwsArgumentError,
+      );
+    },
+  );
 }

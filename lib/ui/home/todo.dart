@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
@@ -18,6 +19,9 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/obligations/claim_sheet.dart';
+import 'package:kibuo/ui/obligations/debt_screen.dart';
+import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/reminders/due_forecast.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -36,6 +40,7 @@ class HomeTodo extends TodoItem {
       rateDays = 0,
       due = null,
       dueName = '',
+      debt = null,
       super(
         kind: over ? TodoKind.budgetOver : TodoKind.budgetNear,
         key: 'budget:${budget?.budget.id}',
@@ -47,6 +52,7 @@ class HomeTodo extends TodoItem {
       rateDays = 0,
       due = null,
       dueName = '',
+      debt = null,
       super(kind: TodoKind.drafts, key: 'drafts');
 
   HomeTodo.recovery()
@@ -56,6 +62,7 @@ class HomeTodo extends TodoItem {
       rateDays = 0,
       due = null,
       dueName = '',
+      debt = null,
       super(kind: TodoKind.recovery, key: 'recovery');
 
   HomeTodo.rate(this.currency, this.rateDays)
@@ -63,6 +70,7 @@ class HomeTodo extends TodoItem {
       drafts = const [],
       due = null,
       dueName = '',
+      debt = null,
       super(kind: TodoKind.oldRate, key: 'rate:${currency?.code}');
 
   /// A date to come that would leave its account short (PRODUCT).
@@ -71,7 +79,20 @@ class HomeTodo extends TodoItem {
       drafts = const [],
       currency = null,
       rateDays = 0,
+      debt = null,
       super(kind: TodoKind.shortfall, key: due.key);
+
+  /// A debt or receivable late, due today or this week (PRODUCT).
+  HomeTodo.debt(DebtLine this.debt, TodoKind kind)
+    : budget = null,
+      drafts = const [],
+      currency = null,
+      rateDays = 0,
+      due = null,
+      dueName = '',
+      super(kind: kind, key: 'debt:${debt.id}');
+
+  final DebtLine? debt;
 
   final DueItem? due;
   final String dueName;
@@ -126,6 +147,19 @@ class TodoLoader {
       final name = await dueNames(data, AppLocalizations.of(context));
       for (final d in soon) {
         items.add(HomeTodo.shortfall(d, name(d)));
+      }
+    }
+    // Debts: late or due today, urgent; due within 7 days, this week.
+    for (final d in await data.debts?.debts() ?? const <DebtLine>[]) {
+      if (d.settled || d.due == null) continue;
+      final (state, days) = debtState(d, now);
+      final owe = d.direction == DebtDirection.owe;
+      if (state == DebtState.late || state == DebtState.today) {
+        items.add(
+          HomeTodo.debt(d, owe ? TodoKind.debtLate : TodoKind.receivableLate),
+        );
+      } else if (days != null && days <= 7) {
+        items.add(HomeTodo.debt(d, TodoKind.debtSoon));
       }
     }
     final lock = this.lock;
@@ -198,6 +232,20 @@ class TodoActions {
         await Navigator.of(context).push<void>(
           MaterialPageRoute(
             builder: (_) => CurrenciesScreen(repository: data.currencies),
+          ),
+        );
+      case TodoKind.debtLate:
+        final debts = data.debts;
+        final detail = await debts?.detail(item.debt!.id);
+        if (detail == null || !context.mounted) break;
+        await repayDebt(context, data: data, debts: debts!, detail: detail);
+      case TodoKind.receivableLate:
+        await showClaimSheet(context, item.debt!);
+      case TodoKind.debtSoon:
+        await Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) =>
+                DebtScreen(data: data, debts: data.debts!, id: item.debt!.id),
           ),
         );
     }
@@ -318,6 +366,29 @@ class TodoLook {
           subtitle: l.todoRecoverySub,
           action: l.todoRecoveryAction,
           name: l.todoRecovery,
+        );
+      case TodoKind.debtLate || TodoKind.receivableLate || TodoKind.debtSoon:
+        final d = item.debt!;
+        final owe = d.direction == DebtDirection.owe;
+        final urgent = item.kind != TodoKind.debtSoon;
+        final word = debtWord(l, d, DateTime.now());
+        return TodoLook._(
+          icon: KibuoIcons.handCoins,
+          tint: owe ? KibuoColors.debtTint : KibuoColors.accentTintStrong,
+          ink: owe ? KibuoColors.debtInk : KibuoColors.accent,
+          title:
+              '${d.person} · '
+              '${formatMoney(d.left, currencyOf(d.left.currency), lang)}',
+          subtitle:
+              '${owe ? l.debtTagOwe : l.debtTagOwed} · '
+              '${word[0].toLowerCase()}${word.substring(1)}',
+          action: switch (item.kind) {
+            TodoKind.debtLate => l.debtRepay,
+            TodoKind.receivableLate => l.debtClaimAction,
+            _ => l.todoSee,
+          },
+          name: d.person,
+          subColor: urgent ? KibuoColors.danger : null,
         );
       case TodoKind.oldRate:
         final title = l.todoRate(

@@ -19,6 +19,7 @@ import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart' show debtWord;
+import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
@@ -108,6 +109,37 @@ class _DebtScreenState extends State<DebtScreen> {
       Navigator.of(context).pop();
       return;
     }
+    await _load();
+  }
+
+  Future<void> _forgive() async {
+    final detail = _detail;
+    if (detail == null) return;
+    final l = AppLocalizations.of(context);
+    final d = detail.line;
+    final left = _money(context, d.left);
+    final sure = await confirmRemoval(
+      context,
+      title: l.debtForgive,
+      summary: Row(
+        children: [
+          Expanded(child: Text(d.person, style: KibuoType.itemName)),
+          Text(left, style: KibuoType.cardTitle),
+        ],
+      ),
+      text: l.debtForgiveText(left),
+      action: l.debtForgive,
+    );
+    if (!sure || !mounted) return;
+    final now = widget.now();
+    await widget.debts.settleWithoutPayment(
+      d.id,
+      on: now,
+      note: l.debtForgivenNote(
+        DateFormat.MMMMd(_lang(context)).format(now),
+        left,
+      ),
+    );
     await _load();
   }
 
@@ -223,6 +255,18 @@ class _DebtScreenState extends State<DebtScreen> {
                     ),
                   ],
                 ),
+                if (d.forgivenSettled && d.settledOn != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    l.debtForgivenOn(
+                      DateFormat.MMMMd(_lang(context)).format(d.settledOn!),
+                      _money(context, d.forgiven!),
+                    ),
+                    style: KibuoType.body
+                        .copyWith(fontSize: 13, color: KibuoColors.accent)
+                        .weight(600),
+                  ),
+                ],
                 const SizedBox(height: 14),
                 const Divider(height: 1, color: KibuoColors.background),
                 const SizedBox(height: 12),
@@ -247,6 +291,16 @@ class _DebtScreenState extends State<DebtScreen> {
               ],
             ),
           ),
+          // Its own reminder, as for a recurrence (PRODUCT); none without a
+          // due date or once settled.
+          if (!d.settled && due != null && widget.data.reminders != null) ...[
+            const SizedBox(height: 12),
+            SettingsCard(
+              children: [
+                RuleReminderField(store: widget.data.reminders!, ruleId: d.id),
+              ],
+            ),
+          ],
           const SizedBox(height: GroupTitle.before),
           GroupTitle(
             title: l.debtRepayments,
@@ -257,7 +311,11 @@ class _DebtScreenState extends State<DebtScreen> {
           if (detail.repayments.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: HelpText(l.debtNoRepayment),
+              child: HelpText(
+                d.forgivenSettled
+                    ? l.debtNoRepaymentForgiven
+                    : l.debtNoRepayment,
+              ),
             )
           else
             SettingsCard(
@@ -303,6 +361,17 @@ class _DebtScreenState extends State<DebtScreen> {
                   ),
               ],
             ),
+          // Given up: what is left goes, nothing moves (PRODUCT).
+          if (!d.settled) ...[
+            const SizedBox(height: 12),
+            Center(
+              child: TextAction(
+                label: l.debtForgive,
+                color: KibuoColors.inkSecondary,
+                onPressed: _forgive,
+              ),
+            ),
+          ],
         ],
       ),
       bottomNavigationBar: d.settled

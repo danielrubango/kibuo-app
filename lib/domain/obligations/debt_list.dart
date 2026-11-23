@@ -26,6 +26,7 @@ class DebtLine {
     required this.left,
     this.due,
     this.settledOn,
+    this.forgiven,
   });
 
   final String id;
@@ -41,8 +42,14 @@ class DebtLine {
   /// None: « Sans échéance ».
   final DateTime? due;
 
-  /// The last repayment's day, once nothing is left.
+  /// The last repayment's day, once nothing is left; or the day it was
+  /// settled without payment.
   final DateTime? settledOn;
+
+  /// What was given up when settled without payment.
+  final Money? forgiven;
+
+  bool get forgivenSettled => forgiven != null && forgiven!.minor > 0;
 
   bool get settled => left.minor <= 0;
 

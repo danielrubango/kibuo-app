@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
@@ -64,8 +66,49 @@ class ReminderPlanner {
     }
     if (data case final data? when await notifier.allowed()) {
       notices.addAll(await _dues(data, l, now));
+      notices.addAll(await _debts(data, l, now));
     }
     await notifier.replace(notices);
+  }
+
+  /// Each debt's own reminder, at its delay; « Par défaut » follows the
+  /// due dates' setting; none without a due date (PRODUCT: Dettes).
+  Future<List<Notice>> _debts(
+    EntryData data,
+    AppLocalizations l,
+    DateTime now,
+  ) async {
+    final debts = data.debts;
+    if (debts == null) return const [];
+    final dueOn = await store.dueOn();
+    final dueDays = await store.dueDays();
+    final lang = l.localeName;
+    final notices = <Notice>[];
+    for (final d in await debts.debts()) {
+      final due = d.due;
+      if (d.settled || due == null) continue;
+      final own = await store.ruleDays(d.id);
+      final days = own ?? (dueOn ? dueDays : -1);
+      if (days < 0) continue;
+      final at = reminderAt(DateTime(due.year, due.month, due.day), days);
+      if (!at.isAfter(now) || at.isAfter(now.add(const Duration(days: 30)))) {
+        continue;
+      }
+      final amount = formatMoney(d.left, currencyOf(d.left.currency), lang);
+      final day = DateFormat.EEEE(lang).format(due);
+      notices.add(
+        Notice(
+          id: 3000 + notices.length,
+          at: at,
+          title: d.direction == DebtDirection.owe
+              ? l.reminderDebtOwe(d.person, amount, day)
+              : l.reminderDebtOwed(d.person, amount, day),
+          body: days == 0 ? l.reminderDebtToday : l.reminderDebtSoon(days),
+          payload: homePayload,
+        ),
+      );
+    }
+    return notices;
   }
 
   /// One notification per due date, at its delay (PRODUCT: Rappels).

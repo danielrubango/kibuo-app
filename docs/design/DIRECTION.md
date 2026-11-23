@@ -67,6 +67,8 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Opérations d'une dette** (validé le 23 novembre 2026, canvas OpDetteA4). Carte blanche bordée d'un trait fin à la couleur de son sens (pêche pour une dette, vert pour une créance), l'étiquette « Dette » ou « Créance », et un titre qui dit l'action : « Emprunté à Jean », « Remboursé à Jean », « Prêté à Jean », « Remboursé par Jean ».
 
+**Marge sous le contenu.** Une page avec le menu du bas (Accueil, Opérations, Aperçu, Plus) garde 160 sous son contenu : le menu, son +, son fondu, puis de quoi lire les dernières lignes au clair (validé le 23 novembre 2026).
+
 **Retour au toucher.** Trois forces de vibration, selon le réglage du téléphone : légère (touches, choix, onglets, ouvrir une ligne), plus franche (ce qui enregistre), marquée (un refus, un glissement qui passe son seuil).
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.

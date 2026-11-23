@@ -272,6 +272,11 @@ class Debts extends Table with SyncColumns {
   /// None: « Sans échéance ».
   DateTimeColumn get dueDate => dateTime().nullable()();
   TextColumn get note => text().nullable()();
+
+  /// Settled without payment (PRODUCT): what was given up, in [currency],
+  /// and when; it can never be taken back.
+  IntColumn get forgiven => integer().withDefault(const Constant(0))();
+  DateTimeColumn get forgivenOn => dateTime().nullable()();
 }
 
 @DriftDatabase(
@@ -299,7 +304,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -349,6 +354,19 @@ class KibuoDatabase extends _$KibuoDatabase {
       from10To11: (m, schema) async {
         await m.addColumn(schema.transactions, schema.transactions.debtId);
         await m.createTable(schema.debts);
+      },
+      from11To12: (m, schema) async {
+        // A trial build once took some data to 11 without the debts: they
+        // come whole here.
+        final hasDebts = (await customSelect(
+          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'debts'",
+        ).get()).isNotEmpty;
+        if (!hasDebts) {
+          await m.createTable(schema.debts);
+        } else {
+          await m.addColumn(schema.debts, schema.debts.forgiven);
+          await m.addColumn(schema.debts, schema.debts.forgivenOn);
+        }
       },
     ),
     beforeOpen: (details) async {

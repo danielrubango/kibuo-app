@@ -15,11 +15,13 @@ import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/obligations/debt_saved_sheet.dart';
+import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
+import 'package:uuid/uuid.dart';
 
 /// « Nouvelle dette ou créance » (canvas NouvelleDette): who, how much in
 /// the debt's own currency, the due date, and whether money moved on an
@@ -44,6 +46,9 @@ class NewDebtScreen extends StatefulWidget {
 
 class _NewDebtScreenState extends State<NewDebtScreen> {
   late DebtDirection _direction = widget.direction;
+
+  /// Its id from the start: its « Rappel » is kept under it.
+  final _id = const Uuid().v7();
   final _name = TextEditingController();
   final _nameFocus = FocusNode();
   final _amountKey = GlobalKey();
@@ -248,6 +253,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
     setState(() => _saving = true);
     final now = widget.now();
     final id = await widget.debts.create(
+      id: _id,
       direction: _direction,
       person: _name.text,
       amount: _amount,
@@ -392,6 +398,18 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                         ),
                     ],
                   ),
+                  // Its own reminder, once it has a due date (PRODUCT).
+                  if (_due != null && widget.data.reminders != null) ...[
+                    const SizedBox(height: 16),
+                    SettingsCard(
+                      children: [
+                        RuleReminderField(
+                          store: widget.data.reminders!,
+                          ruleId: _id,
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

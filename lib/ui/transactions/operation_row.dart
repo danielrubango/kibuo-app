@@ -56,7 +56,8 @@ class OperationRow extends StatelessWidget {
         : owe
         ? KibuoColors.debtTint
         : KibuoColors.accentTintStrong;
-    final person = t.note?.trim();
+    // Its note's first line: a note may follow (« Soldée sans paiement »).
+    final person = t.note?.split('\n').first.trim();
     final l = AppLocalizations.of(context);
     final row = Material(
       color: KibuoColors.surface,

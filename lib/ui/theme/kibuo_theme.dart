@@ -33,6 +33,11 @@ abstract final class KibuoTheme {
   /// Side margins of every screen.
   static const screenMargin = 16.0;
 
+  /// Under the content of a page with the bottom menu: the menu, its + and
+  /// its fade (132), then 28 more, so the last lines read in the clear
+  /// (owner, 23 November).
+  static const belowTabBar = 160.0;
+
   static ThemeData light() {
     const scheme = ColorScheme(
       brightness: Brightness.light,

@@ -289,6 +289,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                         },
                         onOpenAccounts: () =>
                             _openAccounts(KibuoData.maybeOf(context)!),
+                        onOpenDebts: (tab) =>
+                            _openDebts(KibuoData.maybeOf(context)!, tab),
                         // The list, until the overview exists (PRODUCT).
                         onOpenMonth: () {
                           _thisMonth.value++;
@@ -425,17 +427,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         if (db != null && _entryData(context) != null)
           SettingsRow(
             label: AppLocalizations.of(context).debtsTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => DebtsScreen(
-                  data: _entryData(context)!,
-                  debts: DebtRepository(db),
-                  prefs: PreferenceStore(db),
-                  hints: HintStore(db),
-                  onChanged: () => _saved.value++,
-                ),
-              ),
-            ),
+            onTap: () => _openDebts(db, DebtDirection.owe),
           ),
         if (_entryData(context) case final data?)
           SettingsRow(
@@ -656,6 +648,21 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       ),
     );
   }
+
+  /// Dettes et créances, on [tab].
+  Future<void> _openDebts(KibuoDatabase db, DebtDirection tab) =>
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => DebtsScreen(
+            data: _entryData(context)!,
+            debts: DebtRepository(db),
+            prefs: PreferenceStore(db),
+            hints: HintStore(db),
+            tab: tab,
+            onChanged: () => _saved.value++,
+          ),
+        ),
+      );
 
   /// « Nouvelle dette ou créance » from the +, then « Dette enregistrée ».
   Future<void> _newDebt(EntryData data, KibuoDatabase db) => runNewDebt(

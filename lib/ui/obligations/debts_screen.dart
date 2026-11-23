@@ -33,6 +33,7 @@ class DebtsScreen extends StatefulWidget {
     required this.debts,
     required this.prefs,
     this.hints,
+    this.tab = DebtDirection.owe,
     this.now = DateTime.now,
     this.onChanged,
   });
@@ -43,6 +44,9 @@ class DebtsScreen extends StatefulWidget {
 
   /// Where the two-step guide remembers it was shown; none, no guide.
   final HintStore? hints;
+
+  /// The tab it opens on.
+  final DebtDirection tab;
   final DateTime Function() now;
 
   /// A debt was saved: its money may have reached a list.
@@ -57,7 +61,7 @@ class DebtsScreen extends StatefulWidget {
 }
 
 class _DebtsScreenState extends State<DebtsScreen> {
-  DebtDirection _tab = DebtDirection.owe;
+  late DebtDirection _tab = widget.tab;
   List<DebtLine>? _lines;
   DebtGrouping _grouping = DebtGrouping.due;
   PaidPlace _paidPlace = PaidPlace.inline;

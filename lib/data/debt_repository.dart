@@ -82,8 +82,10 @@ class DebtRepository {
     String? accountId,
     ExchangeRate? rate,
     bool rateTyped = false,
+    String? id,
   }) async {
-    final id = const Uuid().v7();
+    // Given by a form that set its reminder before saving.
+    final debtId = id ?? const Uuid().v7();
     final name = person.trim();
     final clean = note?.trim();
     await _db.transaction(() async {
@@ -91,7 +93,7 @@ class DebtRepository {
           .into(_db.debts)
           .insert(
             DebtsCompanion.insert(
-              id: id,
+              id: debtId,
               version: await _nextVersion(),
               deviceId: _db.deviceId,
               direction: direction.stored,
@@ -117,10 +119,10 @@ class DebtRepository {
         rate: rate,
         rateTyped: rateTyped,
         note: name,
-        debtId: id,
+        debtId: debtId,
       );
     });
-    return id;
+    return debtId;
   }
 
   /// Every debt and receivable, with what is left of each.
@@ -151,7 +153,9 @@ class DebtRepository {
                 m,
           ];
           final left =
-              r.amount - repaid.fold<int>(0, (sum, m) => sum + m.amount);
+              r.amount -
+              r.forgiven -
+              repaid.fold<int>(0, (sum, m) => sum + m.amount);
           DateTime? last;
           for (final m in repaid) {
             final d = m.date.toLocal();
@@ -164,7 +168,8 @@ class DebtRepository {
             amount: Money(r.amount, r.currency),
             left: Money(left < 0 ? 0 : left, r.currency),
             due: r.dueDate?.toLocal(),
-            settledOn: left <= 0 ? last : null,
+            settledOn: left > 0 ? null : r.forgivenOn?.toLocal() ?? last,
+            forgiven: r.forgiven > 0 ? Money(r.forgiven, r.currency) : null,
           );
         }(),
     ];
@@ -362,4 +367,46 @@ class DebtRepository {
 
   Future<void> setCountInTotals(bool on) =>
       PreferenceStore(_db).write(_inTotals, '$on');
+
+  /// Settled without payment (PRODUCT): what is left is given up for good,
+  /// nothing moves on the accounts, and [note] is added to the operation
+  /// that opened it, if any.
+  Future<void> settleWithoutPayment(
+    String id, {
+    required DateTime on,
+    required String note,
+  }) async {
+    final line = (await debts()).firstWhere((d) => d.id == id);
+    if (line.settled) return;
+    await _db.transaction(() async {
+      await (_db.update(_db.debts)..where((d) => d.id.equals(id))).write(
+        DebtsCompanion(
+          forgiven: Value(line.left.minor),
+          forgivenOn: Value(on.toUtc()),
+          version: Value(await _nextVersion()),
+          deviceId: Value(_db.deviceId),
+        ),
+      );
+      final openKind = line.direction == DebtDirection.owe ? 'in' : 'out';
+      final opening =
+          await (_db.select(_db.transactions)..where(
+                (t) =>
+                    t.debtId.equals(id) &
+                    t.kind.equals(openKind) &
+                    t.deleted.not(),
+              ))
+              .getSingleOrNull();
+      if (opening == null) return;
+      final was = opening.note?.trim();
+      await (_db.update(
+        _db.transactions,
+      )..where((t) => t.id.equals(opening.id))).write(
+        TransactionsCompanion(
+          note: Value(was == null || was.isEmpty ? note : '$was\n$note'),
+          version: Value(await _nextVersion()),
+          deviceId: Value(_db.deviceId),
+        ),
+      );
+    });
+  }
 }
