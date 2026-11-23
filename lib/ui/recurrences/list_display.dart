@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -11,8 +12,9 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 /// recurrences and drafts, each applied at once, then « Terminé ».
 Future<void> showListDisplaySheet(
   BuildContext context,
-  RecurringRepository recurrences,
-) {
+  RecurringRepository recurrences, {
+  DebtRepository? debts,
+}) {
   final l = AppLocalizations.of(context);
   return showKibuoSheet<void>(
     context,
@@ -21,6 +23,10 @@ Future<void> showListDisplaySheet(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RecurrenceChoices(recurrences: recurrences),
+        if (debts != null) ...[
+          const SizedBox(height: 16),
+          DebtTotalsChoice(debts: debts),
+        ],
         const SizedBox(height: 8),
         HelpText(l.displayFoot),
         const SizedBox(height: 16),
@@ -250,6 +256,65 @@ class _RecurrencesSettingsRowState extends State<RecurrencesSettingsRow> {
         );
         await _load();
       },
+    );
+  }
+}
+
+/// « Dettes et créances »: their operations in Entrées and Sorties, or
+/// apart (PRODUCT). Applied at once.
+class DebtTotalsChoice extends StatefulWidget {
+  const DebtTotalsChoice({super.key, required this.debts});
+
+  final DebtRepository debts;
+
+  @override
+  State<DebtTotalsChoice> createState() => _DebtTotalsChoiceState();
+}
+
+class _DebtTotalsChoiceState extends State<DebtTotalsChoice> {
+  bool? _count;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.debts.countInTotals().then((on) {
+      if (mounted) setState(() => _count = on);
+    });
+  }
+
+  Future<void> _set(bool on) async {
+    setState(() => _count = on);
+    await widget.debts.setCountInTotals(on);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final count = _count;
+    if (count == null) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SectionTitle(l.debtsTitle),
+        SettingsCard(
+          children: [
+            DisplayChoice(
+              icon: KibuoIcons.arrowsDownUp,
+              label: l.debtsInTotals,
+              help: l.debtsInTotalsHelp,
+              on: count,
+              onTap: () => _set(true),
+            ),
+            DisplayChoice(
+              icon: KibuoIcons.handCoins,
+              label: l.debtsApart,
+              help: l.debtsApartHelp,
+              on: !count,
+              onTap: () => _set(false),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

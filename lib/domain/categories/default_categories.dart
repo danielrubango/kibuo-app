@@ -89,3 +89,11 @@ String debtCategoryId({required bool owe, required CategoryKind kind}) {
       : (into ? receivableIn : receivableOut);
   return 'default-${c.key}';
 }
+
+/// Whether a category is a debt's (true) or a receivable's (false); null
+/// for any other.
+bool? debtOweOf(String? key) => switch (key) {
+  'debtIn' || 'debtOut' => true,
+  'receivableIn' || 'receivableOut' => false,
+  _ => null,
+};

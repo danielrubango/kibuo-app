@@ -108,7 +108,6 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
     }
     expect(find.text('Dette enregistrée'), findsOneWidget);
-    expect(find.text('Se ferme seule dans un instant'), findsOneWidget);
     // It closes by itself.
     await tester.pump(const Duration(seconds: 7));
     await settle(tester);

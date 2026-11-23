@@ -7,21 +7,25 @@ void main() {
   const long =
       'Avec les autres, à leur date. Sans date : dans « Sans échéance ».';
 
-  Future<void> show(WidgetTester tester, String text, {bool still = false}) =>
-      tester.pumpWidget(
-        MediaQuery(
-          data: MediaQueryData(disableAnimations: still),
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: Center(
-              child: SizedBox(
-                width: 120,
-                child: ScrollingLine(text, style: style),
-              ),
-            ),
+  Future<void> show(
+    WidgetTester tester,
+    String text, {
+    bool still = false,
+    int? runs,
+  }) => tester.pumpWidget(
+    MediaQuery(
+      data: MediaQueryData(disableAnimations: still),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: SizedBox(
+            width: 120,
+            child: ScrollingLine(text, style: style, runs: runs),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   double offset(WidgetTester tester) => tester
       .widget<SingleChildScrollView>(find.byType(SingleChildScrollView))
@@ -51,5 +55,20 @@ void main() {
     await show(tester, long, still: true);
     expect(find.byType(SingleChildScrollView), findsNothing);
     expect(find.text(long), findsOneWidget);
+  });
+
+  testWidgets('with runs, it stops at its start after them', (tester) async {
+    await show(tester, long, runs: 1);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1500));
+    await tester.pump(const Duration(seconds: 30));
+    await tester.pump(const Duration(milliseconds: 1500));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump();
+    expect(offset(tester), 0);
+    // No new slide after the pause.
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(seconds: 1));
+    expect(offset(tester), 0);
   });
 }

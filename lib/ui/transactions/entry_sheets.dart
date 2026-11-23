@@ -9,6 +9,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/fields.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -71,7 +72,12 @@ class RadioLine extends StatelessWidget {
       selected: on,
       button: true,
       child: InkWell(
-        onTap: enabled ? onTap : null,
+        onTap: enabled
+            ? () {
+                Haptics.tap();
+                onTap();
+              }
+            : null,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
@@ -169,7 +175,15 @@ Future<AccountInfo?> pickAccount(
                 for (final a in accounts)
                   RadioLine(
                     label: a.name,
-                    help: a.currency,
+                    // Its balance, to choose knowingly (owner, 23
+                    // November).
+                    help: l.accountBalanceLine(
+                      formatMoney(
+                        a.balance,
+                        currencyOf(a.balance.currency),
+                        _lang(context),
+                      ),
+                    ),
                     on: a.id == current,
                     onTap: () => Navigator.of(context).pop(a),
                   ),

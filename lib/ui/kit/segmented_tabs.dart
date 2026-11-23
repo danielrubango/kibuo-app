@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -43,7 +44,10 @@ class SegmentedTabs<T> extends StatelessWidget {
                   borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-                    onTap: () => onPick(item),
+                    onTap: () {
+                      Haptics.tap();
+                      onPick(item);
+                    },
                     child: SizedBox(
                       height: KibuoTheme.heightTouch,
                       child: Center(
@@ -87,7 +91,10 @@ class SegmentedTabs<T> extends StatelessWidget {
               borderRadius: BorderRadius.circular(9),
               child: InkWell(
                 borderRadius: BorderRadius.circular(9),
-                onTap: () => onPick(item),
+                onTap: () {
+                  Haptics.tap();
+                  onPick(item);
+                },
                 child: Container(
                   height: 30,
                   padding: const EdgeInsets.symmetric(horizontal: 10),

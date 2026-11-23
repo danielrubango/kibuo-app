@@ -50,7 +50,14 @@ Leçon de plus : **un cadre qui apparaît vaut mieux qu'un cadre qui s'élargit*
 - La ligne qui défile (`ScrollingLine`) est un composant du kit, utilisé par tous les choix d'affichage.
 - La ligne qui s'ouvre au-dessus d'un voile n'existe que dans la liste des dettes : elle rejoindra le kit le jour où un deuxième écran l'emploie (À traiter, Projets).
 
-## À décider
+## Deuxième temps (fiche et remboursements)
+
+- **Ce qui a marché** : le dessin d'abord pour l'allure des opérations de dette (A, puis A1 à A3, puis A4 retenue) ; les données écrites tests d'abord (rembourser, modifier, supprimer : 11 cas) ; la fiche et la feuille « Rembourser » suivies sur leurs planches.
+- **Tes retours en route** : le solde dans le choix du compte, la ligne qui reste ouverte derrière la feuille et la fiche, le titre qui dit l'action (« Emprunt à Jean », « Remb. à Jean » si la place manque), et les vibrations.
+- **Composants** : les vibrations sont dans le kit (touches du pavé, boutons, interrupteurs, choix, onglets, lignes de refus) : trois forces, réglées par le téléphone ; le choix du compte (avec solde) reste une seule feuille partagée.
+- **Leçon** : une action qui part d'un endroit (une ligne ouverte) doit y ramener, à jour ; ne jamais refermer ce que la personne regardait.
+
+
 
 1. **L'ouverture d'une ligne** : à valider sur ton téléphone.
 2. **La suite** : le deuxième temps (fiche, « Rembourser », modifier, solder, supprimer) et le style « provisoire » des opérations de dette dans Opérations.

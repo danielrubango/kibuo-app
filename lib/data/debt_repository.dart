@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/categories/default_categories.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -9,6 +10,49 @@ import 'package:kibuo/domain/sync/hybrid_clock.dart';
 import 'package:uuid/uuid.dart';
 
 export 'package:kibuo/domain/obligations/debt_list.dart';
+
+/// A repayment of a debt or receivable, as its card lists it.
+class Repayment {
+  const Repayment({
+    required this.id,
+    required this.date,
+    required this.account,
+    required this.amount,
+  });
+
+  /// Its operation.
+  final String id;
+  final DateTime date;
+
+  /// The account's name.
+  final String account;
+
+  /// In the debt's currency.
+  final Money amount;
+}
+
+/// What a debt's card shows.
+class DebtDetail {
+  const DebtDetail({
+    required this.line,
+    required this.openedOn,
+    required this.repayments,
+    required this.operations,
+    this.openingAccountId,
+  });
+
+  final DebtLine line;
+  final DateTime openedOn;
+
+  /// The newest first.
+  final List<Repayment> repayments;
+
+  /// The account the money borrowed or lent moved on, if any.
+  final String? openingAccountId;
+
+  /// Its operations, opening included: deleting it removes them.
+  final int operations;
+}
 
 /// Debts and receivables (PRODUCT: Dettes et créances). Money that moves
 /// for them is an operation of its account, tied to the debt.
@@ -167,4 +211,155 @@ class DebtRepository {
           );
     }
   }
+
+  /// A repayment of [debtId] from (or, for a receivable, into)
+  /// [accountId]: [amount] in the debt's currency, never more than what is
+  /// left (PRODUCT); converted at [rate] for an account in another
+  /// currency. Returns its operation's id.
+  Future<String> repay(
+    String debtId, {
+    required Money amount,
+    required String accountId,
+    required DateTime date,
+    ExchangeRate? rate,
+    bool rateTyped = false,
+  }) async {
+    final line = (await debts()).firstWhere((d) => d.id == debtId);
+    if (amount.currency != line.left.currency ||
+        amount.minor <= 0 ||
+        amount.minor > line.left.minor) {
+      throw ArgumentError.value(amount, 'amount', 'more than what is left');
+    }
+    final owe = line.direction == DebtDirection.owe;
+    final kind = owe ? CategoryKind.out : CategoryKind.into;
+    await _ensureCategories();
+    return _transactions.create(
+      kind: owe ? EntryKind.expense : EntryKind.income,
+      accountId: accountId,
+      categoryId: debtCategoryId(owe: owe, kind: kind),
+      paid: amount,
+      fees: 0,
+      date: date,
+      rate: rate,
+      rateTyped: rateTyped,
+      note: line.person,
+      debtId: debtId,
+    );
+  }
+
+  /// Its card: what is left, its repayments, where its money moved.
+  Future<DebtDetail?> detail(String id) async {
+    final line = (await debts()).where((d) => d.id == id).firstOrNull;
+    if (line == null) return null;
+    final row = await (_db.select(
+      _db.debts,
+    )..where((d) => d.id.equals(id))).getSingle();
+    final moves =
+        await (_db.select(_db.transactions)
+              ..where((t) => t.debtId.equals(id) & t.deleted.not())
+              ..orderBy([(t) => OrderingTerm.desc(t.date)]))
+            .get();
+    final names = {
+      for (final a in await _db.select(_db.accounts).get()) a.id: a.name,
+    };
+    final repayKind = line.direction == DebtDirection.owe ? 'out' : 'in';
+    return DebtDetail(
+      line: line,
+      openedOn: row.openedOn.toLocal(),
+      operations: moves.length,
+      openingAccountId: moves
+          .where((m) => m.kind != repayKind)
+          .firstOrNull
+          ?.accountId,
+      repayments: [
+        for (final m in moves)
+          if (m.kind == repayKind && m.status == 'done')
+            Repayment(
+              id: m.id,
+              date: m.date.toLocal(),
+              account: names[m.accountId] ?? '',
+              amount: Money(m.amount, m.currency),
+            ),
+      ],
+    );
+  }
+
+  /// A new name, amount or due date. The amount never goes below what was
+  /// already paid back; the operation that opened it follows.
+  Future<void> edit(
+    String id, {
+    required String person,
+    required Money amount,
+    DateTime? due,
+  }) async {
+    final line = (await debts()).firstWhere((d) => d.id == id);
+    final repaid = line.amount.minor - line.left.minor;
+    if (amount.currency != line.amount.currency || amount.minor < repaid) {
+      throw ArgumentError.value(amount, 'amount', 'below what was repaid');
+    }
+    await _db.transaction(() async {
+      await (_db.update(_db.debts)..where((d) => d.id.equals(id))).write(
+        DebtsCompanion(
+          person: Value(person.trim()),
+          amount: Value(amount.minor),
+          dueDate: Value(due?.toUtc()),
+          version: Value(await _nextVersion()),
+          deviceId: Value(_db.deviceId),
+        ),
+      );
+      if (amount == line.amount) return;
+      final openKind = line.direction == DebtDirection.owe ? 'in' : 'out';
+      final opening =
+          await (_db.select(_db.transactions)..where(
+                (t) =>
+                    t.debtId.equals(id) &
+                    t.kind.equals(openKind) &
+                    t.deleted.not(),
+              ))
+              .getSingleOrNull();
+      if (opening == null) return;
+      final op = (await _transactions.get(opening.id))!;
+      await _transactions.update(
+        op.id,
+        kind: op.kind,
+        accountId: op.accountId,
+        categoryId: op.categoryId!,
+        paid: amount,
+        fees: op.total.fees.minor,
+        date: op.date,
+        rate: op.rate,
+        rateTyped: op.rateTyped,
+        note: op.note,
+      );
+    });
+  }
+
+  /// The debt and every operation of it, gone together (PRODUCT).
+  Future<void> delete(String id) async {
+    await _db.transaction(() async {
+      final moves = await (_db.select(
+        _db.transactions,
+      )..where((t) => t.debtId.equals(id) & t.deleted.not())).get();
+      for (final m in moves) {
+        await _transactions.delete(m.id);
+      }
+      await (_db.update(_db.debts)..where((d) => d.id.equals(id))).write(
+        DebtsCompanion(
+          deleted: const Value(true),
+          version: Value(await _nextVersion()),
+          deviceId: Value(_db.deviceId),
+        ),
+      );
+    });
+  }
+
+  static const _inTotals = 'debts_in_totals';
+
+  /// Whether debts' operations count in Entrées and Sorties (PRODUCT: on
+  /// by default; never in budgets either way).
+  Future<bool> countInTotals() async =>
+      await PreferenceStore(_db).read(_inTotals) != 'false';
+
+  Future<void> setCountInTotals(bool on) =>
+      PreferenceStore(_db).write(_inTotals, '$on');
 }

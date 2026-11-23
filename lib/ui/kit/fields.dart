@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -492,26 +493,29 @@ class RefusalLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16),
-      child: Row(
-        children: [
-          const Icon(KibuoIcons.warning, size: 18, color: KibuoColors.danger),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: KibuoType.body.copyWith(
-                fontSize: 14,
-                color: KibuoColors.danger,
+    // A refusal is felt (owner, 23 November).
+    return RefuseOnAppear(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: Row(
+          children: [
+            const Icon(KibuoIcons.warning, size: 18, color: KibuoColors.danger),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                style: KibuoType.body.copyWith(
+                  fontSize: 14,
+                  color: KibuoColors.danger,
+                ),
               ),
             ),
-          ),
-          if (action case final label?)
-            TextAction(label: label, onPressed: onAction)
-          else
-            const SizedBox(height: KibuoTheme.heightTouch),
-        ],
+            if (action case final label?)
+              TextAction(label: label, onPressed: onAction)
+            else
+              const SizedBox(height: KibuoTheme.heightTouch),
+          ],
+        ),
       ),
     );
   }

@@ -63,7 +63,11 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Création depuis une liste qu'on gère.** Un bouton en pointillés en fin de liste (« Nouveau compte », « Nouvelle dette »), jamais un bouton flottant.
 
-**Confirmer une création.** Une feuille qui se ferme seule (barre menthe qui se vide, « Se ferme seule dans un instant »), ou tout de suite avec ✕ ; un toucher la garde ouverte.
+**Confirmer une création ou un remboursement** (validé le 23 novembre 2026, canvas ConfirmA). Une feuille commune : le titre et ✕, une carte blanche (la coche menthe, ce qui a été fait, son compte et son heure, le montant ; pour une dette, sa barre et « Reste … sur … »), ses actions (blanche à gauche, menthe à droite, 48 de haut), puis la barre menthe qui se vide, sans phrase. Elle se ferme seule, ou tout de suite avec ✕ ; un toucher la garde ouverte. Un remboursement propose « Annuler et modifier » et, depuis la liste, « Voir la dette ».
+
+**Opérations d'une dette** (validé le 23 novembre 2026, canvas OpDetteA4). Carte blanche bordée d'un trait fin à la couleur de son sens (pêche pour une dette, vert pour une créance), l'étiquette « Dette » ou « Créance », et un titre qui dit l'action : « Emprunté à Jean », « Remboursé à Jean », « Prêté à Jean », « Remboursé par Jean ».
+
+**Retour au toucher.** Trois forces de vibration, selon le réglage du téléphone : légère (touches, choix, onglets, ouvrir une ligne), plus franche (ce qui enregistre), marquée (un refus, un glissement qui passe son seuil).
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.
 

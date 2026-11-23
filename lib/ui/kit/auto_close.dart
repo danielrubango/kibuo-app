@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// A confirmation sheet's content that closes by itself (canvas
-/// ApresFeuilleB): [child], then a mint bar that empties and « Se ferme
-/// seule dans un instant ». A touch on the sheet keeps it open, and the
-/// bar goes.
+/// ApresFeuilleB): [child], then a mint bar that empties, with no words
+/// (owner, 23 November). A touch on the sheet keeps it open, and the bar
+/// goes.
 class AutoClose extends StatefulWidget {
   const AutoClose({
     super.key,
@@ -62,11 +60,6 @@ class _AutoCloseState extends State<AutoClose>
                 backgroundColor: KibuoColors.track,
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            AppLocalizations.of(context).entryClosesSoon,
-            style: KibuoType.caption,
           ),
         ],
       ],

@@ -2964,4 +2964,196 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtsCoachTry => 'Try it';
+
+  @override
+  String get debtLeftOwe => 'I still owe';
+
+  @override
+  String get debtLeftOwed => 'Still owed to me';
+
+  @override
+  String debtRepaidOf(String paid, String total) {
+    return '$paid paid back of $total';
+  }
+
+  @override
+  String debtReceivedOf(String paid, String total) {
+    return '$paid received of $total';
+  }
+
+  @override
+  String get debtRepayments => 'Repayments';
+
+  @override
+  String debtRepaymentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count times',
+      one: 'once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtNoRepayment => 'No repayment yet.';
+
+  @override
+  String get debtRepay => 'Pay back';
+
+  @override
+  String get debtCollect => 'Collect';
+
+  @override
+  String get debtDetails => 'Details';
+
+  @override
+  String get debtEditAction => 'Edit';
+
+  @override
+  String debtRepayTitle(String name) {
+    return 'Pay back $name';
+  }
+
+  @override
+  String debtCollectTitle(String name) {
+    return 'Collect from $name';
+  }
+
+  @override
+  String debtBorrowedOn(String date) {
+    return 'borrowed $date';
+  }
+
+  @override
+  String debtLentOn(String date) {
+    return 'lent $date';
+  }
+
+  @override
+  String get debtFrom => 'From';
+
+  @override
+  String get debtTo => 'To';
+
+  @override
+  String get debtLater => 'Later';
+
+  @override
+  String get debtRepaySaved => 'Repayment saved';
+
+  @override
+  String get debtCollectSaved => 'Money received saved';
+
+  @override
+  String get debtSettledOweToast => 'Debt settled';
+
+  @override
+  String get debtSettledOwedToast => 'Money owed settled';
+
+  @override
+  String get debtEditTitleOwe => 'Edit the debt';
+
+  @override
+  String get debtEditTitleOwed => 'Edit the money owed';
+
+  @override
+  String debtAmountMin(String amount) {
+    return 'At least $amount, already paid back.';
+  }
+
+  @override
+  String get debtDeleteOwe => 'Delete the debt';
+
+  @override
+  String get debtDeleteOwed => 'Delete the money owed';
+
+  @override
+  String debtDeleteText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Its $count operations will be deleted too, and their accounts\' balances will be as before.',
+      one: 'Its operation will be deleted too, and its account\'s balance will be as before.',
+      zero: 'Nothing moved on your accounts: only the line goes.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtDeleted(String name) {
+    return '$name deleted';
+  }
+
+  @override
+  String get debtOpLocked =>
+      'Amount, currency and category are changed from the debt\'s card.';
+
+  @override
+  String get debtSeeDebt => 'See the debt';
+
+  @override
+  String debtLeftCap(String amount) {
+    return 'At most $amount, what is left.';
+  }
+
+  @override
+  String get debtTagOwe => 'Debt';
+
+  @override
+  String get debtTagOwed => 'Money owed';
+
+  @override
+  String get debtsInTotals => 'In Money in and out';
+
+  @override
+  String get debtsInTotalsHelp =>
+      'Money borrowed counts as money in, a repayment as money out.';
+
+  @override
+  String get debtsApart => 'Apart';
+
+  @override
+  String get debtsApartHelp => 'In the list, but out of the month\'s totals.';
+
+  @override
+  String accountBalanceLine(String amount) {
+    return 'Balance: $amount';
+  }
+
+  @override
+  String debtTitleBorrow(String name) {
+    return 'Borrowed from $name';
+  }
+
+  @override
+  String debtTitleRepayTo(String name) {
+    return 'Paid back to $name';
+  }
+
+  @override
+  String debtTitleRepayToShort(String name) {
+    return 'Paid back to $name';
+  }
+
+  @override
+  String debtTitleLend(String name) {
+    return 'Lent to $name';
+  }
+
+  @override
+  String debtTitleRepayFrom(String name) {
+    return 'Paid back by $name';
+  }
+
+  @override
+  String debtTitleRepayFromShort(String name) {
+    return 'Paid back by $name';
+  }
+
+  @override
+  String debtLeftOf(String left, String total) {
+    return '$left left of $total';
+  }
 }

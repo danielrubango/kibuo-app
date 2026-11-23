@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
-/// The eight kinds of button of the design system, each with its role.
+/// The kinds of button of the design system, each with its role.
 enum ButtonKind {
   /// Mint, 54 high: the one main action of a screen, at the bottom.
   primary,
@@ -22,6 +23,10 @@ enum ButtonKind {
 
   /// Dashed: adds an item to a list.
   create,
+
+  /// Mint, 48 high: the main action beside a white one, in a sheet
+  /// (canvas ApresFeuilleB, ConfirmA).
+  mint,
 }
 
 class KibuoButton extends StatelessWidget {
@@ -74,6 +79,7 @@ class KibuoButton extends StatelessWidget {
         const BorderSide(color: KibuoColors.danger, width: 1.5),
       ),
       ButtonKind.create => (Colors.transparent, KibuoColors.accent, null),
+      ButtonKind.mint => (KibuoColors.mint, KibuoColors.ink, null),
     };
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),
@@ -84,7 +90,15 @@ class KibuoButton extends StatelessWidget {
       shape: shape,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: onPressed,
+        onTap: onPressed == null
+            ? null
+            : () {
+                // What saves is felt more firmly.
+                kind == ButtonKind.primary || kind == ButtonKind.mint
+                    ? Haptics.confirm()
+                    : Haptics.tap();
+                onPressed!();
+              },
         child: SizedBox(
           height: height,
           width: double.infinity,

@@ -4764,6 +4764,282 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Essayer'**
   String get debtsCoachTry;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je dois encore'**
+  String get debtLeftOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'On me doit encore'**
+  String get debtLeftOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{paid} remboursés sur {total}'**
+  String debtRepaidOf(String paid, String total);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{paid} reçus sur {total}'**
+  String debtReceivedOf(String paid, String total);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remboursements'**
+  String get debtRepayments;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 fois} other{{count} fois}}'**
+  String debtRepaymentsCount(int count);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun remboursement pour l’instant.'**
+  String get debtNoRepayment;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rembourser'**
+  String get debtRepay;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Encaisser'**
+  String get debtCollect;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails'**
+  String get debtDetails;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get debtEditAction;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rembourser {name}'**
+  String debtRepayTitle(String name);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Encaisser {name}'**
+  String debtCollectTitle(String name);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'emprunt du {date}'**
+  String debtBorrowedOn(String date);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'prêt du {date}'**
+  String debtLentOn(String date);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis'**
+  String get debtFrom;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vers'**
+  String get debtTo;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get debtLater;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remboursement enregistré'**
+  String get debtRepaySaved;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Encaissement enregistré'**
+  String get debtCollectSaved;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dette soldée'**
+  String get debtSettledOweToast;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créance soldée'**
+  String get debtSettledOwedToast;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la dette'**
+  String get debtEditTitleOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la créance'**
+  String get debtEditTitleOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au moins {amount}, déjà remboursés.'**
+  String debtAmountMin(String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la dette'**
+  String get debtDeleteOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la créance'**
+  String get debtDeleteOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Rien n’a bougé sur vos comptes : seule la ligne disparaît.} =1{Son opération sera aussi supprimée, et le solde de son compte reviendra comme avant.} other{Ses {count} opérations seront aussi supprimées, et les soldes de leurs comptes reviendront comme avant.}}'**
+  String debtDeleteText(int count);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} supprimé'**
+  String debtDeleted(String name);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant, devise et catégorie se modifient depuis la fiche de la dette.'**
+  String get debtOpLocked;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la dette'**
+  String get debtSeeDebt;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au plus {amount}, ce qui reste.'**
+  String debtLeftCap(String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dette'**
+  String get debtTagOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créance'**
+  String get debtTagOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans les Entrées et Sorties'**
+  String get debtsInTotals;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’argent emprunté compte comme une entrée, un remboursement comme une sortie.'**
+  String get debtsInTotalsHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'À part'**
+  String get debtsApart;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans la liste, mais hors des totaux du mois.'**
+  String get debtsApartHelp;
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Solde : {amount}'**
+  String accountBalanceLine(String amount);
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Emprunté à {name}'**
+  String debtTitleBorrow(String name);
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remboursé à {name}'**
+  String debtTitleRepayTo(String name);
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remboursé à {name}'**
+  String debtTitleRepayToShort(String name);
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prêté à {name}'**
+  String debtTitleLend(String name);
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remboursé par {name}'**
+  String debtTitleRepayFrom(String name);
+
+  /// Account choice and debt operation titles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remboursé par {name}'**
+  String debtTitleRepayFromShort(String name);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste {left} sur {total}'**
+  String debtLeftOf(String left, String total);
 }
 
 class _AppLocalizationsDelegate

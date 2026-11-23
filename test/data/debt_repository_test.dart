@@ -133,4 +133,125 @@ void main() {
     }
     expect(await debts.people(), ['Kevin', 'amani', 'Patrick']);
   });
+
+  group('repaying', () {
+    late String debt;
+    setUp(() async {
+      debt = await debts.create(
+        direction: DebtDirection.owe,
+        person: 'Patrick',
+        amount: const Money(20000, 'USD'),
+        openedOn: DateTime(2026, 11, 1),
+        accountId: mpesa,
+      );
+    });
+
+    test('a repayment leaves the account and lowers what is left', () async {
+      await debts.repay(
+        debt,
+        amount: const Money(8000, 'USD'),
+        accountId: mpesa,
+        date: DateTime(2026, 11, 10),
+      );
+      final line = (await debts.debts()).single;
+      expect(line.left, const Money(12000, 'USD'));
+      expect(line.settled, isFalse);
+      // 100 + 200 borrowed − 80 repaid.
+      expect(await balance(), const Money(22000, 'USD'));
+      final detail = (await debts.detail(debt))!;
+      expect(detail.repayments.single.amount, const Money(8000, 'USD'));
+      expect(detail.repayments.single.account, 'M-Pesa');
+      expect(detail.openingAccountId, mpesa);
+    });
+
+    test('never more than what is left; reaching it settles', () async {
+      expect(
+        () => debts.repay(
+          debt,
+          amount: const Money(20001, 'USD'),
+          accountId: mpesa,
+          date: DateTime(2026, 11, 10),
+        ),
+        throwsArgumentError,
+      );
+      await debts.repay(
+        debt,
+        amount: const Money(20000, 'USD'),
+        accountId: mpesa,
+        date: DateTime(2026, 11, 12),
+      );
+      final line = (await debts.debts()).single;
+      expect(line.settled, isTrue);
+      expect(line.settledOn, DateTime(2026, 11, 12));
+    });
+
+    test('a receivable is paid back into the account', () async {
+      final lent = await debts.create(
+        direction: DebtDirection.owed,
+        person: 'Grâce',
+        amount: const Money(3000, 'USD'),
+        openedOn: DateTime(2026, 11, 1),
+        accountId: mpesa,
+      );
+      await debts.repay(
+        lent,
+        amount: const Money(1000, 'USD'),
+        accountId: mpesa,
+        date: DateTime(2026, 11, 5),
+      );
+      // 100 + 200 borrowed − 30 lent + 10 back.
+      expect(await balance(), const Money(28000, 'USD'));
+      final op = (await transactions.all()).firstWhere(
+        (t) => t.debtId == lent && t.kind == EntryKind.income,
+      );
+      expect(
+        op.categoryId,
+        debtCategoryId(owe: false, kind: CategoryKind.into),
+      );
+    });
+
+    test('editing: name, due date and amount, its operation follows', () async {
+      await debts.repay(
+        debt,
+        amount: const Money(5000, 'USD'),
+        accountId: mpesa,
+        date: DateTime(2026, 11, 10),
+      );
+      expect(
+        () => debts.edit(
+          debt,
+          person: 'Patrick',
+          amount: const Money(4000, 'USD'),
+        ),
+        throwsArgumentError,
+      );
+      await debts.edit(
+        debt,
+        person: 'Patrick M.',
+        amount: const Money(15000, 'USD'),
+        due: DateTime(2026, 12, 5),
+      );
+      final line = (await debts.debts()).single;
+      expect(line.person, 'Patrick M.');
+      expect(line.amount, const Money(15000, 'USD'));
+      expect(line.left, const Money(10000, 'USD'));
+      expect(line.due, DateTime(2026, 12, 5));
+      // 100 + 150 borrowed − 50 repaid.
+      expect(await balance(), const Money(20000, 'USD'));
+    });
+
+    test('deleting takes its operations with it', () async {
+      await debts.repay(
+        debt,
+        amount: const Money(5000, 'USD'),
+        accountId: mpesa,
+        date: DateTime(2026, 11, 10),
+      );
+      expect((await debts.detail(debt))!.operations, 2);
+      await debts.delete(debt);
+      expect(await debts.debts(), isEmpty);
+      expect(await transactions.all(), isEmpty);
+      expect(await balance(), const Money(10000, 'USD'));
+    });
+  });
 }

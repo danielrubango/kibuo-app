@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/categories/default_categories.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
@@ -42,9 +43,31 @@ class OperationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final muted = t.isIgnored || t.isPlanned;
+    // A debt's operation (canvas OpDetteA4): the person as title, « Dette »
+    // or « Créance » before the second line, a thin line of its colour.
+    final owe = muted ? null : debtOweOf(labels.category?.key);
+    final debtInk = owe == null
+        ? null
+        : owe
+        ? KibuoColors.debtInk
+        : KibuoColors.accent;
+    final debtTint = owe == null
+        ? null
+        : owe
+        ? KibuoColors.debtTint
+        : KibuoColors.accentTintStrong;
+    final person = t.note?.trim();
+    final l = AppLocalizations.of(context);
     final row = Material(
       color: KibuoColors.surface,
-      borderRadius: BorderRadius.circular(16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: owe == null
+            ? BorderSide.none
+            : BorderSide(
+                color: owe ? KibuoColors.debtEdge : KibuoColors.accentTintOpen,
+              ),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
@@ -55,10 +78,17 @@ class OperationRow extends StatelessWidget {
             child: _RowBody(
               t: t,
               labels: labels,
-              title: title,
+              title: owe != null && person != null && person.isNotEmpty
+                  ? (debtTitle(l, labels.category?.key, person), null)
+                  : title,
+              shortTitle: owe != null && person != null && person.isNotEmpty
+                  ? debtTitle(l, labels.category?.key, person, short: true)
+                  : null,
               subtitle: subtitle,
               amountMarked: amountMarked,
-              tag: tag,
+              tag: owe == null ? tag : (owe ? l.debtTagOwe : l.debtTagOwed),
+              tagInk: debtInk,
+              tagTint: debtTint,
               titleColor: t.isIgnored
                   ? KibuoColors.inkSecondary
                   : KibuoColors.ink,
@@ -228,8 +258,18 @@ class _RowBody extends StatelessWidget {
     required this.amountColor,
     this.titleColor = KibuoColors.ink,
     this.tag,
+    this.tagInk,
+    this.tagTint,
+    this.shortTitle,
     this.muted = false,
   });
+
+  /// Said shorter when [title] does not fit.
+  final String? shortTitle;
+
+  /// The tag's colours; grey without.
+  final Color? tagInk;
+  final Color? tagTint;
 
   final TransactionInfo t;
   final OperationLabels labels;
@@ -261,11 +301,32 @@ class _RowBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _MarkedText(
-                title,
-                KibuoType.rowLabel.copyWith(color: titleColor),
-                markWeight: 700,
-              ),
+              if (shortTitle case final short?)
+                LayoutBuilder(
+                  builder: (context, box) {
+                    final style = DefaultTextStyle.of(context).style
+                        .merge(KibuoType.rowLabel);
+                    final fits =
+                        (TextPainter(
+                          text: TextSpan(text: title.$1, style: style),
+                          textDirection: Directionality.of(context),
+                          textScaler: MediaQuery.textScalerOf(context),
+                          maxLines: 1,
+                        )..layout()).width <=
+                        box.maxWidth;
+                    return _MarkedText(
+                      fits ? title : (short, null),
+                      KibuoType.rowLabel.copyWith(color: titleColor),
+                      markWeight: 700,
+                    );
+                  },
+                )
+              else
+                _MarkedText(
+                  title,
+                  KibuoType.rowLabel.copyWith(color: titleColor),
+                  markWeight: 700,
+                ),
               const SizedBox(height: 2),
               if (tag case final tag?)
                 Row(
@@ -276,12 +337,13 @@ class _RowBody extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: KibuoColors.background,
+                        color: tagTint ?? KibuoColors.background,
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: Text(
                         tag,
                         style: KibuoType.caption.copyWith(
+                          color: tagInk,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           fontVariations: const [FontVariation.weight(600)],
@@ -376,3 +438,21 @@ class _MarkedText extends StatelessWidget {
     );
   }
 }
+
+/// A debt's operation says what it did (owner, 23 November): « Emprunt à
+/// Jean », « Remboursement à Jean », « Prêt à Jean », « Remboursement de
+/// Jean »; [short] when space runs out.
+String debtTitle(
+  AppLocalizations l,
+  String? key,
+  String person, {
+  bool short = false,
+}) => switch (key) {
+  'debtIn' => l.debtTitleBorrow(person),
+  'debtOut' =>
+    short ? l.debtTitleRepayToShort(person) : l.debtTitleRepayTo(person),
+  'receivableOut' => l.debtTitleLend(person),
+  'receivableIn' =>
+    short ? l.debtTitleRepayFromShort(person) : l.debtTitleRepayFrom(person),
+  _ => person,
+};

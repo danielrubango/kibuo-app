@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -38,7 +39,10 @@ class ChoiceTile extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onTap,
+          onTap: () {
+            Haptics.tap();
+            onTap();
+          },
           child: Container(
             height: 60,
             padding: const EdgeInsets.symmetric(horizontal: 16),

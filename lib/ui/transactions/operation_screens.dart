@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
@@ -7,15 +8,18 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/obligations/debt_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/transactions/entry_sheets.dart';
 import 'package:kibuo/ui/transactions/overdraft_check.dart';
 
 /// The detail of an operation (canvas OperationDetailBas): the category,
@@ -67,6 +71,16 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
   }
 
   Future<void> _edit() async {
+    // A debt's operation: only its account and its date (PRODUCT).
+    if (_t!.debtId != null) {
+      final saved = await showKibuoSheet<bool>(
+        context,
+        title: AppLocalizations.of(context).currenciesEdit,
+        builder: (_) => _DebtOperationSheet(data: widget.data, t: _t!),
+      );
+      if (saved == true) await _load();
+      return;
+    }
     await runEntry(
       context,
       widget.data,
@@ -452,22 +466,47 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
             ),
           ],
           const SizedBox(height: 12),
-          KibuoButton(
-            label: l.entryDuplicate,
-            kind: ButtonKind.secondary,
-            icon: KibuoIcons.copy,
-            onPressed: _duplicate,
-          ),
-          // Under « Dupliquer », as a plain red action (owner, 15 November
-          // 2026; canvas OperationCarteTransfert).
-          const SizedBox(height: 8),
-          Center(
-            child: TextAction(
-              label: l.entryDeleteOperation,
-              color: KibuoColors.danger,
-              onPressed: _confirmDelete,
+          // A debt's operation is changed and deleted with its debt
+          // (PRODUCT: Dettes et créances).
+          if (t.debtId case final debtId?) ...[
+            HelpText(l.debtOpLocked),
+            if (widget.data.debts case final debts?) ...[
+              const SizedBox(height: 12),
+              KibuoButton(
+                label: l.debtSeeDebt,
+                kind: ButtonKind.secondary,
+                onPressed: () async {
+                  await Navigator.of(context).push<void>(
+                    MaterialPageRoute(
+                      builder: (_) => DebtScreen(
+                        data: widget.data,
+                        debts: debts,
+                        id: debtId,
+                      ),
+                    ),
+                  );
+                  await _load();
+                },
+              ),
+            ],
+          ] else ...[
+            KibuoButton(
+              label: l.entryDuplicate,
+              kind: ButtonKind.secondary,
+              icon: KibuoIcons.copy,
+              onPressed: _duplicate,
             ),
-          ),
+            // Under « Dupliquer », as a plain red action (owner, 15
+            // November 2026; canvas OperationCarteTransfert).
+            const SizedBox(height: 8),
+            Center(
+              child: TextAction(
+                label: l.entryDeleteOperation,
+                color: KibuoColors.danger,
+                onPressed: _confirmDelete,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -535,3 +574,116 @@ class _TransferRoute extends StatelessWidget {
 }
 
 enum _DeleteChoice { delete, authorize }
+
+/// A debt's operation changes only its account (one in the same currency)
+/// and its date; the rest follows its debt.
+class _DebtOperationSheet extends StatefulWidget {
+  const _DebtOperationSheet({required this.data, required this.t});
+
+  final EntryData data;
+  final TransactionInfo t;
+
+  @override
+  State<_DebtOperationSheet> createState() => _DebtOperationSheetState();
+}
+
+class _DebtOperationSheetState extends State<_DebtOperationSheet> {
+  List<AccountInfo> _accounts = const [];
+  late String _account = widget.t.accountId;
+  late DateTime _date = widget.t.date.toLocal();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final all = await widget.data.accounts.accounts();
+    final mine = all.where((a) => a.id == widget.t.accountId).firstOrNull;
+    if (!mounted) return;
+    setState(
+      () => _accounts = [
+        for (final a in all)
+          if (mine == null || a.currency == mine.currency) a,
+      ],
+    );
+  }
+
+  Future<void> _pickAccount() async {
+    final picked = await pickAccount(
+      context,
+      accounts: _accounts,
+      current: _account,
+    );
+    if (picked != null) setState(() => _account = picked.id);
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(
+        () => _date = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          _date.hour,
+          _date.minute,
+        ),
+      );
+    }
+  }
+
+  Future<void> _save() async {
+    final t = widget.t;
+    await widget.data.transactions.update(
+      t.id,
+      kind: t.kind,
+      accountId: _account,
+      categoryId: t.categoryId!,
+      paid: t.paid,
+      fees: t.total.fees.minor,
+      date: _date,
+      rate: t.rate,
+      rateTyped: t.rateTyped,
+      note: t.note,
+    );
+    if (mounted) Navigator.of(context).pop(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final name =
+        _accounts.where((a) => a.id == _account).firstOrNull?.name ?? '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SettingsCard(
+          children: [
+            SettingsRow(
+              label: l.entryAccount,
+              value: name,
+              onTap: _pickAccount,
+            ),
+            SettingsRow(
+              label: l.entryDate,
+              value: DateFormat.yMMMd(lang).format(_date),
+              onTap: _pickDate,
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        HelpText(l.debtOpLocked),
+        const SizedBox(height: 16),
+        KibuoButton(label: l.entrySave, onPressed: _save),
+      ],
+    );
+  }
+}

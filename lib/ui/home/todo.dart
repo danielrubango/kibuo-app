@@ -12,6 +12,7 @@ import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/home/drafts_sheet.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
@@ -575,8 +576,12 @@ class _SwipeToPutOffState extends State<SwipeToPutOff>
         return TapRegion(
           onTapOutside: (_) => _close(),
           child: GestureDetector(
-            onHorizontalDragUpdate: (d) =>
-                _slide.value = (_slide.value + d.delta.dx).clamp(-_width, 0),
+            onHorizontalDragUpdate: (d) {
+              final was = -_slide.value > _width / 2;
+              _slide.value = (_slide.value + d.delta.dx).clamp(-_width, 0);
+              // Past the middle, letting go puts it off: felt once.
+              if (!was && -_slide.value > _width / 2) Haptics.refuse();
+            },
             onHorizontalDragEnd: _end,
             child: Stack(
               clipBehavior: Clip.none,
