@@ -3,6 +3,7 @@ import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/reminders/notifier.dart';
@@ -123,20 +124,13 @@ class _RemindersScreenState extends State<RemindersScreen>
 
   Future<void> _pickDelay() async {
     final l = AppLocalizations.of(context);
-    final picked = await showKibuoSheet<int>(
+    final picked = await showChoiceSheet<int>(
       context,
       title: l.remindersDelay,
-      builder: (context) => SettingsCard(
-        children: [
-          for (final days in ReminderStore.dueChoices)
-            CheckChoice(
-              label: l.daysBefore(days),
-              help: '',
-              on: days == _dueDays,
-              onTap: () => Navigator.of(context).pop(days),
-            ),
-        ],
-      ),
+      selected: _dueDays,
+      options: [
+        for (final days in ReminderStore.dueChoices) (days, l.daysBefore(days)),
+      ],
     );
     if (picked == null || picked == _dueDays) return;
     await widget.store.setDueDays(picked);

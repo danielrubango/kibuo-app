@@ -11,9 +11,10 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
-import 'package:kibuo/ui/kit/dashed_border.dart';
+import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
@@ -672,27 +673,20 @@ class _RuleReminderFieldState extends State<RuleReminderField> {
   Future<void> _choose() async {
     final l = AppLocalizations.of(context);
     const asDefault = -2;
-    final picked = await showKibuoSheet<int>(
+    final picked = await showChoiceSheet<int>(
       context,
       title: l.reminderRule,
-      builder: (context) => SettingsCard(
-        children: [
-          for (final value in [asDefault, -1, ...ReminderStore.dueChoices])
-            CheckChoice(
-              label: switch (value) {
-                asDefault =>
-                  _dueOn
-                      ? l.reminderRuleDefault(l.daysBefore(_dueDays))
-                      : l.reminderRuleOff,
-                -1 => l.reminderRuleNone,
-                _ => l.daysBefore(value),
-              },
-              help: '',
-              on: (_remind ?? asDefault) == value,
-              onTap: () => Navigator.of(context).pop(value),
-            ),
-        ],
-      ),
+      selected: _remind ?? asDefault,
+      options: [
+        (
+          asDefault,
+          _dueOn
+              ? l.reminderRuleDefault(l.daysBefore(_dueDays))
+              : l.reminderRuleOff,
+        ),
+        (-1, l.reminderRuleNone),
+        for (final days in ReminderStore.dueChoices) (days, l.daysBefore(days)),
+      ],
     );
     if (picked == null) return;
     await widget.store.setRuleDays(
@@ -814,121 +808,32 @@ class _PlannedScreenState extends State<PlannedScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 2, 16, 32),
         children: [
-          DashedBorder(
-            radius: KibuoTheme.radiusFeatured,
-            color: KibuoColors.line,
-            width: 2,
-            child: Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: KibuoColors.surface,
-                borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      if (category != null && rule.kind != EntryKind.transfer)
-                        CategoryTile(category: category, size: 44, muted: true)
-                      else
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: KibuoColors.background,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: const Icon(
-                            KibuoIcons.arrowsLeftRight,
-                            size: 22,
-                            color: KibuoColors.inkMuted,
-                          ),
-                        ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              names.title(l, rule),
-                              style: KibuoType.body.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                fontVariations: const [
-                                  FontVariation.weight(600),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              l.plannedStatus(rule.kind.name),
-                              style: KibuoType.help,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _signed(rule, lang),
-                    style: KibuoType.bigAmount.copyWith(
-                      fontSize: 42,
-                      height: 48 / 42,
-                      color: KibuoColors.inkSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+          OperationHero(
+            tile: category != null && rule.kind != EntryKind.transfer
+                ? CategoryTile(category: category, size: 44, muted: true)
+                : Container(
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
-                      color: const Color(0x0F0E1320),
-                      borderRadius: BorderRadius.circular(
-                        KibuoTheme.radiusPill,
-                      ),
+                      color: KibuoColors.background,
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Text(
-                      l.plannedOn(
-                        DateFormat.MMMMEEEEd(lang).format(rule.schedule.start),
-                      ),
-                      style: KibuoType.help.copyWith(color: KibuoColors.ink),
+                    child: const Icon(
+                      KibuoIcons.arrowsLeftRight,
+                      size: 22,
+                      color: KibuoColors.inkMuted,
                     ),
                   ),
-                ],
-              ),
+            title: names.title(l, rule),
+            status: l.plannedStatus(rule.kind.name),
+            amount: _signed(rule, lang),
+            amountColor: KibuoColors.inkSecondary,
+            chip: l.plannedOn(
+              DateFormat.MMMMEEEEd(lang).format(rule.schedule.start),
             ),
           ),
           const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: KibuoColors.surface,
-              borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  KibuoIcons.clock,
-                  size: 20,
-                  color: KibuoColors.inkSecondary,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l.plannedNotice,
-                    style: KibuoType.body.copyWith(
-                      height: 20 / 14,
-                      color: KibuoColors.inkSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          NoticeCard(icon: KibuoIcons.clock, text: l.plannedNotice),
           const SizedBox(height: 14),
           Material(
             color: KibuoColors.surface,
