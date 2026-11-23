@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/data/debt_repository.dart';
+import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/accounts/account_total.dart';
@@ -23,6 +25,8 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/obligations/debt_home_cards.dart';
+import 'package:kibuo/ui/obligations/debt_screen.dart';
 import 'package:kibuo/ui/recurrences/planned_operation.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/recurrences/rhythm_text.dart';
@@ -48,7 +52,11 @@ class HomeScreen extends StatefulWidget {
     this.budgets,
     this.todos,
     this.onChanged,
+    this.onOpenDebts,
   });
+
+  /// Touching « Je dois » or « On me doit »: the debts, on that tab.
+  final ValueChanged<DebtDirection>? onOpenDebts;
 
   /// Something done from here (a draft, a recurrence) may change other
   /// tabs: the shell reloads them all, this one included.
@@ -85,8 +93,33 @@ class _HomeScreenState extends State<HomeScreen> {
   /// the 5 nearest (PRODUCT).
   List<(TransactionInfo, OperationLabels, Schedule)> _coming = const [];
 
+  /// Debts and receivables due in those 14 days, among the 5 shown.
+  List<DebtLine> _comingDebts = const [];
+
   /// How many recurrences are due in those 14 days.
   int _comingCount = 0;
+
+  /// The debts and receivables not settled (PRODUCT: Dettes et créances).
+  List<DebtLine> _debts = const [];
+  Map<String, ExchangeRate> _rates = const {};
+
+  /// One side of the home cards, in the main currency.
+  DebtSide _side(DebtDirection direction, CurrencyInfo main, String lang) {
+    final lines = [
+      for (final d in _debts)
+        if (d.direction == direction) d,
+    ];
+    if (lines.isEmpty) return const DebtSide(total: null, count: 0);
+    final total = totalIn(main, [
+      for (final d in lines) d.left,
+    ], (code) => _rates[code]);
+    final now = DateTime.now();
+    return DebtSide(
+      total: formatMoney(total.amount, main, lang),
+      count: lines.length,
+      late: lines.where((d) => debtState(d, now).$1 == DebtState.late).length,
+    );
+  }
 
   static const _comingShown = 5;
 
@@ -148,9 +181,14 @@ class _HomeScreenState extends State<HomeScreen> {
             (debtsCount || t.debtId == null))
           t,
     ];
+    final debts = [
+      for (final d in await data.debts?.debts() ?? const <DebtLine>[])
+        if (!d.settled) d,
+    ];
     final rates = <String, ExchangeRate>{};
     final codes = {
       for (final a in accounts) a.balance.currency,
+      for (final d in debts) d.left.currency,
       for (final t in month) ...[
         if (flowOf(t).incoming case final m?) m.currency,
         if (flowOf(t).outgoing case final m?) m.currency,
@@ -175,8 +213,25 @@ class _HomeScreenState extends State<HomeScreen> {
       for (final p in planned)
         if (seen.add(p.rule.id)) p,
     ];
+    // Debts due in the 14 days join them, in date order (PRODUCT).
+    final dueDebts = [
+      for (final d in debts)
+        if (d.due case final due?)
+          if (!due.isBefore(today) &&
+              due.isBefore(today.add(const Duration(days: 15))))
+            d,
+    ];
+    final both = <(DateTime, Object)>[
+      for (final p in next) (p.day, p),
+      for (final d in dueDebts) (d.due!, d),
+    ]..sort((a, b) => a.$1.compareTo(b.$1));
+    final shown = both.take(_comingShown).map((e) => e.$2).toList();
+    final comingDebts = [
+      for (final e in shown)
+        if (e is DebtLine) e,
+    ];
     final coming = <(TransactionInfo, OperationLabels, Schedule)>[];
-    for (final p in next.take(_comingShown)) {
+    for (final p in shown.whereType<Planned>()) {
       if (!mounted) return;
       final t = plannedOperation(p);
       coming.add((
@@ -189,12 +244,15 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _todo = todo;
       _coming = coming;
-      _comingCount = next.length;
+      _comingCount = next.length + dueDebts.length;
+      _comingDebts = comingDebts;
       _main = main;
       _available = totalIn(main, [
         for (final a in accounts) a.balance,
       ], (code) => rates[code]);
       _month = flowTotals(main, month.map(flowOf), (code) => rates[code]);
+      _debts = debts;
+      _rates = rates;
     });
   }
 
@@ -217,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final main = _main;
     return ListView(
       // Room for the floating bar and its fade.
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 112),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, KibuoTheme.belowTabBar),
       children: [
         TabHeader(
           title: TabHeader.text(l.homeTitle),
@@ -260,6 +318,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 : formatSigned(m, main, lang),
             onTap: widget.onOpenMonth,
           ),
+          // Under the month, as soon as something is owed (PRODUCT).
+          if (_debts.isNotEmpty && widget.onOpenDebts != null) ...[
+            const SizedBox(height: 8),
+            DebtHomeCards(
+              owe: _side(DebtDirection.owe, main, lang),
+              owed: _side(DebtDirection.owed, main, lang),
+              onOpen: widget.onOpenDebts!,
+            ),
+          ],
         ],
         if (_todo.isNotEmpty)
           TodoSection(
@@ -274,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-        if (_coming.isNotEmpty) ..._upcoming(l),
+        if (_coming.isNotEmpty || _comingDebts.isNotEmpty) ..._upcoming(l),
       ],
     );
   }
@@ -283,12 +350,16 @@ class _HomeScreenState extends State<HomeScreen> {
   /// as the list's planned operations, under their date (PRODUCT).
   List<Widget> _upcoming(AppLocalizations l) {
     final lang = Localizations.localeOf(context).languageCode;
-    final days =
-        <DateTime, List<(TransactionInfo, OperationLabels, Schedule)>>{};
+    final days = <DateTime, List<Object>>{};
     for (final e in _coming) {
       final d = e.$1.date.toLocal();
       (days[DateTime(d.year, d.month, d.day)] ??= []).add(e);
     }
+    for (final d in _comingDebts) {
+      final due = d.due!;
+      (days[DateTime(due.year, due.month, due.day)] ??= []).add(d);
+    }
+    final sorted = days.keys.toList()..sort();
     return [
       const SizedBox(height: GroupTitle.before),
       GroupTitle(
@@ -300,23 +371,43 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         onTap: widget.onOpenMonth,
       ),
-      for (final (i, MapEntry(key: day, value: ops))
-          in days.entries.indexed) ...[
+      for (final (i, day) in sorted.indexed) ...[
         if (i > 0) const SizedBox(height: GroupTitle.before),
         GroupTitle(title: dayLabel(context, day)),
-        for (final (j, (t, labels, schedule)) in ops.indexed) ...[
+        for (final (j, e) in days[day]!.indexed) ...[
           if (j > 0) const SizedBox(height: 8),
-          OperationRow(
-            t: t,
-            labels: labels,
-            title: (labels.categoryPath.split(' › ').last, null),
-            subtitle: (rhythmOnly(l, lang, schedule), null),
-            tag: l.plannedTag,
-            onTap: () async {
-              await openRuleCard(context, widget.data, t.id);
-              await _changed();
-            },
-          ),
+          if (e case (
+            final TransactionInfo t,
+            final OperationLabels labels,
+            final Schedule schedule,
+          ))
+            OperationRow(
+              t: t,
+              labels: labels,
+              title: (labels.categoryPath.split(' › ').last, null),
+              subtitle: (rhythmOnly(l, lang, schedule), null),
+              tag: l.plannedTag,
+              onTap: () async {
+                await openRuleCard(context, widget.data, t.id);
+                await _changed();
+              },
+            )
+          else if (e case final DebtLine d)
+            DebtComingRow(
+              debt: d,
+              onTap: () async {
+                await Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) => DebtScreen(
+                      data: widget.data,
+                      debts: widget.data.debts!,
+                      id: d.id,
+                    ),
+                  ),
+                );
+                await _changed();
+              },
+            ),
         ],
       ],
     ];

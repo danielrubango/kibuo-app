@@ -5040,6 +5040,132 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Reste {left} sur {total}'**
   String debtLeftOf(String left, String total);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Solder sans paiement'**
+  String get debtForgive;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le reste ({amount}) sera abandonné. Rien ne bouge sur vos comptes, et ce reste ne pourra plus être repris.'**
+  String debtForgiveText(String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soldée sans paiement le {date} : {amount} abandonnés'**
+  String debtForgivenOn(String date, String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soldée sans paiement le {date}, reste abandonné : {amount}'**
+  String debtForgivenNote(String date, String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun remboursement : soldée sans paiement.'**
+  String get debtNoRepaymentForgiven;
+
+  /// Debts on the home screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 dette} other{{count} dettes}}'**
+  String debtsCountOwe(int count);
+
+  /// Debts on the home screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 créance} other{{count} créances}}'**
+  String debtsCountOwed(int count);
+
+  /// Debts on the home screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien'**
+  String get debtsNothing;
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réclamer à {name}'**
+  String debtClaimTitle(String name);
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} vous doit {amount}'**
+  String debtClaimOwes(String name, String amount);
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message'**
+  String get debtClaimMessageLabel;
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour {name}, petit rappel pour les {amount} que tu me dois. Merci !'**
+  String debtClaimMessage(String name, String amount);
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour {name}, petit rappel pour les {amount} que tu devais me rendre le {date}. Merci !'**
+  String debtClaimMessageDue(String name, String amount, String date);
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get debtClaimSend;
+
+  /// Claiming money owed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réclamer'**
+  String get debtClaimAction;
+
+  /// Debts in À venir.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rembourser {name}'**
+  String debtComingOwe(String name);
+
+  /// Debts in À venir.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} me rembourse'**
+  String debtComingOwed(String name);
+
+  /// Debt reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rembourser {name} : {amount}, échéance {day}'**
+  String reminderDebtOwe(String name, String amount, String day);
+
+  /// Debt reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} doit vous rembourser {amount} {day}'**
+  String reminderDebtOwed(String name, String amount, String day);
+
+  /// Debt reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'C’est aujourd’hui.'**
+  String get reminderDebtToday;
+
+  /// Debt reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =1{C’est demain.} other{Dans {days} jours.}}'**
+  String reminderDebtSoon(int days);
 }
 
 class _AppLocalizationsDelegate

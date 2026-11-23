@@ -430,7 +430,7 @@ class _OperationsScreenState extends State<OperationsScreen> {
       (days[dayOf(e.$1)] ??= []).add(e);
     }
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 140),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, KibuoTheme.belowTabBar),
       children: [
         _header(l, month),
         const SizedBox(height: 16),

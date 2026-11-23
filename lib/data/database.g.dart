@@ -7533,6 +7533,29 @@ class $DebtsTable extends Debts with TableInfo<$DebtsTable, DebtRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _forgivenMeta = const VerificationMeta(
+    'forgiven',
+  );
+  @override
+  late final GeneratedColumn<int> forgiven = GeneratedColumn<int>(
+    'forgiven',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _forgivenOnMeta = const VerificationMeta(
+    'forgivenOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> forgivenOn = GeneratedColumn<DateTime>(
+    'forgiven_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -7546,6 +7569,8 @@ class $DebtsTable extends Debts with TableInfo<$DebtsTable, DebtRow> {
     openedOn,
     dueDate,
     note,
+    forgiven,
+    forgivenOn,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7638,6 +7663,18 @@ class $DebtsTable extends Debts with TableInfo<$DebtsTable, DebtRow> {
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('forgiven')) {
+      context.handle(
+        _forgivenMeta,
+        forgiven.isAcceptableOrUnknown(data['forgiven']!, _forgivenMeta),
+      );
+    }
+    if (data.containsKey('forgiven_on')) {
+      context.handle(
+        _forgivenOnMeta,
+        forgivenOn.isAcceptableOrUnknown(data['forgiven_on']!, _forgivenOnMeta),
+      );
+    }
     return context;
   }
 
@@ -7691,6 +7728,14 @@ class $DebtsTable extends Debts with TableInfo<$DebtsTable, DebtRow> {
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      forgiven: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}forgiven'],
+      )!,
+      forgivenOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}forgiven_on'],
+      ),
     );
   }
 
@@ -7723,6 +7768,11 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
   /// None: « Sans échéance ».
   final DateTime? dueDate;
   final String? note;
+
+  /// Settled without payment (PRODUCT): what was given up, in [currency],
+  /// and when; it can never be taken back.
+  final int forgiven;
+  final DateTime? forgivenOn;
   const DebtRow({
     required this.id,
     required this.version,
@@ -7735,6 +7785,8 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
     required this.openedOn,
     this.dueDate,
     this.note,
+    required this.forgiven,
+    this.forgivenOn,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -7754,6 +7806,10 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    map['forgiven'] = Variable<int>(forgiven);
+    if (!nullToAbsent || forgivenOn != null) {
+      map['forgiven_on'] = Variable<DateTime>(forgivenOn);
+    }
     return map;
   }
 
@@ -7772,6 +7828,10 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
           ? const Value.absent()
           : Value(dueDate),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      forgiven: Value(forgiven),
+      forgivenOn: forgivenOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(forgivenOn),
     );
   }
 
@@ -7792,6 +7852,8 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
       openedOn: serializer.fromJson<DateTime>(json['openedOn']),
       dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
       note: serializer.fromJson<String?>(json['note']),
+      forgiven: serializer.fromJson<int>(json['forgiven']),
+      forgivenOn: serializer.fromJson<DateTime?>(json['forgivenOn']),
     );
   }
   @override
@@ -7809,6 +7871,8 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
       'openedOn': serializer.toJson<DateTime>(openedOn),
       'dueDate': serializer.toJson<DateTime?>(dueDate),
       'note': serializer.toJson<String?>(note),
+      'forgiven': serializer.toJson<int>(forgiven),
+      'forgivenOn': serializer.toJson<DateTime?>(forgivenOn),
     };
   }
 
@@ -7824,6 +7888,8 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
     DateTime? openedOn,
     Value<DateTime?> dueDate = const Value.absent(),
     Value<String?> note = const Value.absent(),
+    int? forgiven,
+    Value<DateTime?> forgivenOn = const Value.absent(),
   }) => DebtRow(
     id: id ?? this.id,
     version: version ?? this.version,
@@ -7836,6 +7902,8 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
     openedOn: openedOn ?? this.openedOn,
     dueDate: dueDate.present ? dueDate.value : this.dueDate,
     note: note.present ? note.value : this.note,
+    forgiven: forgiven ?? this.forgiven,
+    forgivenOn: forgivenOn.present ? forgivenOn.value : this.forgivenOn,
   );
   DebtRow copyWithCompanion(DebtsCompanion data) {
     return DebtRow(
@@ -7850,6 +7918,10 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
       openedOn: data.openedOn.present ? data.openedOn.value : this.openedOn,
       dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
       note: data.note.present ? data.note.value : this.note,
+      forgiven: data.forgiven.present ? data.forgiven.value : this.forgiven,
+      forgivenOn: data.forgivenOn.present
+          ? data.forgivenOn.value
+          : this.forgivenOn,
     );
   }
 
@@ -7866,7 +7938,9 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
           ..write('currency: $currency, ')
           ..write('openedOn: $openedOn, ')
           ..write('dueDate: $dueDate, ')
-          ..write('note: $note')
+          ..write('note: $note, ')
+          ..write('forgiven: $forgiven, ')
+          ..write('forgivenOn: $forgivenOn')
           ..write(')'))
         .toString();
   }
@@ -7884,6 +7958,8 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
     openedOn,
     dueDate,
     note,
+    forgiven,
+    forgivenOn,
   );
   @override
   bool operator ==(Object other) =>
@@ -7899,7 +7975,9 @@ class DebtRow extends DataClass implements Insertable<DebtRow> {
           other.currency == this.currency &&
           other.openedOn == this.openedOn &&
           other.dueDate == this.dueDate &&
-          other.note == this.note);
+          other.note == this.note &&
+          other.forgiven == this.forgiven &&
+          other.forgivenOn == this.forgivenOn);
 }
 
 class DebtsCompanion extends UpdateCompanion<DebtRow> {
@@ -7914,6 +7992,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
   final Value<DateTime> openedOn;
   final Value<DateTime?> dueDate;
   final Value<String?> note;
+  final Value<int> forgiven;
+  final Value<DateTime?> forgivenOn;
   final Value<int> rowid;
   const DebtsCompanion({
     this.id = const Value.absent(),
@@ -7927,6 +8007,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
     this.openedOn = const Value.absent(),
     this.dueDate = const Value.absent(),
     this.note = const Value.absent(),
+    this.forgiven = const Value.absent(),
+    this.forgivenOn = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DebtsCompanion.insert({
@@ -7941,6 +8023,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
     required DateTime openedOn,
     this.dueDate = const Value.absent(),
     this.note = const Value.absent(),
+    this.forgiven = const Value.absent(),
+    this.forgivenOn = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        version = Value(version),
@@ -7962,6 +8046,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
     Expression<DateTime>? openedOn,
     Expression<DateTime>? dueDate,
     Expression<String>? note,
+    Expression<int>? forgiven,
+    Expression<DateTime>? forgivenOn,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -7976,6 +8062,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
       if (openedOn != null) 'opened_on': openedOn,
       if (dueDate != null) 'due_date': dueDate,
       if (note != null) 'note': note,
+      if (forgiven != null) 'forgiven': forgiven,
+      if (forgivenOn != null) 'forgiven_on': forgivenOn,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -7992,6 +8080,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
     Value<DateTime>? openedOn,
     Value<DateTime?>? dueDate,
     Value<String?>? note,
+    Value<int>? forgiven,
+    Value<DateTime?>? forgivenOn,
     Value<int>? rowid,
   }) {
     return DebtsCompanion(
@@ -8006,6 +8096,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
       openedOn: openedOn ?? this.openedOn,
       dueDate: dueDate ?? this.dueDate,
       note: note ?? this.note,
+      forgiven: forgiven ?? this.forgiven,
+      forgivenOn: forgivenOn ?? this.forgivenOn,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -8046,6 +8138,12 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (forgiven.present) {
+      map['forgiven'] = Variable<int>(forgiven.value);
+    }
+    if (forgivenOn.present) {
+      map['forgiven_on'] = Variable<DateTime>(forgivenOn.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -8066,6 +8164,8 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
           ..write('openedOn: $openedOn, ')
           ..write('dueDate: $dueDate, ')
           ..write('note: $note, ')
+          ..write('forgiven: $forgiven, ')
+          ..write('forgivenOn: $forgivenOn, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -11803,6 +11903,8 @@ typedef $$DebtsTableCreateCompanionBuilder = DebtsCompanion Function({
   required DateTime openedOn,
   Value<DateTime?> dueDate,
   Value<String?> note,
+  Value<int> forgiven,
+  Value<DateTime?> forgivenOn,
   Value<int> rowid,
 });
 typedef $$DebtsTableUpdateCompanionBuilder = DebtsCompanion Function({
@@ -11817,6 +11919,8 @@ typedef $$DebtsTableUpdateCompanionBuilder = DebtsCompanion Function({
   Value<DateTime> openedOn,
   Value<DateTime?> dueDate,
   Value<String?> note,
+  Value<int> forgiven,
+  Value<DateTime?> forgivenOn,
   Value<int> rowid,
 });
 
@@ -11881,6 +11985,16 @@ class $$DebtsTableFilterComposer
 
   ColumnFilters<String> get note => $composableBuilder(
     column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get forgiven => $composableBuilder(
+    column: $table.forgiven,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get forgivenOn => $composableBuilder(
+    column: $table.forgivenOn,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -11948,6 +12062,16 @@ class $$DebtsTableOrderingComposer
     column: $table.note,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get forgiven => $composableBuilder(
+    column: $table.forgiven,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get forgivenOn => $composableBuilder(
+    column: $table.forgivenOn,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$DebtsTableAnnotationComposer
@@ -11991,6 +12115,14 @@ class $$DebtsTableAnnotationComposer
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<int> get forgiven =>
+      $composableBuilder(column: $table.forgiven, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get forgivenOn => $composableBuilder(
+    column: $table.forgivenOn,
+    builder: (column) => column,
+  );
 }
 
 class $$DebtsTableTableManager
@@ -12032,6 +12164,8 @@ class $$DebtsTableTableManager
                 Value<DateTime> openedOn = const Value.absent(),
                 Value<DateTime?> dueDate = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<int> forgiven = const Value.absent(),
+                Value<DateTime?> forgivenOn = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DebtsCompanion(
                 id: id,
@@ -12045,6 +12179,8 @@ class $$DebtsTableTableManager
                 openedOn: openedOn,
                 dueDate: dueDate,
                 note: note,
+                forgiven: forgiven,
+                forgivenOn: forgivenOn,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -12060,6 +12196,8 @@ class $$DebtsTableTableManager
                 required DateTime openedOn,
                 Value<DateTime?> dueDate = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<int> forgiven = const Value.absent(),
+                Value<DateTime?> forgivenOn = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DebtsCompanion.insert(
                 id: id,
@@ -12073,6 +12211,8 @@ class $$DebtsTableTableManager
                 openedOn: openedOn,
                 dueDate: dueDate,
                 note: note,
+                forgiven: forgiven,
+                forgivenOn: forgivenOn,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -3193,4 +3193,114 @@ class AppLocalizationsFr extends AppLocalizations {
   String debtLeftOf(String left, String total) {
     return 'Reste $left sur $total';
   }
+
+  @override
+  String get debtForgive => 'Solder sans paiement';
+
+  @override
+  String debtForgiveText(String amount) {
+    return 'Le reste ($amount) sera abandonné. Rien ne bouge sur vos comptes, et ce reste ne pourra plus être repris.';
+  }
+
+  @override
+  String debtForgivenOn(String date, String amount) {
+    return 'Soldée sans paiement le $date : $amount abandonnés';
+  }
+
+  @override
+  String debtForgivenNote(String date, String amount) {
+    return 'Soldée sans paiement le $date, reste abandonné : $amount';
+  }
+
+  @override
+  String get debtNoRepaymentForgiven =>
+      'Aucun remboursement : soldée sans paiement.';
+
+  @override
+  String debtsCountOwe(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dettes',
+      one: '1 dette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtsCountOwed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count créances',
+      one: '1 créance',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtsNothing => 'Rien';
+
+  @override
+  String debtClaimTitle(String name) {
+    return 'Réclamer à $name';
+  }
+
+  @override
+  String debtClaimOwes(String name, String amount) {
+    return '$name vous doit $amount';
+  }
+
+  @override
+  String get debtClaimMessageLabel => 'Message';
+
+  @override
+  String debtClaimMessage(String name, String amount) {
+    return 'Bonjour $name, petit rappel pour les $amount que tu me dois. Merci !';
+  }
+
+  @override
+  String debtClaimMessageDue(String name, String amount, String date) {
+    return 'Bonjour $name, petit rappel pour les $amount que tu devais me rendre le $date. Merci !';
+  }
+
+  @override
+  String get debtClaimSend => 'Envoyer';
+
+  @override
+  String get debtClaimAction => 'Réclamer';
+
+  @override
+  String debtComingOwe(String name) {
+    return 'Rembourser $name';
+  }
+
+  @override
+  String debtComingOwed(String name) {
+    return '$name me rembourse';
+  }
+
+  @override
+  String reminderDebtOwe(String name, String amount, String day) {
+    return 'Rembourser $name : $amount, échéance $day';
+  }
+
+  @override
+  String reminderDebtOwed(String name, String amount, String day) {
+    return '$name doit vous rembourser $amount $day';
+  }
+
+  @override
+  String get reminderDebtToday => 'C’est aujourd’hui.';
+
+  @override
+  String reminderDebtSoon(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Dans $days jours.',
+      one: 'C’est demain.',
+    );
+    return '$_temp0';
+  }
 }

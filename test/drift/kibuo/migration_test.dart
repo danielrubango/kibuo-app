@@ -9,6 +9,7 @@ import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
+import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -458,4 +459,35 @@ void main() {
       await db.close();
     },
   );
+
+  test('version 11 to 12 keeps the debts, nothing given up', () async {
+    const debt = v11.DebtsData(
+      id: 'debt-1',
+      version: 110,
+      deviceId: 'phone-1',
+      deleted: 0,
+      direction: 'owe',
+      person: 'Patrick',
+      amount: 50000,
+      currency: 'CDF',
+      openedOn: 1794700000,
+      dueDate: 1795000000,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 11,
+      newVersion: 12,
+      createOld: v11.DatabaseAtV11.new,
+      createNew: v12.DatabaseAtV12.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.debts, debt),
+      validateItems: (newDb) async {
+        final kept = (await newDb.select(newDb.debts).get()).single;
+        expect(kept.person, 'Patrick');
+        expect(kept.amount, 50000);
+        expect(kept.forgiven, 0);
+        expect(kept.forgivenOn, equals(null));
+      },
+    );
+  });
 }

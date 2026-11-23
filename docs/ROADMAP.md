@@ -70,7 +70,7 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Phase 5 : Dettes, créances et projets
 
-- [ ] Dettes et créances, avec remboursements partiels
+- [x] Dettes et créances, avec remboursements partiels
 - [ ] Message pré-rempli pour réclamer un remboursement
 - [ ] Projets et versements
 - [ ] Rappels des dettes, créances et projets

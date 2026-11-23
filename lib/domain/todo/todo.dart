@@ -5,9 +5,17 @@ enum TodoGroup { urgent, week, reminders }
 
 /// What a line of « À traiter » is about, in the order PRODUCT gives.
 enum TodoKind {
+  /// A debt late or due today: « Rembourser ».
+  debtLate(TodoGroup.urgent),
+
+  /// Money owed to the user, late or due today: « Réclamer ».
+  receivableLate(TodoGroup.urgent),
   budgetOver(TodoGroup.urgent),
   recovery(TodoGroup.urgent),
   drafts(TodoGroup.week),
+
+  /// A debt or receivable due in the next 7 days.
+  debtSoon(TodoGroup.week),
   shortfall(TodoGroup.week),
   budgetNear(TodoGroup.week),
   oldRate(TodoGroup.reminders);

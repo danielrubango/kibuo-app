@@ -32,7 +32,7 @@ class TabPlaceholder extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return ListView(
       // Room for the floating bar and its fade.
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 112),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, KibuoTheme.belowTabBar),
       children: [
         TabHeader(title: TabHeader.text(title), subtitle: subtitle),
         const SizedBox(height: 16),

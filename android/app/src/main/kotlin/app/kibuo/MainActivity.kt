@@ -32,6 +32,15 @@ class MainActivity : FlutterFragmentActivity() {
                     }
                     return@setMethodCallHandler result.success(false)
                 }
+                // « Réclamer »: the phone's share menu (SMS, WhatsApp…) with
+                // the message; kibuo never reads the contacts.
+                if (call.method == "shareText") {
+                    val send = Intent(Intent.ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(Intent.EXTRA_TEXT, call.arguments as String)
+                    startActivity(Intent.createChooser(send, null))
+                    return@setMethodCallHandler result.success(true)
+                }
                 // « Ouvrir les réglages du téléphone » when notifications are
                 // blocked (PRODUCT: Rappels).
                 if (call.method == "notificationSettings") {
