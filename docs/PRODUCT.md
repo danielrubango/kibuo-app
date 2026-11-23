@@ -118,6 +118,17 @@ kibuo aide à savoir où part son argent et à préparer ce qui compte, sans dé
 - La liste se groupe par date d'échéance ou par personne, au choix de l'utilisateur.
 - Les dettes et créances soldées restent par défaut dans leur mois, ou dans « Sans échéance » si elles n'avaient pas de date. L'utilisateur peut choisir de les regrouper en bas ou de les masquer (réglage d'affichage, aussi dans Réglages).
 
+Décidé le 23 novembre 2026 :
+
+- La phase se livre en trois temps validés : créer et lister (Plus › Dettes et créances, « Nouvelle entrée » aussi depuis le +, liste par onglets Je dois / On me doit et par mois, feuille d'affichage) ; la fiche et les remboursements (fiche, « Rembourser », modifier, solder, dettes soldées) ; autour (cartes de l'accueil, « À traiter » avec dettes en retard et créances à réclamer et le message pré-rempli par SMS ou WhatsApp, « À venir », rappel de chaque dette). Rien n'apparaît sur l'accueil, dans « À traiter » ni dans « À venir » avant le troisième temps.
+- Emprunter est une entrée : l'argent reçu compte dans les Entrées du mois, et un remboursement dans les Sorties (prêter et être remboursé, l'inverse). Ces mouvements gardent leur nature : étiquette « Dette » ou « Créance » dans la liste, et un style qui dit qu'ils sont provisoires, puisque l'argent repartira (ou reviendra). Un réglage d'affichage laisse l'utilisateur choisir s'ils comptent dans les Entrées et Sorties ou restent à part. Ils ne comptent jamais dans les budgets. Le solde des comptes change toujours ; le patrimoine (comptes, plus créances, moins dettes) le montre au mieux.
+- Une dette garde sa propre devise ; un remboursement depuis un compte dans une autre devise se convertit au taux du jour, corrigeable, puis figé, comme une dépense.
+- La personne est un nom tapé librement, avec les noms déjà utilisés proposés en tapant.
+- Un remboursement ne dépasse jamais le reste dû (pré-rempli) ; atteindre le reste solde la dette.
+- Une dette ancienne s'enregistre sans compte (interrupteur éteint) : seul le reste dû est noté ; ses remboursements peuvent sortir d'un compte.
+- Le rappel d'une dette est la même ligne « Rappel » que pour les récurrences (par défaut, Aucun, le jour même, 1, 2, 3, 7 jours).
+- La liste : par échéance, la plus proche d'abord, celles en retard tout en haut en rouge, « Sans échéance » en bas ; « par personne » est un choix de la feuille d'affichage.
+
 ### Projets
 
 - Chaque projet est rattaché à un compte, quel que soit son type (banque, mobile money, etc.). Un compte peut porter plusieurs projets.

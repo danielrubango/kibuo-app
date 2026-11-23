@@ -98,6 +98,8 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Après la V1
 
+- [ ] Aller plus loin : remboursements par mobile money, emprunts bancaires, taxes et impôts par pays (voir [backlog/aller-plus-loin.md](backlog/aller-plus-loin.md))
+
 - [ ] Fonctionner en arrière-plan : rattrapage des récurrences et notifications sans ouvrir kibuo
 
 - [ ] Couleurs des comptes, au choix dans une petite palette (carte du compte, filtres)
