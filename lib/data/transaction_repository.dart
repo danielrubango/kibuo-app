@@ -42,6 +42,7 @@ class TransactionInfo {
     this.note,
     this.status = 'done',
     this.recurringId,
+    this.debtId,
   });
 
   final String id;
@@ -78,6 +79,9 @@ class TransactionInfo {
 
   /// The recurrence it comes from.
   final String? recurringId;
+
+  /// The debt or receivable it opens or repays (GLOSSARY: Dette).
+  final String? debtId;
 
   bool get isDraft => status == 'draft';
 
@@ -169,6 +173,7 @@ class TransactionRepository {
     bool rateTyped = false,
     String? note,
     Occurrence? occurrence,
+    String? debtId,
   }) async {
     final id = const Uuid().v7();
     final columns = await _columns(
@@ -192,6 +197,7 @@ class TransactionRepository {
             status: Value(occurrence?.status ?? 'done'),
             recurringId: Value(occurrence?.ruleId),
             occurrence: Value(occurrence?.day),
+            debtId: Value(debtId),
           ),
         );
     return id;
@@ -427,6 +433,7 @@ class TransactionRepository {
       note: r.note,
       status: r.status,
       recurringId: r.recurringId,
+      debtId: r.debtId,
     );
   }
 }

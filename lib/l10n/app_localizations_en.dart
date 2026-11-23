@@ -1231,6 +1231,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'otherIncome': 'Other',
       'adjustExpense': 'Adjustment',
       'adjustIncome': 'Adjustment',
+      'debtIn': 'Debt',
+      'debtOut': 'Debt',
+      'receivableIn': 'Money owed',
+      'receivableOut': 'Money owed',
       'other': '',
     });
     return '$_temp0';
@@ -2673,4 +2677,291 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get remindersBudgetHelp => 'One alert per category';
+
+  @override
+  String get debtsTitle => 'Debts and money owed';
+
+  @override
+  String get debtsOwe => 'I owe';
+
+  @override
+  String get debtsOwed => 'Owed to me';
+
+  @override
+  String debtsLateCount(int count) {
+    return '$count overdue';
+  }
+
+  @override
+  String get debtsLateGroup => 'Overdue';
+
+  @override
+  String get debtsNoDue => 'No due date';
+
+  @override
+  String debtsAbout(String amount) {
+    return 'About $amount';
+  }
+
+  @override
+  String debtWordLate(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days overdue',
+      one: '1 day overdue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtWordToday => 'Today';
+
+  @override
+  String get debtWordTomorrow => 'Tomorrow';
+
+  @override
+  String get debtWordAfterTomorrow => 'In 2 days';
+
+  @override
+  String debtWordIn(int days) {
+    return 'In $days days';
+  }
+
+  @override
+  String debtWordSettled(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Settled $days days ago',
+      one: 'Settled yesterday',
+      zero: 'Settled today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtWordReceived(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Received $days days ago',
+      one: 'Received yesterday',
+      zero: 'Received today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtDueLine(String date) {
+    return 'Due: $date';
+  }
+
+  @override
+  String debtDueTodayLine(String date) {
+    return 'Due: today, $date';
+  }
+
+  @override
+  String debtDueLateLine(String date) {
+    return 'Was due: $date';
+  }
+
+  @override
+  String get debtNoDueLine => 'No date set';
+
+  @override
+  String get debtNothingRepaid => 'Nothing paid back yet.';
+
+  @override
+  String get debtNothingReceived => 'Nothing received yet.';
+
+  @override
+  String debtRepaidLine(String paid, String total) {
+    return '$paid already paid back of $total.';
+  }
+
+  @override
+  String debtReceivedLine(String paid, String total) {
+    return '$paid already received of $total.';
+  }
+
+  @override
+  String debtAboutLine(String amount) {
+    return 'About $amount at today’s rate.';
+  }
+
+  @override
+  String debtSettledOwe(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count settled debts',
+      one: '1 settled debt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtSettledOwed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count paid back to me',
+      one: '1 paid back to me',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtsEmptyOwe => 'No debts';
+
+  @override
+  String get debtsEmptyOweHelp =>
+      'Note what you owe, with or without a due date.';
+
+  @override
+  String get debtsEmptyOwed => 'Nobody owes you anything';
+
+  @override
+  String get debtsEmptyOwedHelp =>
+      'Note the money you lend, to know who has to pay back.';
+
+  @override
+  String get debtsGroupBy => 'Sort by';
+
+  @override
+  String get debtsByDue => 'Due date';
+
+  @override
+  String get debtsByDueHelp => 'The closest first, overdue ones on top.';
+
+  @override
+  String get debtsByPerson => 'Person';
+
+  @override
+  String get debtsByPersonHelp => 'One group per name, in alphabetical order.';
+
+  @override
+  String get debtsPaidTitle => 'Settled debts and money owed';
+
+  @override
+  String get debtsPaidInline => 'In their month';
+
+  @override
+  String get debtsPaidInlineHelp =>
+      'With the others, at their date. Without a date: in “No due date”.';
+
+  @override
+  String get debtsPaidBottom => 'Grouped at the bottom';
+
+  @override
+  String get debtsPaidBottomHelp => 'A separate “settled” block that unfolds.';
+
+  @override
+  String get debtsPaidHidden => 'Hidden';
+
+  @override
+  String get debtsPaidHiddenHelp => 'Not in the list.';
+
+  @override
+  String get debtPersonOwe => 'Who I owe';
+
+  @override
+  String get debtPersonOwed => 'Who owes me';
+
+  @override
+  String get debtPersonHint => 'A name';
+
+  @override
+  String get debtPersonMissing => 'Type a name';
+
+  @override
+  String get debtLeft => 'Still owed';
+
+  @override
+  String get debtDue => 'Due date';
+
+  @override
+  String get debtDueClear => 'Remove the due date';
+
+  @override
+  String get debtLinkOwe => 'Money received in an account';
+
+  @override
+  String get debtLinkOwed => 'Money paid from an account';
+
+  @override
+  String debtLinkHelp(String account) {
+    return '$account, its balance will change';
+  }
+
+  @override
+  String get debtLinkOffHelp => 'An old one: only what is left is noted';
+
+  @override
+  String get debtSavedOwe => 'Debt saved';
+
+  @override
+  String get debtSavedOwed => 'Money owed saved';
+
+  @override
+  String get debtCurrency => 'Currency of the debt';
+
+  @override
+  String get debtAmountMissing => 'Type an amount';
+
+  @override
+  String get debtNewOwe => 'New debt';
+
+  @override
+  String get debtNewOwed => 'New money owed';
+
+  @override
+  String get debtNoAccount => 'No account';
+
+  @override
+  String get debtsOpenTitle => 'Opening a line';
+
+  @override
+  String get debtsDetailsAbove => 'Details above';
+
+  @override
+  String get debtsDetailsAboveHelp =>
+      'The line moves down, the details come from the top.';
+
+  @override
+  String get debtsDetailsBelow => 'Details below';
+
+  @override
+  String get debtsDetailsBelowHelp =>
+      'The line stays, the details unfold below it.';
+
+  @override
+  String debtsCoachStep(int step) {
+    return '$step of 2';
+  }
+
+  @override
+  String get debtsCoach1Title => 'One line, one person';
+
+  @override
+  String get debtsCoach1Text =>
+      'Red means the due date has passed. The square around the day fills as money is paid back.';
+
+  @override
+  String get debtsCoach2Title => 'Touch for details';
+
+  @override
+  String get debtsCoach2Text =>
+      'The full date and what is already paid back show on touch. Where they appear is chosen in Display.';
+
+  @override
+  String get debtsCoachSkip => 'Skip';
+
+  @override
+  String get debtsCoachNext => 'Next';
+
+  @override
+  String get debtsCoachTry => 'Try it';
 }

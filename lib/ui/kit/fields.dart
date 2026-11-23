@@ -68,6 +68,7 @@ class KibuoTextField extends StatelessWidget {
     this.autofocus = false,
     this.textCapitalization = TextCapitalization.sentences,
     this.onFocus,
+    this.focusNode,
   });
 
   final String? label;
@@ -77,6 +78,7 @@ class KibuoTextField extends StatelessWidget {
   final String? error;
   final bool autofocus;
   final TextCapitalization textCapitalization;
+  final FocusNode? focusNode;
 
   /// When the field takes the focus, whatever way: a screen closes Kibuo's
   /// keypad here, so the phone's keyboard never shows with it.
@@ -103,6 +105,7 @@ class KibuoTextField extends StatelessWidget {
           },
           child: TextField(
             controller: controller,
+            focusNode: focusNode,
             onChanged: onChanged,
             autofocus: autofocus,
             textCapitalization: textCapitalization,
@@ -509,6 +512,53 @@ class RefusalLine extends StatelessWidget {
           else
             const SizedBox(height: KibuoTheme.heightTouch),
         ],
+      ),
+    );
+  }
+}
+
+/// A date to touch: the calendar, the date, ›.
+class DateField extends StatelessWidget {
+  const DateField({super.key, required this.text, required this.onTap});
+
+  final String text;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          height: KibuoTheme.heightField,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                const Icon(
+                  KibuoIcons.calendarBlank,
+                  size: 20,
+                  color: KibuoColors.inkSecondary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: KibuoType.body.copyWith(fontSize: 16),
+                  ),
+                ),
+                const Icon(
+                  KibuoIcons.caretRight,
+                  size: 16,
+                  color: KibuoColors.inkMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

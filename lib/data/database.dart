@@ -166,6 +166,10 @@ class Transactions extends Table with SyncColumns {
   /// + month × 100 + day): one occurrence per rule and day.
   TextColumn get recurringId => text().nullable()();
   IntColumn get occurrence => integer().nullable()();
+
+  /// The debt or receivable it opens or repays (GLOSSARY: Dette): its
+  /// kind tells which, « in » opening a debt or repaying a receivable.
+  TextColumn get debtId => text().nullable()();
 }
 
 /// A rule that makes an operation at regular intervals (GLOSSARY:
@@ -247,6 +251,29 @@ class BudgetAmounts extends Table with SyncColumns {
   TextColumn get currency => text()();
 }
 
+/// Money the user owes someone, or someone owes the user (GLOSSARY:
+/// Dette, Créance). Its repayments are rows of [Transactions].
+@DataClassName('DebtRow')
+class Debts extends Table with SyncColumns {
+  /// « owe »: the user owes; « owed »: someone owes the user.
+  TextColumn get direction => text()();
+
+  /// The counterparty: a name typed freely (GLOSSARY: Contrepartie).
+  TextColumn get person => text()();
+
+  /// What was owed at the start, in [currency], the debt's own; for an old
+  /// debt noted without an account, what is left.
+  IntColumn get amount => integer()();
+  TextColumn get currency => text()();
+
+  /// The day it began.
+  DateTimeColumn get openedOn => dateTime()();
+
+  /// None: « Sans échéance ».
+  DateTimeColumn get dueDate => dateTime().nullable()();
+  TextColumn get note => text().nullable()();
+}
+
 @DriftDatabase(
   tables: [
     Devices,
@@ -261,6 +288,7 @@ class BudgetAmounts extends Table with SyncColumns {
     Budgets,
     BudgetAmounts,
     RecurringRules,
+    Debts,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -271,7 +299,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -318,11 +346,34 @@ class KibuoDatabase extends _$KibuoDatabase {
         await m.addColumn(schema.transactions, schema.transactions.occurrence);
         await m.createTable(schema.recurringRules);
       },
+      from10To11: (m, schema) async {
+        await m.addColumn(schema.transactions, schema.transactions.debtId);
+        await m.createTable(schema.debts);
+      },
     ),
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
+      if (details.versionNow >= 11) await _repairDebts();
     },
   );
+
+  /// A trial build once took some data to version 11 without the debts:
+  /// what is missing is added, nothing is removed.
+  Future<void> _repairDebts() async {
+    Future<bool> has(String sql) async =>
+        (await customSelect(sql).get()).isNotEmpty;
+    final m = createMigrator();
+    if (!await has(
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'debts'",
+    )) {
+      await m.createTable(debts);
+    }
+    if (!await has(
+      "SELECT 1 FROM pragma_table_info('transactions') WHERE name = 'debt_id'",
+    )) {
+      await m.addColumn(transactions, transactions.debtId);
+    }
+  }
 
   /// The highest version recorded in any table, to restart the clock.
   Future<int> lastVersion() async {

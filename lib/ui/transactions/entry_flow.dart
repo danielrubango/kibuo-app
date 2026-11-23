@@ -10,6 +10,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/categories/category_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
+import 'package:kibuo/ui/kit/auto_close.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -417,53 +418,24 @@ Future<SavedAction?> showSavedSheet(
   );
 }
 
-class _SavedSheet extends StatefulWidget {
+class _SavedSheet extends StatelessWidget {
   const _SavedSheet({required this.saved, required this.labels});
 
   final TransactionInfo saved;
   final OperationLabels labels;
 
   @override
-  State<_SavedSheet> createState() => _SavedSheetState();
-}
-
-class _SavedSheetState extends State<_SavedSheet>
-    with SingleTickerProviderStateMixin {
-  static const _stay = Duration(seconds: 6);
-  late final _clock = AnimationController(vsync: this, duration: _stay)
-    ..forward().whenCompleteOrCancel(() {
-      if (mounted && !_held) Navigator.of(context).maybePop();
-    });
-  bool _held = false;
-
-  @override
-  void dispose() {
-    _clock.dispose();
-    super.dispose();
-  }
-
-  void _hold() {
-    if (_held) return;
-    setState(() => _held = true);
-    _clock.stop();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
-    final t = widget.saved;
+    final t = saved;
     final expense = t.kind == EntryKind.expense;
     final transfer = t.kind == EntryKind.transfer;
     String money(Money m) => formatMoney(m, currencyOf(m.currency), lang);
     final details = <(String, String, bool)>[
       // A transfer (canvas ApresTransfert): what arrived, the frozen rate.
       if (transfer && t.rate != null) ...[
-        (
-          l.transferArrives(widget.labels.toAccount ?? ''),
-          money(t.arrived!),
-          false,
-        ),
+        (l.transferArrives(labels.toAccount ?? ''), money(t.arrived!), false),
         (
           l.entryRateFrozen(currencyOf(t.rate!.base).symbol),
           formatRate(t.rate!, lang).split(' = ').last,
@@ -489,10 +461,9 @@ class _SavedSheetState extends State<_SavedSheet>
           false,
         ),
     ];
-    return Listener(
-      onPointerDown: (_) => _hold(),
-      child: Padding(
-        padding: sheetPadding(context),
+    return Padding(
+      padding: sheetPadding(context),
+      child: AutoClose(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -521,12 +492,12 @@ class _SavedSheetState extends State<_SavedSheet>
                       Text(
                         transfer
                             ? l.transferSavedSub(
-                                widget.labels.account,
-                                widget.labels.toAccount ?? '',
+                                labels.account,
+                                labels.toAccount ?? '',
                                 operationWhen(context, t.date, DateTime.now()),
                               )
-                            : '${widget.labels.categoryPath.split(' › ').last} · '
-                                  '${widget.labels.account} · '
+                            : '${labels.categoryPath.split(' › ').last} · '
+                                  '${labels.account} · '
                                   '${operationWhen(context, t.date, DateTime.now())}',
                         style: KibuoType.caption,
                         maxLines: 1,
@@ -608,23 +579,6 @@ class _SavedSheetState extends State<_SavedSheet>
                 ),
               ],
             ),
-            if (!_held) ...[
-              const SizedBox(height: 12),
-              AnimatedBuilder(
-                animation: _clock,
-                builder: (context, _) => ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    value: 1 - _clock.value,
-                    minHeight: 4,
-                    color: KibuoColors.mint,
-                    backgroundColor: KibuoColors.track,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(l.entryClosesSoon, style: KibuoType.caption),
-            ],
           ],
         ),
       ),

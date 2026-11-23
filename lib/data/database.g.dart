@@ -3735,6 +3735,15 @@ class $TransactionsTable extends Transactions
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _debtIdMeta = const VerificationMeta('debtId');
+  @override
+  late final GeneratedColumn<String> debtId = GeneratedColumn<String>(
+    'debt_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3758,6 +3767,7 @@ class $TransactionsTable extends Transactions
     status,
     recurringId,
     occurrence,
+    debtId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3918,6 +3928,12 @@ class $TransactionsTable extends Transactions
         occurrence.isAcceptableOrUnknown(data['occurrence']!, _occurrenceMeta),
       );
     }
+    if (data.containsKey('debt_id')) {
+      context.handle(
+        _debtIdMeta,
+        debtId.isAcceptableOrUnknown(data['debt_id']!, _debtIdMeta),
+      );
+    }
     return context;
   }
 
@@ -4011,6 +4027,10 @@ class $TransactionsTable extends Transactions
         DriftSqlType.int,
         data['${effectivePrefix}occurrence'],
       ),
+      debtId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}debt_id'],
+      ),
     );
   }
 
@@ -4069,6 +4089,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
   /// + month × 100 + day): one occurrence per rule and day.
   final String? recurringId;
   final int? occurrence;
+
+  /// The debt or receivable it opens or repays (GLOSSARY: Dette): its
+  /// kind tells which, « in » opening a debt or repaying a receivable.
+  final String? debtId;
   const TransactionRow({
     required this.id,
     required this.version,
@@ -4091,6 +4115,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     required this.status,
     this.recurringId,
     this.occurrence,
+    this.debtId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4132,6 +4157,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     if (!nullToAbsent || occurrence != null) {
       map['occurrence'] = Variable<int>(occurrence);
     }
+    if (!nullToAbsent || debtId != null) {
+      map['debt_id'] = Variable<String>(debtId);
+    }
     return map;
   }
 
@@ -4172,6 +4200,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       occurrence: occurrence == null && nullToAbsent
           ? const Value.absent()
           : Value(occurrence),
+      debtId: debtId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(debtId),
     );
   }
 
@@ -4202,6 +4233,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       status: serializer.fromJson<String>(json['status']),
       recurringId: serializer.fromJson<String?>(json['recurringId']),
       occurrence: serializer.fromJson<int?>(json['occurrence']),
+      debtId: serializer.fromJson<String?>(json['debtId']),
     );
   }
   @override
@@ -4229,6 +4261,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       'status': serializer.toJson<String>(status),
       'recurringId': serializer.toJson<String?>(recurringId),
       'occurrence': serializer.toJson<int?>(occurrence),
+      'debtId': serializer.toJson<String?>(debtId),
     };
   }
 
@@ -4254,6 +4287,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     String? status,
     Value<String?> recurringId = const Value.absent(),
     Value<int?> occurrence = const Value.absent(),
+    Value<String?> debtId = const Value.absent(),
   }) => TransactionRow(
     id: id ?? this.id,
     version: version ?? this.version,
@@ -4276,6 +4310,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     status: status ?? this.status,
     recurringId: recurringId.present ? recurringId.value : this.recurringId,
     occurrence: occurrence.present ? occurrence.value : this.occurrence,
+    debtId: debtId.present ? debtId.value : this.debtId,
   );
   TransactionRow copyWithCompanion(TransactionsCompanion data) {
     return TransactionRow(
@@ -4308,6 +4343,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       occurrence: data.occurrence.present
           ? data.occurrence.value
           : this.occurrence,
+      debtId: data.debtId.present ? data.debtId.value : this.debtId,
     );
   }
 
@@ -4334,7 +4370,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           ..write('note: $note, ')
           ..write('status: $status, ')
           ..write('recurringId: $recurringId, ')
-          ..write('occurrence: $occurrence')
+          ..write('occurrence: $occurrence, ')
+          ..write('debtId: $debtId')
           ..write(')'))
         .toString();
   }
@@ -4362,6 +4399,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     status,
     recurringId,
     occurrence,
+    debtId,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4387,7 +4425,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           other.note == this.note &&
           other.status == this.status &&
           other.recurringId == this.recurringId &&
-          other.occurrence == this.occurrence);
+          other.occurrence == this.occurrence &&
+          other.debtId == this.debtId);
 }
 
 class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
@@ -4412,6 +4451,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
   final Value<String> status;
   final Value<String?> recurringId;
   final Value<int?> occurrence;
+  final Value<String?> debtId;
   final Value<int> rowid;
   const TransactionsCompanion({
     this.id = const Value.absent(),
@@ -4435,6 +4475,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.status = const Value.absent(),
     this.recurringId = const Value.absent(),
     this.occurrence = const Value.absent(),
+    this.debtId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TransactionsCompanion.insert({
@@ -4459,6 +4500,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.status = const Value.absent(),
     this.recurringId = const Value.absent(),
     this.occurrence = const Value.absent(),
+    this.debtId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        version = Value(version),
@@ -4491,6 +4533,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Expression<String>? status,
     Expression<String>? recurringId,
     Expression<int>? occurrence,
+    Expression<String>? debtId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4515,6 +4558,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       if (status != null) 'status': status,
       if (recurringId != null) 'recurring_id': recurringId,
       if (occurrence != null) 'occurrence': occurrence,
+      if (debtId != null) 'debt_id': debtId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4541,6 +4585,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Value<String>? status,
     Value<String?>? recurringId,
     Value<int?>? occurrence,
+    Value<String?>? debtId,
     Value<int>? rowid,
   }) {
     return TransactionsCompanion(
@@ -4565,6 +4610,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       status: status ?? this.status,
       recurringId: recurringId ?? this.recurringId,
       occurrence: occurrence ?? this.occurrence,
+      debtId: debtId ?? this.debtId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4635,6 +4681,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     if (occurrence.present) {
       map['occurrence'] = Variable<int>(occurrence.value);
     }
+    if (debtId.present) {
+      map['debt_id'] = Variable<String>(debtId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4665,6 +4714,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
           ..write('status: $status, ')
           ..write('recurringId: $recurringId, ')
           ..write('occurrence: $occurrence, ')
+          ..write('debtId: $debtId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7361,6 +7411,667 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRow> {
   }
 }
 
+class $DebtsTable extends Debts with TableInfo<$DebtsTable, DebtRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DebtsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _directionMeta = const VerificationMeta(
+    'direction',
+  );
+  @override
+  late final GeneratedColumn<String> direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _personMeta = const VerificationMeta('person');
+  @override
+  late final GeneratedColumn<String> person = GeneratedColumn<String>(
+    'person',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _openedOnMeta = const VerificationMeta(
+    'openedOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> openedOn = GeneratedColumn<DateTime>(
+    'opened_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dueDateMeta = const VerificationMeta(
+    'dueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
+    'due_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    direction,
+    person,
+    amount,
+    currency,
+    openedOn,
+    dueDate,
+    note,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'debts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DebtRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('direction')) {
+      context.handle(
+        _directionMeta,
+        direction.isAcceptableOrUnknown(data['direction']!, _directionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_directionMeta);
+    }
+    if (data.containsKey('person')) {
+      context.handle(
+        _personMeta,
+        person.isAcceptableOrUnknown(data['person']!, _personMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_personMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('opened_on')) {
+      context.handle(
+        _openedOnMeta,
+        openedOn.isAcceptableOrUnknown(data['opened_on']!, _openedOnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_openedOnMeta);
+    }
+    if (data.containsKey('due_date')) {
+      context.handle(
+        _dueDateMeta,
+        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
+      );
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DebtRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DebtRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      )!,
+      person: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      openedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}opened_on'],
+      )!,
+      dueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due_date'],
+      ),
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+    );
+  }
+
+  @override
+  $DebtsTable createAlias(String alias) {
+    return $DebtsTable(attachedDatabase, alias);
+  }
+}
+
+class DebtRow extends DataClass implements Insertable<DebtRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+
+  /// « owe »: the user owes; « owed »: someone owes the user.
+  final String direction;
+
+  /// The counterparty: a name typed freely (GLOSSARY: Contrepartie).
+  final String person;
+
+  /// What was owed at the start, in [currency], the debt's own; for an old
+  /// debt noted without an account, what is left.
+  final int amount;
+  final String currency;
+
+  /// The day it began.
+  final DateTime openedOn;
+
+  /// None: « Sans échéance ».
+  final DateTime? dueDate;
+  final String? note;
+  const DebtRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.direction,
+    required this.person,
+    required this.amount,
+    required this.currency,
+    required this.openedOn,
+    this.dueDate,
+    this.note,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['direction'] = Variable<String>(direction);
+    map['person'] = Variable<String>(person);
+    map['amount'] = Variable<int>(amount);
+    map['currency'] = Variable<String>(currency);
+    map['opened_on'] = Variable<DateTime>(openedOn);
+    if (!nullToAbsent || dueDate != null) {
+      map['due_date'] = Variable<DateTime>(dueDate);
+    }
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    return map;
+  }
+
+  DebtsCompanion toCompanion(bool nullToAbsent) {
+    return DebtsCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      direction: Value(direction),
+      person: Value(person),
+      amount: Value(amount),
+      currency: Value(currency),
+      openedOn: Value(openedOn),
+      dueDate: dueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueDate),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+    );
+  }
+
+  factory DebtRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DebtRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      direction: serializer.fromJson<String>(json['direction']),
+      person: serializer.fromJson<String>(json['person']),
+      amount: serializer.fromJson<int>(json['amount']),
+      currency: serializer.fromJson<String>(json['currency']),
+      openedOn: serializer.fromJson<DateTime>(json['openedOn']),
+      dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
+      note: serializer.fromJson<String?>(json['note']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'direction': serializer.toJson<String>(direction),
+      'person': serializer.toJson<String>(person),
+      'amount': serializer.toJson<int>(amount),
+      'currency': serializer.toJson<String>(currency),
+      'openedOn': serializer.toJson<DateTime>(openedOn),
+      'dueDate': serializer.toJson<DateTime?>(dueDate),
+      'note': serializer.toJson<String?>(note),
+    };
+  }
+
+  DebtRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? direction,
+    String? person,
+    int? amount,
+    String? currency,
+    DateTime? openedOn,
+    Value<DateTime?> dueDate = const Value.absent(),
+    Value<String?> note = const Value.absent(),
+  }) => DebtRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    direction: direction ?? this.direction,
+    person: person ?? this.person,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+    openedOn: openedOn ?? this.openedOn,
+    dueDate: dueDate.present ? dueDate.value : this.dueDate,
+    note: note.present ? note.value : this.note,
+  );
+  DebtRow copyWithCompanion(DebtsCompanion data) {
+    return DebtRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      person: data.person.present ? data.person.value : this.person,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      openedOn: data.openedOn.present ? data.openedOn.value : this.openedOn,
+      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      note: data.note.present ? data.note.value : this.note,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DebtRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('direction: $direction, ')
+          ..write('person: $person, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('openedOn: $openedOn, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('note: $note')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    deviceId,
+    deleted,
+    direction,
+    person,
+    amount,
+    currency,
+    openedOn,
+    dueDate,
+    note,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DebtRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.direction == this.direction &&
+          other.person == this.person &&
+          other.amount == this.amount &&
+          other.currency == this.currency &&
+          other.openedOn == this.openedOn &&
+          other.dueDate == this.dueDate &&
+          other.note == this.note);
+}
+
+class DebtsCompanion extends UpdateCompanion<DebtRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> direction;
+  final Value<String> person;
+  final Value<int> amount;
+  final Value<String> currency;
+  final Value<DateTime> openedOn;
+  final Value<DateTime?> dueDate;
+  final Value<String?> note;
+  final Value<int> rowid;
+  const DebtsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.person = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.openedOn = const Value.absent(),
+    this.dueDate = const Value.absent(),
+    this.note = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DebtsCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String direction,
+    required String person,
+    required int amount,
+    required String currency,
+    required DateTime openedOn,
+    this.dueDate = const Value.absent(),
+    this.note = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       direction = Value(direction),
+       person = Value(person),
+       amount = Value(amount),
+       currency = Value(currency),
+       openedOn = Value(openedOn);
+  static Insertable<DebtRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? direction,
+    Expression<String>? person,
+    Expression<int>? amount,
+    Expression<String>? currency,
+    Expression<DateTime>? openedOn,
+    Expression<DateTime>? dueDate,
+    Expression<String>? note,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (direction != null) 'direction': direction,
+      if (person != null) 'person': person,
+      if (amount != null) 'amount': amount,
+      if (currency != null) 'currency': currency,
+      if (openedOn != null) 'opened_on': openedOn,
+      if (dueDate != null) 'due_date': dueDate,
+      if (note != null) 'note': note,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DebtsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? direction,
+    Value<String>? person,
+    Value<int>? amount,
+    Value<String>? currency,
+    Value<DateTime>? openedOn,
+    Value<DateTime?>? dueDate,
+    Value<String?>? note,
+    Value<int>? rowid,
+  }) {
+    return DebtsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      direction: direction ?? this.direction,
+      person: person ?? this.person,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      openedOn: openedOn ?? this.openedOn,
+      dueDate: dueDate ?? this.dueDate,
+      note: note ?? this.note,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (person.present) {
+      map['person'] = Variable<String>(person.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (openedOn.present) {
+      map['opened_on'] = Variable<DateTime>(openedOn.value);
+    }
+    if (dueDate.present) {
+      map['due_date'] = Variable<DateTime>(dueDate.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DebtsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('direction: $direction, ')
+          ..write('person: $person, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('openedOn: $openedOn, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('note: $note, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$KibuoDatabase extends GeneratedDatabase {
   _$KibuoDatabase(QueryExecutor e) : super(e);
   $KibuoDatabaseManager get managers => $KibuoDatabaseManager(this);
@@ -7376,6 +8087,7 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
   late final $BudgetsTable budgets = $BudgetsTable(this);
   late final $BudgetAmountsTable budgetAmounts = $BudgetAmountsTable(this);
   late final $RecurringRulesTable recurringRules = $RecurringRulesTable(this);
+  late final $DebtsTable debts = $DebtsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7393,6 +8105,7 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
     budgets,
     budgetAmounts,
     recurringRules,
+    debts,
   ];
 }
 
@@ -9239,6 +9952,7 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       Value<String> status,
       Value<String?> recurringId,
       Value<int?> occurrence,
+      Value<String?> debtId,
       Value<int> rowid,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
@@ -9264,6 +9978,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<String> status,
       Value<String?> recurringId,
       Value<int?> occurrence,
+      Value<String?> debtId,
       Value<int> rowid,
     });
 
@@ -9378,6 +10093,11 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<int> get occurrence => $composableBuilder(
     column: $table.occurrence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get debtId => $composableBuilder(
+    column: $table.debtId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -9495,6 +10215,11 @@ class $$TransactionsTableOrderingComposer
     column: $table.occurrence,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get debtId => $composableBuilder(
+    column: $table.debtId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TransactionsTableAnnotationComposer
@@ -9576,6 +10301,9 @@ class $$TransactionsTableAnnotationComposer
     column: $table.occurrence,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get debtId =>
+      $composableBuilder(column: $table.debtId, builder: (column) => column);
 }
 
 class $$TransactionsTableTableManager
@@ -9630,6 +10358,7 @@ class $$TransactionsTableTableManager
                 Value<String> status = const Value.absent(),
                 Value<String?> recurringId = const Value.absent(),
                 Value<int?> occurrence = const Value.absent(),
+                Value<String?> debtId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
@@ -9653,6 +10382,7 @@ class $$TransactionsTableTableManager
                 status: status,
                 recurringId: recurringId,
                 occurrence: occurrence,
+                debtId: debtId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9678,6 +10408,7 @@ class $$TransactionsTableTableManager
                 Value<String> status = const Value.absent(),
                 Value<String?> recurringId = const Value.absent(),
                 Value<int?> occurrence = const Value.absent(),
+                Value<String?> debtId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 id: id,
@@ -9701,6 +10432,7 @@ class $$TransactionsTableTableManager
                 status: status,
                 recurringId: recurringId,
                 occurrence: occurrence,
+                debtId: debtId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -11059,6 +11791,321 @@ typedef $$RecurringRulesTableProcessedTableManager =
       RecurringRow,
       PrefetchHooks Function()
     >;
+typedef $$DebtsTableCreateCompanionBuilder = DebtsCompanion Function({
+  required String id,
+  required int version,
+  required String deviceId,
+  Value<bool> deleted,
+  required String direction,
+  required String person,
+  required int amount,
+  required String currency,
+  required DateTime openedOn,
+  Value<DateTime?> dueDate,
+  Value<String?> note,
+  Value<int> rowid,
+});
+typedef $$DebtsTableUpdateCompanionBuilder = DebtsCompanion Function({
+  Value<String> id,
+  Value<int> version,
+  Value<String> deviceId,
+  Value<bool> deleted,
+  Value<String> direction,
+  Value<String> person,
+  Value<int> amount,
+  Value<String> currency,
+  Value<DateTime> openedOn,
+  Value<DateTime?> dueDate,
+  Value<String?> note,
+  Value<int> rowid,
+});
+
+class $$DebtsTableFilterComposer
+    extends Composer<_$KibuoDatabase, $DebtsTable> {
+  $$DebtsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get person => $composableBuilder(
+    column: $table.person,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get openedOn => $composableBuilder(
+    column: $table.openedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DebtsTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $DebtsTable> {
+  $$DebtsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get person => $composableBuilder(
+    column: $table.person,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get openedOn => $composableBuilder(
+    column: $table.openedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DebtsTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $DebtsTable> {
+  $$DebtsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<String> get person =>
+      $composableBuilder(column: $table.person, builder: (column) => column);
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get openedOn =>
+      $composableBuilder(column: $table.openedOn, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dueDate =>
+      $composableBuilder(column: $table.dueDate, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+}
+
+class $$DebtsTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $DebtsTable,
+          DebtRow,
+          $$DebtsTableFilterComposer,
+          $$DebtsTableOrderingComposer,
+          $$DebtsTableAnnotationComposer,
+          $$DebtsTableCreateCompanionBuilder,
+          $$DebtsTableUpdateCompanionBuilder,
+          (DebtRow, BaseReferences<_$KibuoDatabase, $DebtsTable, DebtRow>),
+          DebtRow,
+          PrefetchHooks Function()
+        > {
+  $$DebtsTableTableManager(_$KibuoDatabase db, $DebtsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DebtsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DebtsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DebtsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> direction = const Value.absent(),
+                Value<String> person = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<DateTime> openedOn = const Value.absent(),
+                Value<DateTime?> dueDate = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DebtsCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                direction: direction,
+                person: person,
+                amount: amount,
+                currency: currency,
+                openedOn: openedOn,
+                dueDate: dueDate,
+                note: note,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String direction,
+                required String person,
+                required int amount,
+                required String currency,
+                required DateTime openedOn,
+                Value<DateTime?> dueDate = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DebtsCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                direction: direction,
+                person: person,
+                amount: amount,
+                currency: currency,
+                openedOn: openedOn,
+                dueDate: dueDate,
+                note: note,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DebtsTable, DebtRow>(table),
+                  BaseReferences<_$KibuoDatabase, $DebtsTable, DebtRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DebtsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $DebtsTable,
+      DebtRow,
+      $$DebtsTableFilterComposer,
+      $$DebtsTableOrderingComposer,
+      $$DebtsTableAnnotationComposer,
+      $$DebtsTableCreateCompanionBuilder,
+      $$DebtsTableUpdateCompanionBuilder,
+      (DebtRow, BaseReferences<_$KibuoDatabase, $DebtsTable, DebtRow>),
+      DebtRow,
+      PrefetchHooks Function()
+    >;
 
 class $KibuoDatabaseManager {
   final _$KibuoDatabase _db;
@@ -11087,4 +12134,6 @@ class $KibuoDatabaseManager {
       $$BudgetAmountsTableTableManager(_db, _db.budgetAmounts);
   $$RecurringRulesTableTableManager get recurringRules =>
       $$RecurringRulesTableTableManager(_db, _db.recurringRules);
+  $$DebtsTableTableManager get debts =>
+      $$DebtsTableTableManager(_db, _db.debts);
 }

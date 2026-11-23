@@ -8,6 +8,7 @@ import 'package:kibuo/data/database.dart';
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v10.dart' as v10;
+import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -385,6 +386,76 @@ void main() {
           expect(await newDb.select(newDb.recurringRules).get(), isEmpty);
         },
       );
+    },
+  );
+
+  test('version 10 to 11 keeps the operations, adds debts', () async {
+    const op = v10.TransactionsData(
+      id: 'tx-1',
+      version: 105,
+      deviceId: 'phone-1',
+      deleted: 0,
+      kind: 'in',
+      accountId: 'acc-1',
+      categoryId: 'default-salary',
+      amount: 40000,
+      currency: 'USD',
+      rateTyped: 0,
+      converted: 40000,
+      fees: 0,
+      date: 1794700000,
+      status: 'draft',
+      recurringId: 'rule-1',
+      occurrence: 20261125,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 10,
+      newVersion: 11,
+      createOld: v10.DatabaseAtV10.new,
+      createNew: v11.DatabaseAtV11.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.transactions, op),
+      validateItems: (newDb) async {
+        final kept = (await newDb.select(newDb.transactions).get()).single;
+        expect(kept.amount, 40000);
+        expect(kept.status, 'draft');
+        expect(kept.occurrence, 20261125);
+        expect(kept.debtId, equals(null), reason: 'no debt before');
+        expect(await newDb.select(newDb.debts).get(), isEmpty);
+      },
+    );
+  });
+
+  test(
+    'a version 11 made elsewhere, without debts, gets them at opening',
+    () async {
+      // A trial build once took the data to 11 with other tables.
+      final schema = await verifier.schemaAt(10);
+      final raw = schema.rawDatabase..execute('PRAGMA user_version = 11;');
+      final db = _open(schema.newConnection());
+      expect(raw.userVersion, 11);
+      await db
+          .into(db.debts)
+          .insert(
+            DebtsCompanion.insert(
+              id: 'debt-1',
+              version: 1,
+              deviceId: 'phone-1',
+              direction: 'owe',
+              person: 'Patrick',
+              amount: 20000,
+              currency: 'USD',
+              openedOn: DateTime.utc(2026, 11, 23),
+            ),
+          );
+      expect((await db.select(db.debts).get()).single.person, 'Patrick');
+      final columns = await db
+          .customSelect("SELECT name FROM pragma_table_info('transactions')")
+          .map((r) => r.read<String>('name'))
+          .get();
+      expect(columns, contains('debt_id'));
+      await db.close();
     },
   );
 }

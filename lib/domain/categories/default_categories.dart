@@ -71,3 +71,21 @@ const adjustmentIncome = DefaultCategory('adjustIncome', 'arrowsDownUp');
 /// Its fixed id, like every provided category's.
 String adjustmentCategoryId(CategoryKind kind) =>
     'default-${(kind == CategoryKind.out ? adjustmentExpense : adjustmentIncome).key}';
+
+/// What opens or repays a debt or a receivable (PRODUCT: Dettes et
+/// créances): never offered in a list of categories, so never in a budget.
+/// « in »: money borrowed, or a receivable paid back; « out »: money lent,
+/// or a debt paid back.
+const debtIn = DefaultCategory('debtIn', 'handCoins');
+const debtOut = DefaultCategory('debtOut', 'handCoins');
+const receivableIn = DefaultCategory('receivableIn', 'handCoins');
+const receivableOut = DefaultCategory('receivableOut', 'handCoins');
+
+/// Its fixed id: [owe] for a debt, else a receivable.
+String debtCategoryId({required bool owe, required CategoryKind kind}) {
+  final into = kind == CategoryKind.into;
+  final c = owe
+      ? (into ? debtIn : debtOut)
+      : (into ? receivableIn : receivableOut);
+  return 'default-${c.key}';
+}
