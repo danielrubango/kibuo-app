@@ -12,6 +12,7 @@ import 'package:kibuo/ui/categories/category_form_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/auto_close.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -468,46 +469,22 @@ class _SavedSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: KibuoColors.mint,
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  child: const Icon(KibuoIcons.check, size: 20),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(switch (t.kind) {
-                        EntryKind.expense => l.entrySavedExpense,
-                        EntryKind.income => l.entrySavedIncome,
-                        EntryKind.transfer => l.transferSaved,
-                      }, style: KibuoType.itemName),
-                      Text(
-                        transfer
-                            ? l.transferSavedSub(
-                                labels.account,
-                                labels.toAccount ?? '',
-                                operationWhen(context, t.date, DateTime.now()),
-                              )
-                            : '${labels.categoryPath.split(' › ').last} · '
-                                  '${labels.account} · '
-                                  '${operationWhen(context, t.date, DateTime.now())}',
-                        style: KibuoType.caption,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Text(signedTotal(context, t), style: KibuoType.cardTitle),
-              ],
+            SavedLine(
+              title: switch (t.kind) {
+                EntryKind.expense => l.entrySavedExpense,
+                EntryKind.income => l.entrySavedIncome,
+                EntryKind.transfer => l.transferSaved,
+              },
+              subtitle: transfer
+                  ? l.transferSavedSub(
+                      labels.account,
+                      labels.toAccount ?? '',
+                      operationWhen(context, t.date, DateTime.now()),
+                    )
+                  : '${labels.categoryPath.split(' › ').last} · '
+                        '${labels.account} · '
+                        '${operationWhen(context, t.date, DateTime.now())}',
+              amount: signedTotal(context, t),
             ),
             if (details.isNotEmpty) ...[
               const SizedBox(height: 12),
@@ -572,10 +549,10 @@ class _SavedSheet extends StatelessWidget {
                       EntryKind.income => l.entryNewIncome,
                       EntryKind.transfer => l.transferAnother,
                     },
-                    kind: ButtonKind.secondary,
+                    kind: ButtonKind.mint,
                     onPressed: () =>
                         Navigator.of(context).pop(SavedAction.another),
-                  ).withMint(),
+                  ),
                 ),
               ],
             ),
@@ -584,27 +561,4 @@ class _SavedSheet extends StatelessWidget {
       ),
     );
   }
-}
-
-extension on KibuoButton {
-  /// The sheet's second button is mint, but only 48 high, beside a white
-  /// one of the same height.
-  Widget withMint() => Material(
-    color: KibuoColors.mint,
-    borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
-    clipBehavior: Clip.antiAlias,
-    child: InkWell(
-      onTap: onPressed,
-      child: SizedBox(
-        height: KibuoTheme.heightSecondary,
-        child: Center(
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: KibuoType.buttonSmall,
-          ),
-        ),
-      ),
-    ),
-  );
 }

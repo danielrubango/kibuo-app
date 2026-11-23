@@ -140,9 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final mainCode = await data.currencies.primaryCurrency() ?? 'USD';
     final main = await data.currencies.currency(mainCode);
     final now = DateTime.now();
+    // Debts' operations stay apart when the user chose so (PRODUCT).
+    final debtsCount = await data.debts?.countInTotals() ?? true;
     final month = [
       for (final t in ops)
-        if (periodOf(now).contains(t.date.toLocal())) t,
+        if (periodOf(now).contains(t.date.toLocal()) &&
+            (debtsCount || t.debtId == null))
+          t,
     ];
     final rates = <String, ExchangeRate>{};
     final codes = {

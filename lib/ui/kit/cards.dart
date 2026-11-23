@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/scrolling_line.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -304,13 +305,26 @@ class SwitchRow extends StatelessWidget {
     final change = onChanged;
     return MergeSemantics(
       child: InkWell(
-        onTap: change == null ? null : () => change(!value),
+        onTap: change == null
+            ? null
+            : () {
+                Haptics.tap();
+                change(!value);
+              },
         child: Padding(
           padding: padding,
           child: Row(
             children: [
               Expanded(child: child),
-              Switch(value: value, onChanged: onChanged),
+              Switch(
+                value: value,
+                onChanged: change == null
+                    ? null
+                    : (on) {
+                        Haptics.tap();
+                        change(on);
+                      },
+              ),
             ],
           ),
         ),
@@ -381,7 +395,10 @@ class IconRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        Haptics.tap();
+        onTap();
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(
@@ -435,7 +452,10 @@ class CheckChoice extends StatelessWidget {
     return Semantics(
       selected: on,
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          Haptics.tap();
+          onTap();
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
@@ -487,7 +507,10 @@ class DisplayChoice extends StatelessWidget {
       selected: on,
       inMutuallyExclusiveGroup: true,
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          Haptics.tap();
+          onTap();
+        },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 7, 14, 7),
           child: ConstrainedBox(

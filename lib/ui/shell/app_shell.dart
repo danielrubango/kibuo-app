@@ -246,6 +246,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       ),
       recurrences: RecurringRepository(db),
       reminders: ReminderStore(db),
+      debts: DebtRepository(db),
     );
   }
 

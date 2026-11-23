@@ -13,8 +13,10 @@ import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/obligations/debt_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -100,6 +102,11 @@ class _DebtsScreenState extends State<DebtsScreen> {
       _detailsAbove = details != 'below';
       _main = main;
       _rates = rates;
+      // Deleted from its card: nothing stays open.
+      if (!lines.any((d) => d.id == _lifted)) {
+        _open = null;
+        _lifted = null;
+      }
     });
     // Once, the first time the list has a line (owner, 23 November).
     final hints = widget.hints;
@@ -290,7 +297,10 @@ class _DebtsScreenState extends State<DebtsScreen> {
 
   /// With a line open, any touch closes it, even on another line; the
   /// next one opens (owner, 23 November).
-  void _toggle(String id) => _open == null ? _openLine(id) : _close();
+  void _toggle(String id) {
+    Haptics.tap();
+    _open == null ? _openLine(id) : _close();
+  }
 
   static const _opening = Duration(milliseconds: 250);
   static const _closing = Duration(milliseconds: 200);
@@ -535,7 +545,12 @@ class _DebtsScreenState extends State<DebtsScreen> {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: _open != null ? _close : () => setState(() => _tab = d),
+        onTap: _open != null
+            ? _close
+            : () {
+                Haptics.tap();
+                setState(() => _tab = d);
+              },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Column(
@@ -719,9 +734,68 @@ class _DebtsScreenState extends State<DebtsScreen> {
               color: KibuoColors.inkSecondary,
             ),
           ),
+          // « Rembourser » or « Encaisser », then « Détails › » (canvas
+          // DettesListeDois); once settled, only « Détails ».
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (!d.settled) ...[
+                Expanded(
+                  child: _BoxButton(
+                    label: owe ? l.debtRepay : l.debtCollect,
+                    dark: true,
+                    onTap: () => _repay(d.id),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              Expanded(
+                child: _BoxButton(
+                  label: l.debtDetails,
+                  chevron: true,
+                  onTap: () => _openCard(d.id),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _repay(String id) async {
+    final detail = await widget.debts.detail(id);
+    if (detail == null || !mounted) return;
+    // The line stays open behind the sheet, and updates (owner, 23
+    // November).
+    final saved = await repayDebt(
+      context,
+      data: widget.data,
+      debts: widget.debts,
+      detail: detail,
+      now: widget.now,
+      onSaved: _load,
+    );
+    if (saved) {
+      widget.onChanged?.call();
+      await _load();
+    }
+  }
+
+  Future<void> _openCard(String id) async {
+    // Back from the card, the line is still open, up to date.
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => DebtScreen(
+          data: widget.data,
+          debts: widget.debts,
+          id: id,
+          now: widget.now,
+        ),
+      ),
+    );
+    widget.onChanged?.call();
+    await _load();
   }
 }
 
@@ -1298,4 +1372,52 @@ class _HolePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_HolePainter old) => old.hole != hole;
+}
+
+/// A button of the open line's box: ink for the action, white for
+/// « Détails › ».
+class _BoxButton extends StatelessWidget {
+  const _BoxButton({
+    required this.label,
+    required this.onTap,
+    this.dark = false,
+    this.chevron = false,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final bool dark;
+  final bool chevron;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: dark ? KibuoColors.ink : KibuoColors.surface,
+    borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
+      onTap: onTap,
+      child: SizedBox(
+        height: KibuoTheme.heightTouch,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: KibuoType.body
+                  .copyWith(color: dark ? KibuoColors.surface : KibuoColors.ink)
+                  .weight(600),
+            ),
+            if (chevron) ...[
+              const SizedBox(width: 8),
+              const Icon(
+                KibuoIcons.caretRight,
+                size: 16,
+                color: KibuoColors.ink,
+              ),
+            ],
+          ],
+        ),
+      ),
+    ),
+  );
 }

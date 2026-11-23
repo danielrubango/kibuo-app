@@ -3001,4 +3001,196 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get debtsCoachTry => 'Essayer';
+
+  @override
+  String get debtLeftOwe => 'Je dois encore';
+
+  @override
+  String get debtLeftOwed => 'On me doit encore';
+
+  @override
+  String debtRepaidOf(String paid, String total) {
+    return '$paid remboursés sur $total';
+  }
+
+  @override
+  String debtReceivedOf(String paid, String total) {
+    return '$paid reçus sur $total';
+  }
+
+  @override
+  String get debtRepayments => 'Remboursements';
+
+  @override
+  String debtRepaymentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fois',
+      one: '1 fois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtNoRepayment => 'Aucun remboursement pour l’instant.';
+
+  @override
+  String get debtRepay => 'Rembourser';
+
+  @override
+  String get debtCollect => 'Encaisser';
+
+  @override
+  String get debtDetails => 'Détails';
+
+  @override
+  String get debtEditAction => 'Modifier';
+
+  @override
+  String debtRepayTitle(String name) {
+    return 'Rembourser $name';
+  }
+
+  @override
+  String debtCollectTitle(String name) {
+    return 'Encaisser $name';
+  }
+
+  @override
+  String debtBorrowedOn(String date) {
+    return 'emprunt du $date';
+  }
+
+  @override
+  String debtLentOn(String date) {
+    return 'prêt du $date';
+  }
+
+  @override
+  String get debtFrom => 'Depuis';
+
+  @override
+  String get debtTo => 'Vers';
+
+  @override
+  String get debtLater => 'Plus tard';
+
+  @override
+  String get debtRepaySaved => 'Remboursement enregistré';
+
+  @override
+  String get debtCollectSaved => 'Encaissement enregistré';
+
+  @override
+  String get debtSettledOweToast => 'Dette soldée';
+
+  @override
+  String get debtSettledOwedToast => 'Créance soldée';
+
+  @override
+  String get debtEditTitleOwe => 'Modifier la dette';
+
+  @override
+  String get debtEditTitleOwed => 'Modifier la créance';
+
+  @override
+  String debtAmountMin(String amount) {
+    return 'Au moins $amount, déjà remboursés.';
+  }
+
+  @override
+  String get debtDeleteOwe => 'Supprimer la dette';
+
+  @override
+  String get debtDeleteOwed => 'Supprimer la créance';
+
+  @override
+  String debtDeleteText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Ses $count opérations seront aussi supprimées, et les soldes de leurs comptes reviendront comme avant.',
+      one: 'Son opération sera aussi supprimée, et le solde de son compte reviendra comme avant.',
+      zero: 'Rien n’a bougé sur vos comptes : seule la ligne disparaît.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtDeleted(String name) {
+    return '$name supprimé';
+  }
+
+  @override
+  String get debtOpLocked =>
+      'Montant, devise et catégorie se modifient depuis la fiche de la dette.';
+
+  @override
+  String get debtSeeDebt => 'Voir la dette';
+
+  @override
+  String debtLeftCap(String amount) {
+    return 'Au plus $amount, ce qui reste.';
+  }
+
+  @override
+  String get debtTagOwe => 'Dette';
+
+  @override
+  String get debtTagOwed => 'Créance';
+
+  @override
+  String get debtsInTotals => 'Dans les Entrées et Sorties';
+
+  @override
+  String get debtsInTotalsHelp =>
+      'L’argent emprunté compte comme une entrée, un remboursement comme une sortie.';
+
+  @override
+  String get debtsApart => 'À part';
+
+  @override
+  String get debtsApartHelp => 'Dans la liste, mais hors des totaux du mois.';
+
+  @override
+  String accountBalanceLine(String amount) {
+    return 'Solde : $amount';
+  }
+
+  @override
+  String debtTitleBorrow(String name) {
+    return 'Emprunté à $name';
+  }
+
+  @override
+  String debtTitleRepayTo(String name) {
+    return 'Remboursé à $name';
+  }
+
+  @override
+  String debtTitleRepayToShort(String name) {
+    return 'Remboursé à $name';
+  }
+
+  @override
+  String debtTitleLend(String name) {
+    return 'Prêté à $name';
+  }
+
+  @override
+  String debtTitleRepayFrom(String name) {
+    return 'Remboursé par $name';
+  }
+
+  @override
+  String debtTitleRepayFromShort(String name) {
+    return 'Remboursé par $name';
+  }
+
+  @override
+  String debtLeftOf(String left, String total) {
+    return 'Reste $left sur $total';
+  }
 }

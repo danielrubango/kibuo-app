@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -63,11 +64,16 @@ class KibuoKeypad extends StatelessWidget {
       borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: delete
-            ? onDelete
+        onTap: () {
+          Haptics.tap();
+          if (delete) {
+            onDelete();
+          } else {
             // The decimal key shows the language's mark (« . » in English)
             // but always types « , », the one the app reads.
-            : () => onKey(allowDecimal && k == decimalSeparator ? ',' : k),
+            onKey(allowDecimal && k == decimalSeparator ? ',' : k);
+          }
+        },
         onLongPress: minus == null
             ? null
             : () {

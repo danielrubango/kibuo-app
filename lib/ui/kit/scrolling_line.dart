@@ -8,10 +8,13 @@ import 'package:flutter/material.dart';
 /// that fits, or a phone asking for fewer animations, stays still, cut
 /// by « … ».
 class ScrollingLine extends StatefulWidget {
-  const ScrollingLine(this.text, {super.key, required this.style});
+  const ScrollingLine(this.text, {super.key, required this.style, this.runs});
 
   final String text;
   final TextStyle style;
+
+  /// How many times it slides before staying at its start; none, always.
+  final int? runs;
 
   /// Points per second: a quiet reading pace.
   static const speed = 30.0;
@@ -29,6 +32,7 @@ class _ScrollingLineState extends State<ScrollingLine> {
   Timer? _timer;
   bool _visible = true;
   bool _running = false;
+  int _done = 0;
 
   @override
   void dispose() {
@@ -69,6 +73,9 @@ class _ScrollingLineState extends State<ScrollingLine> {
     _wait(ScrollingLine.fade, () {
       if (_scroll.hasClients) _scroll.jumpTo(0);
       setState(() => _visible = true);
+      _done++;
+      final runs = widget.runs;
+      if (runs != null && _done >= runs) return;
       _wait(ScrollingLine.againPause, _slide);
     });
   }

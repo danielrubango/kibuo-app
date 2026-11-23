@@ -77,7 +77,13 @@ class CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = categoryColors(category.kind);
+    // A debt's operations take its colour, whichever way the money goes
+    // (canvas OpDetteA4).
+    final colors = switch (debtOweOf(category.key)) {
+      true => categoryColors(CategoryKind.out),
+      false => categoryColors(CategoryKind.into),
+      null => categoryColors(category.kind),
+    };
     return Container(
       width: size,
       height: size,

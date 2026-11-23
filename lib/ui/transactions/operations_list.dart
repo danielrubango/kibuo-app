@@ -202,8 +202,11 @@ class _OperationsScreenState extends State<OperationsScreen> {
     await widget.hints?.swipeDone();
   }
 
+  bool _debtsCount = true;
+
   Future<void> _load() async {
     final data = widget.data;
+    _debtsCount = await data.debts?.countInTotals() ?? true;
     // Drafts and ignored ones show in the list; only done ones count.
     final all = await data.transactions.all(drafts: true);
     final recurrences = data.recurrences;
@@ -330,10 +333,11 @@ class _OperationsScreenState extends State<OperationsScreen> {
     return true;
   }
 
-  /// Drafts, ignored and planned operations count in no total (PRODUCT).
+  /// Drafts, ignored and planned operations count in no total; debts'
+  /// operations only if the user wants (PRODUCT).
   FlowTotals _totals(Iterable<TransactionInfo> ops) => flowTotals(
     _main!,
-    ops.where((t) => t.counts).map(flowOf),
+    ops.where((t) => t.counts && (_debtsCount || t.debtId == null)).map(flowOf),
     (code) => _rates[code],
   );
 
@@ -634,7 +638,11 @@ class _OperationsScreenState extends State<OperationsScreen> {
                       padding: EdgeInsets.zero,
                       tooltip: l.listDisplay,
                       onPressed: () async {
-                        await showListDisplaySheet(context, recurrences);
+                        await showListDisplaySheet(
+                          context,
+                          recurrences,
+                          debts: widget.data.debts,
+                        );
                         await _load();
                       },
                       icon: const Icon(

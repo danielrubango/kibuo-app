@@ -4,6 +4,7 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -46,6 +47,7 @@ class EntryData {
     this.opener = const DeviceAttachmentOpener(),
     this.recurrences,
     this.reminders,
+    this.debts,
   });
 
   final AccountRepository accounts;
@@ -61,6 +63,9 @@ class EntryData {
 
   /// The reminders' settings: a recurrence's own « Rappel ».
   final ReminderStore? reminders;
+
+  /// Debts: a debt's operation opens its card from its detail.
+  final DebtRepository? debts;
 }
 
 /// What the entry pops when it planned instead of saving (PRODUCT): not
