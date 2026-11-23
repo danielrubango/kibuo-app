@@ -643,7 +643,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     if (!widget._firstLaunch) ...[
                       const SizedBox(height: 16),
                       FieldLabel(l.accountOpeningDate),
-                      _DateRow(text: _dateText(l), onTap: _pickDate),
+                      DateField(text: _dateText(l), onTap: _pickDate),
                       const SizedBox(height: 8),
                       HelpText(l.accountOpeningDateHelp),
                     ],
@@ -799,52 +799,6 @@ class _TypeChip extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DateRow extends StatelessWidget {
-  const _DateRow({required this.text, required this.onTap});
-
-  final String text;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: KibuoColors.surface,
-      borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          height: KibuoTheme.heightField,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                const Icon(
-                  KibuoIcons.calendarBlank,
-                  size: 20,
-                  color: KibuoColors.inkSecondary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    text,
-                    style: KibuoType.body.copyWith(fontSize: 16),
-                  ),
-                ),
-                const Icon(
-                  KibuoIcons.caretRight,
-                  size: 16,
-                  color: KibuoColors.inkMuted,
-                ),
-              ],
             ),
           ),
         ),

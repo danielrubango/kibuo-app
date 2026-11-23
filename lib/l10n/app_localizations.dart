@@ -2141,7 +2141,7 @@ abstract class AppLocalizations {
   /// Categories: categoryName
   ///
   /// In fr, this message translates to:
-  /// **'{key, select, food{Repas} restaurant{Restaurant} market{Marché} transport{Transport} taxi{Taxi} motoTaxi{Moto-taxi} bus{Bus} fuel{Carburant} toll{Péage} groceries{Courses} housing{Logement} rent{Loyer} electricity{Électricité} water{Eau} communication{Communication} airtime{Crédit} internet{Internet} health{Santé} pharmacy{Pharmacie} school{École} family{Famille} outings{Sorties} contributions{Cotisations} otherExpense{Autres} salary{Salaire} business{Activité} sale{Vente} service{Prestation} giftReceived{Cadeau reçu} refund{Remboursement} otherIncome{Autres} adjustExpense{Régularisation} adjustIncome{Régularisation} other{}}'**
+  /// **'{key, select, food{Repas} restaurant{Restaurant} market{Marché} transport{Transport} taxi{Taxi} motoTaxi{Moto-taxi} bus{Bus} fuel{Carburant} toll{Péage} groceries{Courses} housing{Logement} rent{Loyer} electricity{Électricité} water{Eau} communication{Communication} airtime{Crédit} internet{Internet} health{Santé} pharmacy{Pharmacie} school{École} family{Famille} outings{Sorties} contributions{Cotisations} otherExpense{Autres} salary{Salaire} business{Activité} sale{Vente} service{Prestation} giftReceived{Cadeau reçu} refund{Remboursement} otherIncome{Autres} adjustExpense{Régularisation} adjustIncome{Régularisation} debtIn{Dette} debtOut{Dette} receivableIn{Créance} receivableOut{Créance} other{}}'**
   String categoryName(String key);
 
   /// Categories: categoriesTitle
@@ -4332,6 +4332,348 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Une alerte par catégorie'**
   String get remindersBudgetHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dettes et créances'**
+  String get debtsTitle;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je dois'**
+  String get debtsOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'On me doit'**
+  String get debtsOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} en retard'**
+  String debtsLateCount(int count);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard'**
+  String get debtsLateGroup;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans échéance'**
+  String get debtsNoDue;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Environ {amount}'**
+  String debtsAbout(String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =1{En retard d’un jour} other{En retard de {days} jours}}'**
+  String debtWordLate(int days);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui'**
+  String get debtWordToday;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demain'**
+  String get debtWordTomorrow;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Après-demain'**
+  String get debtWordAfterTomorrow;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans {days} jours'**
+  String debtWordIn(int days);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =0{Soldée aujourd’hui} =1{Soldée hier} other{Soldée il y a {days} jours}}'**
+  String debtWordSettled(int days);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =0{Reçue aujourd’hui} =1{Reçue hier} other{Reçue il y a {days} jours}}'**
+  String debtWordReceived(int days);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échéance : {date}'**
+  String debtDueLine(String date);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échéance : aujourd’hui, {date}'**
+  String debtDueTodayLine(String date);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échéance dépassée : {date}'**
+  String debtDueLateLine(String date);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune date fixée'**
+  String get debtNoDueLine;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien remboursé pour l’instant.'**
+  String get debtNothingRepaid;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien reçu pour l’instant.'**
+  String get debtNothingReceived;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{paid} déjà remboursés sur {total}.'**
+  String debtRepaidLine(String paid, String total);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{paid} déjà reçus sur {total}.'**
+  String debtReceivedLine(String paid, String total);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Environ {amount} au taux du jour.'**
+  String debtAboutLine(String amount);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 dette soldée} other{{count} dettes soldées}}'**
+  String debtSettledOwe(int count);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 créance encaissée} other{{count} créances encaissées}}'**
+  String debtSettledOwed(int count);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune dette'**
+  String get debtsEmptyOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notez ce que vous devez, avec ou sans échéance.'**
+  String get debtsEmptyOweHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personne ne vous doit rien'**
+  String get debtsEmptyOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notez l’argent prêté, pour savoir qui doit rembourser.'**
+  String get debtsEmptyOwedHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une dette ou une créance'**
+  String get debtsAdd;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ranger par'**
+  String get debtsGroupBy;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échéance'**
+  String get debtsByDue;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'La plus proche d’abord, celles en retard en haut.'**
+  String get debtsByDueHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personne'**
+  String get debtsByPerson;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un groupe par nom, dans l’ordre alphabétique.'**
+  String get debtsByPersonHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dettes et créances soldées'**
+  String get debtsPaidTitle;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans leur mois'**
+  String get debtsPaidInline;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avec les autres, à leur date. Sans date : dans « Sans échéance ».'**
+  String get debtsPaidInlineHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Regroupées en bas'**
+  String get debtsPaidBottom;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un bloc « soldées » à part, qui se déplie.'**
+  String get debtsPaidBottomHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquées'**
+  String get debtsPaidHidden;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Absentes de la liste.'**
+  String get debtsPaidHiddenHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'À qui je dois'**
+  String get debtPersonOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qui me doit'**
+  String get debtPersonOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un nom'**
+  String get debtPersonHint;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez un nom'**
+  String get debtPersonMissing;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste dû'**
+  String get debtLeft;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Échéance'**
+  String get debtDue;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer l’échéance'**
+  String get debtDueClear;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Argent reçu sur un compte'**
+  String get debtLinkOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Argent sorti d’un compte'**
+  String get debtLinkOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{account}, le solde sera mis à jour'**
+  String debtLinkHelp(String account);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une dette ancienne : seul le reste dû est noté'**
+  String get debtLinkOffHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dette enregistrée'**
+  String get debtSavedOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créance enregistrée'**
+  String get debtSavedOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Devise de la dette'**
+  String get debtCurrency;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez un montant'**
+  String get debtAmountMissing;
 }
 
 class _AppLocalizationsDelegate

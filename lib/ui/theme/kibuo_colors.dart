@@ -70,11 +70,27 @@ abstract final class KibuoColors {
   static const warningSoft = Color(0xFFFFF8E8);
   static const warningSoftInk = Color(0xFF6B4A00);
 
+  /// The ring around a debt's day, due soon (canvas DettesListeDois).
+  static const warningTrack = Color(0xFFF6E2B4);
+
   // Meaning: late or over budget.
   static const danger = Color(0xFFB3321A);
 
   /// What fills a danger button held down.
   static const dangerTint = Color(0xFFFBE3DE);
+
+  /// A late debt's day: its square, its number and its ring (canvas
+  /// DettesListeDois).
+  static const dangerSoft = Color(0xFFFFF1ED);
+  static const dangerDeep = Color(0xFF7C1F0C);
+  static const dangerTrack = Color(0xFFFFD3C8);
+
+  /// Late, written on ink (the chosen tab of Dettes et créances).
+  static const dangerOnInk = Color(0xFFFFB4A2);
+
+  /// A debt's day, not yet due, and once settled (canvas DettesListeDois).
+  static const accentSoft = Color(0xFFF2FBF7);
+  static const accentDone = Color(0xFFD6F5E8);
 
   // The veil behind a sheet: ink at 42 %, the page below stays readable.
   static const scrim = Color(0x6B0E1320);

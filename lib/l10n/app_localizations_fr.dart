@@ -1248,6 +1248,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'otherIncome': 'Autres',
       'adjustExpense': 'Régularisation',
       'adjustIncome': 'Régularisation',
+      'debtIn': 'Dette',
+      'debtOut': 'Dette',
+      'receivableIn': 'Créance',
+      'receivableOut': 'Créance',
       'other': '',
     });
     return '$_temp0';
@@ -2706,4 +2710,244 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get remindersBudgetHelp => 'Une alerte par catégorie';
+
+  @override
+  String get debtsTitle => 'Dettes et créances';
+
+  @override
+  String get debtsOwe => 'Je dois';
+
+  @override
+  String get debtsOwed => 'On me doit';
+
+  @override
+  String debtsLateCount(int count) {
+    return '$count en retard';
+  }
+
+  @override
+  String get debtsLateGroup => 'En retard';
+
+  @override
+  String get debtsNoDue => 'Sans échéance';
+
+  @override
+  String debtsAbout(String amount) {
+    return 'Environ $amount';
+  }
+
+  @override
+  String debtWordLate(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'En retard de $days jours',
+      one: 'En retard d’un jour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtWordToday => 'Aujourd’hui';
+
+  @override
+  String get debtWordTomorrow => 'Demain';
+
+  @override
+  String get debtWordAfterTomorrow => 'Après-demain';
+
+  @override
+  String debtWordIn(int days) {
+    return 'Dans $days jours';
+  }
+
+  @override
+  String debtWordSettled(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Soldée il y a $days jours',
+      one: 'Soldée hier',
+      zero: 'Soldée aujourd’hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtWordReceived(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Reçue il y a $days jours',
+      one: 'Reçue hier',
+      zero: 'Reçue aujourd’hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtDueLine(String date) {
+    return 'Échéance : $date';
+  }
+
+  @override
+  String debtDueTodayLine(String date) {
+    return 'Échéance : aujourd’hui, $date';
+  }
+
+  @override
+  String debtDueLateLine(String date) {
+    return 'Échéance dépassée : $date';
+  }
+
+  @override
+  String get debtNoDueLine => 'Aucune date fixée';
+
+  @override
+  String get debtNothingRepaid => 'Rien remboursé pour l’instant.';
+
+  @override
+  String get debtNothingReceived => 'Rien reçu pour l’instant.';
+
+  @override
+  String debtRepaidLine(String paid, String total) {
+    return '$paid déjà remboursés sur $total.';
+  }
+
+  @override
+  String debtReceivedLine(String paid, String total) {
+    return '$paid déjà reçus sur $total.';
+  }
+
+  @override
+  String debtAboutLine(String amount) {
+    return 'Environ $amount au taux du jour.';
+  }
+
+  @override
+  String debtSettledOwe(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dettes soldées',
+      one: '1 dette soldée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtSettledOwed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count créances encaissées',
+      one: '1 créance encaissée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtsEmptyOwe => 'Aucune dette';
+
+  @override
+  String get debtsEmptyOweHelp =>
+      'Notez ce que vous devez, avec ou sans échéance.';
+
+  @override
+  String get debtsEmptyOwed => 'Personne ne vous doit rien';
+
+  @override
+  String get debtsEmptyOwedHelp =>
+      'Notez l’argent prêté, pour savoir qui doit rembourser.';
+
+  @override
+  String get debtsAdd => 'Ajouter une dette ou une créance';
+
+  @override
+  String get debtsGroupBy => 'Ranger par';
+
+  @override
+  String get debtsByDue => 'Échéance';
+
+  @override
+  String get debtsByDueHelp =>
+      'La plus proche d’abord, celles en retard en haut.';
+
+  @override
+  String get debtsByPerson => 'Personne';
+
+  @override
+  String get debtsByPersonHelp =>
+      'Un groupe par nom, dans l’ordre alphabétique.';
+
+  @override
+  String get debtsPaidTitle => 'Dettes et créances soldées';
+
+  @override
+  String get debtsPaidInline => 'Dans leur mois';
+
+  @override
+  String get debtsPaidInlineHelp =>
+      'Avec les autres, à leur date. Sans date : dans « Sans échéance ».';
+
+  @override
+  String get debtsPaidBottom => 'Regroupées en bas';
+
+  @override
+  String get debtsPaidBottomHelp =>
+      'Un bloc « soldées » à part, qui se déplie.';
+
+  @override
+  String get debtsPaidHidden => 'Masquées';
+
+  @override
+  String get debtsPaidHiddenHelp => 'Absentes de la liste.';
+
+  @override
+  String get debtPersonOwe => 'À qui je dois';
+
+  @override
+  String get debtPersonOwed => 'Qui me doit';
+
+  @override
+  String get debtPersonHint => 'Un nom';
+
+  @override
+  String get debtPersonMissing => 'Indiquez un nom';
+
+  @override
+  String get debtLeft => 'Reste dû';
+
+  @override
+  String get debtDue => 'Échéance';
+
+  @override
+  String get debtDueClear => 'Retirer l’échéance';
+
+  @override
+  String get debtLinkOwe => 'Argent reçu sur un compte';
+
+  @override
+  String get debtLinkOwed => 'Argent sorti d’un compte';
+
+  @override
+  String debtLinkHelp(String account) {
+    return '$account, le solde sera mis à jour';
+  }
+
+  @override
+  String get debtLinkOffHelp =>
+      'Une dette ancienne : seul le reste dû est noté';
+
+  @override
+  String get debtSavedOwe => 'Dette enregistrée';
+
+  @override
+  String get debtSavedOwed => 'Créance enregistrée';
+
+  @override
+  String get debtCurrency => 'Devise de la dette';
+
+  @override
+  String get debtAmountMissing => 'Indiquez un montant';
 }

@@ -9,6 +9,7 @@ import 'package:kibuo/data/budget_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/month_start_store.dart';
@@ -30,9 +31,12 @@ import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/obligations/debts_screen.dart';
+import 'package:kibuo/ui/obligations/new_debt_screen.dart';
 import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/reminders/notifier.dart';
@@ -418,6 +422,20 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
               ),
             ),
           ),
+        if (db != null && _entryData(context) != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).debtsTitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => DebtsScreen(
+                  data: _entryData(context)!,
+                  debts: DebtRepository(db),
+                  prefs: PreferenceStore(db),
+                  onChanged: () => _saved.value++,
+                ),
+              ),
+            ),
+          ),
         if (_entryData(context) case final data?)
           SettingsRow(
             label: AppLocalizations.of(context).recurrencesTitle,
@@ -617,6 +635,10 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       AddChoice.transfer => EntryKind.transfer,
       _ => null,
     };
+    final db = KibuoData.maybeOf(context);
+    if (choice == AddChoice.debt && data != null && db != null) {
+      return _newDebt(data, db);
+    }
     if (data != null && kind != null) {
       // The alert once the saved sheet is gone (PRODUCT: Alertes).
       return runEntry(
@@ -632,6 +654,23 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         fullscreenDialog: true,
       ),
     );
+  }
+
+  /// « Nouvelle dette ou créance » from the +, then « Dette enregistrée ».
+  Future<void> _newDebt(EntryData data, KibuoDatabase db) async {
+    final saved = await Navigator.of(context).push<DebtDirection>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => NewDebtScreen(data: data, debts: DebtRepository(db)),
+      ),
+    );
+    if (saved == null || !mounted) return;
+    final l = AppLocalizations.of(context);
+    showKibuoToast(
+      context,
+      saved == DebtDirection.owe ? l.debtSavedOwe : l.debtSavedOwed,
+    );
+    _saved.value++;
   }
 }
 
