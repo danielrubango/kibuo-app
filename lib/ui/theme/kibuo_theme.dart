@@ -233,3 +233,11 @@ abstract final class KibuoSpace {
   /// Between two large parts of a screen.
   static const xxl = 32.0;
 }
+
+/// A text style at another weight, the variable font's axis set with it.
+extension KibuoWeight on TextStyle {
+  TextStyle weight(int value) => copyWith(
+    fontWeight: FontWeight.values[value ~/ 100 - 1],
+    fontVariations: [FontVariation.weight(value.toDouble())],
+  );
+}

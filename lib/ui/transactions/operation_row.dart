@@ -107,10 +107,6 @@ class DraftCard extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final (:card, :dash) = draftColors(t.kind);
     final ink = kindColors(t.kind).ink;
-    TextStyle w(TextStyle s, int weight) => s.copyWith(
-      fontWeight: FontWeight.values[weight ~/ 100 - 1],
-      fontVariations: [FontVariation.weight(weight.toDouble())],
-    );
     return DashedBorder(
       radius: 16,
       color: dash,
@@ -151,7 +147,9 @@ class DraftCard extends StatelessWidget {
                             l.draftLabel,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: w(KibuoType.help, 600).copyWith(color: ink),
+                            style: KibuoType.help
+                                .weight(600)
+                                .copyWith(color: ink),
                           ),
                         ),
                       ),
@@ -164,7 +162,7 @@ class DraftCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             minimumSize: const Size(0, KibuoTheme.heightTouch),
                             foregroundColor: KibuoColors.inkSecondary,
-                            textStyle: w(KibuoType.body, 600),
+                            textStyle: KibuoType.body.weight(600),
                           ),
                           child: Text(l.draftIgnore),
                         ),
@@ -182,7 +180,7 @@ class DraftCard extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            textStyle: w(KibuoType.body, 600),
+                            textStyle: KibuoType.body.weight(600),
                           ),
                           child: Text(l.draftValidate),
                         ),

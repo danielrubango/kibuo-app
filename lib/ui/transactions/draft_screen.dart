@@ -8,8 +8,8 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
-import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/fields.dart';
+import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/recurrences/rhythm_text.dart';
@@ -220,124 +220,37 @@ class _DraftScreenState extends State<DraftScreen> {
     final noRate = waitsForRate(t, labels);
     final refusal = _refusal;
     final blocked = noRate || refusal != null;
-    TextStyle w(TextStyle s, int weight) => s.copyWith(
-      fontWeight: FontWeight.values[weight ~/ 100 - 1],
-      fontVariations: [FontVariation.weight(weight.toDouble())],
-    );
     final unit = rule?.schedule.unit.name ?? 'month';
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 2, 16, 32),
         children: [
-          DashedBorder(
-            radius: KibuoTheme.radiusFeatured,
-            color: ignored ? KibuoColors.line : dash,
-            width: 2,
-            child: Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: ignored ? KibuoColors.surface : card,
-                borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      OperationTile(
-                        kind: t.kind,
-                        labels: labels,
-                        size: 44,
-                        muted: ignored,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              draftName(t, labels),
-                              style: w(
-                                KibuoType.body,
-                                600,
-                              ).copyWith(fontSize: 18),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              l.draftStatus(t.status, unit),
-                              style: w(KibuoType.help, 500).copyWith(
-                                color: ignored ? KibuoColors.inkSecondary : ink,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    signedTotal(context, t),
-                    style: KibuoType.bigAmount.copyWith(
-                      fontSize: 42,
-                      height: 48 / 42,
-                      color: ignored ? KibuoColors.inkMuted : KibuoColors.ink,
-                      decoration: ignored ? TextDecoration.lineThrough : null,
-                      decorationColor: KibuoColors.inkMuted,
-                      decorationThickness: 2,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0x0F0E1320),
-                      borderRadius: BorderRadius.circular(
-                        KibuoTheme.radiusPill,
-                      ),
-                    ),
-                    child: Text(
-                      _due(l, lang, t.date),
-                      style: KibuoType.help.copyWith(color: KibuoColors.ink),
-                    ),
-                  ),
-                ],
-              ),
+          OperationHero(
+            tile: OperationTile(
+              kind: t.kind,
+              labels: labels,
+              size: 44,
+              muted: ignored,
             ),
+            title: draftName(t, labels),
+            status: l.draftStatus(t.status, unit),
+            statusColor: ignored ? KibuoColors.inkSecondary : ink,
+            amount: signedTotal(context, t),
+            amountColor: ignored ? KibuoColors.inkMuted : KibuoColors.ink,
+            struck: ignored,
+            chip: _due(l, lang, t.date),
+            background: ignored ? KibuoColors.surface : card,
+            dash: ignored ? KibuoColors.line : dash,
           ),
           const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: ignored ? KibuoColors.surface : KibuoColors.warningSoft,
-              borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  KibuoIcons.repeat,
-                  size: 20,
-                  color: ignored
-                      ? KibuoColors.inkSecondary
-                      : KibuoColors.warningSoftInk,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    ignored ? l.ignoredNotice : l.draftNotice,
-                    style: KibuoType.body.copyWith(
-                      height: 20 / 14,
-                      color: ignored
-                          ? KibuoColors.inkSecondary
-                          : KibuoColors.warningSoftInk,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          NoticeCard(
+            icon: KibuoIcons.repeat,
+            text: ignored ? l.ignoredNotice : l.draftNotice,
+            background: ignored ? KibuoColors.surface : KibuoColors.warningSoft,
+            ink: ignored
+                ? KibuoColors.inkSecondary
+                : KibuoColors.warningSoftInk,
           ),
           const SizedBox(height: 14),
           Material(
