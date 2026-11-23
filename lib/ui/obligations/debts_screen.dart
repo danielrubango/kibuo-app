@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter, PathMetric;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/debt_repository.dart';
+import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -13,7 +14,6 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
-import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -30,6 +30,7 @@ class DebtsScreen extends StatefulWidget {
     required this.data,
     required this.debts,
     required this.prefs,
+    this.hints,
     this.now = DateTime.now,
     this.onChanged,
   });
@@ -37,6 +38,9 @@ class DebtsScreen extends StatefulWidget {
   final EntryData data;
   final DebtRepository debts;
   final PreferenceStore prefs;
+
+  /// Where the two-step guide remembers it was shown; none, no guide.
+  final HintStore? hints;
   final DateTime Function() now;
 
   /// A debt was saved: its money may have reached a list.
@@ -44,6 +48,7 @@ class DebtsScreen extends StatefulWidget {
 
   static const groupingKey = 'debts_grouping';
   static const paidKey = 'debts_paid_place';
+  static const detailsKey = 'debts_details_place';
 
   @override
   State<DebtsScreen> createState() => _DebtsScreenState();
@@ -56,6 +61,10 @@ class _DebtsScreenState extends State<DebtsScreen> {
   PaidPlace _paidPlace = PaidPlace.inline;
   String? _open;
   bool _paidShown = false;
+
+  /// The guide's step, 1 or 2; 0 when not shown.
+  int _coach = 0;
+  final _firstRow = GlobalKey();
 
   /// What converts each other currency to the main one.
   String? _main;
@@ -71,6 +80,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
     final lines = await widget.debts.debts();
     final grouping = await widget.prefs.read(DebtsScreen.groupingKey);
     final paid = await widget.prefs.read(DebtsScreen.paidKey);
+    final details = await widget.prefs.read(DebtsScreen.detailsKey);
     final main = await widget.data.currencies.primaryCurrency();
     final rates = <String, ExchangeRate>{};
     if (main != null) {
@@ -87,10 +97,34 @@ class _DebtsScreenState extends State<DebtsScreen> {
           ? DebtGrouping.person
           : DebtGrouping.due;
       _paidPlace = PaidPlace.fromStored(paid);
+      _detailsAbove = details != 'below';
       _main = main;
       _rates = rates;
     });
+    // Once, the first time the list has a line (owner, 23 November).
+    final hints = widget.hints;
+    if (hints != null &&
+        _coach == 0 &&
+        lines.any((d) => d.direction == _tab) &&
+        !await hints.debtsCoachShown()) {
+      await hints.debtsCoachDone();
+      if (mounted) setState(() => _coach = 1);
+    }
   }
+
+  void _coachNext() {
+    if (_coach == 1) {
+      setState(() => _coach = 2);
+      return;
+    }
+    // « Essayer »: the first line opens.
+    setState(() => _coach = 0);
+    final first = _firstId;
+    if (first != null) _openLine(first);
+  }
+
+  String? _firstId;
+  List<DebtLine>? _firstLines;
 
   String get _lang => Localizations.localeOf(context).languageCode;
 
@@ -125,29 +159,22 @@ class _DebtsScreenState extends State<DebtsScreen> {
   }
 
   Future<void> _add() async {
-    final saved = await Navigator.of(context).push<DebtDirection>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => NewDebtScreen(
-          data: widget.data,
-          debts: widget.debts,
-          direction: _tab,
-          now: widget.now,
-        ),
-      ),
+    final saved = await runNewDebt(
+      context,
+      data: widget.data,
+      debts: widget.debts,
+      direction: _tab,
+      now: widget.now,
+      onSaved: () {
+        widget.onChanged?.call();
+        _load();
+      },
     );
     if (saved == null || !mounted) return;
-    final l = AppLocalizations.of(context);
     setState(() {
       _tab = saved;
       _open = null;
     });
-    showKibuoToast(
-      context,
-      saved == DebtDirection.owe ? l.debtSavedOwe : l.debtSavedOwed,
-    );
-    widget.onChanged?.call();
-    await _load();
   }
 
   Future<void> _display() async {
@@ -157,12 +184,19 @@ class _DebtsScreenState extends State<DebtsScreen> {
       title: l.listDisplay,
       builder: (context) => StatefulBuilder(
         builder: (context, setSheet) {
-          void pick({DebtGrouping? grouping, PaidPlace? paid}) {
+          void pick({DebtGrouping? grouping, PaidPlace? paid, bool? above}) {
             setState(() {
               _grouping = grouping ?? _grouping;
               _paidPlace = paid ?? _paidPlace;
+              _detailsAbove = above ?? _detailsAbove;
               _open = null;
             });
+            if (above != null) {
+              widget.prefs.write(
+                DebtsScreen.detailsKey,
+                above ? 'above' : 'below',
+              );
+            }
             setSheet(() {});
             if (grouping != null) {
               widget.prefs.write(DebtsScreen.groupingKey, grouping.name);
@@ -222,6 +256,26 @@ class _DebtsScreenState extends State<DebtsScreen> {
                 ],
               ),
               const SizedBox(height: 16),
+              SectionTitle(l.debtsOpenTitle),
+              SettingsCard(
+                children: [
+                  DisplayChoice(
+                    icon: KibuoIcons.arrowLineUp,
+                    label: l.debtsDetailsAbove,
+                    help: l.debtsDetailsAboveHelp,
+                    on: _detailsAbove,
+                    onTap: () => pick(above: true),
+                  ),
+                  DisplayChoice(
+                    icon: KibuoIcons.arrowDown,
+                    label: l.debtsDetailsBelow,
+                    help: l.debtsDetailsBelowHelp,
+                    on: !_detailsAbove,
+                    onTap: () => pick(above: false),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               KibuoButton(
                 label: l.displayDone,
                 kind: ButtonKind.dark,
@@ -234,7 +288,54 @@ class _DebtsScreenState extends State<DebtsScreen> {
     );
   }
 
-  void _toggle(String id) => setState(() => _open = _open == id ? null : id);
+  /// With a line open, any touch closes it, even on another line; the
+  /// next one opens (owner, 23 November).
+  void _toggle(String id) => _open == null ? _openLine(id) : _close();
+
+  static const _opening = Duration(milliseconds: 250);
+  static const _closing = Duration(milliseconds: 200);
+
+  /// The line above the veil, kept while it closes.
+  String? _lifted;
+
+  /// Where an open line's details show (the display sheet's choice).
+  bool _detailsAbove = true;
+
+  /// The card above the veil is built closed, then opens: both it and the
+  /// one in the list grow together.
+  void _openLine(String id) {
+    setState(() => _lifted = id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _lifted == id) setState(() => _open = id);
+    });
+  }
+
+  void _close() {
+    setState(() => _open = null);
+    Future<void>.delayed(_closing, () {
+      if (mounted && _open == null) setState(() => _lifted = null);
+    });
+  }
+
+  /// Where the open line's card is, for its copy above the veil.
+  final _openLink = LayerLink();
+
+  /// A line; [live] above the veil, where it opens. In the list behind,
+  /// it never moves (owner, 23 November).
+  Widget _row(
+    AppLocalizations l,
+    DebtLine d,
+    DateTime now, {
+    required bool live,
+  }) => _DebtRow(
+    line: d,
+    now: now,
+    open: live && d.id == _open,
+    amount: _money(d.left),
+    details: live && d.id == _lifted ? _details(l, d, now) : null,
+    detailsAbove: _detailsAbove,
+    onTap: () => _toggle(d.id),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +353,9 @@ class _DebtsScreenState extends State<DebtsScreen> {
       paidPlace: _paidPlace,
     );
     final dim = _open != null;
-    return Scaffold(
+    _firstLines = listing.groups.isEmpty ? null : listing.groups.first.lines;
+    _firstId = _firstLines?.first.id;
+    final page = Scaffold(
       appBar: AppBar(
         title: Text(l.debtsTitle),
         actions: [
@@ -267,75 +370,149 @@ class _DebtsScreenState extends State<DebtsScreen> {
           const SizedBox(width: 4),
         ],
       ),
-      floatingActionButton: dim
-          ? null
-          : _AddButton(label: l.debtsAdd, onTap: _add),
       body: lines == null
           ? const SizedBox.shrink()
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-              children: [
-                _Dimmed(
-                  on: dim,
-                  child: Row(
-                    children: [
-                      for (final d in DebtDirection.values) ...[
-                        if (d == DebtDirection.owed) const SizedBox(width: 10),
-                        Expanded(child: _tabCard(l, d, lines, now)),
-                      ],
-                    ],
-                  ),
-                ),
-                if (listing.groups.isEmpty && listing.paid.isEmpty) ...[
-                  const SizedBox(height: 16),
-                  EmptyCard(
-                    icon: KibuoIcons.handCoins,
-                    title: _tab == DebtDirection.owe
-                        ? l.debtsEmptyOwe
-                        : l.debtsEmptyOwed,
-                    help: _tab == DebtDirection.owe
-                        ? l.debtsEmptyOweHelp
-                        : l.debtsEmptyOwedHelp,
-                  ),
-                ],
-                for (final g in listing.groups) ...[
-                  const SizedBox(height: GroupTitle.before),
+          // A touch on the empty page closes the open line.
+          : GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: dim ? _close : null,
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+                children: [
                   _Dimmed(
                     on: dim,
-                    child: GroupTitle(
-                      title: _groupTitle(l, g.key),
-                      leading: g.key.isLate ? const _LateDot() : null,
-                      trailing:
-                          [
-                                for (final d in g.lines)
-                                  if (!d.settled) d,
-                              ].length >
-                              1
-                          ? GroupNote(_total(g.lines) ?? '')
-                          : null,
+                    child: Row(
+                      children: [
+                        for (final d in DebtDirection.values) ...[
+                          if (d == DebtDirection.owed)
+                            const SizedBox(width: 10),
+                          Expanded(child: _tabCard(l, d, lines, now)),
+                        ],
+                      ],
                     ),
                   ),
-                  _card(l, g.lines, now),
-                ],
-                if (listing.paid.isNotEmpty) ...[
-                  const SizedBox(height: GroupTitle.gap),
-                  _Dimmed(
-                    on: dim && !listing.paid.any((d) => d.id == _open),
-                    child: _PaidToggle(
-                      label: _tab == DebtDirection.owe
-                          ? l.debtSettledOwe(listing.paid.length)
-                          : l.debtSettledOwed(listing.paid.length),
-                      open: _paidShown,
-                      onTap: () => setState(() => _paidShown = !_paidShown),
+                  if (listing.groups.isEmpty && listing.paid.isEmpty) ...[
+                    const SizedBox(height: 16),
+                    EmptyCard(
+                      icon: KibuoIcons.handCoins,
+                      title: _tab == DebtDirection.owe
+                          ? l.debtsEmptyOwe
+                          : l.debtsEmptyOwed,
+                      help: _tab == DebtDirection.owe
+                          ? l.debtsEmptyOweHelp
+                          : l.debtsEmptyOwedHelp,
                     ),
-                  ),
-                  if (_paidShown) ...[
-                    const SizedBox(height: 8),
-                    _card(l, listing.paid, now),
                   ],
+                  for (final g in listing.groups) ...[
+                    const SizedBox(height: GroupTitle.before),
+                    _Dimmed(
+                      on: dim,
+                      child: GroupTitle(
+                        title: _groupTitle(l, g.key),
+                        leading: g.key.isLate ? const _LateDot() : null,
+                        trailing:
+                            [
+                                  for (final d in g.lines)
+                                    if (!d.settled) d,
+                                ].length >
+                                1
+                            ? GroupNote(_total(g.lines) ?? '')
+                            : null,
+                      ),
+                    ),
+                    _card(l, g.lines, now),
+                  ],
+                  if (listing.paid.isNotEmpty) ...[
+                    const SizedBox(height: GroupTitle.gap),
+                    _Dimmed(
+                      on: dim && !listing.paid.any((d) => d.id == _open),
+                      child: _PaidToggle(
+                        label: _tab == DebtDirection.owe
+                            ? l.debtSettledOwe(listing.paid.length)
+                            : l.debtSettledOwed(listing.paid.length),
+                        open: _paidShown,
+                        onTap: _open != null
+                            ? _close
+                            : () => setState(() => _paidShown = !_paidShown),
+                      ),
+                    ),
+                    if (_paidShown) ...[
+                      const SizedBox(height: 8),
+                      _card(l, listing.paid, now),
+                    ],
+                  ],
+                  // Like « Nouveau compte » and « Nouveau budget »: dashed, at
+                  // the end of the list.
+                  const SizedBox(height: 16),
+                  _Dimmed(
+                    on: dim,
+                    child: KibuoButton(
+                      label: _tab == DebtDirection.owe
+                          ? l.debtNewOwe
+                          : l.debtNewOwed,
+                      kind: ButtonKind.create,
+                      icon: KibuoIcons.plusBold,
+                      onPressed: dim ? _close : _add,
+                    ),
+                  ),
                 ],
-              ],
+              ),
             ),
+    );
+    return Stack(
+      children: [
+        page,
+        // Behind the open line, faded and lightly blurred, a light grey
+        // veil over the whole screen, its bar too; the card holding the
+        // line stays white above it, in its place (owner, 23 November).
+        if (_lifted != null) ...[
+          // Only what appears reacts: the veil holds the page behind,
+          // which neither scrolls nor moves, and a touch on it closes the
+          // line (owner, 23 November).
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _close,
+              child: AnimatedOpacity(
+                duration: dim ? _opening : _closing,
+                opacity: dim ? 1 : 0,
+                child: const ColoredBox(color: KibuoColors.veil),
+              ),
+            ),
+          ),
+          for (final lines in [
+            for (final g in listing.groups) g.lines,
+            if (_paidShown) listing.paid,
+          ])
+            if (lines.any((d) => d.id == _lifted))
+              Positioned(
+                left: 16,
+                right: 16,
+                top: 0,
+                child: CompositedTransformFollower(
+                  link: _openLink,
+                  showWhenUnlinked: false,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: _card(l, lines, now, above: true),
+                  ),
+                ),
+              ),
+        ],
+        if (_coach > 0)
+          Positioned.fill(
+            // Above the page's own Material: its words need one too.
+            child: Material(
+              type: MaterialType.transparency,
+              child: _Coach(
+                target: _firstRow,
+                step: _coach,
+                onSkip: () => setState(() => _coach = 0),
+                onNext: _coachNext,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -358,10 +535,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => setState(() {
-          _tab = d;
-          _open = null;
-        }),
+        onTap: _open != null ? _close : () => setState(() => _tab = d),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Column(
@@ -421,11 +595,21 @@ class _DebtsScreenState extends State<DebtsScreen> {
     return t[0].toUpperCase() + t.substring(1);
   }
 
-  /// One white card for a group's lines.
-  Widget _card(AppLocalizations l, List<DebtLine> lines, DateTime now) {
-    final hasOpen = lines.any((d) => d.id == _open);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+  /// One white card for a group's lines. The card holding the open line
+  /// is drawn again [above] the veil, its other lines only faded.
+  Widget _card(
+    AppLocalizations l,
+    List<DebtLine> lines,
+    DateTime now, {
+    bool above = false,
+  }) {
+    final holds = lines.any((d) => d.id == _lifted);
+    final card = AnimatedContainer(
+      duration: _open != null ? _opening : _closing,
+      curve: Curves.easeOutCubic,
+      // With the line's block 6 around its words: 12 to the card's edge,
+      // and 8 on each side of a divider, as before.
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
@@ -437,31 +621,32 @@ class _DebtsScreenState extends State<DebtsScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
-                  vertical: 8,
+                  vertical: 2,
                 ),
                 child: Container(
                   height: 1,
-                  color: d.id == _open || lines[i - 1].id == _open
+                  color: above && (d.id == _open || lines[i - 1].id == _open)
                       ? Colors.transparent
                       : KibuoColors.background,
                 ),
               ),
             _Dimmed(
-              on: _open != null && d.id != _open,
-              blur: hasOpen,
-              child: _DebtRow(
-                line: d,
-                now: now,
-                open: d.id == _open,
-                amount: _money(d.left),
-                details: d.id == _open ? _details(l, d, now) : null,
-                onTap: () => _toggle(d.id),
-              ),
+              on: _open != null && (!above || d.id != _open),
+              blur: !above,
+              child: !above && i == 0 && identical(lines, _firstLines)
+                  ? KeyedSubtree(
+                      key: _firstRow,
+                      child: _row(l, d, now, live: false),
+                    )
+                  : _row(l, d, now, live: above),
             ),
           ],
         ],
       ),
     );
+    return holds && !above
+        ? CompositedTransformTarget(link: _openLink, child: card)
+        : card;
   }
 
   /// What an open line adds: the full date, how much is paid back, and
@@ -614,7 +799,7 @@ String debtWord(AppLocalizations l, DebtLine d, DateTime now) {
 }
 
 /// A line: the due day in its ringed square, the name, the words, what is
-/// left, ˅. Open, it lifts and shows [details] above.
+/// left, ˅. Open, it lifts and unfolds [details] below.
 class _DebtRow extends StatelessWidget {
   const _DebtRow({
     required this.line,
@@ -623,13 +808,19 @@ class _DebtRow extends StatelessWidget {
     required this.amount,
     required this.onTap,
     this.details,
+    this.detailsAbove = false,
   });
 
   final DebtLine line;
   final DateTime now;
   final bool open;
+
   final String amount;
   final Widget? details;
+
+  /// The details come down from above the line, which goes down with
+  /// them, and go back up on closing (owner, 23 November, to compare).
+  final bool detailsAbove;
   final VoidCallback onTap;
 
   @override
@@ -709,30 +900,66 @@ class _DebtRow extends StatelessWidget {
         ),
       ),
     );
+    // The block is always there, 8 inside the card and 6 around the
+    // words: open, its frame fades in, nothing slides sideways, only the
+    // height changes (owner, 23 November). Opening, the frame comes
+    // first, then the details; closing, the other way round.
+    final duration = open
+        ? _DebtsScreenState._opening
+        : _DebtsScreenState._closing;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: EdgeInsets.symmetric(horizontal: open ? 6 : 14),
-      padding: EdgeInsets.all(open ? 8 : 0),
+      duration: duration,
+      curve: open
+          ? const Interval(0, 0.6, curve: Curves.easeOut)
+          : const Interval(0.4, 1, curve: Curves.easeIn),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: open
-            ? const [
-                BoxShadow(
-                  color: Color(0x240E1320),
-                  blurRadius: 24,
-                  offset: Offset(0, 8),
-                ),
-              ]
-            : null,
+        borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
+        border: Border.all(
+          color: open
+              ? KibuoColors.track
+              : KibuoColors.track.withValues(alpha: 0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: open ? const Color(0x1F0E1320) : const Color(0x000E1320),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          if (details case final details?) ...[
-            details,
-            const SizedBox(height: 8),
-          ],
-          row,
+          if (!detailsAbove) row,
+          AnimatedCrossFade(
+            duration: _DebtsScreenState._opening,
+            reverseDuration: _DebtsScreenState._closing,
+            // Opening, the details wait for the frame; closing, they go
+            // first.
+            sizeCurve: open
+                ? const Interval(0.25, 1, curve: Curves.easeOutCubic)
+                : const Interval(0, 0.75, curve: Curves.easeInCubic),
+            secondCurve: const Interval(0.4, 1, curve: Curves.easeOut),
+            // Above, the details slide in from the top edge and leave by
+            // it: their bottom shows first.
+            alignment: detailsAbove
+                ? Alignment.bottomCenter
+                : Alignment.topCenter,
+            crossFadeState: open && details != null
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: EdgeInsets.only(
+                top: detailsAbove ? 0 : 8,
+                bottom: detailsAbove ? 8 : 0,
+              ),
+              child: details ?? const SizedBox(width: double.infinity),
+            ),
+          ),
+          if (detailsAbove) row,
         ],
       ),
     );
@@ -804,7 +1031,7 @@ class _RingPainter extends CustomPainter {
       old.share != share || old.look != look;
 }
 
-/// Lines and blocks behind an open line: faded and blurred.
+/// Lines and blocks behind an open line: faded, lightly blurred.
 class _Dimmed extends StatelessWidget {
   const _Dimmed({required this.on, required this.child, this.blur = true});
 
@@ -812,16 +1039,18 @@ class _Dimmed extends StatelessWidget {
   final bool blur;
   final Widget child;
 
+  // The blur comes at once, only the fading moves: a blur that grows
+  // spreads the edges, and the page seemed to move (owner, 23 November).
   @override
-  Widget build(BuildContext context) => AnimatedOpacity(
-    duration: const Duration(milliseconds: 200),
-    opacity: on ? 0.6 : 1,
-    child: on && blur
-        ? ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: child,
-          )
-        : child,
+  Widget build(BuildContext context) => ImageFiltered(
+    enabled: blur && on,
+    imageFilter: ImageFilter.blur(sigmaX: 1.2, sigmaY: 1.2),
+    child: AnimatedOpacity(
+      duration: on ? _DebtsScreenState._opening : _DebtsScreenState._closing,
+      curve: Curves.easeOutCubic,
+      opacity: on ? 0.6 : 1,
+      child: child,
+    ),
   );
 }
 
@@ -891,29 +1120,182 @@ class _PaidToggle extends StatelessWidget {
   );
 }
 
-/// The + at the bottom right (canvas DettesListeDois): 62, mint, 20 round.
-class _AddButton extends StatelessWidget {
-  const _AddButton({required this.label, required this.onTap});
+/// The list's guide (canvas DettesListeDois): the page darkened but for
+/// the first line, then a white card under it, « 1 sur 2 », its title and
+/// words, « Passer » and « Suivant », then « Essayer ».
+class _Coach extends StatefulWidget {
+  const _Coach({
+    required this.target,
+    required this.step,
+    required this.onSkip,
+    required this.onNext,
+  });
 
-  final String label;
-  final VoidCallback onTap;
+  final GlobalKey target;
+  final int step;
+  final VoidCallback onSkip;
+  final VoidCallback onNext;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: label,
-    child: Material(
-      color: KibuoColors.mint,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 62,
-          height: 62,
-          child: Icon(KibuoIcons.plusBold, size: 26, color: KibuoColors.ink),
-        ),
+  State<_Coach> createState() => _CoachState();
+}
+
+class _CoachState extends State<_Coach> {
+  Rect? _hole;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
+
+  void _measure() {
+    final box = widget.target.currentContext?.findRenderObject() as RenderBox?;
+    final me = context.findRenderObject() as RenderBox?;
+    if (!mounted || box == null || me == null || !box.hasSize) return;
+    final topLeft = me.globalToLocal(box.localToGlobal(Offset.zero));
+    // The window fits the card: its sides, and 12 above and below the
+    // line's words, the card's own space (owner, 23 November). The line's
+    // block sits 8 inside the card and 6 around its words.
+    final line = topLeft & box.size;
+    setState(
+      () => _hole = Rect.fromLTRB(
+        line.left - 8,
+        line.top - 6,
+        line.right + 8,
+        line.bottom + 6,
       ),
-    ),
-  );
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final hole = _hole;
+    if (hole == null) return const SizedBox.expand();
+    final first = widget.step == 1;
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {},
+            child: CustomPaint(painter: _HolePainter(hole)),
+          ),
+        ),
+        Positioned(
+          left: 16,
+          right: 16,
+          top: hole.bottom + 15,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                left: 24,
+                top: -7,
+                child: Transform.rotate(
+                  angle: 0.785398,
+                  child: Container(
+                    width: 14,
+                    height: 14,
+                    color: KibuoColors.surface,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: KibuoColors.surface,
+                  borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l.debtsCoachStep(widget.step),
+                      style: KibuoType.caption.weight(600),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      first ? l.debtsCoach1Title : l.debtsCoach2Title,
+                      style: KibuoType.cardTitle,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      first ? l.debtsCoach1Text : l.debtsCoach2Text,
+                      style: KibuoType.body.copyWith(
+                        color: KibuoColors.inkSecondary,
+                        height: 20 / 14,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: widget.onSkip,
+                          style: TextButton.styleFrom(
+                            foregroundColor: KibuoColors.inkSecondary,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 44),
+                            textStyle: KibuoType.buttonSmall.copyWith(
+                              fontSize: 14,
+                            ),
+                          ),
+                          child: Text(l.debtsCoachSkip),
+                        ),
+                        const Spacer(),
+                        FilledButton(
+                          onPressed: widget.onNext,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: KibuoColors.mint,
+                            foregroundColor: KibuoColors.ink,
+                            minimumSize: const Size(0, 44),
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                KibuoTheme.radiusTile,
+                              ),
+                            ),
+                            textStyle: KibuoType.buttonSmall,
+                          ),
+                          child: Text(
+                            first ? l.debtsCoachNext : l.debtsCoachTry,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The guide's veil, open around [hole].
+class _HolePainter extends CustomPainter {
+  _HolePainter(this.hole);
+
+  final Rect hole;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRect(Offset.zero & size)
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          hole,
+          const Radius.circular(KibuoTheme.radiusCard),
+        ),
+      );
+    canvas.drawPath(path, Paint()..color = KibuoColors.tipScrim);
+  }
+
+  @override
+  bool shouldRepaint(_HolePainter old) => old.hole != hole;
 }

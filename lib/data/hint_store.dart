@@ -38,4 +38,12 @@ class HintStore {
   Future<bool> swipeShown() async => await _read(_swipe) == 'true';
 
   Future<void> swipeDone() => _write(_swipe, 'true');
+
+  static const _debts = 'hint_debts_coach_done';
+
+  /// Whether the debts list's two-step guide was shown (owner, 23
+  /// November): once, the first time the list has a line.
+  Future<bool> debtsCoachShown() async => await _read(_debts) == 'true';
+
+  Future<void> debtsCoachDone() => _write(_debts, 'true');
 }

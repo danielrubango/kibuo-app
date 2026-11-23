@@ -2861,9 +2861,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Notez l’argent prêté, pour savoir qui doit rembourser.';
 
   @override
-  String get debtsAdd => 'Ajouter une dette ou une créance';
-
-  @override
   String get debtsGroupBy => 'Ranger par';
 
   @override
@@ -2950,4 +2947,58 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get debtAmountMissing => 'Indiquez un montant';
+
+  @override
+  String get debtNewOwe => 'Nouvelle dette';
+
+  @override
+  String get debtNewOwed => 'Nouvelle créance';
+
+  @override
+  String get debtNoAccount => 'Sans compte';
+
+  @override
+  String get debtsOpenTitle => 'Ouvrir une ligne';
+
+  @override
+  String get debtsDetailsAbove => 'Détails au-dessus';
+
+  @override
+  String get debtsDetailsAboveHelp =>
+      'La ligne descend, les détails viennent du haut.';
+
+  @override
+  String get debtsDetailsBelow => 'Détails en dessous';
+
+  @override
+  String get debtsDetailsBelowHelp =>
+      'La ligne reste en place, les détails se déplient dessous.';
+
+  @override
+  String debtsCoachStep(int step) {
+    return '$step sur 2';
+  }
+
+  @override
+  String get debtsCoach1Title => 'Chaque ligne, une personne';
+
+  @override
+  String get debtsCoach1Text =>
+      'En rouge, l’échéance est dépassée. Le carré autour du jour se remplit à mesure des remboursements.';
+
+  @override
+  String get debtsCoach2Title => 'Touchez pour le détail';
+
+  @override
+  String get debtsCoach2Text =>
+      'La date complète et ce qui est déjà remboursé s’affichent au toucher. Où ils apparaissent se choisit dans Affichage.';
+
+  @override
+  String get debtsCoachSkip => 'Passer';
+
+  @override
+  String get debtsCoachNext => 'Suivant';
+
+  @override
+  String get debtsCoachTry => 'Essayer';
 }

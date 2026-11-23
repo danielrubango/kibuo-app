@@ -8,6 +8,7 @@ import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/debt_repository.dart';
+import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
@@ -56,7 +57,7 @@ void main() {
     }
   }
 
-  Future<void> show(WidgetTester tester) async {
+  Future<void> show(WidgetTester tester, {HintStore? hints}) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.reset);
@@ -72,6 +73,7 @@ void main() {
           data: data,
           debts: debts,
           prefs: PreferenceStore(db),
+          hints: hints,
           now: () => now,
         ),
       ),
@@ -84,7 +86,7 @@ void main() {
   ) async {
     await show(tester);
     expect(find.text('Aucune dette'), findsOneWidget);
-    await tester.tap(find.bySemanticsLabel('Ajouter une dette ou une créance'));
+    await tester.tap(find.text('Nouvelle dette'));
     await settle(tester);
     expect(find.text('À qui je dois'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'Patrick');
@@ -98,8 +100,19 @@ void main() {
     await settle(tester);
     expect(find.text('M-Pesa, le solde sera mis à jour'), findsOneWidget);
     await tester.tap(find.text('Enregistrer'));
-    await settle(tester);
+    // Not settled: the sheet's bar runs for six seconds.
+    for (var i = 0; i < 6; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 20)),
+      );
+      await tester.pump(const Duration(milliseconds: 200));
+    }
     expect(find.text('Dette enregistrée'), findsOneWidget);
+    expect(find.text('Se ferme seule dans un instant'), findsOneWidget);
+    // It closes by itself.
+    await tester.pump(const Duration(seconds: 7));
+    await settle(tester);
+    expect(find.text('Dette enregistrée'), findsNothing);
     expect(find.text('Patrick'), findsOneWidget);
     expect(find.text('Sans échéance'), findsWidgets);
     final account = (await data.accounts.accounts()).single;
@@ -146,11 +159,48 @@ void main() {
     expect(find.text('Grâce'), findsNothing);
     await tester.tap(find.text('Oncle Jean'));
     await settle(tester);
-    expect(find.text('Échéance dépassée : lundi 2 novembre'), findsOneWidget);
-    expect(find.text('Rien remboursé pour l’instant.'), findsOneWidget);
+    expect(find.text('Échéance dépassée : lundi 2 novembre'), findsWidgets);
+    expect(find.text('Rien remboursé pour l’instant.'), findsWidgets);
+    // Open, it covers the lines below without moving them; a touch on
+    // the veil only closes it.
+    await tester.tapAt(const Offset(200, 800));
+    await tester.pump(const Duration(milliseconds: 300));
+    await settle(tester);
+    expect(find.text('Rien remboursé pour l’instant.'), findsNothing);
+    await tester.tap(find.text('Kevin'));
+    await settle(tester);
+    expect(find.text('Échéance : aujourd’hui, lundi 9 novembre'), findsWidgets);
+    // The tabs too: the first touch closes, the next one switches.
+    await tester.tap(find.text('On me doit'));
+    await settle(tester);
+    expect(find.text('Grâce'), findsNothing);
     await tester.tap(find.text('On me doit'));
     await settle(tester);
     expect(find.text('Grâce'), findsOneWidget);
     expect(find.text('Dans 6 jours'), findsOneWidget);
+  });
+
+  testWidgets('the guide shows once, then « Essayer » opens a line', (
+    tester,
+  ) async {
+    await debts.create(
+      direction: DebtDirection.owe,
+      person: 'Kevin',
+      amount: const Money(1000, 'USD'),
+      openedOn: DateTime(2026, 11, 1),
+      due: DateTime(2026, 11, 20),
+    );
+    final hints = HintStore(db);
+    await show(tester, hints: hints);
+    expect(find.text('1 sur 2'), findsOneWidget);
+    expect(find.text('Chaque ligne, une personne'), findsOneWidget);
+    await tester.tap(find.text('Suivant'));
+    await settle(tester);
+    expect(find.text('Touchez pour le détail'), findsOneWidget);
+    await tester.tap(find.text('Essayer'));
+    await settle(tester);
+    expect(find.text('Touchez pour le détail'), findsNothing);
+    expect(find.text('Échéance : vendredi 20 novembre'), findsWidgets);
+    expect(await hints.debtsCoachShown(), isTrue);
   });
 }

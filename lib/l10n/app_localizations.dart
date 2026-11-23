@@ -4510,12 +4510,6 @@ abstract class AppLocalizations {
   /// Debts and receivables.
   ///
   /// In fr, this message translates to:
-  /// **'Ajouter une dette ou une créance'**
-  String get debtsAdd;
-
-  /// Debts and receivables.
-  ///
-  /// In fr, this message translates to:
   /// **'Ranger par'**
   String get debtsGroupBy;
 
@@ -4674,6 +4668,102 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Indiquez un montant'**
   String get debtAmountMissing;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle dette'**
+  String get debtNewOwe;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle créance'**
+  String get debtNewOwed;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans compte'**
+  String get debtNoAccount;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir une ligne'**
+  String get debtsOpenTitle;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails au-dessus'**
+  String get debtsDetailsAbove;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'La ligne descend, les détails viennent du haut.'**
+  String get debtsDetailsAboveHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails en dessous'**
+  String get debtsDetailsBelow;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'La ligne reste en place, les détails se déplient dessous.'**
+  String get debtsDetailsBelowHelp;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{step} sur 2'**
+  String debtsCoachStep(int step);
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque ligne, une personne'**
+  String get debtsCoach1Title;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'En rouge, l’échéance est dépassée. Le carré autour du jour se remplit à mesure des remboursements.'**
+  String get debtsCoach1Text;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez pour le détail'**
+  String get debtsCoach2Title;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'La date complète et ce qui est déjà remboursé s’affichent au toucher. Où ils apparaissent se choisit dans Affichage.'**
+  String get debtsCoach2Text;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get debtsCoachSkip;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get debtsCoachNext;
+
+  /// Debts and receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'Essayer'**
+  String get debtsCoachTry;
 }
 
 class _AppLocalizationsDelegate

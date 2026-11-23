@@ -14,6 +14,7 @@ import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/obligations/debt_saved_sheet.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -22,7 +23,7 @@ import 'package:kibuo/ui/transactions/entry_sheets.dart';
 
 /// « Nouvelle dette ou créance » (canvas NouvelleDette): who, how much in
 /// the debt's own currency, the due date, and whether money moved on an
-/// account. Pops with the new debt's direction once saved.
+/// account. Pops with what was saved.
 class NewDebtScreen extends StatefulWidget {
   const NewDebtScreen({
     super.key,
@@ -246,7 +247,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
     if (!_named || !_ready || _saving) return;
     setState(() => _saving = true);
     final now = widget.now();
-    await widget.debts.create(
+    final id = await widget.debts.create(
       direction: _direction,
       person: _name.text,
       amount: _amount,
@@ -257,7 +258,15 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
       rate: _rate,
       rateTyped: _rateTyped,
     );
-    if (mounted) Navigator.of(context).pop(_direction);
+    if (mounted) {
+      Navigator.of(context).pop(
+        SavedDebt(
+          id: id,
+          direction: _direction,
+          account: _link ? _account?.name : null,
+        ),
+      );
+    }
   }
 
   /// The names already used that start like the one typed.
@@ -440,4 +449,40 @@ class _Suggestion extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// The form, then « Dette enregistrée »; « Nouvelle dette » there opens the
+/// form again. Returns the direction of the last debt saved, if any.
+Future<DebtDirection?> runNewDebt(
+  BuildContext context, {
+  required EntryData data,
+  required DebtRepository debts,
+  DebtDirection direction = DebtDirection.owe,
+  DateTime Function() now = DateTime.now,
+  VoidCallback? onSaved,
+}) async {
+  DebtDirection? last;
+  var next = direction;
+  while (true) {
+    if (!context.mounted) return last;
+    final saved = await Navigator.of(context).push<SavedDebt>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) =>
+            NewDebtScreen(data: data, debts: debts, direction: next, now: now),
+      ),
+    );
+    if (saved == null || !context.mounted) return last;
+    last = saved.direction;
+    onSaved?.call();
+    final debt = (await debts.debts()).where((d) => d.id == saved.id);
+    if (debt.isEmpty || !context.mounted) return last;
+    final again = await showDebtSavedSheet(
+      context,
+      debt.single,
+      account: saved.account,
+    );
+    if (again != true) return last;
+    next = saved.direction;
+  }
 }

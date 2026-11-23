@@ -128,6 +128,7 @@ Décidé le 23 novembre 2026 :
 - Une dette ancienne s'enregistre sans compte (interrupteur éteint) : seul le reste dû est noté ; ses remboursements peuvent sortir d'un compte.
 - Le rappel d'une dette est la même ligne « Rappel » que pour les récurrences (par défaut, Aucun, le jour même, 1, 2, 3, 7 jours).
 - La liste : par échéance, la plus proche d'abord, celles en retard tout en haut en rouge, « Sans échéance » en bas ; « par personne » est un choix de la feuille d'affichage.
+- Premier temps livré le 23 novembre 2026 : « Nouvelle dette » ou « Nouvelle créance » en pointillés en fin de liste (et Dette depuis le +), puis la feuille « Dette enregistrée » avec « Nouvelle dette ». Toucher une ligne montre sa date complète et ce qui est remboursé ; la feuille d'affichage règle aussi où ces détails apparaissent. Un guide en deux étapes s'affiche une fois, la première fois que la liste a une ligne. La ligne « Rappel » du formulaire vient avec les rappels des dettes (troisième temps).
 
 ### Projets
 

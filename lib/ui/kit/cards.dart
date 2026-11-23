@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/scrolling_line.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -515,14 +516,22 @@ class DisplayChoice extends StatelessWidget {
                     children: [
                       Text(label, style: KibuoType.rowLabel),
                       const SizedBox(height: 2),
-                      Text(
-                        help,
-                        maxLines: helpLines,
-                        overflow: helpLines == null
-                            ? null
-                            : TextOverflow.ellipsis,
-                        style: KibuoType.caption.copyWith(height: 16 / 12),
-                      ),
+                      // One line in a sheet: a long one slides to its
+                      // end and back (owner, 23 November).
+                      if (helpLines == 1)
+                        ScrollingLine(
+                          help,
+                          style: KibuoType.caption.copyWith(height: 16 / 12),
+                        )
+                      else
+                        Text(
+                          help,
+                          maxLines: helpLines,
+                          overflow: helpLines == null
+                              ? null
+                              : TextOverflow.ellipsis,
+                          style: KibuoType.caption.copyWith(height: 16 / 12),
+                        ),
                     ],
                   ),
                 ),

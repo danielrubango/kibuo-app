@@ -31,7 +31,6 @@ import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
-import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
@@ -431,6 +430,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                   data: _entryData(context)!,
                   debts: DebtRepository(db),
                   prefs: PreferenceStore(db),
+                  hints: HintStore(db),
                   onChanged: () => _saved.value++,
                 ),
               ),
@@ -657,21 +657,12 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   }
 
   /// « Nouvelle dette ou créance » from the +, then « Dette enregistrée ».
-  Future<void> _newDebt(EntryData data, KibuoDatabase db) async {
-    final saved = await Navigator.of(context).push<DebtDirection>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => NewDebtScreen(data: data, debts: DebtRepository(db)),
-      ),
-    );
-    if (saved == null || !mounted) return;
-    final l = AppLocalizations.of(context);
-    showKibuoToast(
-      context,
-      saved == DebtDirection.owe ? l.debtSavedOwe : l.debtSavedOwed,
-    );
-    _saved.value++;
-  }
+  Future<void> _newDebt(EntryData data, KibuoDatabase db) => runNewDebt(
+    context,
+    data: data,
+    debts: DebtRepository(db),
+    onSaved: () => _saved.value++,
+  );
 }
 
 /// Fades the content out just above the bar, so white cards never touch it.

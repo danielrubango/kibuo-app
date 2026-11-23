@@ -2828,9 +2828,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Note the money you lend, to know who has to pay back.';
 
   @override
-  String get debtsAdd => 'Add a debt or money owed';
-
-  @override
   String get debtsGroupBy => 'Sort by';
 
   @override
@@ -2913,4 +2910,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtAmountMissing => 'Type an amount';
+
+  @override
+  String get debtNewOwe => 'New debt';
+
+  @override
+  String get debtNewOwed => 'New money owed';
+
+  @override
+  String get debtNoAccount => 'No account';
+
+  @override
+  String get debtsOpenTitle => 'Opening a line';
+
+  @override
+  String get debtsDetailsAbove => 'Details above';
+
+  @override
+  String get debtsDetailsAboveHelp =>
+      'The line moves down, the details come from the top.';
+
+  @override
+  String get debtsDetailsBelow => 'Details below';
+
+  @override
+  String get debtsDetailsBelowHelp =>
+      'The line stays, the details unfold below it.';
+
+  @override
+  String debtsCoachStep(int step) {
+    return '$step of 2';
+  }
+
+  @override
+  String get debtsCoach1Title => 'One line, one person';
+
+  @override
+  String get debtsCoach1Text =>
+      'Red means the due date has passed. The square around the day fills as money is paid back.';
+
+  @override
+  String get debtsCoach2Title => 'Touch for details';
+
+  @override
+  String get debtsCoach2Text =>
+      'The full date and what is already paid back show on touch. Where they appear is chosen in Display.';
+
+  @override
+  String get debtsCoachSkip => 'Skip';
+
+  @override
+  String get debtsCoachNext => 'Next';
+
+  @override
+  String get debtsCoachTry => 'Try it';
 }
