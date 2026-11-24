@@ -2090,5 +2090,19 @@
   "restoreGoHome": "Voir mes données",
   "@restoreGoHome": {"description": "Restore."},
   "protectRestore": "Pour restaurer une sauvegarde",
-  "@protectRestore": {"description": "Restore."}
+  "@protectRestore": {"description": "Restore."},
+  "startRestoreLink": "J’ai une sauvegarde",
+  "@startRestoreLink": {"description": "Restore at start."},
+  "startRestoreTitle": "Restaurer cette sauvegarde ?",
+  "@startRestoreTitle": {"description": "Restore at start."},
+  "startRestoreContent": "Contenu",
+  "@startRestoreContent": {"description": "Restore at start."},
+  "startRestoreCounts": "{accounts, plural, =1{1 compte} other{{accounts} comptes}} · {ops, plural, =0{aucune opération} =1{1 opération} other{{ops} opérations}}",
+  "@startRestoreCounts": {"description": "Restore at start.", "placeholders": {"accounts": {"type": "int"}, "ops": {"type": "int"}}},
+  "startRestoreHidden": "• comptes · • opérations",
+  "@startRestoreHidden": {"description": "Restore at start."},
+  "startRestoreNote": "Vous retrouvez la langue, la devise et les réglages de la sauvegarde ; les étapes suivantes sont sautées.",
+  "@startRestoreNote": {"description": "Restore at start."},
+  "startRestoreAction": "Restaurer",
+  "@startRestoreAction": {"description": "Restore at start."}
 }

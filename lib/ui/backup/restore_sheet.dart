@@ -60,7 +60,6 @@ Future<void> runRestore(
   PickedBackup picked,
   RestoreTools tools,
 ) async {
-  final l = AppLocalizations.of(context);
   BackupEnvelope? envelope;
   try {
     envelope = await peekBackup(picked.file);
@@ -69,16 +68,7 @@ Future<void> runRestore(
   }
   if (!context.mounted) return;
   if (envelope == null) {
-    await showKibuoSheet<void>(
-      context,
-      title: l.restoreTitle,
-      builder: (_) => NoticeCard(
-        icon: KibuoIcons.warningCircle,
-        text: l.restoreNotKibuo,
-        background: KibuoColors.dangerTint,
-        ink: KibuoColors.danger,
-      ),
-    );
+    await showNotBackup(context);
     return;
   }
   final now = tools.now();
@@ -91,7 +81,6 @@ Future<void> runRestore(
   final folder = state.folder;
   final reachable = folder != null && await tools.folders.reachable(folder);
   if (!context.mounted) return;
-  final lang = Localizations.localeOf(context).languageCode;
   final done = await showModalBottomSheet<_Restored>(
     context: context,
     isScrollControlled: true,
@@ -111,12 +100,11 @@ Future<void> runRestore(
     ),
   );
   if (done == null || !context.mounted) return;
-  await showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    isDismissible: false,
-    builder: (context) => _DoneSheet(done: done, lang: lang),
+  await showRestoredSheet(
+    context,
+    done.manifest,
+    copy: done.copy,
+    folder: done.folder,
   );
   if (context.mounted) {
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -517,17 +505,49 @@ class _RestoreSheetState extends State<_RestoreSheet> {
   }
 }
 
-/// « Données restaurées » (canvas RestauC3).
-class _DoneSheet extends StatelessWidget {
-  const _DoneSheet({required this.done, required this.lang});
+/// « Données restaurées » (canvas RestauC3): what came back and, after a
+/// restore over data, the copy made before; « Voir mes données ».
+Future<void> showRestoredSheet(
+  BuildContext context,
+  BackupManifest manifest, {
+  String? copy,
+  String? folder,
+}) => showModalBottomSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  useSafeArea: true,
+  isDismissible: false,
+  builder: (context) =>
+      _DoneSheet(manifest: manifest, copy: copy, folder: folder),
+);
 
-  final _Restored done;
-  final String lang;
+/// A file that is not a backup: said, nothing else.
+Future<void> showNotBackup(BuildContext context) {
+  final l = AppLocalizations.of(context);
+  return showKibuoSheet<void>(
+    context,
+    title: l.restoreTitle,
+    builder: (_) => NoticeCard(
+      icon: KibuoIcons.warningCircle,
+      text: l.restoreNotKibuo,
+      background: KibuoColors.dangerTint,
+      ink: KibuoColors.danger,
+    ),
+  );
+}
+
+class _DoneSheet extends StatelessWidget {
+  const _DoneSheet({required this.manifest, this.copy, this.folder});
+
+  final BackupManifest manifest;
+  final String? copy;
+  final String? folder;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final m = done.manifest;
+    final lang = Localizations.localeOf(context).languageCode;
+    final m = manifest;
     return SingleChildScrollView(
       padding: sheetPadding(context),
       child: Column(
@@ -573,41 +593,43 @@ class _DoneSheet extends StatelessWidget {
               ValueRow(label: l.restoreProjects, value: '${m.projects}'),
             ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: KibuoColors.surface,
-              borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  KibuoIcons.lockKey,
-                  size: 18,
-                  color: KibuoColors.inkSecondary,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.restoreCopyWhere(done.folder),
-                        style: KibuoType.caption,
-                      ),
-                      Text(
-                        done.copy,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: KibuoType.body.weight(700),
-                      ),
-                    ],
+          if (copy case final copy?) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: KibuoColors.surface,
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    KibuoIcons.lockKey,
+                    size: 18,
+                    color: KibuoColors.inkSecondary,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l.restoreCopyWhere(folder ?? ''),
+                          style: KibuoType.caption,
+                        ),
+                        Text(
+                          copy,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: KibuoType.body.weight(700),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
           const SizedBox(height: 16),
           KibuoButton(
             label: l.restoreGoHome,

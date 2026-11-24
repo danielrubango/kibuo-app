@@ -4104,4 +4104,41 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get protectRestore => 'Pour restaurer une sauvegarde';
+
+  @override
+  String get startRestoreLink => 'J’ai une sauvegarde';
+
+  @override
+  String get startRestoreTitle => 'Restaurer cette sauvegarde ?';
+
+  @override
+  String get startRestoreContent => 'Contenu';
+
+  @override
+  String startRestoreCounts(int accounts, int ops) {
+    String _temp0 = intl.Intl.pluralLogic(
+      accounts,
+      locale: localeName,
+      other: '$accounts comptes',
+      one: '1 compte',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      ops,
+      locale: localeName,
+      other: '$ops opérations',
+      one: '1 opération',
+      zero: 'aucune opération',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get startRestoreHidden => '• comptes · • opérations';
+
+  @override
+  String get startRestoreNote =>
+      'Vous retrouvez la langue, la devise et les réglages de la sauvegarde ; les étapes suivantes sont sautées.';
+
+  @override
+  String get startRestoreAction => 'Restaurer';
 }

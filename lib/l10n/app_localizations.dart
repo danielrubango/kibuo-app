@@ -6348,6 +6348,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Pour restaurer une sauvegarde'**
   String get protectRestore;
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'J’ai une sauvegarde'**
+  String get startRestoreLink;
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer cette sauvegarde ?'**
+  String get startRestoreTitle;
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu'**
+  String get startRestoreContent;
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'{accounts, plural, =1{1 compte} other{{accounts} comptes}} · {ops, plural, =0{aucune opération} =1{1 opération} other{{ops} opérations}}'**
+  String startRestoreCounts(int accounts, int ops);
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'• comptes · • opérations'**
+  String get startRestoreHidden;
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous retrouvez la langue, la devise et les réglages de la sauvegarde ; les étapes suivantes sont sautées.'**
+  String get startRestoreNote;
+
+  /// Restore at start.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer'**
+  String get startRestoreAction;
 }
 
 class _AppLocalizationsDelegate

@@ -4,6 +4,8 @@ import 'package:kibuo/data/backup_file.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/backup/backup_files.dart';
+import 'package:kibuo/ui/backup/start_restore_sheet.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -29,9 +31,18 @@ class KibuoData extends InheritedWidget {
 /// on it; throws when the backup cannot replace it, the data left as it
 /// was.
 class KibuoRestore extends InheritedWidget {
-  const KibuoRestore({super.key, required this.replace, required super.child});
+  const KibuoRestore({
+    super.key,
+    required this.replace,
+    required super.child,
+    this.afterStart,
+  });
 
   final Future<void> Function(BackupContents contents) replace;
+
+  /// After a restore at the start: the code and the fingerprint stayed on
+  /// the old phone, creating one is offered (PRODUCT).
+  final Future<void> Function()? afterStart;
 
   /// Null in widget tests without it.
   static KibuoRestore? maybeOf(BuildContext context) =>
@@ -105,6 +116,19 @@ class _DataGateState extends State<DataGate> {
     if (failed != null) throw failed;
   }
 
+  /// « J'ai une sauvegarde » on unreadable data: the file set aside, the
+  /// backup in its place (PRODUCT: Restauration).
+  Future<void> _restoreUnreadable(Unreadable unreadable, PickedBackup picked) =>
+      runStartRestore(
+        context,
+        picked,
+        replace: (contents) async {
+          final reopened = await unreadable.restore(contents);
+          if (mounted) setState(() => _opening = Future.value(reopened));
+        },
+        afterward: widget.onRecovered,
+      );
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -114,6 +138,7 @@ class _DataGateState extends State<DataGate> {
           database: database,
           child: KibuoRestore(
             replace: _replace,
+            afterStart: widget.onRecovered,
             // A new database: the app below starts afresh on it.
             child: KeyedSubtree(
               key: ObjectKey(database),
@@ -121,30 +146,37 @@ class _DataGateState extends State<DataGate> {
             ),
           ),
         ),
-        final Unreadable unreadable => UnreadableScreen(
-          onRecover: !unreadable.canRecover
-              ? null
-              : () => Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    builder: (_) => RecoveryEntryScreen(
-                      onCode: (code) async {
-                        final reopened = await unreadable.recover(code);
-                        if (reopened is! Opened) return false;
-                        setState(() {
-                          _opening = Future.value(reopened);
-                        });
-                        await widget.onRecovered?.call();
-                        return true;
-                      },
+        final Unreadable unreadable => WhenBackupOpened(
+          onOpened: (picked) => _restoreUnreadable(unreadable, picked),
+          child: UnreadableScreen(
+            onBackup: () async {
+              final picked = await DeviceBackupFiles.instance.pick();
+              if (picked != null) await _restoreUnreadable(unreadable, picked);
+            },
+            onRecover: !unreadable.canRecover
+                ? null
+                : () => Navigator.of(context).push<bool>(
+                    MaterialPageRoute(
+                      builder: (_) => RecoveryEntryScreen(
+                        onCode: (code) async {
+                          final reopened = await unreadable.recover(code);
+                          if (reopened is! Opened) return false;
+                          setState(() {
+                            _opening = Future.value(reopened);
+                          });
+                          await widget.onRecovered?.call();
+                          return true;
+                        },
+                      ),
                     ),
                   ),
-                ),
-          onStartOver: () {
-            final reopening = unreadable.startOver();
-            setState(() {
-              _opening = reopening;
-            });
-          },
+            onStartOver: () {
+              final reopening = unreadable.startOver();
+              setState(() {
+                _opening = reopening;
+              });
+            },
+          ),
         ),
         // The start screen covers the opening; this never shows for long.
         null => const ColoredBox(color: KibuoColors.background),
@@ -158,9 +190,13 @@ class UnreadableScreen extends StatelessWidget {
     super.key,
     required this.onStartOver,
     this.onRecover,
+    this.onBackup,
   });
 
   final VoidCallback onStartOver;
+
+  /// « J'ai une sauvegarde »: none in tests without it.
+  final VoidCallback? onBackup;
 
   /// Opens the recovery-code entry; null when no code was ever created.
   final VoidCallback? onRecover;
@@ -220,6 +256,10 @@ class UnreadableScreen extends StatelessWidget {
                         child: Text(l.unreadableStartOver),
                       ),
               ),
+              if (onBackup case final restore?) ...[
+                const SizedBox(height: 4),
+                BackupLink(onPressed: restore),
+              ],
             ],
           ),
         ),

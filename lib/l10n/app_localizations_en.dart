@@ -4065,4 +4065,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get protectRestore => 'To restore a backup';
+
+  @override
+  String get startRestoreLink => 'I have a backup';
+
+  @override
+  String get startRestoreTitle => 'Restore this backup?';
+
+  @override
+  String get startRestoreContent => 'Contents';
+
+  @override
+  String startRestoreCounts(int accounts, int ops) {
+    String _temp0 = intl.Intl.pluralLogic(
+      accounts,
+      locale: localeName,
+      other: '$accounts accounts',
+      one: '1 account',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      ops,
+      locale: localeName,
+      other: '$ops operations',
+      one: '1 operation',
+      zero: 'no operation',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get startRestoreHidden => '• accounts · • operations';
+
+  @override
+  String get startRestoreNote =>
+      'You get back the backup’s language, currency and settings; the next steps are skipped.';
+
+  @override
+  String get startRestoreAction => 'Restore';
 }

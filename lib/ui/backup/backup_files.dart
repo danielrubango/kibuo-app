@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 /// A backup file to restore, copied into kibuo's own cache.
 class PickedBackup {
@@ -59,4 +59,49 @@ class DeviceBackupFiles implements BackupFiles {
       return null;
     }
   }
+}
+
+/// Hands [onOpened] the .kibuo file kibuo was opened with, at once or
+/// later, while [child] shows (PRODUCT: Restauration, au départ).
+class WhenBackupOpened extends StatefulWidget {
+  const WhenBackupOpened({
+    super.key,
+    required this.onOpened,
+    required this.child,
+    this.files,
+  });
+
+  final void Function(PickedBackup picked) onOpened;
+  final Widget child;
+
+  /// The phone's own when null.
+  final BackupFiles? files;
+
+  @override
+  State<WhenBackupOpened> createState() => _WhenBackupOpenedState();
+}
+
+class _WhenBackupOpenedState extends State<WhenBackupOpened> {
+  late final BackupFiles _files = widget.files ?? DeviceBackupFiles.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _files.opened.addListener(_take);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _take());
+  }
+
+  @override
+  void dispose() {
+    _files.opened.removeListener(_take);
+    super.dispose();
+  }
+
+  Future<void> _take() async {
+    final picked = await _files.takeOpened();
+    if (picked != null && mounted) widget.onOpened(picked);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

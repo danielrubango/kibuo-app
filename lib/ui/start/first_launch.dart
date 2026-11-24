@@ -8,6 +8,8 @@ import 'package:kibuo/domain/transactions/search.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/backup/backup_files.dart';
+import 'package:kibuo/ui/backup/start_restore_sheet.dart';
 import 'package:kibuo/ui/brand/kibuo_mark.dart';
 import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -106,6 +108,24 @@ class _FirstLaunchFlowState extends State<FirstLaunchFlow> {
     if (mounted) setState(() => _step = step);
   }
 
+  /// « J'ai une sauvegarde » (canvas RestauNeuf): the language, currency
+  /// and settings come from it, the steps are skipped.
+  Future<void> _pickBackup() async {
+    final picked = await DeviceBackupFiles.instance.pick();
+    if (picked != null && mounted) await _restore(picked);
+  }
+
+  Future<void> _restore(PickedBackup picked) async {
+    final restore = KibuoRestore.maybeOf(context);
+    if (restore == null) return;
+    await runStartRestore(
+      context,
+      picked,
+      replace: restore.replace,
+      afterward: restore.afterStart,
+    );
+  }
+
   Future<void> _finish() async {
     await _store.finish();
     widget.onDone();
@@ -113,6 +133,11 @@ class _FirstLaunchFlowState extends State<FirstLaunchFlow> {
 
   @override
   Widget build(BuildContext context) {
+    // A .kibuo touched while setting up: the same sheet (PRODUCT).
+    return WhenBackupOpened(onOpened: _restore, child: _flow(context));
+  }
+
+  Widget _flow(BuildContext context) {
     return PopScope(
       // Back: the step before; from the first, Android closes kibuo.
       canPop: _step == 1 || _step == 4,
@@ -120,7 +145,11 @@ class _FirstLaunchFlowState extends State<FirstLaunchFlow> {
         if (!popped && _step > 1) _go(_step - 1);
       },
       child: switch (_step) {
-        1 => _LanguageStep(store: _store, onNext: () => _go(2)),
+        1 => _LanguageStep(
+          store: _store,
+          onNext: () => _go(2),
+          onBackup: _pickBackup,
+        ),
         2 => _CurrencyStep(currencies: _currencies, onNext: () => _go(3)),
         3 => _accountStep(context),
         _ => _ProtectionStep(onStart: _finish),
@@ -184,12 +213,16 @@ class _StepPage extends StatelessWidget {
     required this.action,
     required this.onAction,
     this.top = 32,
+    this.below,
   });
 
   final List<Widget> children;
   final String action;
   final VoidCallback? onAction;
   final double top;
+
+  /// Under the button: « J'ai une sauvegarde » at the first step.
+  final Widget? below;
 
   @override
   Widget build(BuildContext context) {
@@ -205,10 +238,18 @@ class _StepPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              // « J'ai une sauvegarde » comes under it with restoring
-              // (ROADMAP, phase 6).
-              child: KibuoButton(label: action, onPressed: onAction),
+              padding: EdgeInsets.fromLTRB(24, 8, 24, below == null ? 24 : 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  KibuoButton(label: action, onPressed: onAction),
+                  if (below case final below?) ...[
+                    const SizedBox(height: 4),
+                    below,
+                  ],
+                ],
+              ),
             ),
           ],
         ),
@@ -221,10 +262,15 @@ class _StepPage extends StatelessWidget {
 /// language, the phone's being chosen first. Choosing it changes kibuo's
 /// language at once.
 class _LanguageStep extends StatelessWidget {
-  const _LanguageStep({required this.store, required this.onNext});
+  const _LanguageStep({
+    required this.store,
+    required this.onNext,
+    required this.onBackup,
+  });
 
   final FirstLaunchStore store;
   final VoidCallback onNext;
+  final VoidCallback onBackup;
 
   static const _names = {'fr': 'Français', 'en': 'English'};
 
@@ -243,6 +289,7 @@ class _LanguageStep extends StatelessWidget {
       top: 64,
       action: l.firstContinue,
       onAction: onNext,
+      below: BackupLink(onPressed: onBackup),
       children: [
         const Align(alignment: Alignment.centerLeft, child: _AppIcon()),
         const SizedBox(height: 32),
