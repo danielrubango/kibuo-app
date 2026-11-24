@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/auto_close.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -92,14 +93,12 @@ class SavedLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: KibuoColors.mint,
-          borderRadius: BorderRadius.circular(11),
-        ),
-        child: const Icon(KibuoIcons.check, size: 20),
+      IconTile(
+        icon: KibuoIcons.check,
+        tint: KibuoColors.mint,
+        ink: null,
+        iconSize: 20,
+        radius: 11,
       ),
       const SizedBox(width: 12),
       Expanded(

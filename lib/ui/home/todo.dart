@@ -19,6 +19,7 @@ import 'package:kibuo/ui/home/drafts_sheet.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
@@ -612,15 +613,7 @@ class _TodoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final look = TodoLook.of(context, item);
     final urgent = item.group == TodoGroup.urgent;
-    final tile = Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: look.tint,
-        borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
-      ),
-      child: Icon(look.icon, size: 18, color: look.ink),
-    );
+    final tile = IconTile(icon: look.icon, tint: look.tint, ink: look.ink);
     final row = InkWell(
       onTap: () => actions.open(context, item),
       child: ConstrainedBox(

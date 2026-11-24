@@ -11,6 +11,7 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/hatched_bar.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/quick_amounts.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -720,15 +721,7 @@ class _EndRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: tint,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, size: 18, color: ink),
-          ),
+          IconTile(icon: icon, tint: tint, ink: ink),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
