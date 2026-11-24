@@ -6,6 +6,8 @@ La base en clair est une copie : SQLite3 Multiple Ciphers la recopie avec la cl�
 
 Avec un mot de passe, chaque morceau est chiffré en AES-GCM avec une clé tirée du mot de passe par PBKDF2-HMAC-SHA256 (300 000 tours, sel neuf à chaque sauvegarde), comme le code de récupération. Une petite empreinte de la clé, rangée dans l'enveloppe, permet de distinguer un mauvais mot de passe d'un fichier abîmé. Sans mot de passe, chaque morceau porte une empreinte SHA-256. Dans les deux cas, chaque morceau est lié à l'enveloppe, à sa place et au fait d'être le dernier : un fichier modifié, coupé ou dont la date a été changée est refusé.
 
+Le résumé porte aussi la langue de kibuo au moment de la sauvegarde (ajouté le 24 novembre 2026) : depuis Android 13, la langue choisie est gardée par Android et non dans la base, elle ne voyagerait pas sans cela ; une restauration la remet. Les sauvegardes plus anciennes n'ont pas ce champ et ne changent pas la langue.
+
 Le dossier choisi et la date de la dernière sauvegarde sont gardés dans le coffre du téléphone, pas dans la base. Une restauration ne les change donc pas, et ils ne voyagent pas dans la sauvegarde. Le code, l'empreinte, la confidentialité et le code de récupération y sont déjà, propres à chaque téléphone.
 
 ## Considered Options
