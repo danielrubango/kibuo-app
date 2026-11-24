@@ -8172,6 +8172,1316 @@ class DebtsCompanion extends UpdateCompanion<DebtRow> {
   }
 }
 
+class $ProjectsTable extends Projects
+    with TableInfo<$ProjectsTable, ProjectRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProjectsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  @override
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+    'icon',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _goalMeta = const VerificationMeta('goal');
+  @override
+  late final GeneratedColumn<int> goal = GeneratedColumn<int>(
+    'goal',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedOnMeta = const VerificationMeta(
+    'startedOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedOn = GeneratedColumn<DateTime>(
+    'started_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dueDateMeta = const VerificationMeta(
+    'dueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
+    'due_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _periodMeta = const VerificationMeta('period');
+  @override
+  late final GeneratedColumn<String> period = GeneratedColumn<String>(
+    'period',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('week'),
+  );
+  static const VerificationMeta _remindMeta = const VerificationMeta('remind');
+  @override
+  late final GeneratedColumn<bool> remind = GeneratedColumn<bool>(
+    'remind',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("remind" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _endingMeta = const VerificationMeta('ending');
+  @override
+  late final GeneratedColumn<String> ending = GeneratedColumn<String>(
+    'ending',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _endedOnMeta = const VerificationMeta(
+    'endedOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> endedOn = GeneratedColumn<DateTime>(
+    'ended_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    name,
+    icon,
+    accountId,
+    goal,
+    currency,
+    startedOn,
+    dueDate,
+    period,
+    remind,
+    ending,
+    endedOn,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'projects';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProjectRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_iconMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('goal')) {
+      context.handle(
+        _goalMeta,
+        goal.isAcceptableOrUnknown(data['goal']!, _goalMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_goalMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('started_on')) {
+      context.handle(
+        _startedOnMeta,
+        startedOn.isAcceptableOrUnknown(data['started_on']!, _startedOnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startedOnMeta);
+    }
+    if (data.containsKey('due_date')) {
+      context.handle(
+        _dueDateMeta,
+        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
+      );
+    }
+    if (data.containsKey('period')) {
+      context.handle(
+        _periodMeta,
+        period.isAcceptableOrUnknown(data['period']!, _periodMeta),
+      );
+    }
+    if (data.containsKey('remind')) {
+      context.handle(
+        _remindMeta,
+        remind.isAcceptableOrUnknown(data['remind']!, _remindMeta),
+      );
+    }
+    if (data.containsKey('ending')) {
+      context.handle(
+        _endingMeta,
+        ending.isAcceptableOrUnknown(data['ending']!, _endingMeta),
+      );
+    }
+    if (data.containsKey('ended_on')) {
+      context.handle(
+        _endedOnMeta,
+        endedOn.isAcceptableOrUnknown(data['ended_on']!, _endedOnMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ProjectRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProjectRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      goal: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}goal'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      startedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_on'],
+      )!,
+      dueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due_date'],
+      ),
+      period: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}period'],
+      )!,
+      remind: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}remind'],
+      )!,
+      ending: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ending'],
+      ),
+      endedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ended_on'],
+      ),
+    );
+  }
+
+  @override
+  $ProjectsTable createAlias(String alias) {
+    return $ProjectsTable(attachedDatabase, alias);
+  }
+}
+
+class ProjectRow extends DataClass implements Insertable<ProjectRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+  final String name;
+
+  /// The Phosphor icon's name.
+  final String icon;
+  final String accountId;
+
+  /// In the account's currency, its minor unit.
+  final int goal;
+  final String currency;
+
+  /// The day it began: where a dated plan starts from.
+  final DateTime startedOn;
+
+  /// Optional: « Avant le 20 décembre ».
+  final DateTime? dueDate;
+
+  /// « week », « fortnight » or « month »: how its plan is divided.
+  final String period;
+
+  /// « Me rappeler de mettre de côté ».
+  final bool remind;
+
+  /// Ended: « spent » (the expense was noted) or « released » (made
+  /// available again); null while running.
+  final String? ending;
+  final DateTime? endedOn;
+  const ProjectRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.name,
+    required this.icon,
+    required this.accountId,
+    required this.goal,
+    required this.currency,
+    required this.startedOn,
+    this.dueDate,
+    required this.period,
+    required this.remind,
+    this.ending,
+    this.endedOn,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['name'] = Variable<String>(name);
+    map['icon'] = Variable<String>(icon);
+    map['account_id'] = Variable<String>(accountId);
+    map['goal'] = Variable<int>(goal);
+    map['currency'] = Variable<String>(currency);
+    map['started_on'] = Variable<DateTime>(startedOn);
+    if (!nullToAbsent || dueDate != null) {
+      map['due_date'] = Variable<DateTime>(dueDate);
+    }
+    map['period'] = Variable<String>(period);
+    map['remind'] = Variable<bool>(remind);
+    if (!nullToAbsent || ending != null) {
+      map['ending'] = Variable<String>(ending);
+    }
+    if (!nullToAbsent || endedOn != null) {
+      map['ended_on'] = Variable<DateTime>(endedOn);
+    }
+    return map;
+  }
+
+  ProjectsCompanion toCompanion(bool nullToAbsent) {
+    return ProjectsCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      name: Value(name),
+      icon: Value(icon),
+      accountId: Value(accountId),
+      goal: Value(goal),
+      currency: Value(currency),
+      startedOn: Value(startedOn),
+      dueDate: dueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueDate),
+      period: Value(period),
+      remind: Value(remind),
+      ending: ending == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ending),
+      endedOn: endedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endedOn),
+    );
+  }
+
+  factory ProjectRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProjectRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      name: serializer.fromJson<String>(json['name']),
+      icon: serializer.fromJson<String>(json['icon']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      goal: serializer.fromJson<int>(json['goal']),
+      currency: serializer.fromJson<String>(json['currency']),
+      startedOn: serializer.fromJson<DateTime>(json['startedOn']),
+      dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
+      period: serializer.fromJson<String>(json['period']),
+      remind: serializer.fromJson<bool>(json['remind']),
+      ending: serializer.fromJson<String?>(json['ending']),
+      endedOn: serializer.fromJson<DateTime?>(json['endedOn']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'name': serializer.toJson<String>(name),
+      'icon': serializer.toJson<String>(icon),
+      'accountId': serializer.toJson<String>(accountId),
+      'goal': serializer.toJson<int>(goal),
+      'currency': serializer.toJson<String>(currency),
+      'startedOn': serializer.toJson<DateTime>(startedOn),
+      'dueDate': serializer.toJson<DateTime?>(dueDate),
+      'period': serializer.toJson<String>(period),
+      'remind': serializer.toJson<bool>(remind),
+      'ending': serializer.toJson<String?>(ending),
+      'endedOn': serializer.toJson<DateTime?>(endedOn),
+    };
+  }
+
+  ProjectRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? name,
+    String? icon,
+    String? accountId,
+    int? goal,
+    String? currency,
+    DateTime? startedOn,
+    Value<DateTime?> dueDate = const Value.absent(),
+    String? period,
+    bool? remind,
+    Value<String?> ending = const Value.absent(),
+    Value<DateTime?> endedOn = const Value.absent(),
+  }) => ProjectRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    name: name ?? this.name,
+    icon: icon ?? this.icon,
+    accountId: accountId ?? this.accountId,
+    goal: goal ?? this.goal,
+    currency: currency ?? this.currency,
+    startedOn: startedOn ?? this.startedOn,
+    dueDate: dueDate.present ? dueDate.value : this.dueDate,
+    period: period ?? this.period,
+    remind: remind ?? this.remind,
+    ending: ending.present ? ending.value : this.ending,
+    endedOn: endedOn.present ? endedOn.value : this.endedOn,
+  );
+  ProjectRow copyWithCompanion(ProjectsCompanion data) {
+    return ProjectRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      name: data.name.present ? data.name.value : this.name,
+      icon: data.icon.present ? data.icon.value : this.icon,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      goal: data.goal.present ? data.goal.value : this.goal,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      startedOn: data.startedOn.present ? data.startedOn.value : this.startedOn,
+      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      period: data.period.present ? data.period.value : this.period,
+      remind: data.remind.present ? data.remind.value : this.remind,
+      ending: data.ending.present ? data.ending.value : this.ending,
+      endedOn: data.endedOn.present ? data.endedOn.value : this.endedOn,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('accountId: $accountId, ')
+          ..write('goal: $goal, ')
+          ..write('currency: $currency, ')
+          ..write('startedOn: $startedOn, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('period: $period, ')
+          ..write('remind: $remind, ')
+          ..write('ending: $ending, ')
+          ..write('endedOn: $endedOn')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    deviceId,
+    deleted,
+    name,
+    icon,
+    accountId,
+    goal,
+    currency,
+    startedOn,
+    dueDate,
+    period,
+    remind,
+    ending,
+    endedOn,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProjectRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.name == this.name &&
+          other.icon == this.icon &&
+          other.accountId == this.accountId &&
+          other.goal == this.goal &&
+          other.currency == this.currency &&
+          other.startedOn == this.startedOn &&
+          other.dueDate == this.dueDate &&
+          other.period == this.period &&
+          other.remind == this.remind &&
+          other.ending == this.ending &&
+          other.endedOn == this.endedOn);
+}
+
+class ProjectsCompanion extends UpdateCompanion<ProjectRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> name;
+  final Value<String> icon;
+  final Value<String> accountId;
+  final Value<int> goal;
+  final Value<String> currency;
+  final Value<DateTime> startedOn;
+  final Value<DateTime?> dueDate;
+  final Value<String> period;
+  final Value<bool> remind;
+  final Value<String?> ending;
+  final Value<DateTime?> endedOn;
+  final Value<int> rowid;
+  const ProjectsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.name = const Value.absent(),
+    this.icon = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.goal = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.startedOn = const Value.absent(),
+    this.dueDate = const Value.absent(),
+    this.period = const Value.absent(),
+    this.remind = const Value.absent(),
+    this.ending = const Value.absent(),
+    this.endedOn = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProjectsCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String name,
+    required String icon,
+    required String accountId,
+    required int goal,
+    required String currency,
+    required DateTime startedOn,
+    this.dueDate = const Value.absent(),
+    this.period = const Value.absent(),
+    this.remind = const Value.absent(),
+    this.ending = const Value.absent(),
+    this.endedOn = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       name = Value(name),
+       icon = Value(icon),
+       accountId = Value(accountId),
+       goal = Value(goal),
+       currency = Value(currency),
+       startedOn = Value(startedOn);
+  static Insertable<ProjectRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? name,
+    Expression<String>? icon,
+    Expression<String>? accountId,
+    Expression<int>? goal,
+    Expression<String>? currency,
+    Expression<DateTime>? startedOn,
+    Expression<DateTime>? dueDate,
+    Expression<String>? period,
+    Expression<bool>? remind,
+    Expression<String>? ending,
+    Expression<DateTime>? endedOn,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (name != null) 'name': name,
+      if (icon != null) 'icon': icon,
+      if (accountId != null) 'account_id': accountId,
+      if (goal != null) 'goal': goal,
+      if (currency != null) 'currency': currency,
+      if (startedOn != null) 'started_on': startedOn,
+      if (dueDate != null) 'due_date': dueDate,
+      if (period != null) 'period': period,
+      if (remind != null) 'remind': remind,
+      if (ending != null) 'ending': ending,
+      if (endedOn != null) 'ended_on': endedOn,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProjectsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? name,
+    Value<String>? icon,
+    Value<String>? accountId,
+    Value<int>? goal,
+    Value<String>? currency,
+    Value<DateTime>? startedOn,
+    Value<DateTime?>? dueDate,
+    Value<String>? period,
+    Value<bool>? remind,
+    Value<String?>? ending,
+    Value<DateTime?>? endedOn,
+    Value<int>? rowid,
+  }) {
+    return ProjectsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      accountId: accountId ?? this.accountId,
+      goal: goal ?? this.goal,
+      currency: currency ?? this.currency,
+      startedOn: startedOn ?? this.startedOn,
+      dueDate: dueDate ?? this.dueDate,
+      period: period ?? this.period,
+      remind: remind ?? this.remind,
+      ending: ending ?? this.ending,
+      endedOn: endedOn ?? this.endedOn,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (icon.present) {
+      map['icon'] = Variable<String>(icon.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (goal.present) {
+      map['goal'] = Variable<int>(goal.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (startedOn.present) {
+      map['started_on'] = Variable<DateTime>(startedOn.value);
+    }
+    if (dueDate.present) {
+      map['due_date'] = Variable<DateTime>(dueDate.value);
+    }
+    if (period.present) {
+      map['period'] = Variable<String>(period.value);
+    }
+    if (remind.present) {
+      map['remind'] = Variable<bool>(remind.value);
+    }
+    if (ending.present) {
+      map['ending'] = Variable<String>(ending.value);
+    }
+    if (endedOn.present) {
+      map['ended_on'] = Variable<DateTime>(endedOn.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('accountId: $accountId, ')
+          ..write('goal: $goal, ')
+          ..write('currency: $currency, ')
+          ..write('startedOn: $startedOn, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('period: $period, ')
+          ..write('remind: $remind, ')
+          ..write('ending: $ending, ')
+          ..write('endedOn: $endedOn, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ContributionsTable extends Contributions
+    with TableInfo<$ContributionsTable, ContributionRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ContributionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    deviceId,
+    deleted,
+    projectId,
+    amount,
+    date,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'contributions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ContributionRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ContributionRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ContributionRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+    );
+  }
+
+  @override
+  $ContributionsTable createAlias(String alias) {
+    return $ContributionsTable(attachedDatabase, alias);
+  }
+}
+
+class ContributionRow extends DataClass implements Insertable<ContributionRow> {
+  final String id;
+  final int version;
+  final String deviceId;
+  final bool deleted;
+  final String projectId;
+
+  /// In the project's currency; negative: taken back.
+  final int amount;
+  final DateTime date;
+  const ContributionRow({
+    required this.id,
+    required this.version,
+    required this.deviceId,
+    required this.deleted,
+    required this.projectId,
+    required this.amount,
+    required this.date,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    map['device_id'] = Variable<String>(deviceId);
+    map['deleted'] = Variable<bool>(deleted);
+    map['project_id'] = Variable<String>(projectId);
+    map['amount'] = Variable<int>(amount);
+    map['date'] = Variable<DateTime>(date);
+    return map;
+  }
+
+  ContributionsCompanion toCompanion(bool nullToAbsent) {
+    return ContributionsCompanion(
+      id: Value(id),
+      version: Value(version),
+      deviceId: Value(deviceId),
+      deleted: Value(deleted),
+      projectId: Value(projectId),
+      amount: Value(amount),
+      date: Value(date),
+    );
+  }
+
+  factory ContributionRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ContributionRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      amount: serializer.fromJson<int>(json['amount']),
+      date: serializer.fromJson<DateTime>(json['date']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'deleted': serializer.toJson<bool>(deleted),
+      'projectId': serializer.toJson<String>(projectId),
+      'amount': serializer.toJson<int>(amount),
+      'date': serializer.toJson<DateTime>(date),
+    };
+  }
+
+  ContributionRow copyWith({
+    String? id,
+    int? version,
+    String? deviceId,
+    bool? deleted,
+    String? projectId,
+    int? amount,
+    DateTime? date,
+  }) => ContributionRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    deviceId: deviceId ?? this.deviceId,
+    deleted: deleted ?? this.deleted,
+    projectId: projectId ?? this.projectId,
+    amount: amount ?? this.amount,
+    date: date ?? this.date,
+  );
+  ContributionRow copyWithCompanion(ContributionsCompanion data) {
+    return ContributionRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      date: data.date.present ? data.date.value : this.date,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ContributionRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('projectId: $projectId, ')
+          ..write('amount: $amount, ')
+          ..write('date: $date')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, version, deviceId, deleted, projectId, amount, date);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ContributionRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.deviceId == this.deviceId &&
+          other.deleted == this.deleted &&
+          other.projectId == this.projectId &&
+          other.amount == this.amount &&
+          other.date == this.date);
+}
+
+class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<String> deviceId;
+  final Value<bool> deleted;
+  final Value<String> projectId;
+  final Value<int> amount;
+  final Value<DateTime> date;
+  final Value<int> rowid;
+  const ContributionsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.date = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ContributionsCompanion.insert({
+    required String id,
+    required int version,
+    required String deviceId,
+    this.deleted = const Value.absent(),
+    required String projectId,
+    required int amount,
+    required DateTime date,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       version = Value(version),
+       deviceId = Value(deviceId),
+       projectId = Value(projectId),
+       amount = Value(amount),
+       date = Value(date);
+  static Insertable<ContributionRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<String>? deviceId,
+    Expression<bool>? deleted,
+    Expression<String>? projectId,
+    Expression<int>? amount,
+    Expression<DateTime>? date,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (deviceId != null) 'device_id': deviceId,
+      if (deleted != null) 'deleted': deleted,
+      if (projectId != null) 'project_id': projectId,
+      if (amount != null) 'amount': amount,
+      if (date != null) 'date': date,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ContributionsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<String>? deviceId,
+    Value<bool>? deleted,
+    Value<String>? projectId,
+    Value<int>? amount,
+    Value<DateTime>? date,
+    Value<int>? rowid,
+  }) {
+    return ContributionsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      deviceId: deviceId ?? this.deviceId,
+      deleted: deleted ?? this.deleted,
+      projectId: projectId ?? this.projectId,
+      amount: amount ?? this.amount,
+      date: date ?? this.date,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ContributionsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('deleted: $deleted, ')
+          ..write('projectId: $projectId, ')
+          ..write('amount: $amount, ')
+          ..write('date: $date, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$KibuoDatabase extends GeneratedDatabase {
   _$KibuoDatabase(QueryExecutor e) : super(e);
   $KibuoDatabaseManager get managers => $KibuoDatabaseManager(this);
@@ -8188,6 +9498,8 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
   late final $BudgetAmountsTable budgetAmounts = $BudgetAmountsTable(this);
   late final $RecurringRulesTable recurringRules = $RecurringRulesTable(this);
   late final $DebtsTable debts = $DebtsTable(this);
+  late final $ProjectsTable projects = $ProjectsTable(this);
+  late final $ContributionsTable contributions = $ContributionsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -8206,6 +9518,8 @@ abstract class _$KibuoDatabase extends GeneratedDatabase {
     budgetAmounts,
     recurringRules,
     debts,
+    projects,
+    contributions,
   ];
 }
 
@@ -12246,6 +13560,653 @@ typedef $$DebtsTableProcessedTableManager =
       DebtRow,
       PrefetchHooks Function()
     >;
+typedef $$ProjectsTableCreateCompanionBuilder = ProjectsCompanion Function({
+  required String id,
+  required int version,
+  required String deviceId,
+  Value<bool> deleted,
+  required String name,
+  required String icon,
+  required String accountId,
+  required int goal,
+  required String currency,
+  required DateTime startedOn,
+  Value<DateTime?> dueDate,
+  Value<String> period,
+  Value<bool> remind,
+  Value<String?> ending,
+  Value<DateTime?> endedOn,
+  Value<int> rowid,
+});
+typedef $$ProjectsTableUpdateCompanionBuilder = ProjectsCompanion Function({
+  Value<String> id,
+  Value<int> version,
+  Value<String> deviceId,
+  Value<bool> deleted,
+  Value<String> name,
+  Value<String> icon,
+  Value<String> accountId,
+  Value<int> goal,
+  Value<String> currency,
+  Value<DateTime> startedOn,
+  Value<DateTime?> dueDate,
+  Value<String> period,
+  Value<bool> remind,
+  Value<String?> ending,
+  Value<DateTime?> endedOn,
+  Value<int> rowid,
+});
+
+class $$ProjectsTableFilterComposer
+    extends Composer<_$KibuoDatabase, $ProjectsTable> {
+  $$ProjectsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get goal => $composableBuilder(
+    column: $table.goal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedOn => $composableBuilder(
+    column: $table.startedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get period => $composableBuilder(
+    column: $table.period,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get remind => $composableBuilder(
+    column: $table.remind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ending => $composableBuilder(
+    column: $table.ending,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get endedOn => $composableBuilder(
+    column: $table.endedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ProjectsTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $ProjectsTable> {
+  $$ProjectsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get goal => $composableBuilder(
+    column: $table.goal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedOn => $composableBuilder(
+    column: $table.startedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get period => $composableBuilder(
+    column: $table.period,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get remind => $composableBuilder(
+    column: $table.remind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ending => $composableBuilder(
+    column: $table.ending,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get endedOn => $composableBuilder(
+    column: $table.endedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ProjectsTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $ProjectsTable> {
+  $$ProjectsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<int> get goal =>
+      $composableBuilder(column: $table.goal, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedOn =>
+      $composableBuilder(column: $table.startedOn, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dueDate =>
+      $composableBuilder(column: $table.dueDate, builder: (column) => column);
+
+  GeneratedColumn<String> get period =>
+      $composableBuilder(column: $table.period, builder: (column) => column);
+
+  GeneratedColumn<bool> get remind =>
+      $composableBuilder(column: $table.remind, builder: (column) => column);
+
+  GeneratedColumn<String> get ending =>
+      $composableBuilder(column: $table.ending, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get endedOn =>
+      $composableBuilder(column: $table.endedOn, builder: (column) => column);
+}
+
+class $$ProjectsTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $ProjectsTable,
+          ProjectRow,
+          $$ProjectsTableFilterComposer,
+          $$ProjectsTableOrderingComposer,
+          $$ProjectsTableAnnotationComposer,
+          $$ProjectsTableCreateCompanionBuilder,
+          $$ProjectsTableUpdateCompanionBuilder,
+          (
+            ProjectRow,
+            BaseReferences<_$KibuoDatabase, $ProjectsTable, ProjectRow>,
+          ),
+          ProjectRow,
+          PrefetchHooks Function()
+        > {
+  $$ProjectsTableTableManager(_$KibuoDatabase db, $ProjectsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProjectsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProjectsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProjectsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> icon = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<int> goal = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<DateTime> startedOn = const Value.absent(),
+                Value<DateTime?> dueDate = const Value.absent(),
+                Value<String> period = const Value.absent(),
+                Value<bool> remind = const Value.absent(),
+                Value<String?> ending = const Value.absent(),
+                Value<DateTime?> endedOn = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProjectsCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                name: name,
+                icon: icon,
+                accountId: accountId,
+                goal: goal,
+                currency: currency,
+                startedOn: startedOn,
+                dueDate: dueDate,
+                period: period,
+                remind: remind,
+                ending: ending,
+                endedOn: endedOn,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String name,
+                required String icon,
+                required String accountId,
+                required int goal,
+                required String currency,
+                required DateTime startedOn,
+                Value<DateTime?> dueDate = const Value.absent(),
+                Value<String> period = const Value.absent(),
+                Value<bool> remind = const Value.absent(),
+                Value<String?> ending = const Value.absent(),
+                Value<DateTime?> endedOn = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProjectsCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                name: name,
+                icon: icon,
+                accountId: accountId,
+                goal: goal,
+                currency: currency,
+                startedOn: startedOn,
+                dueDate: dueDate,
+                period: period,
+                remind: remind,
+                ending: ending,
+                endedOn: endedOn,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ProjectsTable, ProjectRow>(table),
+                  BaseReferences<_$KibuoDatabase, $ProjectsTable, ProjectRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ProjectsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $ProjectsTable,
+      ProjectRow,
+      $$ProjectsTableFilterComposer,
+      $$ProjectsTableOrderingComposer,
+      $$ProjectsTableAnnotationComposer,
+      $$ProjectsTableCreateCompanionBuilder,
+      $$ProjectsTableUpdateCompanionBuilder,
+      (ProjectRow, BaseReferences<_$KibuoDatabase, $ProjectsTable, ProjectRow>),
+      ProjectRow,
+      PrefetchHooks Function()
+    >;
+typedef $$ContributionsTableCreateCompanionBuilder =
+    ContributionsCompanion Function({
+      required String id,
+      required int version,
+      required String deviceId,
+      Value<bool> deleted,
+      required String projectId,
+      required int amount,
+      required DateTime date,
+      Value<int> rowid,
+    });
+typedef $$ContributionsTableUpdateCompanionBuilder =
+    ContributionsCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<String> deviceId,
+      Value<bool> deleted,
+      Value<String> projectId,
+      Value<int> amount,
+      Value<DateTime> date,
+      Value<int> rowid,
+    });
+
+class $$ContributionsTableFilterComposer
+    extends Composer<_$KibuoDatabase, $ContributionsTable> {
+  $$ContributionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get projectId => $composableBuilder(
+    column: $table.projectId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ContributionsTableOrderingComposer
+    extends Composer<_$KibuoDatabase, $ContributionsTable> {
+  $$ContributionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get projectId => $composableBuilder(
+    column: $table.projectId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ContributionsTableAnnotationComposer
+    extends Composer<_$KibuoDatabase, $ContributionsTable> {
+  $$ContributionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get projectId =>
+      $composableBuilder(column: $table.projectId, builder: (column) => column);
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+}
+
+class $$ContributionsTableTableManager
+    extends
+        RootTableManager<
+          _$KibuoDatabase,
+          $ContributionsTable,
+          ContributionRow,
+          $$ContributionsTableFilterComposer,
+          $$ContributionsTableOrderingComposer,
+          $$ContributionsTableAnnotationComposer,
+          $$ContributionsTableCreateCompanionBuilder,
+          $$ContributionsTableUpdateCompanionBuilder,
+          (
+            ContributionRow,
+            BaseReferences<
+              _$KibuoDatabase,
+              $ContributionsTable,
+              ContributionRow
+            >,
+          ),
+          ContributionRow,
+          PrefetchHooks Function()
+        > {
+  $$ContributionsTableTableManager(
+    _$KibuoDatabase db,
+    $ContributionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ContributionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ContributionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ContributionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> projectId = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ContributionsCompanion(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                projectId: projectId,
+                amount: amount,
+                date: date,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int version,
+                required String deviceId,
+                Value<bool> deleted = const Value.absent(),
+                required String projectId,
+                required int amount,
+                required DateTime date,
+                Value<int> rowid = const Value.absent(),
+              }) => ContributionsCompanion.insert(
+                id: id,
+                version: version,
+                deviceId: deviceId,
+                deleted: deleted,
+                projectId: projectId,
+                amount: amount,
+                date: date,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ContributionsTable, ContributionRow>(table),
+                  BaseReferences<
+                    _$KibuoDatabase,
+                    $ContributionsTable,
+                    ContributionRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ContributionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$KibuoDatabase,
+      $ContributionsTable,
+      ContributionRow,
+      $$ContributionsTableFilterComposer,
+      $$ContributionsTableOrderingComposer,
+      $$ContributionsTableAnnotationComposer,
+      $$ContributionsTableCreateCompanionBuilder,
+      $$ContributionsTableUpdateCompanionBuilder,
+      (
+        ContributionRow,
+        BaseReferences<_$KibuoDatabase, $ContributionsTable, ContributionRow>,
+      ),
+      ContributionRow,
+      PrefetchHooks Function()
+    >;
 
 class $KibuoDatabaseManager {
   final _$KibuoDatabase _db;
@@ -12276,4 +14237,8 @@ class $KibuoDatabaseManager {
       $$RecurringRulesTableTableManager(_db, _db.recurringRules);
   $$DebtsTableTableManager get debts =>
       $$DebtsTableTableManager(_db, _db.debts);
+  $$ProjectsTableTableManager get projects =>
+      $$ProjectsTableTableManager(_db, _db.projects);
+  $$ContributionsTableTableManager get contributions =>
+      $$ContributionsTableTableManager(_db, _db.contributions);
 }

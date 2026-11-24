@@ -5,6 +5,7 @@ import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/debt_repository.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -48,6 +49,7 @@ class EntryData {
     this.recurrences,
     this.reminders,
     this.debts,
+    this.projects,
   });
 
   final AccountRepository accounts;
@@ -66,6 +68,9 @@ class EntryData {
 
   /// Debts: a debt's operation opens its card from its detail.
   final DebtRepository? debts;
+
+  /// Projects: what they hold back leaves the available amount.
+  final ProjectRepository? projects;
 }
 
 /// What the entry pops when it planned instead of saving (PRODUCT): not

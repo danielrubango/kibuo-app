@@ -14,6 +14,7 @@ import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/month_start_store.dart';
 import 'package:kibuo/data/preference_store.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/search_history.dart';
@@ -36,6 +37,8 @@ import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
+import 'package:kibuo/ui/projects/new_project_screen.dart';
+import 'package:kibuo/ui/projects/projects_screen.dart';
 import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/reminders/notifier.dart';
@@ -247,6 +250,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       recurrences: RecurringRepository(db),
       reminders: ReminderStore(db),
       debts: DebtRepository(db),
+      projects: ProjectRepository(db),
     );
   }
 
@@ -291,6 +295,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                             _openAccounts(KibuoData.maybeOf(context)!),
                         onOpenDebts: (tab) =>
                             _openDebts(KibuoData.maybeOf(context)!, tab),
+                        onOpenProjects: _openProjects,
+                        onNewProject: _newProject,
                         // The list, until the overview exists (PRODUCT).
                         onOpenMonth: () {
                           _thisMonth.value++;
@@ -428,6 +434,11 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
           SettingsRow(
             label: AppLocalizations.of(context).debtsTitle,
             onTap: () => _openDebts(db, DebtDirection.owe),
+          ),
+        if (db != null && _entryData(context) != null)
+          SettingsRow(
+            label: AppLocalizations.of(context).projectsTitle,
+            onTap: _openProjects,
           ),
         if (_entryData(context) case final data?)
           SettingsRow(
@@ -632,6 +643,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     if (choice == AddChoice.debt && data != null && db != null) {
       return _newDebt(data, db);
     }
+    if (choice == AddChoice.project && data != null) return _newProject();
     if (data != null && kind != null) {
       // The alert once the saved sheet is gone (PRODUCT: Alertes).
       return runEntry(
@@ -647,6 +659,35 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         fullscreenDialog: true,
       ),
     );
+  }
+
+  /// Plus › Projets.
+  Future<void> _openProjects() async {
+    final data = _entryData(context);
+    if (data?.projects == null) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ProjectsScreen(
+          data: data!,
+          projects: data.projects!,
+          onChanged: () => _saved.value++,
+        ),
+      ),
+    );
+    _saved.value++;
+  }
+
+  /// « Nouveau projet », from the + or the home.
+  Future<void> _newProject() async {
+    final data = _entryData(context);
+    if (data?.projects == null) return;
+    final made = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => NewProjectScreen(data: data!, projects: data.projects!),
+      ),
+    );
+    if (made == true) _saved.value++;
   }
 
   /// Dettes et créances, on [tab].

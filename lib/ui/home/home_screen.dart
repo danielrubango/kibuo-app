@@ -53,7 +53,13 @@ class HomeScreen extends StatefulWidget {
     this.todos,
     this.onChanged,
     this.onOpenDebts,
+    this.onOpenProjects,
+    this.onNewProject,
   });
+
+  /// The strip under the available amount: the projects, or a first one.
+  final VoidCallback? onOpenProjects;
+  final VoidCallback? onNewProject;
 
   /// Touching « Je dois » or « On me doit »: the debts, on that tab.
   final ValueChanged<DebtDirection>? onOpenDebts;
@@ -98,6 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// How many recurrences are due in those 14 days.
   int _comingCount = 0;
+
+  AccountTotal? _total;
+  AccountTotal? _held;
+  bool _hasProjects = false;
 
   /// The debts and receivables not settled (PRODUCT: Dettes et créances).
   List<DebtLine> _debts = const [];
@@ -181,6 +191,10 @@ class _HomeScreenState extends State<HomeScreen> {
             (debtsCount || t.debtId == null))
           t,
     ];
+    final held = await data.projects?.reserved() ?? const <String, int>{};
+    final hasProjects = (await data.projects?.projects() ?? const []).any(
+      (p) => p.running,
+    );
     final debts = [
       for (final d in await data.debts?.debts() ?? const <DebtLine>[])
         if (!d.settled) d,
@@ -247,9 +261,19 @@ class _HomeScreenState extends State<HomeScreen> {
       _comingCount = next.length + dueDebts.length;
       _comingDebts = comingDebts;
       _main = main;
+      // Available: the accounts less what projects hold back (PRODUCT).
       _available = totalIn(main, [
+        for (final a in accounts)
+          Money(a.balance.minor - (held[a.id] ?? 0), a.balance.currency),
+      ], (code) => rates[code]);
+      _total = totalIn(main, [
         for (final a in accounts) a.balance,
       ], (code) => rates[code]);
+      _held = totalIn(main, [
+        for (final a in accounts)
+          if (held[a.id] case final h? when h > 0) Money(h, a.balance.currency),
+      ], (code) => rates[code]);
+      _hasProjects = hasProjects;
       _month = flowTotals(main, month.map(flowOf), (code) => rates[code]);
       _debts = debts;
       _rates = rates;
@@ -291,6 +315,17 @@ class _HomeScreenState extends State<HomeScreen> {
               lang,
             ),
             onTap: widget.onOpenAccounts,
+            strip: widget.onOpenProjects == null || _total == null
+                ? null
+                : _ProjectsStrip(
+                    total: formatMoney(_total!.amount, main, lang),
+                    held: _hasProjects
+                        ? formatMoney(_held!.amount, main, lang)
+                        : null,
+                    onTap: _hasProjects
+                        ? widget.onOpenProjects!
+                        : widget.onNewProject ?? widget.onOpenProjects!,
+                  ),
           ),
           if (available.withoutRate.isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -420,7 +455,15 @@ class _HomeScreenState extends State<HomeScreen> {
 /// « Disponible », the amount, « à dépenser librement »: mint, 22 round,
 /// opening Comptes.
 class _AvailableCard extends StatelessWidget {
-  const _AvailableCard({required this.amount, required this.long, this.onTap});
+  const _AvailableCard({
+    required this.amount,
+    required this.long,
+    this.onTap,
+    this.strip,
+  });
+
+  /// « Total … · dont projets … › » just under, close, in a paler mint.
+  final Widget? strip;
 
   /// Whole or short.
   final String Function(bool short) amount;
@@ -433,50 +476,131 @@ class _AvailableCard extends StatelessWidget {
     return Semantics(
       button: true,
       hint: l.homeOpenAccounts,
-      child: Material(
-        color: KibuoColors.mint,
-        borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
+      child: Column(
+        children: [
+          Material(
+            color: KibuoColors.mint,
+            borderRadius: strip == null
+                ? BorderRadius.circular(KibuoTheme.radiusFeatured)
+                : const BorderRadius.vertical(
+                    top: Radius.circular(KibuoTheme.radiusFeatured),
+                    bottom: Radius.circular(8),
+                  ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l.homeAvailable,
+                            style: KibuoType.help.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontVariations: const [FontVariation.weight(500)],
+                              color: KibuoColors.accentDeep,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          FitAmount(
+                            long: long,
+                            style: KibuoType.bigAmount.copyWith(
+                              height: 42 / 34,
+                            ),
+                            span: (short) => TextSpan(text: amount(short)),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            l.homeAvailableHelp,
+                            style: KibuoType.caption.copyWith(
+                              color: KibuoColors.accentDeep,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Icon(
+                      KibuoIcons.caretRight,
+                      size: 20,
+                      color: KibuoColors.accent,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (strip case final strip?) ...[const SizedBox(height: 6), strip],
+        ],
+      ),
+    );
+  }
+}
+
+/// « Total 1 248,50 $ » and « dont projets 300,00 $ › » (canvas
+/// Total_positif), or « + Créer un projet » without any.
+class _ProjectsStrip extends StatelessWidget {
+  const _ProjectsStrip({required this.total, required this.onTap, this.held});
+
+  final String total;
+  final String? held;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    const ink = KibuoColors.accentStripInk;
+    TextSpan part(String label, String value) => TextSpan(
+      children: [
+        TextSpan(text: '$label '),
+        TextSpan(
+          text: value,
+          style: const TextStyle(color: KibuoColors.ink).weight(700),
+        ),
+      ],
+    );
+    final held = this.held;
+    return Material(
+      color: KibuoColors.accentTintStrong,
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(8),
+        bottom: Radius.circular(KibuoTheme.radiusCard),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: KibuoTheme.heightTouch),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             child: Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.homeAvailable,
-                        style: KibuoType.help.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontVariations: const [FontVariation.weight(500)],
-                          color: KibuoColors.accentDeep,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      FitAmount(
-                        long: long,
-                        style: KibuoType.bigAmount.copyWith(height: 42 / 34),
-                        span: (short) => TextSpan(text: amount(short)),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        l.homeAvailableHelp,
-                        style: KibuoType.caption.copyWith(
-                          color: KibuoColors.accentDeep,
-                        ),
-                      ),
-                    ],
+                  child: Text.rich(
+                    part(l.homeTotalLabel, total),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: KibuoType.body.copyWith(fontSize: 13, color: ink),
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Icon(
-                  KibuoIcons.caretRight,
-                  size: 20,
-                  color: KibuoColors.accent,
-                ),
+                if (held != null)
+                  Text.rich(
+                    part(l.homeOfProjectsLabel, held),
+                    style: KibuoType.body.copyWith(fontSize: 13, color: ink),
+                  )
+                else
+                  Text(
+                    '+ ${l.homeNewProject}',
+                    style: KibuoType.body
+                        .copyWith(fontSize: 13, color: KibuoColors.accent)
+                        .weight(600),
+                  ),
+                const SizedBox(width: 2),
+                const Icon(KibuoIcons.caretRight, size: 16, color: ink),
               ],
             ),
           ),
