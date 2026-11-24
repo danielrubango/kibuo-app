@@ -16,6 +16,7 @@ class _Service extends BackupService {
     : super(db: db, appFolder: () async => Directory.systemTemp, vault: vault);
 
   String? language;
+  String? password;
   int writes = 0;
   bool breaks = false;
 
@@ -28,6 +29,7 @@ class _Service extends BackupService {
     if (breaks) throw StateError('disk full');
     writes++;
     this.language = language;
+    this.password = password;
     final work = await Directory.systemTemp.createTemp('kibuo-test-');
     return File('${work.path}/x.kibuo')..writeAsStringSync('backup');
   }
@@ -218,5 +220,14 @@ void main() {
     await service.rememberLanguage('en');
     expect(await auto.run(now: now), AutoBackupOutcome.done);
     expect(service.language, 'en');
+  });
+
+  test('encrypted with the remembered password, if there is one', () async {
+    await service.setAuto(on: true);
+    expect(await auto.run(now: now), AutoBackupOutcome.done);
+    expect(service.password, isNull);
+    await service.rememberPassword('secret-123');
+    expect(await auto.run(now: DateTime(2026, 12, 1)), AutoBackupOutcome.done);
+    expect(service.password, 'secret-123');
   });
 }

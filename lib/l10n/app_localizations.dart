@@ -6157,6 +6157,66 @@ abstract class AppLocalizations {
   /// **'Sauvegardes'**
   String get autoBackupChannel;
 
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun'**
+  String get backupPasswordNone;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retenu'**
+  String get backupPasswordKept;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe des sauvegardes'**
+  String get backupPasswordSheetTitle;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'kibuo le retient sur ce téléphone et chiffre avec lui toutes vos sauvegardes, automatiques et manuelles.'**
+  String get backupPasswordSheetBody;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retenir le mot de passe'**
+  String get backupPasswordKeep;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le mot de passe'**
+  String get backupPasswordChange;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le mot de passe'**
+  String get backupPasswordRemove;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffrée avec votre mot de passe'**
+  String get backupEncryptedWith;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour changer le mot de passe des sauvegardes'**
+  String get protectBackupPasswordChange;
+
+  /// Remembered backup password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour retirer le mot de passe des sauvegardes'**
+  String get protectBackupPasswordRemove;
+
   /// Backup.
   ///
   /// In fr, this message translates to:

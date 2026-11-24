@@ -147,6 +147,27 @@ Future<BackupEnvelope> peekBackup(File file) async {
   }
 }
 
+/// Whether [password] opens [file], without opening it: only the key's
+/// fingerprint in the envelope is compared. A backup without a password
+/// opens with any.
+Future<bool> backupPasswordOpens(File file, String password) => Isolate.run(() {
+  final raf = file.openSync();
+  try {
+    final (envelope, _) = _readEnvelope(raf);
+    if (envelope['encrypted'] != true) return true;
+    final kdf = envelope['kdf'] as Map<String, dynamic>;
+    final derived = pbkdf2(
+      utf8.encode(password),
+      base64.decode(kdf['salt'] as String),
+      kdf['rounds'] as int,
+      32,
+    );
+    return _same(_check(derived), base64.decode(kdf['check'] as String));
+  } finally {
+    raf.closeSync();
+  }
+});
+
 /// Opens [file] into the empty folder [into].
 Future<BackupContents> openBackup(
   File file, {

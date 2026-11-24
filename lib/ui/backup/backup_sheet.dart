@@ -3,10 +3,11 @@ import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
+import 'package:kibuo/ui/backup/backup_password_fields.dart';
+import 'package:kibuo/ui/backup/password_sheet.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/confirm_sheet.dart';
-import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
@@ -95,6 +96,28 @@ class _BackupSheetState extends State<_BackupSheet> {
   late BackupFolder? _folder = widget.state.folder;
   late bool _reachable = widget.reachable;
   bool _encrypt = false;
+
+  /// The remembered password: every backup uses it, never asked
+  /// (MotDePasseRetenu A3).
+  String? _remembered;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRemembered();
+  }
+
+  Future<void> _loadRemembered() async {
+    final password = await widget.service.rememberedPassword();
+    if (mounted) setState(() => _remembered = password);
+  }
+
+  Future<void> _changePassword() async {
+    if (await showBackupPasswordSheet(context, widget.service)) {
+      await _loadRemembered();
+    }
+  }
+
   bool _saving = false;
   final _password = TextEditingController();
   final _again = TextEditingController();
@@ -110,7 +133,11 @@ class _BackupSheetState extends State<_BackupSheet> {
       _folder != null &&
       _reachable &&
       !_saving &&
-      (!_encrypt || backupPasswordReady(_password.text, _again.text));
+      (_remembered != null ||
+          !_encrypt ||
+          backupPasswordReady(_password.text, _again.text));
+
+  bool get _encrypted => _remembered != null || _encrypt;
 
   Future<void> _pick() async {
     final picked = await widget.folders.pick();
@@ -129,7 +156,7 @@ class _BackupSheetState extends State<_BackupSheet> {
     try {
       final file = await widget.service.write(
         now: at,
-        password: _encrypt ? _password.text : null,
+        password: _remembered ?? (_encrypt ? _password.text : null),
         // Android 13 and more keep the language outside the data.
         language: Localizations.localeOf(context).languageCode,
       );
@@ -144,7 +171,7 @@ class _BackupSheetState extends State<_BackupSheet> {
       if (!ok) throw StateError('not written');
       await widget.service.done(at);
       if (!mounted) return;
-      Navigator.of(context).pop(_Done(name, folder, at, encrypted: _encrypt));
+      Navigator.of(context).pop(_Done(name, folder, at, encrypted: _encrypted));
     } on Object {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -199,30 +226,18 @@ class _BackupSheetState extends State<_BackupSheet> {
               folder: _folder,
               reachable: _reachable,
               encrypt: _encrypt,
+              remembered: _remembered != null,
+              onChangePassword: _saving ? null : _changePassword,
               onPick: _saving ? null : _pick,
               onEncrypt: _saving ? null : (on) => setState(() => _encrypt = on),
             ),
-            if (_encrypt) ...[
+            if (_encrypt && _remembered == null) ...[
               const SizedBox(height: 12),
-              KibuoTextField(
-                key: const ValueKey('backup-password'),
-                hint: l.backupPassword,
-                controller: _password,
-                secret: true,
-                textCapitalization: TextCapitalization.none,
-                onChanged: (_) => setState(() {}),
+              BackupPasswordFields(
+                password: _password,
+                again: _again,
+                onChanged: () => setState(() {}),
               ),
-              const SizedBox(height: 12),
-              KibuoTextField(
-                key: const ValueKey('backup-password-again'),
-                hint: l.backupPasswordAgain,
-                controller: _again,
-                secret: true,
-                textCapitalization: TextCapitalization.none,
-                onChanged: (_) => setState(() {}),
-              ),
-              const SizedBox(height: 12),
-              _Warning(l.backupPasswordWarning),
             ],
             if (!typing) ...[
               const SizedBox(height: 12),
@@ -256,7 +271,13 @@ class _OptionsCard extends StatelessWidget {
     required this.encrypt,
     required this.onPick,
     required this.onEncrypt,
+    this.remembered = false,
+    this.onChangePassword,
   });
+
+  /// A password is remembered: said, with « Changer », no switch.
+  final bool remembered;
+  final VoidCallback? onChangePassword;
 
   final BackupFolder? folder;
   final bool reachable;
@@ -341,61 +362,54 @@ class _OptionsCard extends StatelessWidget {
             ),
           ),
           const Divider(height: 1, thickness: 1, color: KibuoColors.background),
-          SwitchRow(
-            value: encrypt,
-            onChanged: onEncrypt,
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              children: [
-                const Icon(
-                  KibuoIcons.lockSimple,
-                  size: 18,
-                  color: KibuoColors.inkSecondary,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    l.backupEncrypt,
-                    style: KibuoType.body.weight(600),
+          if (remembered)
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 52),
+              child: Row(
+                children: [
+                  const Icon(
+                    KibuoIcons.lockSimple,
+                    size: 18,
+                    color: KibuoColors.inkSecondary,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      l.backupEncryptedWith,
+                      style: KibuoType.body.weight(600),
+                    ),
+                  ),
+                  TextAction(
+                    label: l.backupChange,
+                    onPressed: onChangePassword,
+                  ),
+                ],
+              ),
+            )
+          else
+            SwitchRow(
+              value: encrypt,
+              onChanged: onEncrypt,
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  const Icon(
+                    KibuoIcons.lockSimple,
+                    size: 18,
+                    color: KibuoColors.inkSecondary,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      l.backupEncrypt,
+                      style: KibuoType.body.weight(600),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
   }
-}
-
-/// « Sans ce mot de passe… », small and amber, with its sign.
-class _Warning extends StatelessWidget {
-  const _Warning(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 1),
-          child: Icon(
-            KibuoIcons.warning,
-            size: 14,
-            color: KibuoColors.warningInk,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            text,
-            style: KibuoType.caption.copyWith(color: KibuoColors.warningInk),
-          ),
-        ),
-      ],
-    ),
-  );
 }

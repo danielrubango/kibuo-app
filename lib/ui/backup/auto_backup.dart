@@ -51,6 +51,7 @@ class AutoBackup {
     try {
       final file = await service.write(
         now: now,
+        password: await service.rememberedPassword(),
         language: language ?? await service.rememberedLanguage(),
       );
       final bool ok;

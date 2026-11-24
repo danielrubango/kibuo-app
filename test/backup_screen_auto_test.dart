@@ -10,6 +10,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/backup/backup_screen.dart';
+import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 import 'support/memory_vault.dart';
@@ -186,6 +187,75 @@ void main() {
     expect(find.text('Documents/Kibuo'), findsOneWidget);
     expect(find.text('Dossier introuvable'), findsNothing);
     expect(folders.names, ['kibuo-auto-2026-11-24.kibuo']);
+  });
+
+  testWidgets('« Mot de passe »: none, remembered, changed, then removed', (
+    tester,
+  ) async {
+    await service.setFolder(dl);
+    await open(tester);
+    expect(find.text('Mot de passe'), findsOneWidget);
+    expect(find.text('Aucun'), findsOneWidget);
+
+    await tester.tap(find.text('Mot de passe'));
+    await tester.pumpAndSettle();
+    expect(find.text('Mot de passe des sauvegardes'), findsOneWidget);
+    expect(
+      find.text(
+        'kibuo le retient sur ce téléphone et chiffre avec lui toutes vos '
+        'sauvegardes, automatiques et manuelles.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Retirer le mot de passe'), findsNothing);
+    Future<void> type(String a, String b) async {
+      await tester.enterText(
+        find.byKey(const ValueKey('remember-password')),
+        a,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('remember-password-again')),
+        b,
+      );
+      await tester.pump();
+    }
+
+    VoidCallback? keep() => tester
+        .widget<KibuoButton>(
+          find.widgetWithText(KibuoButton, 'Retenir le mot de passe'),
+        )
+        .onPressed;
+    expect(keep(), isNull);
+    await type('court', 'court');
+    expect(keep(), isNull);
+    await type('premier-mot', 'premier-mos');
+    expect(keep(), isNull);
+    await type('premier-mot', 'premier-mot');
+    expect(keep(), isNotNull);
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Retenir le mot de passe'));
+    await settle(tester);
+    expect(await service.rememberedPassword(), 'premier-mot');
+    expect(find.text('Retenu'), findsOneWidget);
+
+    // Changed.
+    await tester.tap(find.text('Mot de passe'));
+    await tester.pumpAndSettle();
+    await type('second-mot', 'second-mot');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Changer le mot de passe'));
+    await settle(tester);
+    expect(await service.rememberedPassword(), 'second-mot');
+
+    // Removed: the next backups are plain.
+    await tester.tap(find.text('Mot de passe'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Retirer le mot de passe'));
+    await settle(tester);
+    expect(await service.rememberedPassword(), isNull);
+    expect(find.text('Aucun'), findsOneWidget);
   });
 }
 

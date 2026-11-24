@@ -237,10 +237,11 @@ void main() {
     expect(find.text('Aujourd’hui'), findsOneWidget, reason: 'the day');
     expect(find.text('Restaurant'), findsOneWidget);
     expect(find.text('Repas · M-Pesa'), findsOneWidget);
-    // Rythme: the gap to the pace, at today.
+    // Rythme: the gap to the pace, at today. 205 of 250 runs ahead of the
+    // pace early in the month and leaves a margin late in it.
     await tester.tap(find.text('Rythme'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('d’avance'), findsOneWidget);
+    expect(find.textContaining(RegExp('d’avance|de marge')), findsOneWidget);
   });
 
   testWidgets('without any expense: said, and « Voir dans Opérations »', (

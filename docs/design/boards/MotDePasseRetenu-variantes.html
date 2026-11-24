@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mot de passe retenu · variantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap">
+<style>
+  :root {
+    --bg: #EEF1F7; --surface: #FFFFFF; --ink: #0E1320; --ink2: #525D73; --muted: #8A93A6;
+    --line: #C9CFDB; --track: #DDE2EC; --fill: #E4E8F0; --mint: #5EEAB5; --accent: #0A7355;
+    --warn: #8A5A00; --warnSoft: #FFF8E8; --warnSoftInk: #6B4A00; --warnTint: #FCEFD2;
+    --danger: #B3321A; --project: #33528A; --projectTint: #E1E8F6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #DCE1EA; font-family: Inter, sans-serif; color: var(--ink); padding: 32px 24px 64px; }
+  h1 { font: 700 26px 'Plus Jakarta Sans', sans-serif; margin: 0 0 6px; }
+  .lead { color: var(--ink2); font-size: 15px; margin: 0 0 32px; max-width: 900px; line-height: 22px; }
+  .variant { margin-bottom: 48px; }
+  .variant h2 { font: 700 20px 'Plus Jakarta Sans', sans-serif; margin: 0 0 4px; }
+  .variant p.why { margin: 0 0 16px; color: var(--ink2); font-size: 14px; line-height: 20px; max-width: 900px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .frame { display: flex; flex-direction: column; gap: 8px; }
+  .frame > span { font-size: 13px; font-weight: 600; color: var(--ink2); }
+  .phone { width: 390px; height: 844px; background: var(--bg); border-radius: 28px; overflow: hidden; position: relative; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  header.bar { display: flex; align-items: center; gap: 4px; height: 44px; }
+  header.bar svg { width: 24px; height: 24px; }
+  header.bar h3 { margin: 0; font: 700 22px 'Plus Jakarta Sans', sans-serif; }
+  .featured { background: var(--mint); border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .featured .k { font-size: 14px; font-weight: 500; }
+  .featured .v { font: 700 26px 'Plus Jakarta Sans', sans-serif; }
+  .dark { height: 48px; border-radius: 14px; background: var(--ink); color: #fff; font: 600 15px Inter, sans-serif; display: flex; align-items: center; justify-content: center; }
+  .card { background: var(--surface); border-radius: 18px; padding: 4px 16px; display: flex; flex-direction: column; }
+  .opt { min-height: 64px; display: flex; align-items: center; gap: 12px; }
+  .opt .t { flex: 1; display: flex; flex-direction: column; }
+  .opt .t b { font-size: 15px; font-weight: 600; }
+  .opt .t small { font-size: 13px; line-height: 18px; color: var(--ink2); }
+  .sw { width: 52px; height: 32px; border-radius: 16px; background: var(--muted); display: flex; align-items: center; padding: 0 3px; flex: 0 0 52px; }
+  .sw.on { background: var(--accent); justify-content: flex-end; }
+  .sw i { width: 26px; height: 26px; border-radius: 13px; background: #fff; display: block; }
+  .line { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--bg); }
+  .line b { font-size: 15px; font-weight: 600; }
+  .line span { font-size: 14px; color: var(--ink2); display: flex; align-items: center; gap: 6px; }
+  .caret { width: 16px; height: 16px; color: var(--muted); }
+  .restore { background: var(--surface); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .restore h4 { margin: 0; font-size: 16px; font-weight: 600; }
+  .restore p { margin: 0; font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .outline { height: 48px; border: 2px solid var(--danger); border-radius: 14px; color: var(--danger); font: 600 15px Inter, sans-serif; display: flex; align-items: center; justify-content: center; }
+  .link { color: var(--accent); font-weight: 700; font-size: 13px; }
+  .scrim { position: absolute; inset: 0; background: rgba(14,19,32,0.42); }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bg); border-radius: 26px 26px 0 0; padding: 10px 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .handle { align-self: center; width: 40px; height: 4px; border-radius: 2px; background: var(--line); }
+  .sheet .head { display: flex; align-items: center; justify-content: space-between; margin-top: -4px; }
+  .sheet .head h3 { margin: 0; font: 700 20px 'Plus Jakarta Sans', sans-serif; }
+  .sheet .head svg { width: 22px; height: 22px; color: var(--ink2); }
+  .note { display: flex; gap: 12px; align-items: center; border-radius: 16px; padding: 12px 14px; font-size: 14px; line-height: 20px; }
+  .note.blue { background: var(--projectTint); color: var(--project); }
+  .note.amber { background: var(--warnSoft); color: var(--warnSoftInk); }
+  .note .tile { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 13px; display: flex; align-items: center; justify-content: center; }
+  .note.amber .tile { background: var(--warnTint); color: var(--warn); }
+  .opts { background: var(--surface); border-radius: 18px; padding: 4px 14px; display: flex; flex-direction: column; }
+  .opts .r { min-height: 56px; display: flex; align-items: center; gap: 10px; }
+  .opts .r + .r { border-top: 1px solid var(--bg); }
+  .opts .r .ic { color: var(--ink2); display: flex; }
+  .opts .r .ic svg { width: 18px; height: 18px; }
+  .opts .r .txt { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+  .opts .r .txt small { font-size: 12px; color: var(--ink2); }
+  .opts .r .txt b { font-size: 14px; font-weight: 700; }
+  .opts .r .txt.plain b { font-weight: 600; }
+  .sw.small { width: 44px; height: 26px; flex: 0 0 44px; border-radius: 13px; }
+  .sw.small i { width: 20px; height: 20px; border-radius: 10px; }
+  .field { height: 52px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-size: 15px; color: var(--muted); }
+  .field.active { border: 2px solid var(--accent); color: var(--ink); }
+  .field svg { width: 20px; height: 20px; color: var(--ink2); }
+  .warn { display: flex; gap: 6px; font-size: 12px; line-height: 16px; color: var(--warn); padding: 0 4px; }
+  .warn svg { width: 14px; height: 14px; flex: 0 0 14px; margin-top: 1px; }
+  .help { font-size: 12px; line-height: 16px; color: var(--ink2); padding: 0 4px; }
+  .primary { min-height: 54px; border-radius: 18px; background: var(--mint); font: 600 16px Inter, sans-serif; display: flex; align-items: center; justify-content: center; }
+  .primary.off { background: var(--fill); color: var(--muted); }
+  .second { min-height: 48px; border-radius: 16px; background: var(--surface); font: 600 15px Inter, sans-serif; display: flex; align-items: center; justify-content: center; }
+  .dangerText { color: var(--danger); font: 600 15px Inter, sans-serif; text-align: center; padding: 12px 0; }
+  .label { font-size: 13px; font-weight: 600; color: var(--ink2); padding: 0 4px; margin-bottom: -6px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="caret" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="folder" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
+  <symbol id="lock" viewBox="0 0 24 24"><path d="M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="warning" viewBox="0 0 24 24"><path d="M12 3l10 18H2zM12 10v5M12 18h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="down" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<h1>Mot de passe retenu · variantes A, B, C</h1>
+<p class="lead">Où choisir le mot de passe que kibuo retient pour chiffrer les sauvegardes, automatiques et manuelles (PRODUCT, 24 novembre). Chaque variante montre l’écran Sauvegarde, la feuille du mot de passe, puis la feuille « Sauvegarder maintenant ? » une fois le mot de passe retenu (déjà décidé : « Chiffrée avec votre mot de passe » et « Changer »).</p>
+
+<!-- ============ A ============ -->
+<section class="variant">
+  <h2>A · Une ligne « Mot de passe » dans la carte</h2>
+  <p class="why">Sous l’interrupteur, une ligne de réglage « Mot de passe · Aucun › » (ou « Retenu › »). Elle ouvre une feuille où l’on choisit, change ou retire le mot de passe. L’écran garde ses trois lignes, sans nouvel interrupteur.</p>
+  <div class="row">
+    <div class="frame"><span>A1 · Écran Sauvegarde</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="featured"><div style="display:flex;flex-direction:column"><span class="k">Dernière sauvegarde</span><span class="v">Aujourd’hui</span></div><div class="dark">Sauvegarder maintenant</div></div>
+        <div class="card">
+          <div class="opt"><div class="t"><b>Sauvegarde automatique</b><small>Chaque semaine</small></div><span class="sw on"><i></i></span></div>
+          <div class="line"><b>Mot de passe</b><span>Aucun <svg class="caret"><use href="#caret"/></svg></span></div>
+          <div class="line"><b>Dossier</b><span>Documents/Kibuo</span></div>
+        </div>
+        <div class="restore"><h4>Restaurer une sauvegarde</h4><p>Toutes les données actuelles seront remplacées. Une copie de leur état sera sauvegardée juste avant.</p><div class="outline">Choisir un fichier</div></div>
+      </div>
+    </div>
+    <div class="frame"><span>A2 · La feuille du mot de passe</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <span class="handle"></span>
+          <div class="head"><h3>Mot de passe des sauvegardes</h3><svg><use href="#x"/></svg></div>
+          <div class="help" style="font-size:14px;line-height:20px">kibuo le retient sur ce téléphone et chiffre avec lui toutes vos sauvegardes, automatiques et manuelles.</div>
+          <div class="field active"><span>••••••••••</span><svg><use href="#eye"/></svg></div>
+          <div class="field"><span>Confirmer le mot de passe</span><svg><use href="#eye"/></svg></div>
+          <div class="warn"><svg><use href="#warning"/></svg>Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte.</div>
+          <div class="primary off">Retenir le mot de passe</div>
+        </div>
+      </div>
+    </div>
+    <div class="frame"><span>A3 · Feuille « Sauvegarder maintenant ? » avec le mot de passe retenu</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <span class="handle"></span>
+          <div class="head"><h3>Sauvegarder maintenant ?</h3><svg><use href="#x"/></svg></div>
+          <div class="note amber"><span class="tile"><svg width="20" height="20"><use href="#down"/></svg></span><span>Votre dernière sauvegarde date de <b>12 jours</b>.</span></div>
+          <div class="opts">
+            <div class="r"><span class="ic"><svg><use href="#folder"/></svg></span><span class="txt"><small>Dossier</small><b>Documents/Kibuo</b></span><span class="link">Changer</span></div>
+            <div class="r"><span class="ic"><svg><use href="#lock"/></svg></span><span class="txt plain"><b>Chiffrée avec votre mot de passe</b></span><span class="link">Changer</span></div>
+          </div>
+          <div class="help">Toutes vos données sont sauvegardées : comptes, opérations, projets, dettes et réglages.</div>
+          <div class="primary">Sauvegarder</div>
+          <div class="second">Plus tard</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B ============ -->
+<section class="variant">
+  <h2>B · L’interrupteur « Protéger par mot de passe » de la planche Sauvegarde</h2>
+  <p class="why">On reprend l’interrupteur déjà dessiné sur les planches Sauvegarde et RestauC1, retiré tant que le mot de passe ne pouvait pas être retenu. L’allumer ouvre la feuille ; une fois allumé, sa deuxième ligne dit « Retenu sur ce téléphone » avec « Changer ». L’éteindre oublie le mot de passe : les sauvegardes suivantes ne sont plus chiffrées.</p>
+  <div class="row">
+    <div class="frame"><span>B1 · Écran Sauvegarde, mot de passe retenu</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="featured"><div style="display:flex;flex-direction:column"><span class="k">Dernière sauvegarde</span><span class="v">Aujourd’hui</span></div><div class="dark">Sauvegarder maintenant</div></div>
+        <div class="card">
+          <div class="opt"><div class="t"><b>Sauvegarde automatique</b><small>Chaque semaine</small></div><span class="sw on"><i></i></span></div>
+          <div class="opt" style="border-top:1px solid var(--bg)"><div class="t"><b>Protéger par mot de passe</b><small>Retenu sur ce téléphone · <span class="link">Changer</span></small></div><span class="sw on"><i></i></span></div>
+          <div class="line"><b>Dossier</b><span>Documents/Kibuo</span></div>
+        </div>
+        <div class="restore"><h4>Restaurer une sauvegarde</h4><p>Toutes les données actuelles seront remplacées. Une copie de leur état sera sauvegardée juste avant.</p><div class="outline">Choisir un fichier</div></div>
+      </div>
+    </div>
+    <div class="frame"><span>B2 · L’interrupteur allumé ouvre la feuille</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <span class="handle"></span>
+          <div class="head"><h3>Protéger par mot de passe</h3><svg><use href="#x"/></svg></div>
+          <div class="help" style="font-size:14px;line-height:20px">kibuo le retient sur ce téléphone et chiffre avec lui toutes vos sauvegardes, automatiques et manuelles.</div>
+          <div class="field active"><span>••••••••••</span><svg><use href="#eye"/></svg></div>
+          <div class="field"><span>Confirmer le mot de passe</span><svg><use href="#eye"/></svg></div>
+          <div class="warn"><svg><use href="#warning"/></svg>Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte.</div>
+          <div class="primary off">Protéger</div>
+        </div>
+      </div>
+    </div>
+    <div class="frame"><span>B3 · Feuille « Sauvegarder maintenant ? » avec le mot de passe retenu</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <span class="handle"></span>
+          <div class="head"><h3>Sauvegarder maintenant ?</h3><svg><use href="#x"/></svg></div>
+          <div class="note amber"><span class="tile"><svg width="20" height="20"><use href="#down"/></svg></span><span>Votre dernière sauvegarde date de <b>12 jours</b>.</span></div>
+          <div class="opts">
+            <div class="r"><span class="ic"><svg><use href="#folder"/></svg></span><span class="txt"><small>Dossier</small><b>Documents/Kibuo</b></span><span class="link">Changer</span></div>
+            <div class="r"><span class="ic"><svg><use href="#lock"/></svg></span><span class="txt plain"><b>Chiffrée avec votre mot de passe</b></span><span class="link">Changer</span></div>
+          </div>
+          <div class="help">Toutes vos données sont sauvegardées : comptes, opérations, projets, dettes et réglages.</div>
+          <div class="primary">Sauvegarder</div>
+          <div class="second">Plus tard</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ C ============ -->
+<section class="variant">
+  <h2>C · Rien sur l’écran : on le retient dans la feuille de sauvegarde</h2>
+  <p class="why">L’écran ne change pas. Dans la feuille « Sauvegarder maintenant ? », quand « Chiffrer avec un mot de passe » est allumé, une case « Retenir ce mot de passe » apparaît sous les champs. Les sauvegardes automatiques s’en servent ensuite. Plus discret, mais on ne voit pas sur l’écran si elles sont chiffrées.</p>
+  <div class="row">
+    <div class="frame"><span>C1 · Écran Sauvegarde (inchangé)</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="featured"><div style="display:flex;flex-direction:column"><span class="k">Dernière sauvegarde</span><span class="v">Aujourd’hui</span></div><div class="dark">Sauvegarder maintenant</div></div>
+        <div class="card">
+          <div class="opt"><div class="t"><b>Sauvegarde automatique</b><small>Chaque semaine · chiffrée</small></div><span class="sw on"><i></i></span></div>
+          <div class="line"><b>Dossier</b><span>Documents/Kibuo</span></div>
+        </div>
+        <div class="restore"><h4>Restaurer une sauvegarde</h4><p>Toutes les données actuelles seront remplacées. Une copie de leur état sera sauvegardée juste avant.</p><div class="outline">Choisir un fichier</div></div>
+      </div>
+    </div>
+    <div class="frame"><span>C2 · Feuille de sauvegarde, « Retenir ce mot de passe »</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <span class="handle"></span>
+          <div class="head"><h3>Sauvegarder maintenant ?</h3><svg><use href="#x"/></svg></div>
+          <div class="opts">
+            <div class="r"><span class="ic"><svg><use href="#folder"/></svg></span><span class="txt"><small>Dossier</small><b>Documents/Kibuo</b></span><span class="link">Changer</span></div>
+            <div class="r"><span class="ic"><svg><use href="#lock"/></svg></span><span class="txt plain"><b>Chiffrer avec un mot de passe</b></span><span class="sw small on"><i></i></span></div>
+          </div>
+          <div class="field active"><span>••••••••••</span><svg><use href="#eye"/></svg></div>
+          <div class="field"><span>Confirmer le mot de passe</span><svg><use href="#eye"/></svg></div>
+          <div class="warn"><svg><use href="#warning"/></svg>Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte.</div>
+          <div class="opts"><div class="r"><span class="txt plain"><b>Retenir ce mot de passe</b><small>Les sauvegardes automatiques seront chiffrées avec lui.</small></span><span class="sw small on"><i></i></span></div></div>
+          <div class="primary off">Sauvegarder</div>
+        </div>
+      </div>
+    </div>
+    <div class="frame"><span>C3 · La fois suivante</span>
+      <div class="phone">
+        <header class="bar"><svg><use href="#back"/></svg><h3>Sauvegarde</h3></header>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <span class="handle"></span>
+          <div class="head"><h3>Sauvegarder maintenant ?</h3><svg><use href="#x"/></svg></div>
+          <div class="note amber"><span class="tile"><svg width="20" height="20"><use href="#down"/></svg></span><span>Votre dernière sauvegarde date de <b>12 jours</b>.</span></div>
+          <div class="opts">
+            <div class="r"><span class="ic"><svg><use href="#folder"/></svg></span><span class="txt"><small>Dossier</small><b>Documents/Kibuo</b></span><span class="link">Changer</span></div>
+            <div class="r"><span class="ic"><svg><use href="#lock"/></svg></span><span class="txt plain"><b>Chiffrée avec votre mot de passe</b></span><span class="link">Changer</span></div>
+          </div>
+          <div class="help">Toutes vos données sont sauvegardées : comptes, opérations, projets, dettes et réglages.</div>
+          <div class="primary">Sauvegarder</div>
+          <div class="second">Plus tard</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

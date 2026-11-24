@@ -23,6 +23,7 @@ class BackupState {
     this.firstOperation,
     this.auto = false,
     this.autoFailedAt,
+    this.hasPassword = false,
   });
 
   final BackupFolder? folder;
@@ -34,6 +35,9 @@ class BackupState {
 
   /// When the last automatic backup failed, if none worked since.
   final DateTime? autoFailedAt;
+
+  /// A password is remembered: every backup is encrypted with it.
+  final bool hasPassword;
 
   bool old(DateTime now) =>
       backupIsOld(last: last, firstOperation: firstOperation, now: now);
@@ -65,6 +69,7 @@ class BackupService {
   static const _auto = autoKey;
   static const _autoFailed = 'backup_auto_failed';
   static const _language = 'backup_language';
+  static const _password = 'backup_password';
 
   Future<BackupState> state() async {
     final uri = await _vault.read(_folderUri);
@@ -72,6 +77,7 @@ class BackupService {
     final last = DateTime.tryParse(await _vault.read(_last) ?? '');
     final failed = DateTime.tryParse(await _vault.read(_autoFailed) ?? '');
     final auto = await _vault.read(_auto) == 'on';
+    final hasPassword = await _vault.read(_password) != null;
     final first = await _db
         .customSelect(
           'SELECT min(date) AS first FROM transactions WHERE deleted = 0',
@@ -86,6 +92,7 @@ class BackupService {
       last: last,
       auto: auto,
       autoFailedAt: failed,
+      hasPassword: hasPassword,
       firstOperation: seconds == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(seconds * 1000),
@@ -142,4 +149,15 @@ class BackupService {
   Future<void> rememberLanguage(String code) => _vault.write(_language, code);
 
   Future<String?> rememberedLanguage() => _vault.read(_language);
+
+  /// The backups' password, kept in the phone's vault only (ADR 0012):
+  /// never in the data, never in a backup.
+  Future<String?> rememberedPassword() => _vault.read(_password);
+
+  /// Remembered, or changed: only the next backups use it.
+  Future<void> rememberPassword(String password) =>
+      _vault.write(_password, password);
+
+  /// Forgotten: the next backups are not encrypted.
+  Future<void> forgetPassword() => _vault.delete(_password);
 }

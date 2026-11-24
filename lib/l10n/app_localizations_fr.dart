@@ -3971,6 +3971,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get autoBackupChannel => 'Sauvegardes';
 
   @override
+  String get backupPasswordNone => 'Aucun';
+
+  @override
+  String get backupPasswordKept => 'Retenu';
+
+  @override
+  String get backupPasswordSheetTitle => 'Mot de passe des sauvegardes';
+
+  @override
+  String get backupPasswordSheetBody =>
+      'kibuo le retient sur ce téléphone et chiffre avec lui toutes vos sauvegardes, automatiques et manuelles.';
+
+  @override
+  String get backupPasswordKeep => 'Retenir le mot de passe';
+
+  @override
+  String get backupPasswordChange => 'Changer le mot de passe';
+
+  @override
+  String get backupPasswordRemove => 'Retirer le mot de passe';
+
+  @override
+  String get backupEncryptedWith => 'Chiffrée avec votre mot de passe';
+
+  @override
+  String get protectBackupPasswordChange =>
+      'Pour changer le mot de passe des sauvegardes';
+
+  @override
+  String get protectBackupPasswordRemove =>
+      'Pour retirer le mot de passe des sauvegardes';
+
+  @override
   String get todoBackup => 'Sauvegarde';
 
   @override

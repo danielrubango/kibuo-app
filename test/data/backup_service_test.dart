@@ -97,4 +97,17 @@ void main() {
     expect(state.old(DateTime(2026, 11, 17)), isFalse);
     expect(state.old(DateTime(2026, 11, 18)), isTrue);
   });
+
+  test('a password can be remembered, changed and forgotten', () async {
+    expect((await backups.state()).hasPassword, isFalse);
+    expect(await backups.rememberedPassword(), isNull);
+    await backups.rememberPassword('premier-mot');
+    expect((await backups.state()).hasPassword, isTrue);
+    expect(await backups.rememberedPassword(), 'premier-mot');
+    await backups.rememberPassword('second-mot');
+    expect(await backups.rememberedPassword(), 'second-mot');
+    await backups.forgetPassword();
+    expect((await backups.state()).hasPassword, isFalse);
+    expect(await backups.rememberedPassword(), isNull);
+  });
 }

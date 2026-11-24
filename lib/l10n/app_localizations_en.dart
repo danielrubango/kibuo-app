@@ -3931,6 +3931,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoBackupChannel => 'Backups';
 
   @override
+  String get backupPasswordNone => 'None';
+
+  @override
+  String get backupPasswordKept => 'Remembered';
+
+  @override
+  String get backupPasswordSheetTitle => 'Backup password';
+
+  @override
+  String get backupPasswordSheetBody =>
+      'kibuo remembers it on this phone and encrypts all your backups with it, automatic and manual.';
+
+  @override
+  String get backupPasswordKeep => 'Remember the password';
+
+  @override
+  String get backupPasswordChange => 'Change the password';
+
+  @override
+  String get backupPasswordRemove => 'Remove the password';
+
+  @override
+  String get backupEncryptedWith => 'Encrypted with your password';
+
+  @override
+  String get protectBackupPasswordChange => 'To change the backup password';
+
+  @override
+  String get protectBackupPasswordRemove => 'To remove the backup password';
+
+  @override
   String get todoBackup => 'Backup';
 
   @override
