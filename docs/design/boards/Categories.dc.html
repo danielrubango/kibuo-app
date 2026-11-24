@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Catégories</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px; position: relative; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 12px">
+  <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+    <a href="Reglages.dc.html" aria-label="Retour aux réglages" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Catégories</h1>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #FFFFFF; border-radius: 16px; padding: 4px">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+      <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="height: 44px; border: 0; border-radius: 12px; font: 600 14px Inter, sans-serif; background: {{t.bg}}; color: {{t.fg}}">{{t.label}}</button>
+    </sc-for>
+  </div>
+  <section style="background: #FFFFFF; border-radius: 18px; padding: 4px 14px; display: flex; flex-direction: column">
+    <sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+      <div style="display: flex; flex-direction: column; border-top: {{c.border}}; margin: 0 -8px; padding: 0 8px; border-radius: 12px; background: {{c.bg}}; transition: background 0.2s">
+        <button type="button" onClick="{{c.open}}" aria-expanded="{{c.isOpen}}" style="min-height: 52px; border: 0; background: transparent; padding: 0; display: flex; align-items: center; gap: 10px; font: {{c.weight}} 16px Inter, sans-serif; color: #0E1320; text-align: left"><span style="flex: 1 1 auto">{{c.name}}</span><span style="font-size: 13px; font-weight: 400; color: #525D73">{{c.count}}</span><span style="width: 28px; height: 28px; flex: 0 0 28px; border-radius: 14px; background: {{c.chevBg}}; color: #0E1320; display: flex; align-items: center; justify-content: center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{c.rot}}); transition: transform 0.2s"><path d="M6 9l6 6 6-6"></path></svg></span></button>
+        <sc-if value="{{c.isOpen}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; margin: 0 0 8px; padding-left: 22px">
+            <sc-for list="{{c.subs}}" as="s" hint-placeholder-count="2">
+              <span style="min-height: 40px; display: flex; align-items: center; font-size: 15px; color: #525D73">{{s}}</span>
+            </sc-for>
+            <button type="button" style="min-height: 44px; border: 0; background: transparent; padding: 0; text-align: left; font: 600 14px Inter, sans-serif; color: #0A7355">Ajouter une sous-catégorie</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </section>
+  <button type="button" style="position: absolute; left: 16px; right: 16px; bottom: 16px; height: 54px; border: 0; border-radius: 18px; background: #5EEAB5; color: #0E1320; font: 600 16px Inter, sans-serif">Ajouter une catégorie</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'out', open: 'Repas' };
+  }
+  renderVals() {
+    var self = this;
+    var data = {
+      out: [
+        { name: 'Repas', subs: ['Restaurant', 'Marché'] },
+        { name: 'Transport', subs: ['Taxi', 'Bus'] },
+        { name: 'Courses', subs: [] },
+        { name: 'Santé', subs: ['Pharmacie'] },
+        { name: 'Sorties', subs: [] },
+        { name: 'Loyer', subs: [] }
+      ],
+      in: [
+        { name: 'Salaire', subs: [] },
+        { name: 'Commerce', subs: ['Ventes', 'Commandes'] },
+        { name: 'Cadeaux reçus', subs: [] }
+      ]
+    };
+    return {
+      tabs: [{ id: 'out', label: 'Dépenses' }, { id: 'in', label: 'Revenus' }].map(function (t) {
+        var on = self.state.tab === t.id;
+        return { label: t.label, on: on, bg: on ? '#0E1320' : 'transparent', fg: on ? '#FFFFFF' : '#0E1320', pick: function () { self.setState({ tab: t.id }); } };
+      }),
+      cats: data[this.state.tab].map(function (c, i) {
+        var isOpen = self.state.open === c.name;
+        var n = c.subs.length;
+        // the chevron turns up when the row is open, telling the user a second tap folds it back
+        return { name: c.name, subs: c.subs, isOpen: isOpen,
+          count: n ? n + (n > 1 ? ' sous-catégories' : ' sous-catégorie') : '',
+          rot: isOpen ? '180deg' : '0deg', chevBg: isOpen ? '#CDEFE0' : '#EEF1F7',
+          bg: isOpen ? '#F4F6FA' : 'transparent', weight: isOpen ? '600' : '500',
+          border: i === 0 || isOpen ? '0' : '1px solid #EEF1F7',
+          open: function () { self.setState({ open: isOpen ? '' : c.name }); } };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

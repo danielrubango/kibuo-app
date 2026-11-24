@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Premier lancement, devise principale</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 32px 24px 24px; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column">
+  <span style="font-size: 14px; font-weight: 600; color: #0A7355">Étape 2 sur 4</span>
+  <h1 style="margin: 12px 0 8px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; line-height: 34px; font-weight: 700">Votre devise principale</h1>
+  <p style="margin: 0 0 20px; font-size: 15px; line-height: 22px; color: #525D73">Elle sert au suivi et aux rapports. Chaque compte gardera sa propre devise.</p>
+  <label for="devise" style="font-size: 14px; font-weight: 600; margin-bottom: 8px">Rechercher une devise</label>
+  <input id="devise" type="search" placeholder="Nom ou code" style="height: 52px; box-sizing: border-box; border: 0; border-radius: 14px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #0E1320; margin-bottom: 14px">
+  <div style="display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto">
+    <sc-for list="{{list}}" as="d" hint-placeholder-count="4">
+      <button type="button" onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="height: 60px; border-radius: 16px; background: #FFFFFF; border: 2px solid {{d.line}}; padding: 0 16px; color: #0E1320; font: 500 16px Inter, sans-serif; display: flex; align-items: center; justify-content: space-between"><span>{{d.name}}</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700">{{d.code}}</span></button>
+    </sc-for>
+  </div>
+  <a href="Lancement3.dc.html" style="height: 56px; border-radius: 18px; background: #5EEAB5; color: #0E1320; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Continuer</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { code: 'USD' };
+  }
+  renderVals() {
+    var self = this;
+    var all = [
+      { name: 'Dollar américain', code: 'USD' },
+      { name: 'Franc congolais', code: 'CDF' },
+      { name: 'Euro', code: 'EUR' },
+      { name: 'Franc CFA', code: 'XAF' }
+    ];
+    return {
+      list: all.map(function (d) {
+        var on = self.state.code === d.code;
+        return { name: d.name, code: d.code, on: on, line: on ? '#0A7355' : '#FFFFFF', pick: function () { self.setState({ code: d.code }); } };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

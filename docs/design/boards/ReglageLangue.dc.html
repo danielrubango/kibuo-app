@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Langue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px; overflow: hidden; position: relative; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 14px">
+  <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+    <a href="Aujourdhui.dc.html" aria-label="Retour à l'accueil" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Réglages</h1>
+  </header>
+  <sc-for list="{{sections}}" as="s" hint-placeholder-count="3">
+    <section style="display: flex; flex-direction: column; gap: 6px">
+      <h2 style="margin: 0; padding-left: 4px; font-size: 13px; font-weight: 600; color: #525D73">{{s.title}}</h2>
+      <div style="background: #FFFFFF; border-radius: 18px; padding: 2px 16px; display: flex; flex-direction: column">
+        <sc-for list="{{s.rows}}" as="r" hint-placeholder-count="3">
+          <a href="{{r.href}}" style="min-height: 52px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: #0E1320; font-size: 16px"><span>{{r.label}}</span><span style="font-size: 14px; color: #525D73">{{r.value}}</span></a>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for><a href="Reglages.dc.html" aria-label="Fermer" style="position: absolute; inset: 0; z-index: 6; background: rgba(14,19,32,0.42)"></a><section role="dialog" aria-label="Langue" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; box-sizing: border-box; padding: 10px 16px 20px; background: #EEF1F7; border-radius: 26px 26px 0 0; box-shadow: 0 -10px 30px rgba(14,19,32,0.18); display: flex; flex-direction: column; gap: 12px"><span aria-hidden="true" style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: #C9CFDB"></span><div style="display: flex; align-items: center; justify-content: space-between; margin-top: -4px"><h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">Langue</h2><a href="Reglages.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; margin-right: -10px; display: flex; align-items: center; justify-content: center; color: #525D73"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a></div><div style="max-height: 300px; overflow: hidden; background: #FFFFFF; border-radius: 18px; padding: 2px 14px; position: relative"><span style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-top: 0; opacity: 1"><span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 15px; font-weight: 600">Français</span><span style="font-size: 12px; color: #525D73">Français</span></span><span style="display: flex; color: #0A7355"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span></span><span style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-top: 1px solid #EEF1F7; opacity: 1"><span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 15px; font-weight: 600">English</span><span style="font-size: 12px; color: #525D73">Anglais</span></span></span></div><span style="font-size: 12px; line-height: 17px; color: #525D73; padding: 0 4px">Les nombres et les dates suivent la langue. Toucher une langue la choisit tout de suite. La liste défilera quand d’autres langues arriveront.</span></section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      sections: [
+        { title: 'Général', rows: [
+          { label: 'Langue', value: 'Français', href: '#' },
+          { label: 'Comptes', value: '5', href: 'Comptes.dc.html' },
+          { label: 'Types de compte', value: '4', href: 'TypeCompte.dc.html' },
+          { label: 'Devises', value: 'USD', href: 'Devises.dc.html' },
+          { label: 'Catégories', value: '', href: 'Categories.dc.html' },
+          { label: 'Début du mois', value: 'Le 1er', href: '#' },
+          { label: 'Récurrences et brouillons', value: 'Automatique', href: 'ReglagesBrouillons.dc.html' }
+        ] },
+        { title: 'Notifications', rows: [
+          { label: 'Rappels et alertes', value: '', href: 'Rappels.dc.html' }
+        ] },
+        { title: 'Sécurité', rows: [
+          { label: 'PIN et biométrie', value: 'Activé', href: 'Verrou.dc.html' },
+          { label: 'Code de récupération', value: '', href: 'CodeRecup.dc.html' }
+        ] },
+        { title: 'Données', rows: [
+          { label: 'Sauvegarde et restauration', value: '', href: 'Sauvegarde.dc.html' },
+          { label: 'Exporter en CSV', value: '', href: '#' }
+        ] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

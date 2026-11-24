@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Trop d’essais</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}
+.key{width:80px;height:60px;border:0;border-radius:20px;background:#FFFFFF;color:#0E1320;font:500 26px 'Space Grotesk',sans-serif;cursor:pointer}
+.key.empty{background:transparent;cursor:default}
+.key:disabled{color:#B6BDCB;background:#E4E8F0;cursor:default}
+.primary{width:100%;min-height:52px;border:0;border-radius:16px;background:#5EEAB5;color:#0E1320;font:600 16px Inter,sans-serif;cursor:pointer}
+.primary.off{background:#DDE2EC;color:#8A93A6;cursor:default}
+.ghost{min-height:44px;border:0;background:transparent;font:600 15px Inter,sans-serif;color:#0A7355;cursor:pointer}
+.chip{min-width:72px;min-height:48px;border-radius:14px;border:1.5px solid #C9CFDB;background:#FFFFFF;font:600 18px 'Space Grotesk',sans-serif;color:#0E1320;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:#0E1320;background:#0E1320;color:#FFFFFF}
+.card{background:#FFFFFF;border-radius:18px;padding:2px 16px;display:flex;flex-direction:column}
+.row{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#0E1320;font-size:16px;text-decoration:none}
+.row+.row{border-top:1px solid #EEF1F7}
+.help{font-size:13px;line-height:18px;color:#525D73;padding:0 4px}
+.sw{width:48px;height:28px;border-radius:14px;border:0;padding:0;position:relative;cursor:pointer;flex:none}
+.sw span{position:absolute;top:3px;width:22px;height:22px;border-radius:11px;background:#FFFFFF;box-shadow:0 1px 2px rgba(14,19,32,.25)}
+.note{font-size:12px;font-weight:600;color:#525D73;border:1px dashed #C9CFDB;border-radius:999px;padding:3px 9px;background:rgba(255,255,255,.6)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 64px 24px 24px; overflow: hidden; position: relative; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 14px"><svg viewBox="0 0 96 96" width="56" height="56" aria-hidden="true"><rect width="96" height="96" rx="22" fill="#0E1320"></rect><circle cx="48" cy="48" r="25" fill="#5EEAB5"></circle><path d="M42 35A10 10 0 1 1 54 35Z" fill="#FFC247" stroke="#0E1320" stroke-width="2.5"></path><path d="M45 28.5h6" stroke="#0E1320" stroke-width="1.8" stroke-linecap="round" opacity="0.45"></path><rect x="37" y="35" width="22" height="5" rx="2.5" fill="#0E1320"></rect></svg><h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700">Trop d’essais</h1><p style="margin: 0; font-size: 15px; line-height: 22px; color: #525D73; text-align: center; max-width: 300px">Réessayez dans <strong style="color: #8A5A00">{{left}}</strong>. Rien n’est effacé.</p><div style="display: flex; gap: 14px; height: 20px; align-items: center; margin: 4px 0 8px"><span style="width: 16px; height: 16px; box-sizing: border-box; border-radius: 8px; border: 2px solid #B6BDCB"></span><span style="width: 16px; height: 16px; box-sizing: border-box; border-radius: 8px; border: 2px solid #B6BDCB"></span><span style="width: 16px; height: 16px; box-sizing: border-box; border-radius: 8px; border: 2px solid #B6BDCB"></span><span style="width: 16px; height: 16px; box-sizing: border-box; border-radius: 8px; border: 2px solid #B6BDCB"></span></div><div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 10px 22px"><button type="button" class="key" disabled>5</button><button type="button" class="key" disabled>8</button><button type="button" class="key" disabled>3</button><button type="button" class="key" disabled>1</button><button type="button" class="key" disabled>7</button><button type="button" class="key" disabled>0</button><button type="button" class="key" disabled>6</button><button type="button" class="key" disabled>2</button><button type="button" class="key" disabled>9</button><span></span><button type="button" class="key" disabled>4</button><button type="button" class="key" disabled>←</button></div><button type="button" class="ghost">Utiliser l’empreinte</button><a href="CodeOublie.dc.html" style="min-height: 44px; display: flex; align-items: center; font-size: 14px; color: #525D73">Code oublié ?</a><span class="note" style="position: absolute; left: 16px; bottom: 16px">Attente : 30 s, puis 1 min, 5 min… à chaque échec</span></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { t: 28 }; }
+  renderVals() {
+    var self = this, t = this.state.t;
+    if (t > 0 && !this.timer) { this.timer = setTimeout(function () { self.timer = null; self.setState({ t: self.state.t - 1 }); }, 1000); }
+    return { left: '0:' + (t < 10 ? '0' : '') + t };
+  }
+}
+</script>
+</body>
+</html>

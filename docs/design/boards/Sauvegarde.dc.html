@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sauvegarde et restauration</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px; overflow: hidden; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 14px">
+  <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+    <a href="Reglages.dc.html" aria-label="Retour aux réglages" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Sauvegarde</h1>
+  </header>
+
+  <section style="background: #5EEAB5; border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 500">Dernière sauvegarde</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700">3 novembre</span></div>
+    <button type="button" style="height: 48px; border: 0; border-radius: 14px; background: #0E1320; color: #FFFFFF; font: 600 15px Inter, sans-serif">Sauvegarder maintenant</button>
+  </section>
+
+  <section style="background: #FFFFFF; border-radius: 18px; padding: 4px 16px; display: flex; flex-direction: column">
+    <sc-for list="{{opts}}" as="o" hint-placeholder-count="2">
+      <div style="min-height: 64px; display: flex; align-items: center; gap: 12px">
+        <div style="flex: 1 1 auto; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">{{o.title}}</span><span style="font-size: 13px; line-height: 18px; color: #525D73">{{o.help}}</span></div>
+        <button type="button" onClick="{{o.toggle}}" aria-pressed="{{o.on}}" aria-label="{{o.title}}" style="width: 52px; height: 44px; flex: 0 0 52px; border: 0; background: transparent; padding: 0; display: flex; align-items: center"><span style="width: 52px; height: 32px; border-radius: 16px; background: {{o.track}}; display: flex; align-items: center; justify-content: {{o.side}}; padding: 0 3px; box-sizing: border-box"><span style="width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF"></span></span></button>
+      </div>
+    </sc-for>
+    <button type="button" style="min-height: 52px; border: 0; background: transparent; padding: 0; display: flex; align-items: center; justify-content: space-between; font: 400 15px Inter, sans-serif; color: #0E1320"><span style="font-weight: 600">Dossier</span><span style="font-size: 14px; color: #525D73">Documents/Kibuo</span></button>
+  </section>
+
+  <section style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+    <h2 style="margin: 0; font-size: 16px; font-weight: 600">Restaurer une sauvegarde</h2>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: #525D73">Toutes les données actuelles seront remplacées. Une copie de leur état sera sauvegardée juste avant.</p>
+    <a href="RestauC1.dc.html" style="height: 48px; box-sizing: border-box; border: 2px solid #B3321A; border-radius: 14px; color: #B3321A; font: 600 15px Inter, sans-serif; display: flex; align-items: center; justify-content: center; text-decoration: none">Choisir un fichier</a>
+  </section>
+
+  <a href="ExportCSV.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: center; font: 600 15px Inter, sans-serif; color: #0A7355; text-decoration: none">Exporter en CSV</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { auto: true, pass: false };
+  }
+  renderVals() {
+    var self = this;
+    var make = function (key, title, help) {
+      var on = self.state[key];
+      return { title: title, help: help, on: on, track: on ? '#0A7355' : '#8A93A6', side: on ? 'flex-end' : 'flex-start', toggle: function () { var s = {}; s[key] = !self.state[key]; self.setState(s); } };
+    };
+    return {
+      opts: [
+        make('auto', 'Sauvegarde automatique', 'Chaque semaine'),
+        make('pass', 'Protéger par mot de passe', 'Sans ce mot de passe, le fichier reste illisible.')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

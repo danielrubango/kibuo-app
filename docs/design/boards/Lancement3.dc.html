@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Premier lancement, premier compte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}.hs{scrollbar-width:none}.hs::-webkit-scrollbar{display:none}</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif">
+  <div class="hs" style="position: absolute; inset: 0; overflow-y: auto">
+    <div style="box-sizing: border-box; padding: 32px 24px {{padBottom}}; display: flex; flex-direction: column; gap: 18px; transform: translateY({{shift}}); transition: transform 0.25s ease">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 14px; font-weight: 600; color: #0A7355">Étape 3 sur 4</span>
+        <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 28px; line-height: 34px; font-weight: 700">Votre premier compte</h1>
+        <p style="margin: 0; font-size: 15px; line-height: 22px; color: #525D73">Commencez par celui que vous utilisez le plus. Vous pourrez en ajouter d'autres ensuite.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+          <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="height: 52px; border-radius: 14px; border: 0; padding: 0 12px; font: 500 15px Inter, sans-serif; background: {{t.bg}}; color: {{t.fg}}; display: flex; align-items: center; gap: 8px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.d}}"></path></svg>{{t.label}}</button>
+        </sc-for>
+        <button type="button" style="grid-column: 1 / -1; height: 48px; border-radius: 14px; border: 1.5px dashed #8A93A6; background: transparent; color: #0A7355; font: 600 15px Inter, sans-serif">Créer un autre type</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="nom" style="font-size: 14px; font-weight: 600">Nom du compte</label>
+        <input id="nom" type="text" value="M-Pesa" style="height: 52px; box-sizing: border-box; border: 0; border-radius: 14px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #0E1320">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 14px; font-weight: 600">Solde de départ</span>
+        <div style="height: 60px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; border: 2px solid {{fieldBorder}}; padding: 0 6px; display: flex; align-items: center; gap: 8px; flex-direction: {{dir}}">
+          <button type="button" onClick="{{nextCurrency}}" aria-label="Changer de devise" style="flex: 0 0 auto; height: 44px; border: 0; border-radius: 12px; padding: 0 10px; background: #EEF1F7; display: flex; align-items: center; gap: 6px; font: 600 15px Inter, sans-serif; color: #0E1320">{{curCode}}<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+          <button type="button" onClick="{{openKeypad}}" aria-label="Saisir le solde de départ" style="flex: 1 1 auto; min-width: 0; height: 52px; border: 0; background: transparent; padding: 0 8px; display: flex; align-items: center; justify-content: {{justify}}; gap: 6px; font-family: 'Space Grotesk', sans-serif; color: #0E1320">
+            <span style="font-size: 26px; font-weight: 700; order: {{symOrder}}; color: #525D73">{{symbol}}</span>
+            <span style="font-size: 26px; font-weight: 700; order: 1">{{amount}}</span>
+            <span aria-hidden="true" style="width: 2px; height: 26px; background: {{caret}}; order: 1"></span>
+          </button>
+        </div>
+        <span style="font-size: 13px; color: #525D73; padding-left: 4px">{{curName}}. Touchez le code pour changer de devise.</span>
+      </div>
+    </div>
+  </div>
+
+  <section style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 10px 16px 16px; background: {{panelBg}}; border-radius: 24px 24px 0 0; box-shadow: {{panelShadow}}; display: flex; flex-direction: column; gap: 10px">
+    <sc-if value="{{kb}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; justify-content: center"><button type="button" onClick="{{closeKeypad}}" aria-label="Fermer le clavier" style="width: 64px; height: 24px; border: 0; background: transparent; padding: 0; display: flex; align-items: center; justify-content: center"><span style="width: 40px; height: 4px; border-radius: 2px; background: #C9CFDB"></span></button></div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{keys}}" as="k" hint-placeholder-count="12">
+          <button type="button" onClick="{{k.press}}" aria-label="{{k.aria}}" style="height: 52px; border: 0; border-radius: 16px; background: #FFFFFF; color: #0E1320; font: 500 22px 'Space Grotesk', sans-serif">{{k.label}}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <a href="Lancement4.dc.html" style="height: 56px; border-radius: 18px; background: #5EEAB5; color: #0E1320; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Continuer</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { type: 'Mobile money', cur: 0, amount: '120', kb: true };
+  }
+  press(k) {
+    var a = this.state.amount;
+    if (k === 'del') { a = a.length > 1 ? a.slice(0, -1) : '0'; }
+    else if (k === ',') { if (a.indexOf(',') < 0) { a = a + ','; } }
+    else if (a === '0') { a = k; }
+    else if (a.length < 9 && !(a.indexOf(',') >= 0 && a.split(',')[1].length >= 2)) { a = a + k; }
+    this.setState({ amount: a });
+  }
+  renderVals() {
+    var self = this;
+    // where each currency writes its symbol: the currency button follows it
+    var C = [
+      { code: 'USD', name: 'Dollar américain', symbol: '$', before: true },
+      { code: 'CDF', name: 'Franc congolais', symbol: 'FC', before: false },
+      { code: 'EUR', name: 'Euro', symbol: '€', before: false }
+    ];
+    var c = C[this.state.cur];
+    var kb = this.state.kb;
+    var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0', 'del'].map(function (k) {
+      return { label: k === 'del' ? '←' : k, aria: k === 'del' ? 'Effacer' : k, press: function () { self.press(k); } };
+    });
+    return {
+      types: [
+        { l: 'Espèces', d: 'M3 7h18v10H3zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z' },
+        { l: 'Banque', d: 'M3 10l9-6 9 6M5 10v8M10 10v8M14 10v8M19 10v8M3 20h18' },
+        { l: 'Mobile money', d: 'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 18h2' },
+        { l: 'Épargne', d: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v10M9 9.5h4.5a2 2 0 0 1 0 4H10' }
+      ].map(function (t) {
+        var on = self.state.type === t.l;
+        return { label: t.l, d: t.d, on: on, bg: on ? '#0E1320' : '#FFFFFF', fg: on ? '#FFFFFF' : '#0E1320', pick: function () { self.setState({ type: t.l }); } };
+      }),
+      keys: keys, kb: kb, amount: this.state.amount,
+      curCode: c.code, curName: c.name, symbol: c.symbol,
+      dir: c.before ? 'row' : 'row-reverse', justify: c.before ? 'flex-start' : 'flex-end', symOrder: c.before ? '0' : '2',
+      fieldBorder: kb ? '#0A7355' : '#FFFFFF', caret: kb ? '#0A7355' : 'transparent',
+      panelBg: kb ? '#E4E8F0' : '#EEF1F7', panelShadow: kb ? '0 -8px 24px rgba(14,19,32,0.10)' : 'none',
+      padBottom: kb ? '360px' : '96px', shift: kb ? '-120px' : '0px',
+      nextCurrency: function () { self.setState({ cur: (self.state.cur + 1) % C.length }); },
+      openKeypad: function () { self.setState({ kb: true }); },
+      closeKeypad: function () { self.setState({ kb: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

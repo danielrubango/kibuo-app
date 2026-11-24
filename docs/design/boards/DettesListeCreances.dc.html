@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dettes, filtre On me doit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}.hs{scrollbar-width:none}.hs::-webkit-scrollbar{display:none}@keyframes kbPulse{0%{transform:scale(0.7);opacity:0.9}100%{transform:scale(1.5);opacity:0}}.kb-pulse{animation:kbPulse 1.4s ease-out infinite}@keyframes kbUp{from{transform:translateY(90px)}to{transform:none}}.kb-fab{animation:kbUp 0.25s ease-out}</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{rootBg}}; transition: background 0.2s; color: #0E1320; font-family: Inter, sans-serif">
+  <div id="kb-scroll" class="hs" style="position: absolute; inset: 0; overflow-y: auto; scroll-behavior: smooth">
+    <main style="box-sizing: border-box; padding: 16px 16px {{padBottom}}; display: flex; flex-direction: column; gap: 10px">
+      <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+        <a href="Aujourdhui.dc.html" aria-label="Retour à l'accueil" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+        <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; flex: 1 1 auto">Dettes et créances</h1>
+        <button type="button" onClick="{{openPrefs}}" aria-label="Affichage de la liste" style="width: 44px; height: 44px; border: 0; background: transparent; color: #0A7355; display: flex; align-items: center; justify-content: center"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4"></path></svg></button>
+      </header>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; opacity: {{dimOp}}; filter: {{dimBlur}}; transition: opacity 0.2s, filter 0.2s">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+          <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="border: 0; border-radius: 16px; padding: 8px 12px; display: flex; flex-direction: column; text-align: left; font-family: Inter, sans-serif; background: {{t.bg}}; color: {{t.fg}}">
+            <span style="display: flex; justify-content: space-between; font-size: 13px"><span>{{t.label}}</span><span style="font-weight: 600; color: {{t.subFg}}">{{t.sub}}</span></span>
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 21px; line-height: 26px; font-weight: 700">{{t.amount}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+        <section style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; opacity: {{g.secOp}}; filter: {{g.secBlur}}; transition: opacity 0.2s, filter 0.2s">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; opacity: {{g.op}}; filter: {{g.blur}}"><h2 style="margin: 0; font: inherit; color: {{g.fg}}">{{g.title}}</h2><sc-if value="{{g.hasTotal}}" hint-placeholder-val="{{false}}"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 500; color: #525D73">{{g.total}}</span></sc-if></div>
+          <sc-for list="{{g.items}}" as="i" hint-placeholder-count="2">
+            <div id="{{i.id}}" style="position: relative; display: flex; flex-direction: column; gap: 8px; border-top: {{i.border}}; padding-top: {{i.padTop}}; opacity: {{i.op}}; filter: {{i.blur}}; background: {{i.rowBg}}; box-shadow: {{i.shadow}}; border-radius: 16px; margin: 0 {{i.mx}}; padding-left: {{i.px}}; padding-right: {{i.px}}; padding-bottom: {{i.pb}}; scroll-margin-top: 16px; scroll-margin-bottom: {{scrollGap}}; transition: opacity 0.2s, background 0.2s">
+              <sc-if value="{{i.open}}" hint-placeholder-val="{{false}}">
+                <div style="background: {{i.boxBg}}; border: 1px solid {{i.track}}; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 18px">
+                  <span style="font-size: 14px; font-weight: 600">{{i.dateLine}}</span>
+                  <sc-if value="{{i.hasProgress}}" hint-placeholder-val="{{false}}"><span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1 1 auto; height: 8px; border-radius: 4px; background: {{i.track}}; overflow: hidden"><span style="display: block; width: {{i.pct}}; height: 8px; border-radius: 4px; background: {{i.bar}}"></span></span><span style="font-size: 12px; font-weight: 600; white-space: nowrap">{{i.pctLabel}}</span></span></sc-if>
+                  <span style="color: #525D73">{{i.payLine}}</span>
+                  <div style="display: flex; gap: 8px; margin-top: 4px">
+                    <sc-if value="{{i.unpaid}}" hint-placeholder-val="{{true}}"><a href="PlusBtnB1.dc.html" style="flex: 1 1 0; min-height: 44px; border-radius: 12px; background: #0E1320; color: #FFFFFF; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">{{i.action}}</a></sc-if>
+                    <a href="FicheDette.dc.html" style="flex: 1 1 0; min-height: 44px; border-radius: 12px; background: #FFFFFF; color: #0E1320; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none">Détails<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+                  </div>
+                </div>
+              </sc-if>
+              <button type="button" onClick="{{i.toggle}}" aria-expanded="{{i.open}}" style="min-height: 48px; width: 100%; border: 0; background: transparent; padding: 0; text-align: left; font-family: Inter, sans-serif; display: flex; align-items: center; gap: 12px; color: #0E1320">
+                <div style="width: 46px; height: 46px; flex: 0 0 46px; position: relative; display: flex; align-items: center; justify-content: center; color: {{i.boxFg}}">
+                  <svg viewBox="0 0 46 46" width="46" height="46" aria-hidden="true" style="position: absolute; inset: 0"><rect x="2.5" y="2.5" width="41" height="41" rx="13" fill="{{i.boxBg}}" stroke="{{i.track}}" stroke-width="4"></rect><path d="M23 2.5H30.5A13 13 0 0 1 43.5 15.5V30.5A13 13 0 0 1 30.5 43.5H15.5A13 13 0 0 1 2.5 30.5V15.5A13 13 0 0 1 15.5 2.5Z" fill="none" stroke="{{i.barStroke}}" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="{{i.dash}}"></path></svg>
+                  <span style="position: relative; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; display: flex"><sc-if value="{{i.paid}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></sc-if><sc-if value="{{i.unpaid}}" hint-placeholder-val="{{true}}">{{i.day}}</sc-if></span>
+                </div>
+                <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-size: 15px; font-weight: 600; color: {{i.nameFg}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{i.name}}</span>
+                  <span style="font-size: 13px; font-weight: 600; color: {{i.wordFg}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{i.word}}</span>
+                </div>
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; white-space: nowrap; color: {{i.amountFg}}">{{i.amount}}</span>
+                <span style="position: relative; display: flex; flex: 0 0 18px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#525D73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.chev}}"></path></svg></span>
+              </button>
+              
+            </div>
+          </sc-for>
+        </section>
+      </sc-for>
+      <sc-if value="{{paidBottom}}" hint-placeholder-val="{{false}}">
+      <button type="button" onClick="{{togglePaid}}" aria-expanded="{{showPaid}}" style="min-height: 48px; border: 0; border-radius: 18px; background: #FFFFFF; padding: 0 14px; display: flex; align-items: center; gap: 10px; font: 600 14px Inter, sans-serif; color: #525D73; opacity: {{paidOp}}; filter: {{paidBlur}}; transition: opacity 0.2s, filter 0.2s"><span style="color: #0A7355; display: flex"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span><span style="flex: 1 1 auto; text-align: left">{{paidLabel}}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{paidChev}}"></path></svg></button>
+      <sc-if value="{{showPaid}}" hint-placeholder-val="{{false}}">
+        <section style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; opacity: {{paidOp}}; filter: {{paidBlur}}; transition: opacity 0.2s, filter 0.2s">
+          <sc-for list="{{paidItems}}" as="i" hint-placeholder-count="1">
+            <div id="{{i.id}}" style="position: relative; display: flex; flex-direction: column; gap: 8px; border-top: {{i.border}}; padding-top: {{i.padTop}}; opacity: {{i.op}}; filter: {{i.blur}}; background: {{i.rowBg}}; box-shadow: {{i.shadow}}; border-radius: 16px; margin: 0 {{i.mx}}; padding-left: {{i.px}}; padding-right: {{i.px}}; padding-bottom: {{i.pb}}; scroll-margin-top: 16px; scroll-margin-bottom: {{scrollGap}}; transition: opacity 0.2s, background 0.2s">
+              <sc-if value="{{i.open}}" hint-placeholder-val="{{false}}">
+                <div style="background: {{i.boxBg}}; border: 1px solid {{i.track}}; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 18px">
+                  <span style="font-size: 14px; font-weight: 600">{{i.dateLine}}</span>
+                  <sc-if value="{{i.hasProgress}}" hint-placeholder-val="{{false}}"><span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1 1 auto; height: 8px; border-radius: 4px; background: {{i.track}}; overflow: hidden"><span style="display: block; width: {{i.pct}}; height: 8px; border-radius: 4px; background: {{i.bar}}"></span></span><span style="font-size: 12px; font-weight: 600; white-space: nowrap">{{i.pctLabel}}</span></span></sc-if>
+                  <span style="color: #525D73">{{i.payLine}}</span>
+                  <div style="display: flex; gap: 8px; margin-top: 4px">
+                    <sc-if value="{{i.unpaid}}" hint-placeholder-val="{{true}}"><a href="PlusBtnB1.dc.html" style="flex: 1 1 0; min-height: 44px; border-radius: 12px; background: #0E1320; color: #FFFFFF; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">{{i.action}}</a></sc-if>
+                    <a href="FicheDette.dc.html" style="flex: 1 1 0; min-height: 44px; border-radius: 12px; background: #FFFFFF; color: #0E1320; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none">Détails<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+                  </div>
+                </div>
+              </sc-if>
+      </sc-if>
+              <button type="button" onClick="{{i.toggle}}" aria-expanded="{{i.open}}" style="min-height: 48px; width: 100%; border: 0; background: transparent; padding: 0; text-align: left; font-family: Inter, sans-serif; display: flex; align-items: center; gap: 12px; color: #0E1320">
+                <div style="width: 46px; height: 46px; flex: 0 0 46px; position: relative; display: flex; align-items: center; justify-content: center; color: {{i.boxFg}}">
+                  <svg viewBox="0 0 46 46" width="46" height="46" aria-hidden="true" style="position: absolute; inset: 0"><rect x="2.5" y="2.5" width="41" height="41" rx="13" fill="{{i.boxBg}}" stroke="{{i.track}}" stroke-width="4"></rect><path d="M23 2.5H30.5A13 13 0 0 1 43.5 15.5V30.5A13 13 0 0 1 30.5 43.5H15.5A13 13 0 0 1 2.5 30.5V15.5A13 13 0 0 1 15.5 2.5Z" fill="none" stroke="{{i.barStroke}}" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="{{i.dash}}"></path></svg>
+                  <span style="position: relative; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; display: flex"><sc-if value="{{i.paid}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></sc-if><sc-if value="{{i.unpaid}}" hint-placeholder-val="{{true}}">{{i.day}}</sc-if></span>
+                </div>
+                <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-size: 15px; font-weight: 600; color: {{i.nameFg}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{i.name}}</span>
+                  <span style="font-size: 13px; font-weight: 600; color: {{i.wordFg}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{i.word}}</span>
+                </div>
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; white-space: nowrap; color: {{i.amountFg}}">{{i.amount}}</span>
+                <span style="position: relative; display: flex; flex: 0 0 18px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#525D73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.chev}}"></path></svg></span>
+              </button>
+              
+            </div>
+          </sc-for>
+        </section>
+      </sc-if>
+    </main>
+  </div>
+  <sc-if value="{{fabOn}}" hint-placeholder-val="{{true}}">
+    <a href="NouvelleDette.dc.html" aria-label="Ajouter une dette ou une créance" class="kb-fab" style="position: absolute; right: 16px; bottom: 16px; width: 62px; height: 62px; border-radius: 20px; background: #5EEAB5; color: #0E1320; display: flex; align-items: center; justify-content: center"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+  </sc-if>
+  <sc-if value="{{coachOn}}" hint-placeholder-val="{{true}}">
+    <div aria-hidden="true" style="position: absolute; left: 22px; top: 167px; width: 346px; height: 62px; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(14,19,32,0.62); pointer-events: none"></div>
+    <div role="dialog" aria-label="Découvrir la liste" style="position: absolute; left: 16px; right: 16px; top: 244px; background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+      <span aria-hidden="true" style="position: absolute; top: -7px; left: 40px; width: 14px; height: 14px; background: #FFFFFF; transform: rotate(45deg)"></span>
+      <span style="font-size: 12px; font-weight: 600; color: #525D73">{{coachStep}}</span>
+      <span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700">{{coachTitle}}</span>
+      <span style="font-size: 14px; line-height: 20px; color: #525D73">{{coachText}}</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px">
+        <button type="button" onClick="{{coachSkip}}" style="min-height: 44px; border: 0; background: transparent; padding: 0; font: 600 14px Inter, sans-serif; color: #525D73">Passer</button>
+        <button type="button" onClick="{{coachNext}}" style="min-height: 44px; border: 0; border-radius: 14px; padding: 0 18px; background: #5EEAB5; color: #0E1320; font: 600 15px Inter, sans-serif">{{coachCta}}</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{prefsOn}}" hint-placeholder-val="{{false}}">
+    <div onClick="{{closePrefs}}" style="position: absolute; inset: 0; background: rgba(14,19,32,0.42)"></div>
+    <section role="dialog" aria-label="Affichage de la liste" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 10px 16px 20px; background: #EEF1F7; border-radius: 26px 26px 0 0; box-shadow: 0 -10px 30px rgba(14,19,32,0.18); display: flex; flex-direction: column; gap: 12px">
+      <span aria-hidden="true" style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: #C9CFDB"></span>
+      <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">Affichage de la liste</h2>
+      <span style="font-size: 14px; font-weight: 600; padding-left: 4px">Dettes et créances soldées</span>
+      <div style="background: #FFFFFF; border-radius: 18px; padding: 4px 14px; display: flex; flex-direction: column">
+        <sc-for list="{{paidModes}}" as="m" hint-placeholder-count="3"><button type="button" onClick="{{m.pick}}" role="radio" aria-checked="{{m.on}}" style="min-height: 62px; border: 0; border-top: {{m.border}}; background: transparent; padding: 8px 0; display: flex; align-items: center; gap: 12px; text-align: left; font-family: Inter, sans-serif; color: #0E1320">
+          <span aria-hidden="true" style="width: 22px; height: 22px; flex: 0 0 22px; box-sizing: border-box; border-radius: 11px; border: 2px solid {{m.ring}}; display: flex; align-items: center; justify-content: center"><span style="width: 10px; height: 10px; border-radius: 5px; background: {{m.dot}}"></span></span>
+          <span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">{{m.label}}</span><span style="font-size: 12px; line-height: 16px; color: #525D73">{{m.help}}</span></span></button></sc-for>
+      </div>
+      <span style="font-size: 12px; color: #525D73; padding-left: 4px">Ce choix se retrouve aussi dans Réglages.</span>
+      <button type="button" onClick="{{closePrefs}}" style="min-height: 52px; border: 0; border-radius: 16px; background: #0E1320; color: #FFFFFF; font: 600 15px Inter, sans-serif">Terminé</button>
+    </section>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'owed', open: {}, showPaid: false, seen: false, coach: 0, paidMode: 'inline', prefs: false };
+  }
+  reveal(id, oldTop) {
+    // make the opened card fully visible once it has rendered
+    var STRAT = 'keep';
+    setTimeout(function () {
+      var el = document.getElementById(id);
+      var box = document.getElementById('kb-scroll');
+      if (!el || !box) return;
+      var br = box.getBoundingClientRect();
+      var topLimit = br.top + 12;
+      var bottomLimit = br.bottom - 16; // the + button is hidden while a card is open
+      if (STRAT === 'keep') {
+        // the tapped row stays under the finger; the list moves only if the card would be cut
+        box.style.scrollBehavior = 'auto';
+        var b = el.querySelector('button[aria-expanded]');
+        if (b && oldTop !== null) box.scrollTop += b.getBoundingClientRect().top - oldTop;
+        box.style.scrollBehavior = 'smooth';
+        var r = el.getBoundingClientRect();
+        if (r.top < topLimit) box.scrollTop -= topLimit - r.top;
+        else if (r.bottom > bottomLimit) box.scrollTop += r.bottom - bottomLimit;
+        return;
+      }
+      var r2 = el.getBoundingClientRect();
+      var target = STRAT === 'top' ? r2.top - topLimit : (r2.top + r2.bottom) / 2 - (topLimit + bottomLimit) / 2;
+      box.scrollTop += target;
+    }, 60);
+  }
+  renderVals() {
+    var self = this;
+    var MODE = 'b';
+    var tab = this.state.tab;
+    var owe = tab === 'owe';
+    var OP = '0.6', BL = 'blur(3px)';
+    var openMap = this.state.open;
+    var openKey = Object.keys(openMap).filter(function (k) { return openMap[k]; })[0] || null;
+    var ST = {
+      late:   { boxBg: '#FFF1ED', boxFg: '#7C1F0C', bar: '#B3321A', wordFg: '#B3321A', track: '#FFD3C8' },
+      today:  { boxBg: '#FFF8E8', boxFg: '#6B4A00', bar: '#D99A1C', wordFg: '#8A5A00', track: '#F6E2B4' },
+      soon:   { boxBg: '#FFF8E8', boxFg: '#6B4A00', bar: '#D99A1C', wordFg: '#8A5A00', track: '#F6E2B4' },
+      normal: { boxBg: '#F2FBF7', boxFg: '#0E1320', bar: '#0A7355', wordFg: '#525D73', track: '#CDEFE0' },
+      none:   { boxBg: '#F4F6FA', boxFg: '#525D73', bar: '#8A93A6', wordFg: '#525D73', track: '#DDE2EC' },
+      paid:   { boxBg: '#D6F5E8', boxFg: '#0A7355', bar: '#0A7355', wordFg: '#0A7355', track: '#CDEFE0' }
+    };
+    // day, name, state, word (always the delay), remaining, pct, pctLabel, dateLine, payLine
+    var data = {
+      owe: [
+        { title: 'En retard', total: '10,00 $', fg: '#B3321A', items: [
+          ['2', 'Oncle Jean', 'late', 'En retard de 7 jours', '10,00 $', 33, '5 / 15 $', 'Échéance dépassée : lundi 2 novembre', '5,00 $ déjà remboursés sur 15,00 $.']
+        ] },
+        { title: 'Novembre', total: '75,00 $', fg: '#0E1320', items: [
+          ['9', 'Kevin', 'today', 'Dans 5 heures', '10,00 $', 0, '', 'Échéance : aujourd\u2019hui, lundi 9 novembre', 'Rien remboursé pour l\u2019instant.'],
+          ['11', 'Amani', 'soon', 'Après-demain', '40,00 $', 0, '', 'Échéance : mercredi 11 novembre', 'Rien remboursé pour l\u2019instant.'],
+          ['28', 'Patrick Mukendi', 'normal', 'Dans 19 jours', '25,00 $', 0, '', 'Échéance : samedi 28 novembre', 'Rien remboursé pour l\u2019instant.']
+        ] },
+        { title: 'Décembre', total: '150,00 $', fg: '#0E1320', items: [
+          ['5', 'Patrick', 'normal', 'Dans 26 jours', '120,00 $', 40, '80 / 200 $', 'Échéance : samedi 5 décembre', '80,00 $ déjà remboursés sur 200,00 $, en 2 fois.'],
+          ['12', 'Amani', 'normal', 'Dans 33 jours', '30,00 $', 0, '', 'Échéance : samedi 12 décembre', 'Rien remboursé pour l\u2019instant.']
+        ] },
+        { title: 'Sans échéance', total: '20,00 $', fg: '#0E1320', items: [
+          ['–', 'Marie', 'none', 'Sans échéance', '20,00 $', 0, '', 'Aucune date fixée', 'Rien remboursé pour l\u2019instant.']
+        ] }
+      ],
+      owed: [
+        { title: 'Novembre', total: '25,00 $', fg: '#0E1320', items: [
+          ['15', 'Grâce', 'normal', 'Dans 6 jours', '25,00 $', 0, '', 'Échéance : dimanche 15 novembre', 'Rien reçu pour l\u2019instant.']
+        ] },
+        { title: 'Décembre', total: '60,00 $', fg: '#0E1320', items: [
+          ['12', 'David', 'normal', 'Dans 33 jours', '60,00 $', 33, '30 / 90 $', 'Échéance : samedi 12 décembre', '30,00 $ déjà reçus sur 90,00 $.']
+        ] },
+        { title: 'Sans échéance', total: 'Environ 10,00 $', fg: '#0E1320', items: [
+          ['–', 'Sarah', 'none', 'Sans échéance', '28 000 FC', 0, '', 'Aucune date fixée', 'Environ 10,00 $ au taux du jour.']
+        ] }
+      ]
+    };
+    var paidData = {
+      owe: [['3', 'Papa', 'paid', 'Soldée il y a 6 jours', '50,00 $', 100, '50 / 50 $', 'Dernier remboursement : mardi 3 novembre', 'Remboursée en 2 fois.']],
+      owed: [['1', 'Ruth', 'paid', 'Reçue il y a 8 jours', '40,00 $', 100, '40 / 40 $', 'Dernier versement : dimanche 1er novembre', 'Reçue en une fois.']]
+    };
+    var hasItems = data[tab].length > 0;
+    var firstKey = hasItems ? tab + data[tab][0].items[0][1] + data[tab][0].items[0][0] : null;
+    var item = function (r, n) {
+      var s = ST[r[2]];
+      var key = tab + r[1] + r[0];
+      var id = 'kb-' + key.replace(/[^a-zA-Z0-9]/g, '');
+      var open = openKey === key;
+      var paid = r[2] === 'paid';
+      var dim = openKey && !open;
+      var lift = open && MODE !== 'c';
+      return {
+        id: id, day: r[0], name: r[1], word: r[3], amount: r[4],
+        pct: r[5] + '%', dash: r[5] + ' 100', pctLabel: r[6], hasProgress: r[5] > 0,
+        dateLine: r[7], payLine: r[8], due: (r[7].split(' : ')[1] || r[7]), paidAmt: (r[6] ? r[6].split(' / ')[0] + ' $' : '0 $'), action: owe ? 'Rembourser' : 'Encaisser',
+        boxBg: s.boxBg, boxFg: s.boxFg, bar: s.bar, wordFg: s.wordFg, track: s.track,
+        barStroke: r[5] > 0 ? s.bar : 'none',
+        nameFg: paid ? '#525D73' : '#0E1320', amountFg: paid ? '#525D73' : '#0E1320',
+        paid: paid, unpaid: !paid,
+        border: n === 0 || lift ? '0' : '1px solid #EEF1F7', padTop: n === 0 ? '0' : '8px',
+        op: dim ? OP : '1', blur: dim ? BL : 'none',
+        rowBg: lift ? '#FFFFFF' : (open ? '#EEF1F7' : 'transparent'),
+        shadow: lift ? '0 8px 24px rgba(14,19,32,0.14)' : 'none',
+        mx: open ? '-8px' : '0', px: open ? '8px' : '0', pb: open ? '8px' : '0',
+        open: open, chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
+        pulse: MODE === 'a' && !self.state.seen && key === firstKey && !openKey,
+        showTip: MODE === 'c' && !self.state.seen && key === firstKey && !openKey,
+        toggle: function () {
+          var b0 = document.getElementById(id);
+          var btn = b0 ? b0.querySelector('button[aria-expanded]') : null;
+          var oldTop = btn ? btn.getBoundingClientRect().top : null;
+          var o = {}; o[key] = !open;
+          self.setState({ open: o, seen: true, coach: 0 });
+          if (!open) self.reveal(id, oldTop);
+        },
+        raw: r
+      };
+    };
+    var build = function (list) { return list.map(function (r, n) { return item(r, n); }); };
+    var tabs = [
+      { id: 'owe', label: 'Je dois', amount: '255,00 $', sub: '1 en retard', alert: true },
+      { id: 'owed', label: 'On me doit', amount: '95,00 $', sub: '', alert: false }
+    ].map(function (t) {
+      var on = tab === t.id;
+      return { label: t.label, amount: t.amount, sub: t.sub, on: on,
+        bg: on ? '#0E1320' : '#FFFFFF', fg: on ? '#FFFFFF' : '#0E1320',
+        subFg: t.alert ? (on ? '#FFB4A2' : '#B3321A') : (on ? '#C3CBDB' : '#525D73'),
+        pick: function () { self.setState({ tab: t.id, open: {} }); } };
+    });
+    // settled debts: in their month (or "Sans échéance"), grouped at the bottom, or hidden
+    var paidMode = this.state.paidMode;
+    var PAID_GROUP = { Papa: 'Novembre', Ruth: 'Novembre' };
+    var groups = data[tab].map(function (g) {
+      var rows = g.items.slice();
+      if (paidMode === 'inline') paidData[tab].forEach(function (r) { if ((PAID_GROUP[r[1]] || 'Sans échéance') === g.title) rows.push(r); });
+      if (paidMode === 'inline') rows.sort(function (a, b) { return (parseInt(a[0], 10) || 99) - (parseInt(b[0], 10) || 99); });
+      var items = build(rows);
+      var has = items.some(function (i) { return i.open; });
+      // a group without the open card fades as a whole; inside the open card's group, only its neighbours fade
+      if (!has) items.forEach(function (i) { i.op = '1'; i.blur = 'none'; });
+      var back = openKey && !has;
+      return { title: g.title, total: g.total, fg: g.fg, hasTotal: g.items.length > 1, items: items,
+        secOp: back ? OP : '1', secBlur: back ? BL : 'none',
+        op: openKey && has ? OP : '1', blur: openKey && has ? BL : 'none' };
+    });
+    var paidItems = paidMode === 'bottom' ? build(paidData[tab]) : [];
+    if (!paidItems.some(function (i) { return i.open; })) paidItems.forEach(function (i) { i.op = '1'; i.blur = 'none'; });
+    var sheetItems = groups.reduce(function (acc, g) { return acc.concat(g.items); }, []).concat(paidItems).filter(function (i) { return i.open; });
+    var sp = this.state.showPaid;
+    var coach = this.state.coach;
+    var sheetOn = MODE === 'c' && !!openKey;
+    return {
+      tabs: tabs, groups: groups, paidItems: paidItems, paidBottom: paidMode === 'bottom',
+      prefsOn: !!this.state.prefs, openPrefs: function () { self.setState({ prefs: true }); }, closePrefs: function () { self.setState({ prefs: false }); },
+      paidModes: [['inline', 'Dans leur mois', 'Avec les autres, à leur date. Sans date : dans « Sans échéance ».'], ['bottom', 'Regroupées en bas', 'Un bloc « soldées » à part, qui se déplie.'], ['hidden', 'Masquées', 'Visibles seulement dans la fiche de la personne.']].map(function (m, i) {
+        var on = paidMode === m[0];
+        return { label: m[1], help: m[2], on: on, border: i === 0 ? '0' : '1px solid #EEF1F7', ring: on ? '#0A7355' : '#B6BDCB', dot: on ? '#0A7355' : 'transparent', pick: function () { self.setState({ paidMode: m[0] }); } };
+      }),
+      showPaid: sp, paidChev: sp ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
+      paidLabel: owe ? '1 dette soldée' : '1 créance encaissée',
+      paidOp: openKey && !paidItems.some(function (i) { return i.open; }) ? OP : '1',
+      paidBlur: openKey && !paidItems.some(function (i) { return i.open; }) ? BL : 'none',
+      dimOp: openKey ? OP : '1', dimBlur: openKey ? BL : 'none', rootBg: openKey ? '#EEF1F7' : '#EEF1F7',
+      togglePaid: function () { self.setState({ showPaid: !self.state.showPaid }); },
+      padBottom: sheetOn ? '320px' : '96px',
+      scrollGap: sheetOn ? '300px' : '96px',
+      fabOn: !openKey,
+      sheetOn: sheetOn, sheetItems: sheetItems,
+      closeSheet: function () { self.setState({ open: {} }); },
+      coachOn: MODE === 'b' && hasItems && coach > 0 && tab === 'owe',
+      coachStep: coach === 1 ? '1 sur 2' : '2 sur 2',
+      coachTitle: coach === 1 ? 'Chaque ligne, une personne' : 'Touchez pour le détail',
+      coachText: coach === 1 ? 'Oncle Jean est en rouge car l\u2019échéance est dépassée. Le carré autour du jour se remplit à mesure des remboursements.' : 'Les montants exacts, la date complète et le bouton pour rembourser s\u2019affichent au toucher.',
+      coachCta: coach === 1 ? 'Suivant' : 'Essayer',
+      coachSkip: function () { self.setState({ coach: 0, seen: true }); },
+      coachNext: function () {
+        if (self.state.coach === 1) { self.setState({ coach: 2 }); return; }
+        var o = {}; o[firstKey] = true;
+        self.setState({ coach: 0, seen: true, open: o });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

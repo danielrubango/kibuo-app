@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Créer le code C2</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}
+.key{width:80px;height:60px;border:0;border-radius:20px;background:#FFFFFF;color:#0E1320;font:500 26px 'Space Grotesk',sans-serif;cursor:pointer}
+.key.empty{background:transparent;cursor:default}
+.key:disabled{color:#B6BDCB;background:#E4E8F0;cursor:default}
+.primary{width:100%;min-height:52px;border:0;border-radius:16px;background:#5EEAB5;color:#0E1320;font:600 16px Inter,sans-serif;cursor:pointer}
+.primary.off{background:#DDE2EC;color:#8A93A6;cursor:default}
+.ghost{min-height:44px;border:0;background:transparent;font:600 15px Inter,sans-serif;color:#0A7355;cursor:pointer}
+.chip{min-width:72px;min-height:48px;border-radius:14px;border:1.5px solid #C9CFDB;background:#FFFFFF;font:600 18px 'Space Grotesk',sans-serif;color:#0E1320;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:#0E1320;background:#0E1320;color:#FFFFFF}
+.card{background:#FFFFFF;border-radius:18px;padding:2px 16px;display:flex;flex-direction:column}
+.row{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#0E1320;font-size:16px;text-decoration:none}
+.row+.row{border-top:1px solid #EEF1F7}
+.help{font-size:13px;line-height:18px;color:#525D73;padding:0 4px}
+.sw{width:48px;height:28px;border-radius:14px;border:0;padding:0;position:relative;cursor:pointer;flex:none}
+.sw span{position:absolute;top:3px;width:22px;height:22px;border-radius:11px;background:#FFFFFF;box-shadow:0 1px 2px rgba(14,19,32,.25)}
+.note{font-size:12px;font-weight:600;color:#525D73;border:1px dashed #C9CFDB;border-radius:999px;padding:3px 9px;background:rgba(255,255,255,.6)}
+</style>
+<style>
+.box{width:44px;height:54px;box-sizing:border-box;border-radius:12px;background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.key.ok{background:#5EEAB5;font-size:24px}
+.key.ok.off{background:#DDE2EC;color:#8A93A6;cursor:default}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 0; overflow: hidden; position: relative; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 14px"><header style="display: flex; align-items: center; gap: 4px; height: 44px; align-self: stretch"><button type="button" aria-label="Annuler" style="width: 44px; height: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0E1320" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Créer votre code</h1></header><div style="display: flex; flex-direction: column; align-items: center; gap: 10px; align-self: stretch; margin-top: 24px"><h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; text-align: center">{{title}}</h2><p style="margin: 0; font-size: 14px; line-height: 20px; color: {{subColor}}; text-align: center; min-height: 40px; max-width: 300px">{{sub}}</p><div aria-label="{{dotsLabel}}" style="display: flex; gap: 8px; margin: 8px 0"><sc-for list="{{boxes}}" as="b" hint-placeholder-count="6"><span class="box" style="border: 2px {{b.border}} {{b.color}}"><span style="width: 12px; height: 12px; border-radius: 6px; background: #0E1320; display: {{b.dot}}"></span></span></sc-for></div></div><div style="display: {{showPad}}; flex-direction: column; align-items: center; gap: 12px; align-self: stretch; margin-top: auto; padding-bottom: 28px"><div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 10px 22px"><sc-for list="{{keys}}" as="k" hint-placeholder-count="12"><button type="button" class="{{k.cls}}" onClick="{{k.press}}" aria-label="{{k.aria}}">{{k.label}}</button></sc-for></div><div style="min-height: 52px; align-self: stretch; display: {{showValidate}}"><button type="button" class="{{validateCls}}" onClick="{{validate}}">Valider</button></div></div><div style="display: {{showDone}}; flex-direction: column; align-items: center; gap: 16px; align-self: stretch; margin-top: 40px"><span style="width: 64px; height: 64px; border-radius: 32px; background: #D5F2E4; display: flex; align-items: center; justify-content: center; color: #0A7355; font-size: 30px">✓</span><p style="margin: 0; font-size: 15px; color: #525D73; text-align: center">Kibuo demandera ce code à chaque ouverture.</p><a href="PinEmpreinte.dc.html" class="primary" style="display: flex; align-items: center; justify-content: center; text-decoration: none">Continuer</a><button type="button" class="ghost" onClick="{{restart}}">Rejouer la maquette</button></div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = this.initial(); }
+  shuffle() {
+    var d = ['0','1','2','3','4','5','6','7','8','9'];
+    for (var i = d.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = d[i]; d[i] = d[j]; d[j] = t; }
+    return d;
+  }
+  keys(disabled) {
+    var self = this, d = this.state.digits;
+    return d.slice(0, 9).concat(['', d[9], 'del']).map(function (k) {
+      return {
+        label: k === 'del' ? '←' : k,
+        aria: k === 'del' ? 'Effacer' : (k === '' ? 'Vide' : k),
+        cls: k === '' ? 'key empty' : 'key',
+        press: function () {
+          if (k === '' || disabled) { return; }
+          if (k === 'del') { self.onDelete(); } else { self.onDigit(k); }
+        }
+      };
+    });
+  }
+  dotList(n, slots, firm) {
+    var out = [];
+    for (var i = 0; i < slots; i++) {
+      var on = i < n, optional = i >= firm;
+      out.push({ bg: on ? '#0E1320' : 'transparent', color: on ? '#0E1320' : (optional ? '#B6BDCB' : '#0E1320'), border: optional && !on ? 'dashed' : 'solid' });
+    }
+    return out;
+  }
+  onDelete() { this.setState({ entry: this.state.entry.slice(0, -1), error: false }); }
+  submit(code) {
+    var s = this.state;
+    if (s.step === 1) { this.setState({ step: 2, first: code, entry: '', digits: this.shuffle(), error: false }); return; }
+    if (code === s.first) { this.setState({ step: 3, entry: '' }); return; }
+    this.setState({ step: 1, first: '', entry: '', digits: this.shuffle(), error: true });
+  }
+  base(len, slots, firm) {
+    var self = this, s = this.state;
+    var titles = { 0: 'Combien de chiffres ?', 1: 'Choisissez votre code', 2: 'Retapez votre code', 3: 'Code créé' };
+    var sub = s.error ? 'Les deux codes ne correspondent pas. Recommencez.' : ({ 0: 'Plus le code est long, plus il est sûr.', 1: '', 2: 'Pour vérifier que vous l’avez bien en tête.', 3: '' })[s.step];
+    return {
+      title: titles[s.step], sub: sub, subColor: s.error ? '#B3321A' : '#525D73',
+      dots: s.step === 1 || s.step === 2 ? this.dotList(s.entry.length, slots, firm) : [],
+      dotsLabel: s.entry.length + ' chiffres saisis',
+      keys: this.keys(false),
+      showPad: s.step === 1 || s.step === 2 ? 'flex' : 'none',
+      showDone: s.step === 3 ? 'flex' : 'none',
+      restart: function () { self.setState(self.initial()); }
+    };
+  }
+  initial() { return { step: 1, entry: '', first: '', error: false, digits: this.shuffle() }; }
+  onDigit(d) {
+    var s = this.state, e = s.entry + d;
+    if (s.step === 2 && e.length === s.first.length) { this.submit(e); return; }
+    if (e.length > 6) { return; }
+    this.setState({ entry: e, error: false });
+  }
+  keysOk(canValidate, withOk) {
+    var self = this, d = this.state.digits;
+    return d.slice(0, 9).concat([withOk ? 'ok' : '', d[9], 'del']).map(function (k) {
+      var isOk = k === 'ok';
+      return {
+        label: k === 'del' ? '←' : (isOk ? '✓' : k),
+        aria: k === 'del' ? 'Effacer' : (isOk ? 'Valider' : k),
+        cls: k === '' ? 'key empty' : isOk ? (self.state.step === 1 ? (canValidate ? 'key ok' : 'key ok off') : 'key empty') : 'key',
+        press: function () {
+          if (k === '') { return; }
+          if (isOk) { if (self.state.step === 1 && canValidate) { self.submit(self.state.entry); } return; }
+          if (k === 'del') { self.onDelete(); } else { self.onDigit(k); }
+        }
+      };
+    });
+  }
+  boxList(n, slots, firm) {
+    var out = [];
+    for (var i = 0; i < slots; i++) {
+      var on = i < n, optional = i >= firm, current = i === n;
+      out.push({ dot: on ? 'block' : 'none', border: optional && !on && !current ? 'dashed' : 'solid',
+                 color: current ? '#0A7355' : (on ? '#0E1320' : (optional ? '#C9CFDB' : '#B6BDCB')) });
+    }
+    return out;
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var first = s.first.length, slots = s.step === 2 ? first : 6, firm = s.step === 2 ? first : 4;
+    var v = this.base(0, slots, firm);
+    v.boxes = s.step === 1 || s.step === 2 ? this.boxList(s.entry.length, slots, firm) : [];
+    v.sub = v.sub || (s.step === 1 ? 'De 4 à 6 chiffres.' : '');
+    var can = s.entry.length >= 4;
+    v.keys = this.keysOk(can, false);
+    v.showValidate = s.step === 1 ? 'block' : 'none';
+    v.validateCls = can ? 'primary' : 'primary off';
+    v.validate = function () { if (can) { self.submit(s.entry); } };
+    return v;
+  }
+}
+</script>
+</body>
+</html>

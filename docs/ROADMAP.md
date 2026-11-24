@@ -78,13 +78,14 @@ Rien n'est codé avant la fin de cette phase.
 ## Phase 6 : Données
 
 - [x] Sauvegarde manuelle
-- [ ] Restauration par remplacement, dont « J'ai une sauvegarde » au premier écran du premier lancement
+- [x] Restauration par remplacement, dont « J'ai une sauvegarde » au premier écran du premier lancement
 - [ ] Sauvegardes automatiques optionnelles, dont leur interrupteur à l'étape 4 du premier lancement
 - [ ] Export CSV
 
 ## Phase 7 : Stabilisation
 
 - [ ] Tableaux de bord
+- [ ] Premier lancement qui accompagne la première configuration (voir [backlog/premier-lancement.md](backlog/premier-lancement.md))
 - [ ] Parcours complets sur le Poco X3 NFC et les émulateurs, dont un Android 8
 - [ ] Guide de réglage des notifications selon les marques
 - [ ] APK partagé à 5 à 10 testeurs

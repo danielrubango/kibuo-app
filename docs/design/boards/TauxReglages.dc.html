@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Taux depuis Réglages</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px; position: relative; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 14px">
+  <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+    <a href="Reglages.dc.html" aria-label="Retour aux réglages" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Devises</h1>
+  </header>
+
+  <section style="background: #5EEAB5; border-radius: 22px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between">
+    <div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 500">Devise principale</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700">USD</span></div>
+    <button type="button" style="min-height: 44px; border: 0; background: transparent; padding: 0; font: 600 15px Inter, sans-serif; color: #0E1320">Changer</button>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 8px">
+    <h2 style="margin: 0; padding-left: 4px; font-size: 13px; font-weight: 600; color: #525D73">Taux de conversion</h2>
+    <sc-for list="{{rates}}" as="r" hint-placeholder-count="2">
+      <article style="background: #FFFFFF; border-radius: 18px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">{{r.name}}</span><span style="font-size: 14px">{{r.rate}}</span><span style="font-size: 13px; color: #525D73">{{r.date}}</span></div>
+        <a href="TauxReglages.dc.html" style="min-height: 44px; display: flex; align-items: center; padding: 0 2px; font: 600 14px Inter, sans-serif; color: #0A7355; text-decoration: none">Modifier</a>
+      </article>
+    </sc-for>
+    <p style="margin: 4px 4px 0; font-size: 14px; line-height: 20px; color: #525D73">Modifier un taux ne change pas les opérations déjà enregistrées.</p>
+  </section>
+
+  <button type="button" style="position: absolute; left: 16px; right: 16px; bottom: 16px; height: 54px; border: 0; border-radius: 18px; background: #5EEAB5; color: #0E1320; font: 600 16px Inter, sans-serif">Ajouter une devise</button>
+<a href="Devises.dc.html" aria-label="Fermer" style="position: absolute; inset: 0; z-index: 6; background: rgba(14,19,32,0.42)"></a><section role="dialog" aria-label="Taux du franc congolais" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; box-sizing: border-box; padding: 10px 16px 20px; background: #EEF1F7; border-radius: 26px 26px 0 0; box-shadow: 0 -10px 30px rgba(14,19,32,0.18); display: flex; flex-direction: column; gap: 12px"><span aria-hidden="true" style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: #C9CFDB"></span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: -4px"><h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">Taux du franc congolais</h2><a href="Devises.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; flex: 0 0 44px; margin-right: -10px; display: flex; align-items: center; justify-content: center; color: #525D73"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a></div><div style="background: #FFFFFF; border: 2px solid #0A7355; border-radius: 16px; padding: 10px 14px; display: flex; align-items: center; gap: 8px"><span style="font-size: 16px; color: #525D73; white-space: nowrap">1 $ =</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700">{{typed}}</span><span aria-hidden="true" style="width: 2px; height: 24px; background: #0A7355"></span><span style="flex: 1 1 auto"></span><span style="flex: 0 0 auto; height: 36px; border-radius: 12px; padding: 0 12px; background: #EEF1F7; display: flex; align-items: center; font: 700 16px Inter, sans-serif; color: #525D73">FC</span></div><span style="display: flex; justify-content: space-between; font-size: 13px; color: #525D73; padding: 0 4px"><span>Avant : 2 800 FC · 3 novembre</span><b style="color: {{varFg}}">{{var}}</b></span><div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px"><sc-for list="{{keys}}" as="k" hint-placeholder-count="12"><button type="button" onClick="{{k.press}}" aria-label="{{k.aria}}" style="height: 50px; border: 0; border-radius: 16px; background: #FFFFFF; color: #0E1320; font: 500 22px 'Space Grotesk', sans-serif">{{k.label}}</button></sc-for></div><span style="font-size: 12px; line-height: 16px; color: #525D73; padding: 0 4px">Les opérations déjà enregistrées gardent leur taux.</span><button type="button" onClick="{{go}}" style="min-height: 54px; border: 0; border-radius: 18px; background: {{pBg}}; color: {{pFg}}; font: 600 16px Inter, sans-serif">Enregistrer le taux</button><a href="Devises.dc.html" style="min-height: 48px; border-radius: 16px; background: #FFFFFF; color: #0E1320; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Annuler</a></section></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { t: '2850' }; }
+  press(k) { var t = this.state.t; if (k === 'del') { t = t.length > 1 ? t.slice(0, -1) : '0'; } else if (k === ',') { if (t.indexOf(',') < 0) { t += ','; } } else if (t === '0') { t = k; } else if (t.length < 7) { t += k; } this.setState({ t: t }); }
+  renderVals() { var self = this, n = parseFloat(this.state.t.replace(',', '.')) || 0, d = n - 2800;
+    var sp = function (x) { return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); };
+    return { typed: sp(this.state.t), var: d === 0 ? 'Inchangé' : (d > 0 ? '+' : '−') + sp(Math.round(Math.abs(d))) + ' FC', varFg: d > 0 ? '#8A4B12' : (d < 0 ? '#0A7355' : '#525D73'),
+      pBg: '#5EEAB5', pFg: '#0E1320', go: function () {},
+      keys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0', 'del'].map(function (k) { return { label: k === 'del' ? '←' : k, aria: k === 'del' ? 'Effacer' : k, press: function () { self.press(k); } }; }) }; }
+}
+</script>
+</body>
+</html>
