@@ -3793,4 +3793,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderProjectFreeMonth => 'A little aside this month?';
+
+  @override
+  String get projectRemindShort => 'Remind me';
 }

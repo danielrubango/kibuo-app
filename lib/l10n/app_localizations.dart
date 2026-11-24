@@ -5928,6 +5928,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Un peu de côté ce mois-ci ?'**
   String get reminderProjectFreeMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me le rappeler'**
+  String get projectRemindShort;
 }
 
 class _AppLocalizationsDelegate

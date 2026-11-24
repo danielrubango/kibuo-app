@@ -1950,5 +1950,7 @@
   "reminderProjectFreeFortnight": "Un peu de côté cette quinzaine ?",
   "@reminderProjectFreeFortnight": {"description": "Reminders."},
   "reminderProjectFreeMonth": "Un peu de côté ce mois-ci ?",
-  "@reminderProjectFreeMonth": {"description": "Reminders."}
+  "@reminderProjectFreeMonth": {"description": "Reminders."},
+  "projectRemindShort": "Me le rappeler",
+  "@projectRemindShort": {"description": "Projects."}
 }
