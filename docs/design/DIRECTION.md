@@ -177,7 +177,7 @@ Une ligne par écran livré : la planche retenue (dans [boards/](boards/), avec 
 | Rappels | `Rappels` | à vérifier | 19 nov. | PRODUCT, Rappels |
 | Dettes et créances | `DettesListeDois`, `DettesListeCreances`, `DettesCarteOuverte`, `DettesAffichage`, `NouvelleDette`, `FicheDette`, `FicheDettePetit`, `RembourserV3`, `ReclamerR1`, `DettesCartes`, `OpDetteA4`, `ConfirmA` | 23 nov. (ligne ouverte, `ConfirmA`, `OpDetteA4`) | 23 nov. | « Ligne qui s'ouvre sur place », « Confirmer une création », « Opérations d'une dette » |
 | Projets | `Projets`, `ProjetNouveau`, `FicheProjet`, `FicheProjetMois`, `FicheProjetQuinzaine`, `FicheProjetSansDate`, `ProjetP1`, `ProjetMettreRefus`, `ProjetReprendre`, `ProjetAtteint`, `ProjetTermine`, `ProjetSupprimer` | 24 nov. (barre, action et lien de carte, confirmations) | 24 nov. | Règles d'écran (Projets, fiche) ; « Barre dans une carte », « Action sous une carte », « Lien en fin de carte » |
-| Sauvegarde manuelle | `Sauvegarde`, `SauvW2`, `SauvW2Premiere`, `PlusAncienne` ; chiffrement : planche P1 (non exportée) | 24 nov. | 24 nov. | Règles d'écran (sauvegarde) ; « Ligne de réglage » |
+| Sauvegarde manuelle | `Sauvegarde`, `SauvW2`, `SauvW2Premiere`, `PlusAncienne` ; chiffrement : planche P1 (non exportée) ; mot de passe retenu : `MotDePasseRetenu-variantes.html`, variante A (25 nov.) | 24 nov. | 24 nov. | Règles d'écran (sauvegarde) ; « Ligne de réglage » |
 | Restauration | `RestauC1`, `RestauC1Err`, `RestauC2`, `RestauC3`, `RestauNeuf` | 24 nov. | 24 nov. | Règles d'écran (restaurer) ; PRODUCT, Restauration |
 
 Dessinés et validés, pas encore construits : la page Plus (`Plus`) et Réglages (`Reglages`, `ReglageLangue`), l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, À propos, Noter kibuo. Dans l'app, l'onglet Plus est une liste provisoire de lignes, et l'Aperçu un écran d'attente.
@@ -188,6 +188,7 @@ La raison est donnée quand elle est écrite dans ce document ou dans PRODUCT ; 
 
 | Écartées | Retenue | Pourquoi |
 |---|---|---|
+| `MotDePasseRetenu` B (interrupteur « Protéger par mot de passe » des planches Sauvegarde et RestauC1), C (« Retenir ce mot de passe » dans la feuille de sauvegarde) | A (ligne « Mot de passe · Aucun › » dans la carte, qui ouvre une feuille) | Choisie par le propriétaire le 25 novembre 2026 ; raison non écrite. L'interrupteur « Protéger par mot de passe » des planches Sauvegarde et RestauC1 n'est donc pas repris. |
 | `ConfirmB` (message plus grand, posé en bas) | `ConfirmA` (feuille qui se ferme seule) | Un message flottant peut cacher le bouton du bas d'une fiche ; la feuille porte aussi les actions (« Annuler et modifier », « Voir la dette ») (23 nov.). |
 | `OpDetteA` (étiquette), `A1` (fond teinté léger), `A2` (fond teinté, tuile blanche), `A3` (fond teinté, fin contour), `B` (pointillés, montant gris), `C` (montant entouré) | `OpDetteA4` (fin contour seul) | Choix du 23 nov. ; raison non écrite. |
 | `RepeterB`, `RepeterC` | `RepeterA` (une ligne « Répéter » qui ouvre Nouvelle récurrence) | Raison non écrite. |
