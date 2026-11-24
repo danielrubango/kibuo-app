@@ -9,8 +9,13 @@ import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
+import 'package:kibuo/ui/kit/status_pill.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
+import 'package:kibuo/ui/projects/project_money.dart';
+import 'package:kibuo/ui/projects/project_parts.dart';
+import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -45,7 +50,8 @@ class ProjectsScreen extends StatefulWidget {
   final ProjectRepository projects;
   final DateTime Function() now;
 
-  /// A project was made: the home's available amount changes.
+  /// A project was made or its money moved: the home's available amount
+  /// changes.
   final VoidCallback? onChanged;
 
   @override
@@ -110,6 +116,33 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     await _load();
   }
 
+  Future<void> _open(ProjectInfo p) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => ProjectScreen(
+          data: widget.data,
+          projects: widget.projects,
+          id: p.id,
+          now: widget.now,
+          onChanged: widget.onChanged,
+        ),
+      ),
+    );
+    if (mounted) await _load();
+  }
+
+  Future<void> _putAside(ProjectInfo p) async {
+    await putAsideFlow(
+      context,
+      data: widget.data,
+      projects: widget.projects,
+      project: p,
+      now: widget.now,
+    );
+    widget.onChanged?.call();
+    if (mounted) await _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -143,7 +176,13 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   ],
                   for (final p in running) ...[
                     const SizedBox(height: 14),
-                    _ProjectCard(project: p, now: widget.now(), money: _money),
+                    _ProjectCard(
+                      project: p,
+                      now: widget.now(),
+                      money: _money,
+                      onOpen: () => _open(p),
+                      onPutAside: () => _putAside(p),
+                    ),
                   ],
                 ],
                 if (ended.isNotEmpty) ...[
@@ -161,6 +200,8 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                         project: p,
                         now: widget.now(),
                         money: _money,
+                        onOpen: () => _open(p),
+                        onPutAside: () => _putAside(p),
                       ),
                     ],
                 ],
@@ -296,18 +337,23 @@ class _Legend extends StatelessWidget {
 
 /// A project's card (canvas Projets): its tile, name and « Avant le 1er
 /// janv. · compte », « En retard » if it is; what is set aside on the goal
-/// and the share; the bar with its mark; ahead or behind, and the amount
-/// per period, or « À votre rythme ».
+/// and the share; the bar with its mark; ahead or behind and the amount
+/// per period, or « À votre rythme », then « Mettre de côté › ». Touched,
+/// it opens the project's card.
 class _ProjectCard extends StatelessWidget {
   const _ProjectCard({
     required this.project,
     required this.now,
     required this.money,
+    required this.onOpen,
+    required this.onPutAside,
   });
 
   final ProjectInfo project;
   final DateTime now;
   final String Function(Money) money;
+  final VoidCallback onOpen;
+  final VoidCallback onPutAside;
 
   @override
   Widget build(BuildContext context) {
@@ -315,23 +361,7 @@ class _ProjectCard extends StatelessWidget {
     final lang = Localizations.localeOf(context).languageCode;
     final p = project;
     final due = p.due;
-    final dated = due != null && p.running && !p.reached;
-    final share = dated
-        ? expectedShare(today: now, start: p.startedOn, due: due)
-        : null;
-    final gap = share == null
-        ? 0
-        : projectGap(goal: p.goal.minor, saved: p.saved.minor, share: share);
-    final late = dated && gap < 0;
-    final per = dated
-        ? perPeriod(
-            goal: p.goal.minor,
-            saved: p.saved.minor,
-            today: now,
-            due: due,
-            period: p.period,
-          )
-        : 0;
+    final pace = ProjectPace.of(p, now);
     final when = due == null
         ? l.projectsNoDate
         : l.projectsBefore(DateFormat.MMMd(lang).format(due));
@@ -341,187 +371,140 @@ class _ProjectCard extends StatelessWidget {
       PlanPeriod.month => l.projectsPerMonth,
     };
     // « 27 $ de retard · 94 $ par mois »: the gap in bold (canvas Projets).
-    final lead = !dated
+    final lead = !pace.dated
         ? null
-        : gap < 0
-        ? l.projectsBehind(money(Money(-gap, p.goal.currency)))
-        : gap > 0
-        ? l.projectsAhead(money(Money(gap, p.goal.currency)))
+        : pace.late
+        ? l.projectsBehind(money(Money(-pace.gap, p.goal.currency)))
+        : pace.ahead
+        ? l.projectsAhead(money(Money(pace.gap, p.goal.currency)))
         : l.projectsOnTrack;
-    final pace = !p.running
+    final rest = !p.running
         ? (p.ending == 'spent' ? l.projectsEndedSpent : l.projectsEndedReleased)
         : p.reached
         ? l.projectsReached
-        : dated
-        ? ' · ${money(Money(per, p.goal.currency))} $periodWord'
+        : pace.dated
+        ? ' · ${money(Money(pace.per, p.goal.currency))} $periodWord'
         : l.projectsOwnPace;
-    final paceColor = !p.running || !dated
+    final restColor = !p.running || !pace.dated
         ? KibuoColors.inkSecondary
-        : late
+        : pace.late
         ? KibuoColors.danger
         : KibuoColors.accent;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-      decoration: BoxDecoration(
-        color: KibuoColors.surface,
+    final canAdd = p.running && !p.reached;
+    return Material(
+      color: KibuoColors.surface,
+      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+      child: InkWell(
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+        onTap: () {
+          Haptics.tap();
+          onOpen();
+        },
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14, 12, 14, canAdd ? 4 : 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: KibuoColors.projectTint,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Icon(
-                  projectIcon(p.icon),
-                  size: 20,
-                  color: KibuoColors.projectInk,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      p.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KibuoType.rowLabel.weight(600),
+              Row(
+                children: [
+                  ProjectTile(icon: p.icon),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          p.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: KibuoType.rowLabel.weight(600),
+                        ),
+                        Text(
+                          '$when · ${p.account}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: KibuoType.caption,
+                        ),
+                      ],
                     ),
-                    Text(
-                      '$when · ${p.account}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KibuoType.caption,
-                    ),
-                  ],
-                ),
-              ),
-              if (late)
-                Container(
-                  height: 22,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: KibuoColors.dangerTint,
-                    borderRadius: BorderRadius.circular(11),
                   ),
-                  child: Text(
-                    l.projectsLate,
-                    style: KibuoType.caption
-                        .copyWith(fontSize: 11, color: KibuoColors.danger)
+                  if (pace.late)
+                    StatusPill(
+                      text: l.projectsLate,
+                      ink: KibuoColors.danger,
+                      tint: KibuoColors.dangerTint,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    money(p.saved),
+                    style: KibuoType.cardTitle.copyWith(fontSize: 20),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      l.projectsOf(money(p.goal)),
+                      style: KibuoType.body.copyWith(
+                        fontSize: 13,
+                        color: KibuoColors.inkSecondary,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${(p.share * 100).round()} %',
+                    style: KibuoType.body
+                        .copyWith(
+                          fontSize: 13,
+                          color: pace.late
+                              ? KibuoColors.danger
+                              : KibuoColors.projectInk,
+                        )
                         .weight(700),
                   ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                money(p.saved),
-                style: KibuoType.cardTitle.copyWith(fontSize: 20),
+                ],
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  l.projectsOf(money(p.goal)),
-                  style: KibuoType.body.copyWith(
-                    fontSize: 13,
-                    color: KibuoColors.inkSecondary,
+              const SizedBox(height: 10),
+              ProjectBar(
+                share: p.share,
+                mark: pace.mark,
+                fill: pace.late ? KibuoColors.danger : KibuoColors.projectLine,
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          if (lead != null)
+                            TextSpan(
+                              text: lead,
+                              style: const TextStyle().weight(700),
+                            ),
+                          TextSpan(text: rest),
+                        ],
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: KibuoType.caption.copyWith(color: restColor),
+                    ),
                   ),
-                ),
-              ),
-              Text(
-                '${(p.share * 100).round()} %',
-                style: KibuoType.body
-                    .copyWith(
-                      fontSize: 13,
-                      color: late ? KibuoColors.danger : KibuoColors.projectInk,
-                    )
-                    .weight(700),
+                  if (canAdd)
+                    TextAction(
+                      label: '${l.projectPutAside} ›',
+                      onPressed: onPutAside,
+                    ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          _ProjectBar(
-            share: p.share,
-            mark: share,
-            fill: late ? KibuoColors.danger : KibuoColors.projectLine,
-          ),
-          const SizedBox(height: 10),
-          Text.rich(
-            TextSpan(
-              children: [
-                if (lead != null && p.running && !p.reached)
-                  TextSpan(text: lead, style: const TextStyle().weight(700)),
-                TextSpan(text: pace),
-              ],
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: KibuoType.caption.copyWith(color: paceColor),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
-
-/// The 8 high bar, and a black mark where it should be today.
-class _ProjectBar extends StatelessWidget {
-  const _ProjectBar({required this.share, required this.fill, this.mark});
-
-  final double share;
-  final double? mark;
-  final Color fill;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 16,
-    child: LayoutBuilder(
-      builder: (context, box) => Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          Container(
-            height: 8,
-            decoration: BoxDecoration(
-              color: KibuoColors.projectTrack,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          Container(
-            height: 8,
-            width: box.maxWidth * share,
-            decoration: BoxDecoration(
-              color: fill,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          if (mark case final m?)
-            Positioned(
-              left: (box.maxWidth * m - 1).clamp(0, box.maxWidth - 2),
-              top: 0,
-              bottom: 0,
-              child: Container(
-                width: 2,
-                decoration: BoxDecoration(
-                  color: KibuoColors.ink,
-                  borderRadius: BorderRadius.circular(1),
-                ),
-              ),
-            ),
-        ],
-      ),
-    ),
-  );
 }
