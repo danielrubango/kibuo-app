@@ -143,7 +143,7 @@ Décidé le 23 novembre 2026 :
 Décidé le 24 novembre 2026 :
 
 - La phase se livre en trois temps validés : créer et lister (page Projets, « Nouveau projet », ligne de Plus et tuile du +, disponible de l'accueil moins l'argent mis de côté avec la bande « Total · dont projets ») ; la fiche et l'argent (fiche, plan, « Mettre de côté », « Reprendre de l'argent », objectif atteint, modifier, supprimer) ; autour (« À traiter », rappel au rythme du plan, part réservée dans Comptes).
-- Mettre de côté ne crée aucune opération : l'argent reste sur le compte, le projet note un versement et cette part devient réservée. Jamais plus que ce qui est libre sur le compte (solde moins ce que ses projets retiennent).
+- Mettre de côté depuis le compte du projet ne crée aucune opération : l'argent reste sur le compte, le projet note un versement et cette part devient réservée. Depuis un autre compte, un transfert vers le compte du projet s'enregistre d'abord. Jamais plus que ce qui est libre sur le compte (solde moins ce que ses projets retiennent).
 - Un projet est dans la devise de son compte, son objectif aussi, sans conversion.
 - Une dépense n'est jamais refusée à cause d'un projet : si elle entame l'argent réservé, le disponible devient négatif (rose, montant en rouge) et le projet garde ses versements.
 - Objectif atteint : « Je l'ai dépensé » ouvre la saisie d'une dépense pré-remplie (montant, compte, note) ; enregistrée, le projet se termine et sa réserve disparaît. « Le garder de côté » ne change rien. « Le rendre disponible » termine le projet sans rien déplacer. Les projets terminés restent consultables.
