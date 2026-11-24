@@ -490,7 +490,8 @@ class _TodoRow extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 60),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          // The home cards' margin, the action's › at 12 (DIRECTION).
+          padding: const EdgeInsets.only(left: 14, right: 12),
           child: Row(
             children: [
               if (look.dashed)

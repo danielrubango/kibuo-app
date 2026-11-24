@@ -490,7 +490,12 @@ class _AvailableCard extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 16, CardArrow.edge, 16),
+                padding: const EdgeInsets.fromLTRB(
+                  CardArrow.edge,
+                  16,
+                  CardArrow.edge,
+                  16,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -572,7 +577,12 @@ class _ProjectsStrip extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: KibuoTheme.heightTouch),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 10, CardArrow.edge, 10),
+            padding: const EdgeInsets.fromLTRB(
+              CardArrow.edge,
+              10,
+              CardArrow.edge,
+              10,
+            ),
             child: Row(
               children: [
                 Expanded(

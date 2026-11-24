@@ -69,7 +69,7 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Marge sous le contenu.** Une page avec le menu du bas (Accueil, Opérations, Aperçu, Plus) garde 160 sous son contenu : le menu, son +, son fondu, puis de quoi lire les dernières lignes au clair (validé le 23 novembre 2026).
 
-**Flèche d'une carte.** Une carte qui ouvre une page finit par une flèche › de 18, grise sur une carte blanche, verte sur une carte menthe, toujours à 14 du bord droit de la carte (Disponible, sa bande, le bilan du mois, Je dois et On me doit ; validé le 24 novembre 2026). Une carte vide de dettes garde ses trois lignes : le titre, « Rien » en gris, un tiret.
+**Flèche d'une carte.** Une carte qui ouvre une page finit par une flèche › de 18, grise sur une carte blanche, verte sur une carte menthe, à 12 du bord droit, pour paraître aussi loin du bord que le texte (Disponible, sa bande, le bilan du mois, Je dois et On me doit ; validé le 24 novembre 2026). Les cartes de l'accueil ont toutes 14 de marge à gauche et à droite ; en haut et en bas, 12 pour une carte blanche, 16 pour la carte menthe « Disponible » ; une ligne de « À traiter » commence à 14 et finit son action à 12. Une carte vide de dettes garde ses trois lignes : le titre, « Rien » en gris, un tiret.
 
 **Retour au toucher.** Trois forces de vibration, selon le réglage du téléphone : légère (touches, choix, onglets, ouvrir une ligne), plus franche (ce qui enregistre), marquée (un refus, un glissement qui passe son seuil).
 
