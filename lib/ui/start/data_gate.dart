@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:kibuo/data/backup_file.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -24,6 +25,22 @@ class KibuoData extends InheritedWidget {
   bool updateShouldNotify(KibuoData old) => old.database != database;
 }
 
+/// Replaces the data with an opened backup (ADR 0006) and reopens the app
+/// on it; throws when the backup cannot replace it, the data left as it
+/// was.
+class KibuoRestore extends InheritedWidget {
+  const KibuoRestore({super.key, required this.replace, required super.child});
+
+  final Future<void> Function(BackupContents contents) replace;
+
+  /// Null in widget tests without it.
+  static KibuoRestore? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<KibuoRestore>();
+
+  @override
+  bool updateShouldNotify(KibuoRestore old) => false;
+}
+
 /// Shows [child] once the database is open, or the unreadable-data screen
 /// when its key is gone (ADR 0005).
 class DataGate extends StatefulWidget {
@@ -33,7 +50,15 @@ class DataGate extends StatefulWidget {
     required this.eraseAndStartOver,
     required this.builder,
     this.onRecovered,
+    this.replaceWithBackup,
+    this.reopen,
   });
+
+  /// Puts a backup in place of the closed data, and opens it.
+  final Future<OpenResult> Function(BackupContents contents)? replaceWithBackup;
+
+  /// Opens the data again, when a backup could not replace it.
+  final Future<OpenResult> Function()? reopen;
 
   /// Called once data was reopened with the recovery code.
   final Future<void> Function()? onRecovered;
@@ -63,6 +88,23 @@ class _DataGateState extends State<DataGate> {
     await reopening;
   }
 
+  /// Closes the data, replaces it, and builds the app anew on the backup:
+  /// every screen, setting and reminder reloads (PRODUCT: Restauration).
+  Future<void> _replace(BackupContents contents) async {
+    final current = await _opening;
+    if (current is Opened) await current.database.close();
+    OpenResult result;
+    Object? failed;
+    try {
+      result = await widget.replaceWithBackup!(contents);
+    } on Object catch (e) {
+      failed = e;
+      result = await widget.reopen!();
+    }
+    setState(() => _opening = Future.value(result));
+    if (failed != null) throw failed;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -70,7 +112,14 @@ class _DataGateState extends State<DataGate> {
       builder: (context, snapshot) => switch (snapshot.data) {
         Opened(:final database) => KibuoData(
           database: database,
-          child: widget.builder(_eraseAll),
+          child: KibuoRestore(
+            replace: _replace,
+            // A new database: the app below starts afresh on it.
+            child: KeyedSubtree(
+              key: ObjectKey(database),
+              child: widget.builder(_eraseAll),
+            ),
+          ),
         ),
         final Unreadable unreadable => UnreadableScreen(
           onRecover: !unreadable.canRecover

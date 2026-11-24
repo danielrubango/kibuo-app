@@ -85,6 +85,21 @@ const _fileName = 'kibuo.db';
 /// The backup comes from a newer kibuo: its tables cannot be read here.
 class BackupTooNew implements Exception {}
 
+/// Whether an opened backup comes from a newer kibuo, before anything is
+/// closed or replaced.
+bool backupTooNew(BackupContents contents) {
+  final raw = sqlite.sqlite3.open(
+    contents.database.path,
+    mode: sqlite.OpenMode.readOnly,
+  );
+  try {
+    final version = raw.select('PRAGMA user_version').single['user_version'];
+    return version is! int || version > KibuoDatabase.currentSchema;
+  } finally {
+    raw.close();
+  }
+}
+
 /// Replaces the data in [folder] by an opened backup (ADR 0006): its
 /// database, encrypted here with this phone's key, and its attachments;
 /// then opens it, an older one updated by the usual migrations. The

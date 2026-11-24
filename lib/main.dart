@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/data/backup_file.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/open_database.dart';
@@ -48,6 +49,9 @@ void main() {
         await lock.load();
         return result;
       },
+      replaceWithBackup: (contents) async =>
+          replaceWithBackup(folder: await folder, contents: contents),
+      reopen: () async => openKibuoDatabase(folder: await folder),
       // A new phone: the code and settings stayed on the old one.
       onRecovered: () async {
         await lock.load();
@@ -76,7 +80,13 @@ class KibuoApp extends StatelessWidget {
     this.ready,
     this.eraseAndStartOver,
     this.onRecovered,
+    this.replaceWithBackup,
+    this.reopen,
   });
+
+  /// Restauration: the backup in place of the data, or the data again.
+  final Future<OpenResult> Function(BackupContents contents)? replaceWithBackup;
+  final Future<OpenResult> Function()? reopen;
 
   /// After data was reopened with the recovery code.
   final Future<void> Function()? onRecovered;
@@ -119,6 +129,8 @@ class KibuoApp extends StatelessWidget {
                   opening: opening,
                   eraseAndStartOver: erase,
                   onRecovered: onRecovered,
+                  replaceWithBackup: replaceWithBackup,
+                  reopen: reopen,
                   // On a new app, the guided first launch comes first.
                   builder: (eraseAll) => lock == null
                       ? FirstLaunchGate(child: AppShell(notifier: _notifier))
