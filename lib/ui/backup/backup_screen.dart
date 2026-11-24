@@ -9,11 +9,13 @@ import 'package:kibuo/ui/backup/auto_backup_task.dart';
 import 'package:kibuo/ui/backup/backup_files.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/backup/backup_sheet.dart';
+import 'package:kibuo/ui/backup/password_sheet.dart';
 import 'package:kibuo/ui/backup/restore_sheet.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// Plus › Sauvegarde (canvas Sauvegarde): the mint card with the last date
@@ -213,6 +215,18 @@ class _BackupScreenState extends State<BackupScreen> {
                           ),
                         ),
                       ),
+                      // MotDePasseRetenu, variant A.
+                      _PasswordRow(
+                        has: state.hasPassword,
+                        onTap: () async {
+                          if (await showBackupPasswordSheet(
+                            context,
+                            widget.service,
+                          )) {
+                            await _load();
+                          }
+                        },
+                      ),
                       _FolderRow(
                         folder: folder,
                         missing: folder != null && !_reachable,
@@ -253,6 +267,46 @@ class _BackupScreenState extends State<BackupScreen> {
                 ],
               ],
             ),
+    );
+  }
+}
+
+/// « Mot de passe · Aucun › » or « Retenu › » (MotDePasseRetenu A1).
+class _PasswordRow extends StatelessWidget {
+  const _PasswordRow({required this.has, required this.onTap});
+
+  final bool has;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 52),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                l.backupPassword,
+                style: KibuoType.rowLabel.weight(600),
+              ),
+            ),
+            Text(
+              has ? l.backupPasswordKept : l.backupPasswordNone,
+              style: KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
+            ),
+            const SizedBox(width: 6),
+            const Icon(
+              KibuoIcons.caretRight,
+              size: 16,
+              color: KibuoColors.inkMuted,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

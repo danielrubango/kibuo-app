@@ -21,10 +21,20 @@ class _Service extends BackupService {
   BackupFolder? folder;
   DateTime? last;
   String? password;
+
+  /// The password kibuo remembers, if any.
+  String? remembered;
   bool written = false;
 
   @override
-  Future<BackupState> state() async => BackupState(folder: folder, last: last);
+  Future<BackupState> state() async =>
+      BackupState(folder: folder, last: last, hasPassword: remembered != null);
+
+  @override
+  Future<String?> rememberedPassword() async => remembered;
+
+  @override
+  Future<void> rememberPassword(String password) async => remembered = password;
 
   @override
   Future<void> setFolder(BackupFolder folder) async => this.folder = folder;
@@ -247,5 +257,36 @@ void main() {
     expect(find.text('Sauvegarder maintenant ?'), findsOneWidget);
     expect(service.last, DateTime(2026, 11, 22));
     await tester.pumpAndSettle(const Duration(seconds: 10));
+  });
+
+  testWidgets('with a remembered password: encrypted with it, never asked', (
+    tester,
+  ) async {
+    final service = _Service(db, folder: folder, last: DateTime(2026, 11, 22))
+      ..remembered = 'retenu-123';
+    await open(tester, service, _Folders());
+
+    expect(find.text('Chiffrée avec votre mot de passe'), findsOneWidget);
+    expect(find.text('Chiffrer avec un mot de passe'), findsNothing);
+    expect(find.byType(Switch), findsNothing);
+    expect(find.byKey(const ValueKey('backup-password')), findsNothing);
+
+    await tester.tap(find.text('Sauvegarder'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(service.password, 'retenu-123');
+    expect(find.bySemanticsLabel('Chiffrée'), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 10));
+  });
+
+  testWidgets('« Changer » opens the password sheet', (tester) async {
+    final service = _Service(db, folder: folder, last: DateTime(2026, 11, 22))
+      ..remembered = 'retenu-123';
+    await open(tester, service, _Folders());
+    // The second « Changer », the first being the folder's.
+    await tester.tap(find.text('Changer').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Mot de passe des sauvegardes'), findsOneWidget);
+    expect(find.text('Changer le mot de passe'), findsOneWidget);
   });
 }

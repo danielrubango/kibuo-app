@@ -38,6 +38,7 @@ class _Files implements BackupFiles {
 
 class _Folders implements BackupFolders {
   String? wrote;
+  bool? wroteEncrypted;
 
   @override
   Future<BackupFolder?> pick() async => null;
@@ -48,6 +49,7 @@ class _Folders implements BackupFolders {
   @override
   Future<bool> write(BackupFolder folder, String name, File file) async {
     wrote = name;
+    wroteEncrypted = (await peekBackup(file)).encrypted;
     return true;
   }
 
@@ -234,5 +236,34 @@ void main() {
     await hold(tester, 'Maintenir pour remplacer');
     await settle(tester);
     expect(replaced, hasLength(1));
+  });
+
+  testWidgets('with the password remembered: no field, and the copy before '
+      'is encrypted', (tester) async {
+    await service.rememberPassword('secret-123');
+    final (folders, replaced) = await open(tester, locked);
+    expect(find.text('Revenir au 3 novembre ?'), findsOneWidget);
+    expect(find.text('Mot de passe de la sauvegarde'), findsNothing);
+    await tester.tap(find.text('Remplacer'));
+    await settle(tester);
+    await settle(tester);
+    expect(replaced, hasLength(1));
+    expect(folders.wroteEncrypted, isTrue);
+  });
+
+  testWidgets('an older password: the field, as before', (tester) async {
+    await service.rememberPassword('another-one');
+    await open(tester, locked);
+    expect(find.text('Mot de passe de la sauvegarde'), findsOneWidget);
+  });
+
+  testWidgets('without a password remembered, the copy before is plain', (
+    tester,
+  ) async {
+    final (folders, _) = await open(tester, plain);
+    await tester.tap(find.text('Remplacer'));
+    await settle(tester);
+    await settle(tester);
+    expect(folders.wroteEncrypted, isFalse);
   });
 }

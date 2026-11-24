@@ -81,6 +81,15 @@ Future<void> runRestore(
   final state = await tools.service.state();
   final folder = state.folder;
   final reachable = folder != null && await tools.folders.reachable(folder);
+  // The remembered password first: when it opens the backup, no field
+  // (PRODUCT: restaurer avec un mot de passe retenu).
+  final remembered = await tools.service.rememberedPassword();
+  final known =
+      envelope.encrypted &&
+          remembered != null &&
+          await backupPasswordOpens(picked.file, remembered)
+      ? remembered
+      : null;
   if (!context.mounted) return;
   final done = await showModalBottomSheet<_Restored>(
     context: context,
@@ -97,6 +106,8 @@ Future<void> runRestore(
         first: state.firstOperation,
         folder: reachable ? folder : null,
         now: now,
+        known: known,
+        remembered: remembered,
       ),
     ),
   );
@@ -124,9 +135,17 @@ class _RestoreSheet extends StatefulWidget {
     required this.first,
     required this.folder,
     required this.now,
+    this.known,
+    this.remembered,
   });
 
   final PickedBackup picked;
+
+  /// The remembered password, when it opens this backup: not asked.
+  final String? known;
+
+  /// The remembered password, which encrypts the copy before.
+  final String? remembered;
   final BackupEnvelope envelope;
   final RestoreTools tools;
 
@@ -164,9 +183,11 @@ class _RestoreSheetState extends State<_RestoreSheet> {
   }
 
   bool get _ready =>
-      _folder != null &&
-      !_working &&
-      (!widget.envelope.encrypted || _password.text.isNotEmpty);
+      _folder != null && !_working && (!_asks || _password.text.isNotEmpty);
+
+  /// The field shows for an encrypted backup the remembered password does
+  /// not open.
+  bool get _asks => widget.envelope.encrypted && widget.known == null;
 
   Future<void> _restore() async {
     final l = AppLocalizations.of(context);
@@ -183,7 +204,9 @@ class _RestoreSheetState extends State<_RestoreSheet> {
       try {
         contents = await openBackup(
           widget.picked.file,
-          password: widget.envelope.encrypted ? _password.text : null,
+          password: widget.envelope.encrypted
+              ? widget.known ?? _password.text
+              : null,
           into: work,
         );
       } on BackupWrongPassword {
@@ -208,7 +231,11 @@ class _RestoreSheetState extends State<_RestoreSheet> {
       File? copy;
       var copied = false;
       try {
-        copy = await widget.tools.service.write(now: at, language: language);
+        copy = await widget.tools.service.write(
+          now: at,
+          password: widget.remembered,
+          language: language,
+        );
         copied = await widget.tools.folders.write(folder, copyName, copy);
       } on Object {
         copied = false;
@@ -426,7 +453,7 @@ class _RestoreSheetState extends State<_RestoreSheet> {
               ),
             ),
           ],
-          if (widget.envelope.encrypted) ...[
+          if (_asks) ...[
             const SizedBox(height: 12),
             KibuoTextField(
               label: l.restorePassword,

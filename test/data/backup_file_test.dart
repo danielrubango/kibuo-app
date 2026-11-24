@@ -150,6 +150,15 @@ void main() {
     );
   });
 
+  test('the right password is known without opening the backup', () async {
+    final file = await backUp(password: 'mot de passe');
+    expect(await backupPasswordOpens(file, 'mot de passe'), isTrue);
+    expect(await backupPasswordOpens(file, 'mot de passf'), isFalse);
+    // Nothing to open without a password: any one does.
+    final plain = await backUp();
+    expect(await backupPasswordOpens(plain, 'mot de passe'), isTrue);
+  });
+
   test('a damaged or cut file is refused', () async {
     for (final password in [null, 'mot de passe']) {
       final file = await backUp(password: password);
