@@ -90,10 +90,6 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     });
   }
 
-  String get _lang => Localizations.localeOf(context).languageCode;
-
-  String _money(Money m) => formatMoney(m, currencyOf(m.currency), _lang);
-
   int _inMain(Money m) {
     final main = _main;
     if (main == null || m.currency == main) return m.minor;
@@ -183,7 +179,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                     _ProjectCard(
                       project: p,
                       now: widget.now(),
-                      money: _money,
+                      money: context.money,
                       onOpen: () => _open(p),
                       onPutAside: () => _putAside(p),
                     ),
@@ -203,7 +199,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                       _ProjectCard(
                         project: p,
                         now: widget.now(),
-                        money: _money,
+                        money: context.money,
                         onOpen: () => _open(p),
                         onPutAside: () => _putAside(p),
                       ),
@@ -248,13 +244,13 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
             spacing: 8,
             children: [
               Text(
-                _money(Money(saved, main)),
+                context.money(Money(saved, main)),
                 style: KibuoType.bigAmount.copyWith(height: 40 / 34),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
-                  l.projectsOf(_money(Money(goal, main))),
+                  l.projectsOf(context.money(Money(goal, main))),
                   style: KibuoType.body.copyWith(
                     fontSize: 15,
                     color: KibuoColors.inkSecondary,
@@ -295,7 +291,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  l.projectsLeft(_money(Money(left, main))),
+                  l.projectsLeft(context.money(Money(left, main))),
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

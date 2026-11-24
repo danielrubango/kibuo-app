@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/debt_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -38,7 +37,7 @@ Future<bool?> showDebtSavedSheet(
             ? l.debtsNoDue
             : l.debtDueLine(DateFormat.MMMd(lang).format(due)),
       ].join(' · '),
-      amount: formatMoney(debt.amount, currencyOf(debt.amount.currency), lang),
+      amount: context.money(debt.amount),
     ),
     actions: [
       ConfirmAction(owe ? l.debtNewOwe : l.debtNewOwed, true, main: true),

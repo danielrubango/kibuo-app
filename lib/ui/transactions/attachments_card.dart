@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -88,14 +89,12 @@ Future<AttachmentSource?> pickAttachmentSource(BuildContext context) {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: KibuoColors.accentTint,
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(icon, size: 20, color: KibuoColors.accent),
+          IconTile(
+            icon: icon,
+            tint: KibuoColors.accentTint,
+            ink: KibuoColors.accent,
+            iconSize: 20,
+            radius: 11,
           ),
           const SizedBox(width: 12),
           Expanded(child: Text(label, style: KibuoType.rowLabel)),

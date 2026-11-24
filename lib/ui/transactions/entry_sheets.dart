@@ -177,13 +177,7 @@ Future<AccountInfo?> pickAccount(
                     label: a.name,
                     // Its balance, to choose knowingly (owner, 23
                     // November).
-                    help: l.accountBalanceLine(
-                      formatMoney(
-                        a.balance,
-                        currencyOf(a.balance.currency),
-                        _lang(context),
-                      ),
-                    ),
+                    help: l.accountBalanceLine(context.money(a.balance)),
                     on: a.id == current,
                     onTap: () => Navigator.of(context).pop(a),
                   ),

@@ -11,6 +11,7 @@ import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
@@ -287,14 +288,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Row(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: KibuoColors.background,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, size: 18, color: KibuoColors.inkSecondary),
+            IconTile(
+              icon: icon,
+              tint: KibuoColors.background,
+              ink: KibuoColors.inkSecondary,
             ),
             const SizedBox(width: 12),
             Expanded(

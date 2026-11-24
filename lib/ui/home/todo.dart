@@ -6,6 +6,7 @@ import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/todo/todo.dart';
@@ -18,6 +19,7 @@ import 'package:kibuo/ui/home/drafts_sheet.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
@@ -429,9 +431,7 @@ class TodoLook {
           title: '$name · ${line.status.percent} %',
           subtitle: over
               ? l.todoBudgetOverSub
-              : l.todoBudgetNearSub(
-                  formatMoney(left, currencyOf(left.currency), lang),
-                ),
+              : l.todoBudgetNearSub(context.money(left)),
           action: l.todoSee,
           name: name,
         );
@@ -461,7 +461,7 @@ class TodoLook {
             DateFormat.MMMd(lang).format(due.planned.day),
           ),
           subtitle: l.todoShortfallSub(
-            formatMoney(missing, currencyOf(missing.currency), lang),
+            context.money(missing),
             due.account.name,
           ),
           action: l.todoSee,
@@ -489,7 +489,7 @@ class TodoLook {
           ink: owe ? KibuoColors.debtInk : KibuoColors.accent,
           title:
               '${d.person} · '
-              '${formatMoney(d.left, currencyOf(d.left.currency), lang)}',
+              '${context.money(d.left)}',
           subtitle:
               '${owe ? l.debtTagOwe : l.debtTagOwed} · '
               '${word[0].toLowerCase()}${word.substring(1)}',
@@ -505,21 +505,12 @@ class TodoLook {
         final p = item.project!;
         final late = item.projectLate!;
         final due = p.due!;
-        final days = DateTime.utc(due.year, due.month, due.day)
-            .difference(
-              DateTime.utc(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
-              ),
-            )
-            .inDays;
+        final days = calendarDays(DateTime.now(), due);
         return TodoLook._(
           icon: projectIcon(p.icon),
           tint: KibuoColors.projectTint,
           ink: KibuoColors.projectInk,
-          title:
-              '${p.name} · ${formatMoney(late, currencyOf(late.currency), lang)}',
+          title: '${p.name} · ${context.money(late)}',
           subtitle: days > 0 ? l.todoProjectLateLeft(days) : l.todoProjectLate,
           action: l.projectPutAside,
           name: p.name,
@@ -622,15 +613,7 @@ class _TodoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final look = TodoLook.of(context, item);
     final urgent = item.group == TodoGroup.urgent;
-    final tile = Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: look.tint,
-        borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
-      ),
-      child: Icon(look.icon, size: 18, color: look.ink),
-    );
+    final tile = IconTile(icon: look.icon, tint: look.tint, ink: look.ink);
     final row = InkWell(
       onTap: () => actions.open(context, item),
       child: ConstrainedBox(

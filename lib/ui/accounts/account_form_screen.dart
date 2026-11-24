@@ -16,6 +16,7 @@ import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
@@ -954,13 +955,11 @@ class _TypeTile extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: 36,
-    height: 36,
-    decoration: BoxDecoration(
-      color: KibuoColors.background,
-      borderRadius: BorderRadius.circular(11),
-    ),
-    child: Icon(icon, size: 20, color: KibuoColors.inkSecondary),
+  Widget build(BuildContext context) => IconTile(
+    icon: icon,
+    tint: KibuoColors.background,
+    ink: KibuoColors.inkSecondary,
+    iconSize: 20,
+    radius: 11,
   );
 }

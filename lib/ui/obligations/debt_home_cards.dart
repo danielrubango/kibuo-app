@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/debt_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/card_arrow.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
@@ -179,9 +178,8 @@ class DebtComingRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final lang = Localizations.localeOf(context).languageCode;
     final owe = debt.direction == DebtDirection.owe;
-    final amount = formatMoney(debt.left, currencyOf(debt.left.currency), lang);
+    final amount = context.money(debt.left);
     return DashedBorder(
       radius: 16,
       color: KibuoColors.line,

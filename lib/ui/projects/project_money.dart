@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/amount_sheet.dart';
@@ -11,6 +11,7 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/hatched_bar.dart';
+import 'package:kibuo/ui/kit/icon_tile.dart';
 import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/quick_amounts.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -22,12 +23,6 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/entry_sheets.dart';
-
-String _money(BuildContext context, Money m) => formatMoney(
-  m,
-  currencyOf(m.currency),
-  Localizations.localeOf(context).languageCode,
-);
 
 /// « Mettre de côté pour Voyage » (canvas ProjetP1, ProjetMettreRefus);
 /// once the goal is met, « Objectif atteint ». True when something moved.
@@ -120,7 +115,7 @@ Future<bool?> _confirmMoved(
         SavedLine(
           title: after.name,
           subtitle: '$where · ${l.entryToday}',
-          amount: '${put ? '+' : '−'}${_money(context, shown)}',
+          amount: '${put ? '+' : '−'}${context.money(shown)}',
         ),
         const SizedBox(height: 6),
         ProjectBar(share: after.share, fill: KibuoColors.projectLine),
@@ -129,8 +124,8 @@ Future<bool?> _confirmMoved(
             Expanded(
               child: Text(
                 l.projectProgress(
-                  _money(context, after.saved),
-                  _money(context, after.goal),
+                  context.money(after.saved),
+                  context.money(after.goal),
                 ),
                 style: KibuoType.caption,
               ),
@@ -261,7 +256,7 @@ class _MoneySheetState extends State<_MoneySheet> {
   bool get _ready =>
       _amount.minor > 0 && !_over && (!widget.put || _account != null);
 
-  String _m(int minor) => _money(context, Money(minor, _currency));
+  String _m(int minor) => context.money(Money(minor, _currency));
 
   Future<void> _pickAmount() async {
     final l = AppLocalizations.of(context);
@@ -544,14 +539,8 @@ Future<bool> reachedFlow(
   final l = AppLocalizations.of(context);
   final today = now();
   final due = project.due;
-  final early = due == null
-      ? 0
-      : DateTime.utc(
-          due.year,
-          due.month,
-          due.day,
-        ).difference(DateTime.utc(today.year, today.month, today.day)).inDays;
-  final amount = _money(context, project.saved);
+  final early = due == null ? 0 : calendarDays(today, due);
+  final amount = context.money(project.saved);
   final text = early > 0
       ? l.projectReachedEarlyText(amount, project.name, early)
       : l.projectReachedText(amount, project.name);
@@ -732,15 +721,7 @@ class _EndRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: tint,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, size: 18, color: ink),
-          ),
+          IconTile(icon: icon, tint: tint, ink: ink),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

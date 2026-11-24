@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 
 /// How a dated project's plan is divided (PRODUCT: Projets).
@@ -19,11 +20,7 @@ enum PlanPeriod {
       values.firstWhere((p) => p.stored == value, orElse: () => week);
 }
 
-int _days(DateTime from, DateTime to) => DateTime.utc(
-  to.year,
-  to.month,
-  to.day,
-).difference(DateTime.utc(from.year, from.month, from.day)).inDays;
+int _days(DateTime from, DateTime to) => calendarDays(from, to);
 
 /// The periods from [today] to [due], at least one: the last one stretches
 /// or shrinks to end the day before [due] (« avant le 1er janvier »).

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/project_repository.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -68,10 +69,6 @@ class _ProjectScreenState extends State<ProjectScreen> {
       _lines = lines;
     });
   }
-
-  String get _lang => Localizations.localeOf(context).languageCode;
-
-  String _money(Money m) => formatMoney(m, currencyOf(m.currency), _lang);
 
   Future<void> _changed() async {
     widget.onChanged?.call();
@@ -195,13 +192,18 @@ class _ProjectScreenState extends State<ProjectScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          _Hero(project: p, now: now, money: _money, onWhatNow: _whatNow),
+          _Hero(
+            project: p,
+            now: now,
+            money: context.money,
+            onWhatNow: _whatNow,
+          ),
           if (ProjectPace.of(p, now).dated) ...[
             const SizedBox(height: 14),
             _Plan(
               project: p,
               now: now,
-              money: _money,
+              money: context.money,
               remind: _RemindRow(project: p, onChanged: _setRemind),
             ),
           ] else if (p.running && !p.reached) ...[
@@ -219,7 +221,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
           if (_lines.isNotEmpty) ...[
             const SizedBox(height: GroupTitle.gap),
             GroupTitle(title: l.projectPayments, count: '${_lines.length}'),
-            _Payments(lines: _lines, money: _money),
+            _Payments(lines: _lines, money: context.money),
           ],
           if (p.running && p.saved.minor > 0)
             ActionUnderCard(label: l.projectTakeBack, onPressed: _takeBack),
@@ -355,12 +357,7 @@ class _Hero extends StatelessWidget {
       state = Text(
         p.reached && endedOn != null && p.due != null
             ? l.projectReachedEarly(
-                DateTime.utc(p.due!.year, p.due!.month, p.due!.day)
-                    .difference(
-                      DateTime.utc(endedOn.year, endedOn.month, endedOn.day),
-                    )
-                    .inDays
-                    .clamp(0, 99999),
+                calendarDays(endedOn, p.due!).clamp(0, 99999),
               )
             : '',
         style: small,
