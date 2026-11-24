@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Étape 4 · sauvegardes automatiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #DCE1EA; font-family: Inter, sans-serif; color: #0E1320; padding: 32px 24px 64px; }
+  h1.page { font: 700 26px 'Plus Jakarta Sans', sans-serif; margin: 0 0 6px; }
+  .lead { color: #525D73; font-size: 15px; margin: 0 0 28px; max-width: 900px; line-height: 22px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .frame { display: flex; flex-direction: column; gap: 8px; width: 390px; }
+  .frame > b { font-size: 14px; }
+  .frame > span { font-size: 13px; color: #525D73; line-height: 18px; }
+  .phone { width: 390px; height: 844px; border-radius: 28px; overflow: hidden; padding: 32px 24px 24px; background: #EEF1F7; display: flex; flex-direction: column; position: relative; }
+  .step { font-size: 14px; font-weight: 600; color: #0A7355; }
+  .phone h2 { margin: 12px 0 8px; font: 700 28px/34px 'Plus Jakarta Sans', sans-serif; }
+  .intro { margin: 0 0 20px; font-size: 15px; line-height: 22px; color: #525D73; }
+  .opts { display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto; }
+  .opt { background: #fff; border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+  .opt .t { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .opt .t b { font-size: 16px; font-weight: 600; }
+  .opt .t small { font-size: 14px; line-height: 20px; color: #525D73; }
+  .opt .t small em { font-style: normal; font-weight: 600; color: #0E1320; }
+  .sw { width: 52px; height: 32px; flex: 0 0 52px; border-radius: 16px; background: #8A93A6; display: flex; align-items: center; padding: 0 3px; }
+  .sw.on { background: #0A7355; justify-content: flex-end; }
+  .sw i { width: 26px; height: 26px; border-radius: 13px; background: #fff; display: block; }
+  .later { margin: 6px 4px 0; font-size: 14px; line-height: 20px; color: #525D73; }
+  .go { height: 56px; border-radius: 18px; background: #5EEAB5; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .picker { position: absolute; inset: 0; background: #fff; display: flex; flex-direction: column; }
+  .picker .bar { height: 64px; display: flex; align-items: center; padding: 0 16px; font-size: 20px; }
+  .picker .crumb { padding: 0 20px 16px; font-size: 14px; color: #525D73; }
+  .picker .grid { padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .picker .grid div { border: 1px solid #DDE2EC; border-radius: 6px; padding: 14px; font-size: 14px; }
+  .picker .use { margin: auto 16px 24px; height: 44px; border-radius: 22px; background: #4A5B8C; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; letter-spacing: .5px; }
+  .tag { position: absolute; top: 10px; right: 12px; background: #FCEFD2; color: #6B4A00; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; }
+</style>
+</head>
+<body>
+<h1 class="page">Étape 4 · « Sauvegardes automatiques »</h1>
+<p class="lead">La planche Lancement4 validée, avec sa deuxième carte. L’interrupteur est éteint au départ ; l’allumer ouvre le choix du dossier d’Android ; sans dossier choisi, il se rééteint (PRODUCT, 24 novembre). Une seule question : ce que dit la carte une fois le dossier choisi (A ou B).</p>
+<div class="row">
+  <div class="frame"><b>1 · Au départ (planche Lancement4)</b><span>Les deux cartes, éteintes.</span>
+    <div class="phone">
+      <span class="step">Étape 4 sur 4</span>
+      <h2>Protégez vos données</h2>
+      <p class="intro">Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.</p>
+      <div class="opts">
+        <div class="opt"><div class="t"><b>Verrouiller l’application</b><small>PIN ou empreinte. Un code de récupération vous sera remis.</small></div><span class="sw"><i></i></span></div>
+        <div class="opt"><div class="t"><b>Sauvegardes automatiques</b><small>Chaque semaine, dans le dossier de votre choix.</small></div><span class="sw"><i></i></span></div>
+        <p class="later">Vous pourrez changer ces choix à tout moment dans les réglages.</p>
+      </div>
+      <div class="go">Commencer</div>
+    </div>
+  </div>
+  <div class="frame"><b>2 · L’allumer ouvre le choix du dossier</b><span>L’écran d’Android, comme pour la sauvegarde manuelle. Revenir sans choisir rééteint l’interrupteur.</span>
+    <div class="phone" style="padding:0">
+      <div class="picker">
+        <span class="tag">écran d’Android</span>
+        <div class="bar">Téléchargements</div>
+        <div class="crumb">Téléphone › Téléchargements</div>
+        <div class="grid"><div>Kibuo</div><div>WhatsApp</div><div>Documents</div><div>Musique</div></div>
+        <div class="use">UTILISER CE DOSSIER</div>
+      </div>
+    </div>
+  </div>
+  <div class="frame"><b>3 A · Allumé, le texte ne change pas</b><span>La carte reste celle de la planche.</span>
+    <div class="phone">
+      <span class="step">Étape 4 sur 4</span>
+      <h2>Protégez vos données</h2>
+      <p class="intro">Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.</p>
+      <div class="opts">
+        <div class="opt"><div class="t"><b>Verrouiller l’application</b><small>PIN ou empreinte. Un code de récupération vous sera remis.</small></div><span class="sw"><i></i></span></div>
+        <div class="opt"><div class="t"><b>Sauvegardes automatiques</b><small>Chaque semaine, dans le dossier de votre choix.</small></div><span class="sw on"><i></i></span></div>
+        <p class="later">Vous pourrez changer ces choix à tout moment dans les réglages.</p>
+      </div>
+      <div class="go">Commencer</div>
+    </div>
+  </div>
+  <div class="frame"><b>3 B · Allumé, la carte nomme le dossier</b><span>« Chaque semaine, dans Téléchargements/Kibuo. » : on voit où iront les fichiers.</span>
+    <div class="phone">
+      <span class="step">Étape 4 sur 4</span>
+      <h2>Protégez vos données</h2>
+      <p class="intro">Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.</p>
+      <div class="opts">
+        <div class="opt"><div class="t"><b>Verrouiller l’application</b><small>PIN ou empreinte. Un code de récupération vous sera remis.</small></div><span class="sw"><i></i></span></div>
+        <div class="opt"><div class="t"><b>Sauvegardes automatiques</b><small>Chaque semaine, dans <em>Téléchargements/Kibuo</em>.</small></div><span class="sw on"><i></i></span></div>
+        <p class="later">Vous pourrez changer ces choix à tout moment dans les réglages.</p>
+      </div>
+      <div class="go">Commencer</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
