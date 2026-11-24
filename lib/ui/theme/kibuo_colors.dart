@@ -55,6 +55,9 @@ abstract final class KibuoColors {
 
   // Meaning: projects, money set aside.
   static const projectInk = Color(0xFF33528A);
+
+  /// Text on the project tint, in a reminder (canvas SauvW2Premiere).
+  static const projectDeep = Color(0xFF24406E);
   static const projectTint = Color(0xFFE1E8F6);
   static const projectLine = Color(0xFF8FA8D6);
 

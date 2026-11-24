@@ -5946,6 +5946,234 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Réservé aux projets'**
   String get accountsReserved;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher le mot de passe'**
+  String get secretShow;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer le mot de passe'**
+  String get secretHide;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde'**
+  String get backupTitle;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde'**
+  String get backupLast;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jamais'**
+  String get backupNever;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui'**
+  String get backupToday;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarder maintenant'**
+  String get backupNow;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier'**
+  String get backupFolder;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun dossier choisi'**
+  String get backupNoFolder;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarder maintenant ?'**
+  String get backupSheetTitle;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Première sauvegarde'**
+  String get backupFirstTitle;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre dernière sauvegarde date de {days, plural, =1{1 jour} other{{days} jours}}.'**
+  String backupOldNote(int days);
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =1{1 jour} other{{days} jours}}'**
+  String backupOldDays(int days);
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sauvegarde pour l’instant. Choisissez où la ranger.'**
+  String get backupFirstNote;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer'**
+  String get backupChange;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner'**
+  String get backupSelect;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier introuvable'**
+  String get backupFolderMissing;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'{folder} n’est plus accessible.'**
+  String backupFolderMissingSub(String folder);
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffrer avec un mot de passe'**
+  String get backupEncrypt;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get backupPassword;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le mot de passe'**
+  String get backupPasswordAgain;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte.'**
+  String get backupPasswordWarning;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes vos données sont sauvegardées : comptes, opérations, projets, dettes et réglages.'**
+  String get backupEverything;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarder'**
+  String get backupSave;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde faite'**
+  String get backupDone;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffrée'**
+  String get backupEncrypted;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'La sauvegarde n’a pas pu être écrite. Vérifiez le dossier et réessayez.'**
+  String get backupFailed;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargements'**
+  String get backupFolderDownload;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Documents'**
+  String get backupFolderDocuments;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde'**
+  String get todoBackup;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il y a {days, plural, =1{1 jour} other{{days} jours}}'**
+  String todoBackupSub(int days);
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sauvegarde'**
+  String get todoBackupNone;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lancer'**
+  String get todoBackupAction;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde et export'**
+  String get moreBackup;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde aujourd’hui'**
+  String get moreBackupToday;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde hier'**
+  String get moreBackupYesterday;
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde il y a {days} jours'**
+  String moreBackupDays(int days);
+
+  /// Backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sauvegarde'**
+  String get moreBackupNone;
 }
 
 class _AppLocalizationsDelegate

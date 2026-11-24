@@ -231,10 +231,14 @@ class SettingsRow extends StatelessWidget {
     required this.onTap,
     this.value,
     this.danger = false,
+    this.valueColor,
   });
 
   final String label;
   final String? value;
+
+  /// Amber when the value asks for attention (an old backup).
+  final Color? valueColor;
 
   /// Null greys the row out.
   final VoidCallback? onTap;
@@ -264,7 +268,17 @@ class SettingsRow extends StatelessWidget {
               ),
               if (value != null) ...[
                 const SizedBox(width: 12),
-                Text(value!, style: KibuoType.caption.copyWith(fontSize: 13)),
+                Flexible(
+                  child: Text(
+                    value!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: KibuoType.caption.copyWith(
+                      fontSize: 13,
+                      color: valueColor,
+                    ),
+                  ),
+                ),
               ],
               if (!danger)
                 const Padding(

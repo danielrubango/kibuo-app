@@ -3840,4 +3840,150 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountsReserved => 'Réservé aux projets';
+
+  @override
+  String get secretShow => 'Afficher le mot de passe';
+
+  @override
+  String get secretHide => 'Masquer le mot de passe';
+
+  @override
+  String get backupTitle => 'Sauvegarde';
+
+  @override
+  String get backupLast => 'Dernière sauvegarde';
+
+  @override
+  String get backupNever => 'Jamais';
+
+  @override
+  String get backupToday => 'Aujourd’hui';
+
+  @override
+  String get backupNow => 'Sauvegarder maintenant';
+
+  @override
+  String get backupFolder => 'Dossier';
+
+  @override
+  String get backupNoFolder => 'Aucun dossier choisi';
+
+  @override
+  String get backupSheetTitle => 'Sauvegarder maintenant ?';
+
+  @override
+  String get backupFirstTitle => 'Première sauvegarde';
+
+  @override
+  String backupOldNote(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours',
+      one: '1 jour',
+    );
+    return 'Votre dernière sauvegarde date de $_temp0.';
+  }
+
+  @override
+  String backupOldDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours',
+      one: '1 jour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupFirstNote =>
+      'Aucune sauvegarde pour l’instant. Choisissez où la ranger.';
+
+  @override
+  String get backupChange => 'Changer';
+
+  @override
+  String get backupSelect => 'Sélectionner';
+
+  @override
+  String get backupFolderMissing => 'Dossier introuvable';
+
+  @override
+  String backupFolderMissingSub(String folder) {
+    return '$folder n’est plus accessible.';
+  }
+
+  @override
+  String get backupEncrypt => 'Chiffrer avec un mot de passe';
+
+  @override
+  String get backupPassword => 'Mot de passe';
+
+  @override
+  String get backupPasswordAgain => 'Confirmer le mot de passe';
+
+  @override
+  String get backupPasswordWarning =>
+      'Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte.';
+
+  @override
+  String get backupEverything =>
+      'Toutes vos données sont sauvegardées : comptes, opérations, projets, dettes et réglages.';
+
+  @override
+  String get backupSave => 'Sauvegarder';
+
+  @override
+  String get backupDone => 'Sauvegarde faite';
+
+  @override
+  String get backupEncrypted => 'Chiffrée';
+
+  @override
+  String get backupFailed =>
+      'La sauvegarde n’a pas pu être écrite. Vérifiez le dossier et réessayez.';
+
+  @override
+  String get backupFolderDownload => 'Téléchargements';
+
+  @override
+  String get backupFolderDocuments => 'Documents';
+
+  @override
+  String get todoBackup => 'Sauvegarde';
+
+  @override
+  String todoBackupSub(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours',
+      one: '1 jour',
+    );
+    return 'Il y a $_temp0';
+  }
+
+  @override
+  String get todoBackupNone => 'Aucune sauvegarde';
+
+  @override
+  String get todoBackupAction => 'Lancer';
+
+  @override
+  String get moreBackup => 'Sauvegarde et export';
+
+  @override
+  String get moreBackupToday => 'Dernière sauvegarde aujourd’hui';
+
+  @override
+  String get moreBackupYesterday => 'Dernière sauvegarde hier';
+
+  @override
+  String moreBackupDays(int days) {
+    return 'Dernière sauvegarde il y a $days jours';
+  }
+
+  @override
+  String get moreBackupNone => 'Aucune sauvegarde';
 }

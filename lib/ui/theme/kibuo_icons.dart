@@ -90,6 +90,8 @@ abstract final class KibuoIcons {
   static const warningCircle = IconData(0xe4e2, fontFamily: _regular);
   static const arrowLineUp = IconData(0xe066, fontFamily: _regular);
   static const eye = IconData(0xe220, fontFamily: _regular);
+  static const downloadSimple = IconData(0xe20c, fontFamily: _regular);
+  static const folderSimple = IconData(0xe25a, fontFamily: _regular);
   static const eyeSlash = IconData(0xe224, fontFamily: _regular);
   static const pencilSimple = IconData(0xe3b4, fontFamily: _regular);
   static const info = IconData(0xe2ce, fontFamily: _regular);

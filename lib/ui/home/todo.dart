@@ -4,11 +4,13 @@ import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/todo/todo.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/backup/backup_sheet.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budget_detail_screen.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
@@ -49,6 +51,7 @@ class HomeTodo extends TodoItem {
       debt = null,
       project = null,
       projectLate = null,
+      backupDays = null,
       super(
         kind: over ? TodoKind.budgetOver : TodoKind.budgetNear,
         key: 'budget:${budget?.budget.id}',
@@ -63,6 +66,7 @@ class HomeTodo extends TodoItem {
       debt = null,
       project = null,
       projectLate = null,
+      backupDays = null,
       super(kind: TodoKind.drafts, key: 'drafts');
 
   HomeTodo.recovery()
@@ -75,6 +79,7 @@ class HomeTodo extends TodoItem {
       debt = null,
       project = null,
       projectLate = null,
+      backupDays = null,
       super(kind: TodoKind.recovery, key: 'recovery');
 
   HomeTodo.rate(this.currency, this.rateDays)
@@ -85,6 +90,7 @@ class HomeTodo extends TodoItem {
       debt = null,
       project = null,
       projectLate = null,
+      backupDays = null,
       super(kind: TodoKind.oldRate, key: 'rate:${currency?.code}');
 
   /// A date to come that would leave its account short (PRODUCT).
@@ -96,6 +102,7 @@ class HomeTodo extends TodoItem {
       debt = null,
       project = null,
       projectLate = null,
+      backupDays = null,
       super(kind: TodoKind.shortfall, key: due.key);
 
   /// A debt or receivable late, due today or this week (PRODUCT).
@@ -108,6 +115,7 @@ class HomeTodo extends TodoItem {
       dueName = '',
       project = null,
       projectLate = null,
+      backupDays = null,
       super(kind: kind, key: 'debt:${debt.id}');
 
   /// A project behind by a whole part of its plan (PRODUCT: Projets).
@@ -119,7 +127,24 @@ class HomeTodo extends TodoItem {
       due = null,
       dueName = '',
       debt = null,
+      backupDays = null,
       super(kind: TodoKind.projectLate, key: 'project:${project.id}');
+
+  /// No backup for more than 7 days; [backupDays] null when there was never
+  /// one (PRODUCT: Sauvegarde manuelle).
+  HomeTodo.backup(this.backupDays)
+    : budget = null,
+      drafts = const [],
+      currency = null,
+      rateDays = 0,
+      due = null,
+      dueName = '',
+      debt = null,
+      project = null,
+      projectLate = null,
+      super(kind: TodoKind.backupOld, key: 'backup');
+
+  final int? backupDays;
 
   final ProjectInfo? project;
 
@@ -213,6 +238,16 @@ class TodoLoader {
       final pace = ProjectPace.of(p, now);
       items.add(HomeTodo.project(p, Money(-pace.gap, p.goal.currency)));
     }
+    // No backup for more than 7 days.
+    if (data.backups case final backups?) {
+      final state = await backups.state();
+      if (state.old(now)) {
+        final last = state.last;
+        items.add(
+          HomeTodo.backup(last == null ? null : backupAgeDays(last, now)),
+        );
+      }
+    }
     final lock = this.lock;
     if (lock != null &&
         lock.recovery != null &&
@@ -299,6 +334,8 @@ class TodoActions {
                 DebtScreen(data: data, debts: data.debts!, id: item.debt!.id),
           ),
         );
+      case TodoKind.backupOld:
+        await runBackup(context, data.backups!);
       case TodoKind.projectLate:
         await Navigator.of(context).push<void>(
           MaterialPageRoute(
@@ -487,6 +524,17 @@ class TodoLook {
           action: l.projectPutAside,
           name: p.name,
           subColor: KibuoColors.danger,
+        );
+      case TodoKind.backupOld:
+        final days = item.backupDays;
+        return TodoLook._(
+          icon: KibuoIcons.downloadSimple,
+          tint: KibuoColors.background,
+          ink: KibuoColors.inkSecondary,
+          title: l.todoBackup,
+          subtitle: days == null ? l.todoBackupNone : l.todoBackupSub(days),
+          action: l.todoBackupAction,
+          name: l.todoBackup,
         );
       case TodoKind.oldRate:
         final title = l.todoRate(

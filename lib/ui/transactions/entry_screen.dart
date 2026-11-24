@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
+import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/debt_repository.dart';
@@ -50,6 +51,7 @@ class EntryData {
     this.reminders,
     this.debts,
     this.projects,
+    this.backups,
   });
 
   final AccountRepository accounts;
@@ -71,6 +73,9 @@ class EntryData {
 
   /// Projects: what they hold back leaves the available amount.
   final ProjectRepository? projects;
+
+  /// The manual backup: « Sauvegarde ancienne » in « À traiter ».
+  final BackupService? backups;
 }
 
 /// What the entry pops when it planned instead of saving (PRODUCT): not

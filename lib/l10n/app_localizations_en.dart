@@ -3802,4 +3802,149 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountsReserved => 'Held for projects';
+
+  @override
+  String get secretShow => 'Show the password';
+
+  @override
+  String get secretHide => 'Hide the password';
+
+  @override
+  String get backupTitle => 'Backup';
+
+  @override
+  String get backupLast => 'Last backup';
+
+  @override
+  String get backupNever => 'Never';
+
+  @override
+  String get backupToday => 'Today';
+
+  @override
+  String get backupNow => 'Back up now';
+
+  @override
+  String get backupFolder => 'Folder';
+
+  @override
+  String get backupNoFolder => 'No folder chosen';
+
+  @override
+  String get backupSheetTitle => 'Back up now?';
+
+  @override
+  String get backupFirstTitle => 'First backup';
+
+  @override
+  String backupOldNote(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Your last backup is $_temp0 old.';
+  }
+
+  @override
+  String backupOldDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupFirstNote => 'No backup yet. Choose where to keep it.';
+
+  @override
+  String get backupChange => 'Change';
+
+  @override
+  String get backupSelect => 'Select';
+
+  @override
+  String get backupFolderMissing => 'Folder not found';
+
+  @override
+  String backupFolderMissingSub(String folder) {
+    return '$folder can no longer be reached.';
+  }
+
+  @override
+  String get backupEncrypt => 'Encrypt with a password';
+
+  @override
+  String get backupPassword => 'Password';
+
+  @override
+  String get backupPasswordAgain => 'Confirm the password';
+
+  @override
+  String get backupPasswordWarning =>
+      'Without this password, the backup cannot be opened.';
+
+  @override
+  String get backupEverything =>
+      'All your data is backed up: accounts, operations, projects, debts and settings.';
+
+  @override
+  String get backupSave => 'Back up';
+
+  @override
+  String get backupDone => 'Backup done';
+
+  @override
+  String get backupEncrypted => 'Encrypted';
+
+  @override
+  String get backupFailed =>
+      'The backup could not be written. Check the folder and try again.';
+
+  @override
+  String get backupFolderDownload => 'Downloads';
+
+  @override
+  String get backupFolderDocuments => 'Documents';
+
+  @override
+  String get todoBackup => 'Backup';
+
+  @override
+  String todoBackupSub(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0 ago';
+  }
+
+  @override
+  String get todoBackupNone => 'No backup yet';
+
+  @override
+  String get todoBackupAction => 'Start';
+
+  @override
+  String get moreBackup => 'Backup and export';
+
+  @override
+  String get moreBackupToday => 'Last backup today';
+
+  @override
+  String get moreBackupYesterday => 'Last backup yesterday';
+
+  @override
+  String moreBackupDays(int days) {
+    return 'Last backup $days days ago';
+  }
+
+  @override
+  String get moreBackupNone => 'No backup yet';
 }

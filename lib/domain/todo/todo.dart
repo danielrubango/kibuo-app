@@ -19,6 +19,9 @@ enum TodoKind {
   shortfall(TodoGroup.week),
   budgetNear(TodoGroup.week),
 
+  /// No backup for more than 7 days (PRODUCT): « Lancer ».
+  backupOld(TodoGroup.reminders),
+
   /// A project behind by a whole part of its plan: « Mettre de côté ».
   projectLate(TodoGroup.reminders),
   oldRate(TodoGroup.reminders);

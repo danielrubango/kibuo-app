@@ -78,12 +78,16 @@ class SavedLine extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    required this.amount,
+    this.amount,
+    this.trailing,
   });
 
   final String title;
   final String subtitle;
-  final String amount;
+  final String? amount;
+
+  /// In place of the amount (the lock of an encrypted backup).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -117,8 +121,14 @@ class SavedLine extends StatelessWidget {
           ],
         ),
       ),
-      const SizedBox(width: 8),
-      Text(amount, style: KibuoType.cardTitle),
+      if (amount case final amount?) ...[
+        const SizedBox(width: 8),
+        Text(amount, style: KibuoType.cardTitle),
+      ],
+      if (trailing case final trailing?) ...[
+        const SizedBox(width: 8),
+        trailing,
+      ],
     ],
   );
 }

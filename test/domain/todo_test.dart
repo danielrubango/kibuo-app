@@ -37,6 +37,25 @@ void main() {
     );
   });
 
+  test('an old backup is a reminder, before late projects and rates', () {
+    final sorted = sortTodos([
+      item(TodoKind.oldRate),
+      item(TodoKind.projectLate),
+      item(TodoKind.backupOld),
+      item(TodoKind.budgetNear),
+    ]);
+    expect(
+      [for (final t in sorted) t.kind],
+      [
+        TodoKind.budgetNear,
+        TodoKind.backupOld,
+        TodoKind.projectLate,
+        TodoKind.oldRate,
+      ],
+    );
+    expect(TodoKind.backupOld.group, TodoGroup.reminders);
+  });
+
   test('the dot takes the most urgent group present', () {
     expect(mostUrgent([item(TodoKind.oldRate)]), TodoGroup.reminders);
     expect(
