@@ -5524,30 +5524,6 @@ abstract class AppLocalizations {
   /// Projects.
   ///
   /// In fr, this message translates to:
-  /// **'Il faut {amount} par semaine pour tenir la date'**
-  String projectNeedWeek(String amount);
-
-  /// Projects.
-  ///
-  /// In fr, this message translates to:
-  /// **'Il faut {amount} par quinzaine pour tenir la date'**
-  String projectNeedFortnight(String amount);
-
-  /// Projects.
-  ///
-  /// In fr, this message translates to:
-  /// **'Il faut {amount} par mois pour tenir la date'**
-  String projectNeedMonth(String amount);
-
-  /// Projects.
-  ///
-  /// In fr, this message translates to:
-  /// **'Il reste {amount} à mettre de côté'**
-  String projectLeftToSave(String amount);
-
-  /// Projects.
-  ///
-  /// In fr, this message translates to:
   /// **'Le plan'**
   String get projectPlan;
 
@@ -5854,20 +5830,44 @@ abstract class AppLocalizations {
   /// Projects.
   ///
   /// In fr, this message translates to:
-  /// **'{amount} mis de côté'**
-  String projectPutAsideDone(String amount);
+  /// **'Détails'**
+  String get projectDetails;
 
   /// Projects.
   ///
   /// In fr, this message translates to:
-  /// **'{amount} repris'**
-  String projectTakenBackDone(String amount);
+  /// **'Mis de côté'**
+  String get projectPutAsideSaved;
 
   /// Projects.
   ///
   /// In fr, this message translates to:
-  /// **'{name} est terminé, l’argent est libre'**
-  String projectReleasedDone(String name);
+  /// **'Argent repris'**
+  String get projectTakenBackSaved;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} est terminé'**
+  String projectEndedSaved(String name);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendu disponible · {account}'**
+  String projectReleasedLine(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé · {account}'**
+  String projectSpentLine(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{saved} sur {goal}'**
+  String projectProgress(String saved, String goal);
 }
 
 class _AppLocalizationsDelegate

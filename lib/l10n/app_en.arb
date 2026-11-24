@@ -914,10 +914,6 @@
   "projectOnPace": " on the pace",
   "projectOn": "On {account}",
   "projectPutAside": "Put aside",
-  "projectNeedWeek": "{amount} a week keeps the date",
-  "projectNeedFortnight": "{amount} a fortnight keeps the date",
-  "projectNeedMonth": "{amount} a month keeps the date",
-  "projectLeftToSave": "{amount} left to put aside",
   "projectPlan": "The plan",
   "projectPlanLeft": "{amount} to go",
   "projectUntil": "until {date}",
@@ -969,7 +965,11 @@
   "projectEditTitle": "Edit the project",
   "projectSave": "Save",
   "projectAccountLocked": "The account can’t change after a first payment.",
-  "projectPutAsideDone": "{amount} put aside",
-  "projectTakenBackDone": "{amount} taken back",
-  "projectReleasedDone": "{name} has ended, the money is free"
+  "projectDetails": "Details",
+  "projectPutAsideSaved": "Put aside",
+  "projectTakenBackSaved": "Money taken back",
+  "projectEndedSaved": "{name} has ended",
+  "projectReleasedLine": "Made available · {account}",
+  "projectSpentLine": "Spent · {account}",
+  "projectProgress": "{saved} of {goal}"
 }

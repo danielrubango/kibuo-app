@@ -489,12 +489,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                     ],
                   ),
                   if (due != null)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextAction(
-                        label: l.projectNoDate,
-                        onPressed: () => setState(() => _due = null),
-                      ),
+                    ActionUnderCard(
+                      label: l.projectNoDate,
+                      color: KibuoColors.accent,
+                      onPressed: () => setState(() => _due = null),
                     ),
                   if (per != null && per > 0) ...[
                     const SizedBox(height: 14),
@@ -570,26 +568,22 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       ),
                     ],
                   ),
-                  if (widget.editing case final p?) ...[
-                    const SizedBox(height: 16),
-                    Center(
-                      child: TextAction(
-                        label: l.projectDelete,
-                        color: KibuoColors.danger,
-                        onPressed: () async {
-                          final gone = await deleteProject(
-                            context,
-                            projects: widget.projects,
-                            project: p,
-                            payments: widget.payments,
-                          );
-                          if (gone && context.mounted) {
-                            Navigator.of(context).pop(true);
-                          }
-                        },
-                      ),
+                  if (widget.editing case final p?)
+                    ActionUnderCard(
+                      label: l.projectDelete,
+                      color: KibuoColors.danger,
+                      onPressed: () async {
+                        final gone = await deleteProject(
+                          context,
+                          projects: widget.projects,
+                          project: p,
+                          payments: widget.payments,
+                        );
+                        if (gone && context.mounted) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
                     ),
-                  ],
                 ],
               ),
             ),

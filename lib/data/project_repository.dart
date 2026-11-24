@@ -74,6 +74,16 @@ class ContributionLine {
   final String? from;
 }
 
+/// What « Mettre de côté » or « Reprendre » wrote, to undo it.
+class MoneyMoved {
+  const MoneyMoved({required this.contributionId, this.transferId});
+
+  final String contributionId;
+
+  /// The transfer that brought it from another account.
+  final String? transferId;
+}
+
 /// Projects and what is set aside for them (PRODUCT: Projets). Nothing
 /// moves on the accounts: the money set aside is only held back.
 class ProjectRepository {
@@ -128,19 +138,22 @@ class ProjectRepository {
     String projectId, {
     required int amount,
     required DateTime date,
-  }) => _insertContribution(projectId, amount, date, null);
+  }) async {
+    await _insertContribution(projectId, amount, date, null);
+  }
 
-  Future<void> _insertContribution(
+  Future<String> _insertContribution(
     String projectId,
     int amount,
     DateTime date,
     String? from,
   ) async {
+    final id = const Uuid().v7();
     await _db
         .into(_db.contributions)
         .insert(
           ContributionsCompanion.insert(
-            id: const Uuid().v7(),
+            id: id,
             version: await _nextVersion(),
             deviceId: _db.deviceId,
             projectId: projectId,
@@ -149,6 +162,7 @@ class ProjectRepository {
             fromAccountId: Value(from),
           ),
         );
+    return id;
   }
 
   /// Every project, running first, with what is set aside.
@@ -215,20 +229,21 @@ class ProjectRepository {
 
   /// « Mettre de côté »: never more than what is free on the account it
   /// comes from. From another account, a transfer brings it to the
-  /// project's account first (PRODUCT: Projets). False when refused.
-  Future<bool> putAside(
+  /// project's account first (PRODUCT: Projets). Null when refused.
+  Future<MoneyMoved?> putAside(
     String projectId, {
     required int amount,
     required DateTime date,
     String? fromAccountId,
   }) async {
     final p = await project(projectId);
-    if (p == null || amount <= 0) return false;
+    if (p == null || amount <= 0) return null;
     final from = fromAccountId == p.accountId ? null : fromAccountId;
-    if (amount > (await free(from ?? p.accountId)).minor) return false;
-    await _db.transaction(() async {
+    if (amount > (await free(from ?? p.accountId)).minor) return null;
+    return _db.transaction(() async {
+      String? transferId;
       if (from != null) {
-        await TransactionRepository(_db).createTransfer(
+        transferId = await TransactionRepository(_db).createTransfer(
           fromId: from,
           toId: p.accountId,
           sent: Money(amount, p.goal.currency),
@@ -237,21 +252,54 @@ class ProjectRepository {
           note: p.name,
         );
       }
-      await _insertContribution(projectId, amount, date, from);
+      final id = await _insertContribution(projectId, amount, date, from);
+      return MoneyMoved(contributionId: id, transferId: transferId);
     });
-    return true;
+  }
+
+  /// « Annuler » on the confirmation: the line goes, and the transfer
+  /// that brought it.
+  Future<void> undo(MoneyMoved moved) async {
+    await _db.transaction(() async {
+      await (_db.update(
+        _db.contributions,
+      )..where((c) => c.id.equals(moved.contributionId))).write(
+        ContributionsCompanion(
+          version: Value(await _nextVersion()),
+          deleted: const Value(true),
+        ),
+      );
+      if (moved.transferId case final t?) {
+        await TransactionRepository(_db).delete(t);
+      }
+    });
+  }
+
+  /// « Annuler » once it was made available: it runs again.
+  Future<void> reopen(String projectId) async {
+    await (_db.update(
+      _db.projects,
+    )..where((p) => p.id.equals(projectId))).write(
+      ProjectsCompanion(
+        version: Value(await _nextVersion()),
+        ending: const Value(null),
+        endedOn: const Value(null),
+      ),
+    );
   }
 
   /// « Reprendre de l'argent »: at most what is set aside; nothing moves.
-  Future<bool> takeBack(
+  /// Null when refused.
+  Future<MoneyMoved?> takeBack(
     String projectId, {
     required int amount,
     required DateTime date,
   }) async {
     final p = await project(projectId);
-    if (p == null || amount <= 0 || amount > p.saved.minor) return false;
-    await _insertContribution(projectId, -amount, date, null);
-    return true;
+    if (p == null || amount <= 0 || amount > p.saved.minor) return null;
+    return MoneyMoved(
+      contributionId: await _insertContribution(projectId, -amount, date, null),
+    );
   }
 
   /// The goal reached: « spent » or « released »; its reserve goes.

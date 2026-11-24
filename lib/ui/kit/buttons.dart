@@ -164,3 +164,25 @@ class TextAction extends StatelessWidget {
     );
   }
 }
+
+/// A text button under a card (DIRECTION: Action sous une carte): centred,
+/// its 44 high touch area right under the card, so the text sits 12 from
+/// it and keeps 12 under it before the next block (« Reprendre de
+/// l'argent », « Supprimer le projet », « Retirer la date »).
+class ActionUnderCard extends StatelessWidget {
+  const ActionUnderCard({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.color = KibuoColors.inkSecondary,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: TextAction(label: label, color: color, onPressed: onPressed),
+  );
+}

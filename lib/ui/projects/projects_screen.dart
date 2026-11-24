@@ -7,6 +7,7 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/card_link.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
@@ -170,7 +171,10 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   )
                 else if (running.isNotEmpty) ...[
                   _summary(l, running),
-                  if (running.any((p) => p.due != null)) ...[
+                  // Only when a card shows the mark.
+                  if (running.any(
+                    (p) => ProjectPace.of(p, widget.now()).dated,
+                  )) ...[
                     const SizedBox(height: 14),
                     _Legend(text: l.projectsMarkLegend),
                   ],
@@ -401,7 +405,7 @@ class _ProjectCard extends StatelessWidget {
           onOpen();
         },
         child: Padding(
-          padding: EdgeInsets.fromLTRB(14, 12, 14, canAdd ? 4 : 14),
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -494,33 +498,13 @@ class _ProjectCard extends StatelessWidget {
                       style: KibuoType.caption.copyWith(color: restColor),
                     ),
                   ),
-                  if (canAdd) ...[
-                    const SizedBox(width: 8),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        Haptics.tap();
-                        onPutAside();
-                      },
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: KibuoTheme.heightTouch,
-                        ),
-                        child: Center(
-                          widthFactor: 1,
-                          child: Text(
-                            '${l.projectPutAside} ›',
-                            style: KibuoType.caption
-                                .copyWith(
-                                  fontSize: 13,
-                                  color: KibuoColors.accent,
-                                )
-                                .weight(700),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  const SizedBox(width: 8),
+                  // Always a link there: « Détails » once nothing can be
+                  // added (owner, 24 November).
+                  CardLink(
+                    label: canAdd ? l.projectPutAside : l.projectDetails,
+                    onTap: canAdd ? onPutAside : onOpen,
+                  ),
                 ],
               ),
             ],

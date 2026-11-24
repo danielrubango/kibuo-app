@@ -5,7 +5,9 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/card_arrow.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/status_pill.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -97,6 +99,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
       projects: widget.projects,
       project: p,
       now: widget.now,
+      onSaved: _changed,
     )) {
       await _changed();
     }
@@ -194,26 +197,14 @@ class _ProjectScreenState extends State<ProjectScreen> {
             GroupTitle(title: l.projectPayments, count: '${_lines.length}'),
             _Payments(lines: _lines, money: _money),
           ],
-          if (p.running && p.saved.minor > 0) ...[
-            const SizedBox(height: 8),
-            Center(
-              child: TextAction(
-                label: l.projectTakeBack,
-                color: KibuoColors.inkSecondary,
-                onPressed: _takeBack,
-              ),
+          if (p.running && p.saved.minor > 0)
+            ActionUnderCard(label: l.projectTakeBack, onPressed: _takeBack),
+          if (!p.running)
+            ActionUnderCard(
+              label: l.projectDelete,
+              color: KibuoColors.danger,
+              onPressed: _delete,
             ),
-          ],
-          if (!p.running) ...[
-            const SizedBox(height: 8),
-            Center(
-              child: TextAction(
-                label: l.projectDelete,
-                color: KibuoColors.danger,
-                onPressed: _delete,
-              ),
-            ),
-          ],
         ],
       ),
       bottomNavigationBar: adding
@@ -351,10 +342,7 @@ class _Hero extends StatelessWidget {
         style: small,
       );
     } else if (p.reached) {
-      state = Text(
-        l.projectsReached,
-        style: small.copyWith(color: KibuoColors.accent).weight(700),
-      );
+      state = const SizedBox.shrink();
     } else if (!pace.dated) {
       state = Text(
         l.projectsOwnPace,
@@ -386,19 +374,8 @@ class _Hero extends StatelessWidget {
         style: small,
       );
     }
-    final hint = ended || p.reached
-        ? null
-        : pace.dated
-        ? switch (p.period) {
-            PlanPeriod.week => l.projectNeedWeek(money(Money(pace.per, cur))),
-            PlanPeriod.fortnight => l.projectNeedFortnight(
-              money(Money(pace.per, cur)),
-            ),
-            PlanPeriod.month => l.projectNeedMonth(money(Money(pace.per, cur))),
-          }
-        : l.projectLeftToSave(money(Money(p.goal.minor - p.saved.minor, cur)));
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 14, CardArrow.edge + 2, 16),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusFeatured),
@@ -454,15 +431,49 @@ class _Hero extends StatelessWidget {
           const SizedBox(height: 8),
           ProjectBar(share: p.share, mark: pace.mark, fill: fill, height: 10),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(flex: 3, child: state),
-              const SizedBox(width: 8),
-              if (p.running && p.reached)
-                TextAction(label: '${l.projectWhatNow} ›', onPressed: onWhatNow)
-              else
-                Expanded(
-                  flex: 2,
+          if (p.running && p.reached)
+            // « Objectif atteint · Et maintenant ? », the card's arrow at
+            // the edge (owner, 24 November).
+            InkWell(
+              onTap: () {
+                Haptics.tap();
+                onWhatNow();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text.rich(
+                        TextSpan(
+                          text: l.projectsReached,
+                          style: const TextStyle(color: KibuoColors.accent)
+                              .weight(700),
+                          children: [
+                            TextSpan(
+                              text: ' · ${l.projectWhatNow}',
+                              style: const TextStyle(color: KibuoColors.ink)
+                                  .weight(600),
+                            ),
+                          ],
+                        ),
+                        style: small,
+                      ),
+                    ),
+                    const CardArrow(),
+                  ],
+                ),
+              ),
+            )
+          else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: state),
+                const SizedBox(width: 12),
+                // Always at the right edge (owner, 24 November).
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 140),
                   child: Text(
                     l.projectOn(p.account),
                     maxLines: 1,
@@ -471,19 +482,8 @@ class _Hero extends StatelessWidget {
                     style: small,
                   ),
                 ),
-            ],
-          ),
-          if (hint != null) ...[
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-              decoration: BoxDecoration(
-                color: KibuoColors.background,
-                borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-              ),
-              child: Text(hint, style: small),
+              ],
             ),
-          ],
         ],
       ),
     );
@@ -598,7 +598,6 @@ class _Plan extends StatelessWidget {
               blendMode: BlendMode.dstIn,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                clipBehavior: Clip.none,
                 itemCount: parts.length,
                 separatorBuilder: (_, _) => const SizedBox(width: 6),
                 itemBuilder: (context, i) {

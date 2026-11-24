@@ -101,7 +101,7 @@ void main() {
         amount: 6000,
         date: DateTime(2026, 11, 24),
       );
-      expect(ok, isTrue);
+      expect(ok, isNotNull);
       expect((await projects.project(trip))!.saved.minor, 6000);
       expect((await projects.free(rawbank)).minor, 4000);
       expect(await TransactionRepository(db).all(), isEmpty);
@@ -116,7 +116,7 @@ void main() {
         amount: 10001,
         date: DateTime(2026, 11, 24),
       );
-      expect(ok, isFalse);
+      expect(ok, equals(null));
       expect(await projects.contributions(trip), isEmpty);
     });
 
@@ -127,7 +127,7 @@ void main() {
         date: DateTime(2026, 11, 24),
         fromAccountId: mpesa,
       );
-      expect(ok, isTrue);
+      expect(ok?.transferId, isNotNull);
       final moved = (await TransactionRepository(db).all()).single;
       expect(moved.accountId, mpesa);
       expect(moved.toAccountId, rawbank);
@@ -145,7 +145,7 @@ void main() {
         date: DateTime(2026, 11, 24),
         fromAccountId: mpesa,
       );
-      expect(ok, isFalse);
+      expect(ok, equals(null));
       expect(await TransactionRepository(db).all(), isEmpty);
     });
 
@@ -157,7 +157,7 @@ void main() {
           amount: 6001,
           date: DateTime(2026, 11, 3),
         ),
-        isFalse,
+        equals(null),
       );
       expect(
         await projects.takeBack(
@@ -165,7 +165,7 @@ void main() {
           amount: 2000,
           date: DateTime(2026, 11, 3),
         ),
-        isTrue,
+        isNotNull,
       );
       final lines = await projects.contributions(trip);
       expect(lines.map((c) => c.amount.minor), [-2000, 6000]);
@@ -208,6 +208,27 @@ void main() {
       expect(await projects.project(trip), equals(null));
       expect(await projects.projects(), isEmpty);
       expect((await projects.free(rawbank)).minor, 10000);
+    });
+
+    test('undone: the line goes, and its transfer with it', () async {
+      final done = await projects.putAside(
+        trip,
+        amount: 20000,
+        date: DateTime(2026, 11, 24),
+        fromAccountId: mpesa,
+      );
+      await projects.undo(done!);
+      expect(await projects.contributions(trip), isEmpty);
+      expect(await TransactionRepository(db).all(), isEmpty);
+      expect((await projects.free(mpesa)).minor, 50000);
+    });
+
+    test('reopened after being made available', () async {
+      await projects.end(trip, ending: 'released', on: DateTime(2026, 11, 4));
+      await projects.reopen(trip);
+      final p = (await projects.project(trip))!;
+      expect(p.running, isTrue);
+      expect(p.endedOn, equals(null));
     });
   });
 }

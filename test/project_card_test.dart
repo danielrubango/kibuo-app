@@ -98,6 +98,16 @@ void main() {
   Widget card(String id) =>
       ProjectScreen(data: data, projects: projects, id: id, now: () => now);
 
+  /// Without settling: the confirmation closes by itself after a while.
+  Future<void> soft(WidgetTester tester) async {
+    for (var i = 0; i < 6; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 20)),
+      );
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+  }
+
   Future<void> done(WidgetTester tester) async {
     // The toast's time runs out.
     await tester.pump(const Duration(seconds: 10));
@@ -120,10 +130,6 @@ void main() {
     expect(find.text('Le plan'), findsNothing); // a rich text
     expect(find.textContaining('Le plan'), findsOneWidget);
     expect(find.text('Cette sem.'), findsOneWidget);
-    expect(
-      shown('Il faut 30,00 \$ par semaine pour tenir la date'),
-      findsOneWidget,
-    );
     expect(find.textContaining('Versements'), findsOneWidget);
     expect(shown('+150,00 \$'), findsOneWidget);
   });
@@ -138,10 +144,25 @@ void main() {
     expect(find.text('Mettre de côté pour Voyage'), findsOneWidget);
     expect(find.text('cette semaine'), findsOneWidget);
     await tester.tap(find.text('Mettre de côté').last);
-    await settle(tester);
+    await soft(tester);
     expect((await projects.project(id))!.saved.minor, 18000);
-    expect(shown('+30,00 \$'), findsOneWidget);
+    expect(find.text('Mis de côté'), findsOneWidget);
     await done(tester);
+    expect(find.text('Mis de côté'), findsNothing);
+    expect(shown('+30,00 \$'), findsOneWidget);
+  });
+
+  testWidgets('« Annuler » on the confirmation undoes it', (tester) async {
+    final id = await trip();
+    await show(tester, card(id));
+    await tester.tap(find.text('Mettre de côté'));
+    await settle(tester);
+    await tester.tap(find.text('Mettre de côté').last);
+    await soft(tester);
+    await tester.tap(find.text('Annuler'));
+    await settle(tester);
+    expect((await projects.project(id))!.saved.minor, 15000);
+    expect(shown('+30,00 \$'), findsNothing);
   });
 
   testWidgets('from another account: the transfer said, and refused '
@@ -177,11 +198,12 @@ void main() {
     await settle(tester);
     expect(find.text('Tout'), findsOneWidget);
     await tester.tap(find.text('Reprendre'));
-    await settle(tester);
+    await soft(tester);
     expect((await projects.project(id))!.saved.minor, 0);
+    expect(find.text('Argent repris'), findsOneWidget);
+    await done(tester);
     expect(shown('−150,00 \$'), findsOneWidget);
     expect(await data.transactions.all(), isEmpty);
-    await done(tester);
   });
 
   testWidgets('the goal met: « Objectif atteint », then made available', (
@@ -198,7 +220,9 @@ void main() {
     expect(find.text('Objectif atteint'), findsWidgets);
     expect(find.text('Le rendre disponible'), findsOneWidget);
     await tester.tap(find.text('Le rendre disponible'));
-    await settle(tester);
+    await soft(tester);
+    expect(find.text('Voyage est terminé'), findsOneWidget);
+    await done(tester);
     final p = (await projects.project(id))!;
     expect(p.running, isFalse);
     expect(p.ending, 'released');

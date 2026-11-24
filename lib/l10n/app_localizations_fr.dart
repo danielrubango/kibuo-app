@@ -3540,26 +3540,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get projectPutAside => 'Mettre de côté';
 
   @override
-  String projectNeedWeek(String amount) {
-    return 'Il faut $amount par semaine pour tenir la date';
-  }
-
-  @override
-  String projectNeedFortnight(String amount) {
-    return 'Il faut $amount par quinzaine pour tenir la date';
-  }
-
-  @override
-  String projectNeedMonth(String amount) {
-    return 'Il faut $amount par mois pour tenir la date';
-  }
-
-  @override
-  String projectLeftToSave(String amount) {
-    return 'Il reste $amount à mettre de côté';
-  }
-
-  @override
   String get projectPlan => 'Le plan';
 
   @override
@@ -3778,17 +3758,31 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le compte ne change plus après un premier versement.';
 
   @override
-  String projectPutAsideDone(String amount) {
-    return '$amount mis de côté';
+  String get projectDetails => 'Détails';
+
+  @override
+  String get projectPutAsideSaved => 'Mis de côté';
+
+  @override
+  String get projectTakenBackSaved => 'Argent repris';
+
+  @override
+  String projectEndedSaved(String name) {
+    return '$name est terminé';
   }
 
   @override
-  String projectTakenBackDone(String amount) {
-    return '$amount repris';
+  String projectReleasedLine(String account) {
+    return 'Rendu disponible · $account';
   }
 
   @override
-  String projectReleasedDone(String name) {
-    return '$name est terminé, l’argent est libre';
+  String projectSpentLine(String account) {
+    return 'Dépensé · $account';
+  }
+
+  @override
+  String projectProgress(String saved, String goal) {
+    return '$saved sur $goal';
   }
 }

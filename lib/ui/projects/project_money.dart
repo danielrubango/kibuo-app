@@ -8,12 +8,12 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/amount_sheet.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/hatched_bar.dart';
 import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/quick_amounts.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
-import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/kit/value_row.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/projects/project_parts.dart';
@@ -46,7 +46,7 @@ Future<bool> putAsideFlow(
   final free = {for (final a in accounts) a.id: await projects.free(a.id)};
   if (!context.mounted) return false;
   final l = AppLocalizations.of(context);
-  final done = await showKibuoSheet<Money>(
+  final done = await showKibuoSheet<_Moved>(
     context,
     title: l.projectPutAsideFor(project.name),
     builder: (_) => _MoneySheet(
@@ -60,12 +60,12 @@ Future<bool> putAsideFlow(
   );
   if (done == null || !context.mounted) return false;
   Haptics.confirm();
-  showKibuoToast(context, l.projectPutAsideDone(_money(context, done)));
-  // What lies behind is up to date under « Objectif atteint ».
+  // What lies behind is up to date under the confirmation.
   await onSaved?.call();
-  if (!context.mounted) return true;
   final after = await projects.project(project.id);
-  if (after != null && after.reached && !project.reached && context.mounted) {
+  if (after == null || !context.mounted) return true;
+  // Met: « Objectif atteint » says it (canvas ProjetAtteint).
+  if (after.reached && !project.reached) {
     await reachedFlow(
       context,
       data: data,
@@ -73,8 +73,75 @@ Future<bool> putAsideFlow(
       project: after,
       now: now,
     );
+    return true;
+  }
+  final undo = await _confirmMoved(
+    context,
+    after: after,
+    done: done,
+    now: now(),
+  );
+  if (undo == true) {
+    await projects.undo(done.moved);
+    await onSaved?.call();
   }
   return true;
+}
+
+/// What a sheet moved: the amount, what was written, where it came from.
+class _Moved {
+  const _Moved(this.amount, this.moved, {this.from});
+
+  final Money amount;
+  final MoneyMoved moved;
+  final String? from;
+}
+
+/// « Mis de côté », « Argent repris » (canvas ConfirmA): the line, the
+/// project's bar after it, « Annuler »; it closes by itself. True to undo.
+Future<bool?> _confirmMoved(
+  BuildContext context, {
+  required ProjectInfo after,
+  required _Moved done,
+  required DateTime now,
+}) {
+  final l = AppLocalizations.of(context);
+  final put = done.amount.minor > 0;
+  final where = done.from == null
+      ? after.account
+      : l.projectFromTo(done.from!, after.account);
+  final shown = Money(done.amount.minor.abs(), done.amount.currency);
+  return showConfirmSheet<bool>(
+    context,
+    title: put ? l.projectPutAsideSaved : l.projectTakenBackSaved,
+    card: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SavedLine(
+          title: after.name,
+          subtitle: '$where · ${l.entryToday}',
+          amount: '${put ? '+' : '−'}${_money(context, shown)}',
+        ),
+        const SizedBox(height: 6),
+        ProjectBar(share: after.share, fill: KibuoColors.projectLine),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l.projectProgress(
+                  _money(context, after.saved),
+                  _money(context, after.goal),
+                ),
+                style: KibuoType.caption,
+              ),
+            ),
+            Text('${(after.share * 100).round()} %', style: KibuoType.caption),
+          ],
+        ),
+      ],
+    ),
+    actions: [ConfirmAction(l.cancel, true)],
+  );
 }
 
 /// « Reprendre de l'argent » (canvas ProjetReprendre): at most what is
@@ -84,9 +151,10 @@ Future<bool> takeBackFlow(
   required ProjectRepository projects,
   required ProjectInfo project,
   DateTime Function() now = DateTime.now,
+  Future<void> Function()? onSaved,
 }) async {
   final l = AppLocalizations.of(context);
-  final done = await showKibuoSheet<Money>(
+  final done = await showKibuoSheet<_Moved>(
     context,
     title: l.projectTakeBack,
     builder: (_) => _MoneySheet(
@@ -100,7 +168,19 @@ Future<bool> takeBackFlow(
   );
   if (done == null || !context.mounted) return false;
   Haptics.confirm();
-  showKibuoToast(context, l.projectTakenBackDone(_money(context, done)));
+  await onSaved?.call();
+  final after = await projects.project(project.id);
+  if (after == null || !context.mounted) return true;
+  final undo = await _confirmMoved(
+    context,
+    after: after,
+    done: done,
+    now: now(),
+  );
+  if (undo == true) {
+    await projects.undo(done.moved);
+    await onSaved?.call();
+  }
   return true;
 }
 
@@ -204,7 +284,7 @@ class _MoneySheetState extends State<_MoneySheet> {
   Future<void> _save() async {
     if (!_ready || _saving) return;
     setState(() => _saving = true);
-    final ok = widget.put
+    final moved = widget.put
         ? await widget.projects.putAside(
             _p.id,
             amount: _amount.minor,
@@ -217,8 +297,17 @@ class _MoneySheetState extends State<_MoneySheet> {
             date: widget.now(),
           );
     if (!mounted) return;
-    if (ok) {
-      Navigator.of(context).pop(_amount);
+    if (moved != null) {
+      final from = widget.put && _account!.id != _p.accountId
+          ? _account!.name
+          : null;
+      Navigator.of(context).pop(
+        _Moved(
+          widget.put ? _amount : Money(-_amount.minor, _currency),
+          moved,
+          from: from,
+        ),
+      );
     } else {
       setState(() => _saving = false);
     }
@@ -568,12 +657,36 @@ Future<bool> reachedFlow(
       // Given up, nothing changes (PRODUCT).
       if (id == null) return false;
       await projects.end(project.id, ending: 'spent', on: now());
+      if (context.mounted) {
+        Haptics.confirm();
+        await showConfirmSheet<void>(
+          context,
+          title: l.projectEndedSaved(project.name),
+          card: SavedLine(
+            title: project.name,
+            subtitle: l.projectSpentLine(project.account),
+            amount: amount,
+          ),
+        );
+      }
       return true;
     case _Ending.release:
       await projects.end(project.id, ending: 'released', on: now());
-      if (context.mounted) {
-        Haptics.confirm();
-        showKibuoToast(context, l.projectReleasedDone(project.name));
+      if (!context.mounted) return true;
+      Haptics.confirm();
+      final undo = await showConfirmSheet<bool>(
+        context,
+        title: l.projectEndedSaved(project.name),
+        card: SavedLine(
+          title: project.name,
+          subtitle: l.projectReleasedLine(project.account),
+          amount: amount,
+        ),
+        actions: [ConfirmAction(l.cancel, true)],
+      );
+      if (undo == true) {
+        await projects.reopen(project.id);
+        return false;
       }
       return true;
     case _Ending.keep:

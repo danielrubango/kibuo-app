@@ -363,16 +363,8 @@ class _DebtScreenState extends State<DebtScreen> {
               ],
             ),
           // Given up: what is left goes, nothing moves (PRODUCT).
-          if (!d.settled) ...[
-            const SizedBox(height: 12),
-            Center(
-              child: TextAction(
-                label: l.debtForgive,
-                color: KibuoColors.inkSecondary,
-                onPressed: _forgive,
-              ),
-            ),
-          ],
+          if (!d.settled)
+            ActionUnderCard(label: l.debtForgive, onPressed: _forgive),
         ],
       ),
       bottomNavigationBar: d.settled
