@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/domain/transactions/budget_period.dart';
+import 'package:kibuo/ui/kit/card_arrow.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -68,7 +69,7 @@ class MonthSummaryCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(14, 12, CardArrow.edge, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

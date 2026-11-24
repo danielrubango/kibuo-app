@@ -61,3 +61,9 @@ Leçon de plus : **un cadre qui apparaît vaut mieux qu'un cadre qui s'élargit*
 
 1. **L'ouverture d'une ligne** : à valider sur ton téléphone.
 2. **La suite** : le deuxième temps (fiche, « Rembourser », modifier, solder, supprimer) et le style « provisoire » des opérations de dette dans Opérations.
+
+## Le 24 novembre : les flèches des cartes
+
+- Les flèches › de l'accueil étaient à 16, 18, 14 et 10 du bord, en trois tailles : chaque écran copiait sa planche, et les planches, faites à des moments différents, ne s'accordaient pas. Je comparais chaque écran à sa planche, pas les flèches des cartes entre elles.
+- Corrigé : un composant du kit (`CardArrow`), une seule taille (18), une seule marge (14), et la règle dans DIRECTION.
+- **Leçon** : avant de coder un écran, comparer entre les planches les marges des éléments communs (flèches, coins, espaces intérieurs), pas seulement leurs tailles et leurs couleurs.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/card_arrow.dart';
 import 'package:kibuo/ui/kit/dashed_border.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -96,7 +97,7 @@ class _Card extends StatelessWidget {
           onTap();
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+          padding: const EdgeInsets.fromLTRB(14, 12, CardArrow.edge, 12),
           child: Row(
             children: [
               Expanded(
@@ -127,6 +128,8 @@ class _Card extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
+                    // Always three lines: « Rien » keeps its place at the
+                    // top, like its neighbour (owner, 24 November).
                     if (side.count > 0)
                       Text.rich(
                         TextSpan(
@@ -144,15 +147,18 @@ class _Card extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: KibuoType.caption,
+                      )
+                    else
+                      Text(
+                        '—',
+                        style: KibuoType.caption.copyWith(
+                          color: KibuoColors.inkMuted,
+                        ),
                       ),
                   ],
                 ),
               ),
-              const Icon(
-                KibuoIcons.caretRight,
-                size: 18,
-                color: KibuoColors.inkMuted,
-              ),
+              const CardArrow(),
             ],
           ),
         ),
