@@ -385,7 +385,8 @@ class _MoneySheetState extends State<_MoneySheet> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Flexible(
+                  // Tight, so its text reaches the right edge.
+                  Expanded(
                     flex: 3,
                     child: Text(
                       projectWhen(l, lang, _p, widget.now(), left: false),
