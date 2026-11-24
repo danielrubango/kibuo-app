@@ -1,6 +1,6 @@
 ---
 title: Ordre des catégories et sous-catégories
-milestone: Après la V1
+milestone: Version 0.5
 labels: [catégories]
 ---
 

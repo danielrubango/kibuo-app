@@ -1,8 +1,19 @@
 # Roadmap
 
-Avancement de la V1, phase par phase. Une case cochée signifie : réalisé et validé par le propriétaire. À la création du dépôt GitHub, ce fichier sera porté selon [backlog/github.md](backlog/github.md).
+Une case cochée signifie : réalisé et validé par le propriétaire. À la création du suivi sur GitHub, ce fichier sera porté selon [backlog/github.md](backlog/github.md).
 
-**Prochaine étape : la première case vide.**
+**Prochaine étape : la première case vide de la version 0.1.**
+
+## Le plan (décidé le 25 novembre 2026)
+
+kibuo sort tôt sur Google Play, puis s'enrichit version par version :
+
+- **0.1** : la première publication, avec ce qui est déjà construit et seulement ce qui manque pour ne pas paraître inachevé ou ce que Google Play exige.
+- **0.2 à 0.5** : une nouveauté principale par version, publiée au fil de l'eau.
+- **1.0** : la version stable et complète, après quelques semaines de test des versions 0.x par de vrais utilisateurs. C'est elle que les documents appellent « la V1 » ([PRODUCT.md](PRODUCT.md), « Cadre de la V1 »).
+- **Après la 1.0** : les grands chantiers (cloud, IA, iOS…), dans cet ordre de départ, à revoir selon les retours.
+
+Les phases 0 à 6 ci-dessous sont l'historique de la construction.
 
 ## Phase 0 : Fondations du projet
 
@@ -15,7 +26,7 @@ Avancement de la V1, phase par phase. Une case cochée signifie : réalisé et v
 
 Rien n'est codé avant la fin de cette phase.
 
-- [ ] Vérifier les marques et réserver les domaines (voir [BRAND.md](BRAND.md))
+- [ ] Vérifier les marques et réserver les domaines (déplacé en version 0.1)
 - [x] Proposer quatre logos en SVG et en choisir un
 - [x] Proposer trois directions visuelles sur l'accueil et la saisie rapide, et en choisir une
 - [x] Maquetter le premier lancement
@@ -80,29 +91,63 @@ Rien n'est codé avant la fin de cette phase.
 - [x] Sauvegarde manuelle
 - [x] Restauration par remplacement, dont « J'ai une sauvegarde » au premier écran du premier lancement
 - [x] Sauvegardes automatiques optionnelles, dont leur interrupteur à l'étape 4 du premier lancement
-- [ ] Export CSV
+- [ ] Export CSV (déplacé en version 0.3)
 
-## Phase 7 : Stabilisation
+## Version 0.1 : première publication sur Google Play
 
-- [ ] Tableaux de bord
-- [ ] Premier lancement qui accompagne la première configuration (voir [backlog/premier-lancement.md](backlog/premier-lancement.md))
-- [ ] Parcours complets sur le Poco X3 NFC et les émulateurs, dont un Android 8
+Ce qui manque dans l'app :
+
+- [ ] La vraie page Plus (planche `Plus`), à la place de la liste provisoire
+- [ ] La page Réglages, avec le choix de la langue après le premier lancement (planches `Reglages`, `ReglageLangue`)
+- [ ] À propos : version, politique de confidentialité, contact (planche `APropos`)
+- [ ] Aperçu : l'écran d'attente reste, avec un texte qui annonce les graphiques
+- [ ] « Enregistrer » grisé : bouton actif et premier champ manquant en rouge (décidé le 24 novembre, planches à montrer)
+- [ ] Interrupteurs : toute la ligne réagit, partout
+
+Ce que Google Play exige :
+
+- [ ] Vérifier les conditions actuelles de Google Play pour un nouveau compte personnel (test fermé obligatoire, nombre de testeurs, durée)
+- [ ] Vérifier la marque « kibuo » et réserver le domaine ([BRAND.md](BRAND.md))
+- [ ] Clé de signature de publication (aujourd'hui l'app est signée avec la clé de développement) et paquet AAB
+- [ ] Site public minimal : la politique de confidentialité ([backlog/site-public.md](backlog/site-public.md))
+- [ ] Fiche Google Play : textes, captures, formulaire sur la sécurité des données, classification du contenu
+- [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE)
+- [ ] Test fermé sur Google Play (environ 12 testeurs, durée à confirmer), puis corrections
+- [ ] Publication
+
+## Version 0.2 : Aperçu
+
+- [ ] Tableaux de bord : évolution, catégories, patrimoine, points suivis (planches `Apercu…`)
+
+## Version 0.3 : Vos données, ailleurs
+
+- [ ] Export CSV (planche `ExportCSV`)
+- [ ] Envoyer une sauvegarde ailleurs (Drive, WhatsApp, e-mail) ([backlog/partage-sauvegarde.md](backlog/partage-sauvegarde.md))
+
+## Version 0.4 : Thème sombre
+
+- [ ] Toutes les maquettes en sombre, puis le choix clair, sombre ou réglage du téléphone ([backlog/theme-sombre.md](backlog/theme-sombre.md))
+
+## Version 0.5 : Accompagner
+
+- [ ] Premier lancement qui accompagne la première configuration ([backlog/premier-lancement.md](backlog/premier-lancement.md))
+- [ ] Aide et support ([backlog/aide.md](backlog/aide.md)), « Noter kibuo »
 - [ ] Guide de réglage des notifications selon les marques
-- [ ] APK partagé à 5 à 10 testeurs
-- [ ] Corrections issues des tests
+- [ ] Ordre des catégories et sous-catégories ([backlog/ordre-categories.md](backlog/ordre-categories.md))
 
-## Phase 8 : Publication
+## Version 1.0 : stable
 
-- [ ] Vérifier les conditions actuelles de Google Play pour les nouveaux comptes
-- [ ] Préparer la fiche, la politique de confidentialité et les captures (pages publiées sur le [site public](backlog/site-public.md))
-- [ ] Publier sur Google Play
+- [ ] Quelques semaines de test des versions 0.x par de vrais utilisateurs
+- [ ] Corrections issues de ces tests
+- [ ] Publication de la 1.0
 
-## Après la V1
+## Après la 1.0
 
-- [ ] Aller plus loin : remboursements par mobile money, emprunts bancaires, taxes et impôts par pays (voir [backlog/aller-plus-loin.md](backlog/aller-plus-loin.md))
+Dans cet ordre de départ (décidé le 25 novembre 2026), à revoir selon les retours :
 
-- [ ] Fonctionner en arrière-plan : rattrapage des récurrences et notifications sans ouvrir kibuo
+1. **Compte kibuo et cloud** : sauvegarde en ligne, synchronisation entre appareils, chiffrement de bout en bout ([backlog/sync-cloud.md](backlog/sync-cloud.md)), offre payante ([backlog/offre-payante.md](backlog/offre-payante.md)), demande de suppression de compte sur le site public.
+2. **IA** : brouillons à partir d'un reçu, d'un SMS partagé ou d'un relevé ; questions naturelles ([backlog/ia.md](backlog/ia.md)).
+3. **iOS** ([backlog/ios.md](backlog/ios.md)).
+4. Ensuite : nouvelles langues ([backlog/langues.md](backlog/langues.md)), accès web local ([backlog/web-local.md](backlog/web-local.md)), coffre des cartes virtuelles ([backlog/cartes-virtuelles.md](backlog/cartes-virtuelles.md)), aller plus loin pays par pays ([backlog/aller-plus-loin.md](backlog/aller-plus-loin.md)), fonctionner en arrière-plan (rattrapage des récurrences et notifications sans ouvrir kibuo), couleurs des comptes.
 
-- [ ] Couleurs des comptes, au choix dans une petite palette (carte du compte, filtres)
-
-Sujets détaillés dans [backlog/](backlog/), à ordonner après la publication.
+Sujets détaillés dans [backlog/](backlog/).

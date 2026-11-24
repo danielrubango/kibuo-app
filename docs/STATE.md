@@ -29,9 +29,9 @@ Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une
 
 ## Prochaines étapes
 
-1. **Export CSV** (phase 6) : planche `ExportCSV` (période, comptes, brouillons et notes, « Exporter » en bas).
-2. **Phase 7 · Stabilisation** : tableaux de bord, premier lancement revu ([backlog/premier-lancement.md](backlog/premier-lancement.md)), parcours complets sur le Poco X3 NFC et un Android 8, guide des notifications selon les marques, APK à 5 à 10 testeurs.
-3. Reste de la phase 1 : vérifier les marques et réserver les domaines ([BRAND.md](BRAND.md)).
+Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
+
+Prochaine case : **version 0.1, la vraie page Plus** (planche `Plus`).
 
 ## Décisions récentes
 
@@ -42,6 +42,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Lignes de réglages, barres dans une carte, actions sous une carte, liens en fin de carte, confirmations des mouvements d'argent : DIRECTION.
 - Les planches du canvas sont désormais aussi dans le dépôt ([design/boards/](design/boards/)), le 24 novembre (le choix du matin même était de les garder dans le canvas seulement).
 - Les règles des agents vivent dans `AGENTS.md`, que `CLAUDE.md` importe.
+- Le plan de publication (0.1 sur Google Play, 0.2 à 0.5, puis 1.0 stable) : [ROADMAP.md](ROADMAP.md), 25 novembre.
 
 ## Questions ouvertes (attendent le propriétaire)
 

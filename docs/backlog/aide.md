@@ -1,6 +1,6 @@
 ---
 title: Aide et support
-milestone: Après la V1
+milestone: Version 0.5
 labels: [aide]
 ---
 

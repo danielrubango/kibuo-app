@@ -1,6 +1,6 @@
 ---
 title: Un premier lancement qui accompagne vraiment
-milestone: Phase 7
+milestone: Version 0.5
 labels: [design, premier-lancement]
 ---
 
