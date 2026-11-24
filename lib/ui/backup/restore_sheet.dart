@@ -9,6 +9,7 @@ import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/backup/backup_files.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -100,6 +101,8 @@ Future<void> runRestore(
     ),
   );
   if (done == null || !context.mounted) return;
+  await applyBackupLanguage(done.manifest);
+  if (!context.mounted) return;
   await showRestoredSheet(
     context,
     done.manifest,
@@ -197,13 +200,15 @@ class _RestoreSheetState extends State<_RestoreSheet> {
       if (!mounted || !await confirmWithCode(context, l.protectRestore)) {
         return;
       }
+      if (!mounted) return;
+      final language = Localizations.localeOf(context).languageCode;
       // The copy first: without it, nothing is replaced (PRODUCT).
       final at = widget.tools.now();
       final copyName = restoreCopyName(at);
       File? copy;
       var copied = false;
       try {
-        copy = await widget.tools.service.write(now: at);
+        copy = await widget.tools.service.write(now: at, language: language);
         copied = await widget.tools.folders.write(folder, copyName, copy);
       } on Object {
         copied = false;
@@ -503,6 +508,15 @@ class _RestoreSheetState extends State<_RestoreSheet> {
       ),
     );
   }
+}
+
+/// The backup's language, back (PRODUCT: Restauration): Android 13 and
+/// more keep it outside the data, so the backup carries it.
+Future<void> applyBackupLanguage(BackupManifest manifest) async {
+  final code = manifest.language;
+  if (code == null) return;
+  appLanguageChoice.value = Locale(code);
+  await setAndroidAppLanguage(code);
 }
 
 /// « Données restaurées » (canvas RestauC3): what came back and, after a

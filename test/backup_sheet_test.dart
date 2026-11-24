@@ -30,7 +30,11 @@ class _Service extends BackupService {
   Future<void> setFolder(BackupFolder folder) async => this.folder = folder;
 
   @override
-  Future<File> write({required DateTime now, String? password}) async {
+  Future<File> write({
+    required DateTime now,
+    String? password,
+    String? language,
+  }) async {
     this.password = password;
     written = true;
     return File('/tmp/kibuo-out/kibuo-2026-11-24-2104.kibuo');

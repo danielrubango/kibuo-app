@@ -49,6 +49,8 @@ Future<void> runStartRestore(
     ),
   );
   if (manifest == null || !navigator.mounted) return;
+  await applyBackupLanguage(manifest);
+  if (!navigator.mounted) return;
   await showRestoredSheet(navigator.context, manifest);
   await afterward?.call();
 }
@@ -242,17 +244,17 @@ class _StartSheetState extends State<_StartSheet> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Spacer(),
-                      if (_checking)
+                      if (_checking) ...[
+                        const Spacer(),
                         const SizedBox.square(
                           dimension: 16,
                           child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      else
+                        ),
+                      ] else
                         // Blurred until the password is right (canvas
                         // RestauNeuf).
-                        Flexible(
-                          flex: 100,
+                        // Tight, so the count reaches the right edge.
+                        Expanded(
                           child: ImageFiltered(
                             enabled: contents == null,
                             imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
