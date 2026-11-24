@@ -2090,6 +2090,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your data stays on this phone. Without a backup, it is lost if you lose the phone.';
 
   @override
+  String get firstBackupTitle => 'Automatic backups';
+
+  @override
+  String get firstBackupHelp => 'Every week, in the folder of your choice.';
+
+  @override
   String get firstLockTitle => 'Lock the app';
 
   @override
