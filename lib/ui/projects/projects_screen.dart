@@ -273,7 +273,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               backgroundColor: KibuoColors.projectTrack,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             children: [
               Text.rich(
@@ -468,13 +468,15 @@ class _ProjectCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              // The bar's box holds its mark, 4 above and under: 12 from
+              // the bar to the text, as in every card with a bar.
+              const SizedBox(height: 8),
               ProjectBar(
                 share: p.share,
                 mark: pace.mark,
                 fill: pace.late ? KibuoColors.danger : KibuoColors.projectLine,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
