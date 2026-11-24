@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **24 novembre 2026**, branche `main` (dernière fusion : `feat/restore-start`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **24 novembre 2026**, branche `main` (dernière fusion : `feat/auto-backup`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -14,9 +14,9 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 | 3 · Cœur | Devises et taux, comptes, catégories, dépenses et revenus, pièces jointes, transferts, découvert, régularisation, actions protégées, saisie rapide, liste et recherche des opérations, premier lancement, accueil, montants courts | 15 au 17 nov. |
 | 4 · Planification | Début du mois, budgets et leur détail, récurrences et brouillons, retouches, rappels (saisie, échéances, opérations datées plus tard, solde insuffisant), alertes de budget, fiche d'une opération prévue | 17 au 19 nov. |
 | 5 · Dettes, créances, projets | Dettes et créances en trois livraisons (liste, fiche et remboursements, autour : cartes de l'accueil, À traiter, rappels, réclamer), cartes de l'accueil aux marges unifiées, projets en trois livraisons (créer et lister ; fiche, mettre de côté, reprendre, objectif atteint, modifier, supprimer ; À traiter, rappels au rythme du plan, réservé dans Comptes) | 23 et 24 nov. |
-| 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier) | 24 nov. |
+| 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier), sauvegardes automatiques, première livraison sur trois (interrupteur de l'écran Sauvegarde, sauvegarde à l'ouverture et en arrière-plan chaque semaine, 4 gardées, échecs signalés une fois par semaine) | 24 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 672 tests verts à la dernière fusion.
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 699 tests verts à la dernière fusion.
 
 ## Dessiné mais pas encore construit
 
@@ -25,12 +25,11 @@ Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une
 ## En cours ou non fusionné
 
 - Aucune branche de code en attente : toutes sont fusionnées dans `main`.
-- `docs/handoff` : cette documentation de passation (planches exportées, STATE, WORKING, SYSTEM, DIRECTION, AGENTS). À fusionner après validation du propriétaire.
 - Sur l'émulateur : un utilisateur Android d'essai `kibuo-essai` (id 10), arrêté, avec des données de test restaurées. Gardé jusqu'à la fin de la phase 6 (voir [WORKING.md](WORKING.md)).
 
 ## Prochaines étapes
 
-1. **Sauvegardes automatiques optionnelles** (phase 6) : à l'ouverture de kibuo quand la dernière a 7 jours ou plus, et en arrière-plan chaque semaine ; leur interrupteur dans l'écran Sauvegarde et à l'étape 4 du premier lancement ([PRODUCT.md](PRODUCT.md), Protection des données ; planches `SauvW2`, `RestauC1` qui montre déjà « Sauvegarde automatique · Chaque semaine »). Mot de passe retenu dans le coffre d'Android, 4 sauvegardes automatiques gardées (décidé le 24 novembre).
+1. **Sauvegardes automatiques, suite** (phase 6) : la première livraison (le moteur) est fusionnée. Restent le **mot de passe retenu** (variantes de l'écran Sauvegarde à montrer avant de coder : où le régler, la feuille manuelle « Chiffrée avec votre mot de passe · Changer ») puis l'**étape 4 du premier lancement** (planche à montrer, texte de Lancement4). Voir [PRODUCT.md](PRODUCT.md), Protection des données.
 2. **Export CSV** (phase 6) : planche `ExportCSV` (période, comptes, brouillons et notes, « Exporter » en bas).
 3. **Phase 7 · Stabilisation** : tableaux de bord, premier lancement revu ([backlog/premier-lancement.md](backlog/premier-lancement.md)), parcours complets sur le Poco X3 NFC et un Android 8, guide des notifications selon les marques, APK à 5 à 10 testeurs.
 4. Reste de la phase 1 : vérifier les marques et réserver les domaines ([BRAND.md](BRAND.md)).
@@ -52,7 +51,9 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 ## Défauts connus et dettes
 
 - **Pas vu sur un vrai téléphone** : ouvrir kibuo en touchant un `.kibuo` dans Fichiers ou WhatsApp (simulé sur l'émulateur par une intention `VIEW`, à vérifier sur le Poco X3).
-- **Vu seulement par les tests** : la langue rendue par une restauration ; la feuille de départ avec une sauvegarde chiffrée ; « J'ai une sauvegarde » sur l'écran des données illisibles.
+- **Vu seulement par les tests** : la langue rendue par une restauration ; la feuille de départ avec une sauvegarde chiffrée ; « J'ai une sauvegarde » sur l'écran des données illisibles ; une sauvegarde automatique due faite kibuo fermé, et sa notification d'échec (l'émulateur refuse d'avancer l'horloge par adb ; le moteur de fond a été lancé et s'arrête proprement quand rien n'est dû).
+- **À surveiller sur le Poco X3** : que la tâche de fond de Xiaomi produise bien un `kibuo-auto-…` au bout d'une semaine sans ouvrir kibuo (installé le 24 novembre).
+- Le message en bas de l'écran garde la coche menthe même pour un échec (sauvegarde manuelle et automatique) : une icône d'alerte serait plus juste, écart au kit à proposer.
 - Les sauvegardes faites avant le 24 novembre (soir) ne portent pas la langue.
 - Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; décidé le 24 novembre que toute la ligne réagira, à construire).
 - Si kibuo est fermé pendant que le code de récupération est affiché, le code n'a jamais été confirmé.
@@ -71,6 +72,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - **Utilisateur d'essai derrière l'écran de verrouillage** (capture noire, focus sur `NotificationShade`) : `adb shell input keyevent 224`, `wm dismiss-keyguard`, `input keyevent 82`, puis un glissement vers le haut.
 - **Déposer un fichier chez l'utilisateur d'essai** : `adb push` vers `/storage/emulated/10/` est refusé. Pousser dans `/data/local/tmp/`, `chmod 644`, puis l'ouvrir dans kibuo : `adb shell am start --user 10 -a android.intent.action.VIEW -d file:///data/local/tmp/x.kibuo -t application/octet-stream -n app.kibuo/.MainActivity`.
 - **Langue sur Android 13+** : la langue choisie est gardée par Android (`setAndroidAppLanguage`), pas dans la base ; d'où sa présence dans le résumé du fichier de sauvegarde.
+- **Lancer la sauvegarde de fond à la main** : `adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler app.kibuo <id>` (l'id se lit dans `dumpsys jobscheduler`, ligne `#AutoBackupWorker#`). Avant l'échéance, WorkManager la repousse (« executed before schedule ») ; éteindre puis rallumer l'interrupteur la relance aussitôt. `cmd time_detector suggest_manual_time` est refusé au shell : on ne peut pas avancer l'horloge par adb.
 - **Coordonnées adb** : les captures sont réduites à 540 de large (×2 environ pour taper) ; avec deux appareils branchés, toujours `-s`.
 
 ### Base chiffrée (SQLite3 Multiple Ciphers)
