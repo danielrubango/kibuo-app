@@ -349,12 +349,19 @@ class _RestoreSheetState extends State<_RestoreSheet> {
                       builder: (context, box) => Stack(
                         alignment: Alignment.centerLeft,
                         children: [
-                          HatchedBar(
-                            done: kept,
-                            after: 1,
-                            ink: KibuoColors.accentSoft,
-                            track: KibuoColors.debtTint,
-                            hatch: KibuoColors.debtLine,
+                          // The full width, 12 high, centred on the mark.
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            top: 5,
+                            bottom: 5,
+                            child: HatchedBar(
+                              done: kept,
+                              after: 1,
+                              ink: KibuoColors.accentSoft,
+                              track: KibuoColors.debtTint,
+                              hatch: KibuoColors.debtLine,
+                            ),
                           ),
                           Positioned(
                             left: (box.maxWidth * kept - 2).clamp(
