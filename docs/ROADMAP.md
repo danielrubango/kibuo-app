@@ -77,7 +77,7 @@ Rien n'est codé avant la fin de cette phase.
 
 ## Phase 6 : Données
 
-- [ ] Sauvegarde manuelle
+- [x] Sauvegarde manuelle
 - [ ] Restauration par remplacement, dont « J'ai une sauvegarde » au premier écran du premier lancement
 - [ ] Sauvegardes automatiques optionnelles, dont leur interrupteur à l'étape 4 du premier lancement
 - [ ] Export CSV
