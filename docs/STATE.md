@@ -30,9 +30,9 @@ Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une
 
 ## Prochaines étapes
 
-1. **Sauvegardes automatiques optionnelles** (phase 6) : à l'ouverture de kibuo quand la dernière a 7 jours ou plus, et en arrière-plan chaque semaine ; leur interrupteur dans l'écran Sauvegarde et à l'étape 4 du premier lancement ([PRODUCT.md](PRODUCT.md), Protection des données ; planches `SauvW2`, `RestauC1` qui montre déjà « Sauvegarde automatique · Chaque semaine »). Le mot de passe retenu reste à cadrer (Questions ouvertes).
+1. **Sauvegardes automatiques optionnelles** (phase 6) : à l'ouverture de kibuo quand la dernière a 7 jours ou plus, et en arrière-plan chaque semaine ; leur interrupteur dans l'écran Sauvegarde et à l'étape 4 du premier lancement ([PRODUCT.md](PRODUCT.md), Protection des données ; planches `SauvW2`, `RestauC1` qui montre déjà « Sauvegarde automatique · Chaque semaine »). Mot de passe retenu dans le coffre d'Android, 4 sauvegardes automatiques gardées (décidé le 24 novembre).
 2. **Export CSV** (phase 6) : planche `ExportCSV` (période, comptes, brouillons et notes, « Exporter » en bas).
-3. **Phase 7 · Stabilisation** : tableaux de bord, parcours complets sur le Poco X3 NFC et un Android 8, guide des notifications selon les marques, APK à 5 à 10 testeurs.
+3. **Phase 7 · Stabilisation** : tableaux de bord, premier lancement revu ([backlog/premier-lancement.md](backlog/premier-lancement.md)), parcours complets sur le Poco X3 NFC et un Android 8, guide des notifications selon les marques, APK à 5 à 10 testeurs.
 4. Reste de la phase 1 : vérifier les marques et réserver les domaines ([BRAND.md](BRAND.md)).
 
 ## Décisions récentes
@@ -47,8 +47,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ## Questions ouvertes (attendent le propriétaire)
 
-- Sauvegardes automatiques (déclenchement décidé le 24 novembre : à l'ouverture et en arrière-plan ; chiffrement possible avec un mot de passe retenu) : où garder ce mot de passe, s'il sert aussi aux sauvegardes manuelles, s'il est oublié ou changé, combien de sauvegardes garder, quoi dire quand le dossier est perdu (PRODUCT, Protection des données).
-- Le moment du travail sur le premier lancement ([backlog/premier-lancement.md](backlog/premier-lancement.md)).
+- Sauvegardes automatiques : ce que dit kibuo quand le dossier n'est plus accessible lors d'une sauvegarde faite en arrière-plan (PRODUCT, Protection des données).
 
 ## Défauts connus et dettes
 

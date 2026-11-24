@@ -85,6 +85,7 @@ Rien n'est codé avant la fin de cette phase.
 ## Phase 7 : Stabilisation
 
 - [ ] Tableaux de bord
+- [ ] Premier lancement qui accompagne la première configuration (voir [backlog/premier-lancement.md](backlog/premier-lancement.md))
 - [ ] Parcours complets sur le Poco X3 NFC et les émulateurs, dont un Android 8
 - [ ] Guide de réglage des notifications selon les marques
 - [ ] APK partagé à 5 à 10 testeurs

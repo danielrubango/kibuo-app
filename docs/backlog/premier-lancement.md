@@ -1,6 +1,6 @@
 ---
 title: Un premier lancement qui accompagne vraiment
-milestone: à décider
+milestone: Phase 7
 labels: [design, premier-lancement]
 ---
 
@@ -16,4 +16,4 @@ Aujourd'hui (voir PRODUCT, « Navigation et saisie ») : quatre étapes (langue,
 - comment l'aider une fois le premier lancement fini (premières actions proposées sur l'accueil vide, guides de première visite) ;
 - le ton et les illustrations des moments forts (DIRECTION, « Icônes et animations »).
 
-Moment : à décider (avant la publication, pendant la phase 7, ou après la V1).
+Moment (décidé le 24 novembre 2026) : phase 7, avant de donner l'APK aux testeurs, pour que leur première impression compte et que leurs retours jugent le résultat.

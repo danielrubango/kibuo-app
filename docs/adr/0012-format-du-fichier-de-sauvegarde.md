@@ -8,6 +8,8 @@ Avec un mot de passe, chaque morceau est chiffré en AES-GCM avec une clé tiré
 
 Le résumé porte aussi la langue de kibuo au moment de la sauvegarde (ajouté le 24 novembre 2026) : depuis Android 13, la langue choisie est gardée par Android et non dans la base, elle ne voyagerait pas sans cela ; une restauration la remet. Les sauvegardes plus anciennes n'ont pas ce champ et ne changent pas la langue.
 
+Un mot de passe de sauvegarde peut être retenu (décidé le 24 novembre 2026), pour que les sauvegardes automatiques soient chiffrées sans le demander. Il est gardé dans le coffre sécurisé d'Android (Keystore), sur ce téléphone seulement : jamais dans la base, jamais dans une sauvegarde. Le changer ne touche qu'aux sauvegardes suivantes ; les anciennes gardent celui avec lequel elles ont été faites. kibuo ne peut pas le retrouver.
+
 Le dossier choisi et la date de la dernière sauvegarde sont gardés dans le coffre du téléphone, pas dans la base. Une restauration ne les change donc pas, et ils ne voyagent pas dans la sauvegarde. Le code, l'empreinte, la confidentialité et le code de récupération y sont déjà, propres à chaque téléphone.
 
 ## Considered Options
@@ -18,4 +20,4 @@ Le dossier choisi et la date de la dernière sauvegarde sont gardés dans le cof
 
 ## Consequences
 
-Sans mot de passe, quiconque obtient le fichier peut lire les données. « Chiffrer avec un mot de passe » est pourtant éteint par défaut, pour qu'une sauvegarde ne demande qu'un geste : la feuille le propose à chaque fois (PRODUCT). Un mot de passe oublié rend la sauvegarde définitivement illisible. Un changement du format augmente sa version dans l'enveloppe, et kibuo devra continuer de lire les versions précédentes.
+Sans mot de passe, quiconque obtient le fichier peut lire les données. « Chiffrer avec un mot de passe » est pourtant éteint par défaut, pour qu'une sauvegarde ne demande qu'un geste : la feuille le propose à chaque fois (PRODUCT). Un mot de passe oublié rend la sauvegarde définitivement illisible ; un mot de passe retenu ne protège pas d'un téléphone perdu déverrouillé, mais il ne quitte jamais l'appareil. Un changement du format augmente sa version dans l'enveloppe, et kibuo devra continuer de lire les versions précédentes.
