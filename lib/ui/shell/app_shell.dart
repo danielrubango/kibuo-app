@@ -247,6 +247,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
             currencies: CurrencyRepository(db),
             categories: CategoryRepository(db),
             transactions: TransactionRepository(db),
+            data: _entryData(context),
           ),
         ),
       )

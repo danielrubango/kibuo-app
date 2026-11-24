@@ -5934,6 +5934,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Me le rappeler'**
   String get projectRemindShort;
+
+  /// Accounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible'**
+  String get accountsAvailable;
+
+  /// Accounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservé aux projets'**
+  String get accountsReserved;
 }
 
 class _AppLocalizationsDelegate

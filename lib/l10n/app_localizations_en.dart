@@ -3796,4 +3796,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectRemindShort => 'Remind me';
+
+  @override
+  String get accountsAvailable => 'Available';
+
+  @override
+  String get accountsReserved => 'Held for projects';
 }

@@ -982,5 +982,7 @@
   "reminderProjectFreeWeek": "A little aside this week?",
   "reminderProjectFreeFortnight": "A little aside these two weeks?",
   "reminderProjectFreeMonth": "A little aside this month?",
-  "projectRemindShort": "Remind me"
+  "projectRemindShort": "Remind me",
+  "accountsAvailable": "Available",
+  "accountsReserved": "Held for projects"
 }

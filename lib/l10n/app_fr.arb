@@ -1952,5 +1952,9 @@
   "reminderProjectFreeMonth": "Un peu de côté ce mois-ci ?",
   "@reminderProjectFreeMonth": {"description": "Reminders."},
   "projectRemindShort": "Me le rappeler",
-  "@projectRemindShort": {"description": "Projects."}
+  "@projectRemindShort": {"description": "Projects."},
+  "accountsAvailable": "Disponible",
+  "accountsReserved": "Réservé aux projets",
+  "@accountsAvailable": {"description": "Accounts."},
+  "@accountsReserved": {"description": "Accounts."}
 }

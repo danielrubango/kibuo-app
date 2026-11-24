@@ -3834,4 +3834,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get projectRemindShort => 'Me le rappeler';
+
+  @override
+  String get accountsAvailable => 'Disponible';
+
+  @override
+  String get accountsReserved => 'Réservé aux projets';
 }
