@@ -1,6 +1,6 @@
 ---
 title: Site public de kibuo
-milestone: Publication
+milestone: Version 0.1
 labels: [site, backend]
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: Envoyer une sauvegarde ailleurs
-milestone: Après la V1
+milestone: Version 0.3
 labels: [sauvegarde]
 ---
 

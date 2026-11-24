@@ -1,6 +1,6 @@
 ---
 title: Thème sombre
-milestone: Design
+milestone: Version 0.4
 labels: [design]
 ---
 
