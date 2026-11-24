@@ -6154,25 +6154,25 @@ abstract class AppLocalizations {
   /// Backup.
   ///
   /// In fr, this message translates to:
-  /// **'Dernière sauvegarde aujourd’hui'**
+  /// **'Aujourd’hui'**
   String get moreBackupToday;
 
   /// Backup.
   ///
   /// In fr, this message translates to:
-  /// **'Dernière sauvegarde hier'**
+  /// **'Hier'**
   String get moreBackupYesterday;
 
   /// Backup.
   ///
   /// In fr, this message translates to:
-  /// **'Dernière sauvegarde il y a {days} jours'**
+  /// **'Il y a {days} jours'**
   String moreBackupDays(int days);
 
   /// Backup.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune sauvegarde'**
+  /// **'Aucune'**
   String get moreBackupNone;
 }
 

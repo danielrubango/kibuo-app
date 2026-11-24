@@ -3974,16 +3974,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get moreBackup => 'Sauvegarde et export';
 
   @override
-  String get moreBackupToday => 'Dernière sauvegarde aujourd’hui';
+  String get moreBackupToday => 'Aujourd’hui';
 
   @override
-  String get moreBackupYesterday => 'Dernière sauvegarde hier';
+  String get moreBackupYesterday => 'Hier';
 
   @override
   String moreBackupDays(int days) {
-    return 'Dernière sauvegarde il y a $days jours';
+    return 'Il y a $days jours';
   }
 
   @override
-  String get moreBackupNone => 'Aucune sauvegarde';
+  String get moreBackupNone => 'Aucune';
 }

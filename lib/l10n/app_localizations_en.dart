@@ -3935,16 +3935,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreBackup => 'Backup and export';
 
   @override
-  String get moreBackupToday => 'Last backup today';
+  String get moreBackupToday => 'Today';
 
   @override
-  String get moreBackupYesterday => 'Last backup yesterday';
+  String get moreBackupYesterday => 'Yesterday';
 
   @override
   String moreBackupDays(int days) {
-    return 'Last backup $days days ago';
+    return '$days days ago';
   }
 
   @override
-  String get moreBackupNone => 'No backup yet';
+  String get moreBackupNone => 'None yet';
 }

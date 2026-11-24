@@ -1019,8 +1019,8 @@
   "todoBackupNone": "No backup yet",
   "todoBackupAction": "Start",
   "moreBackup": "Backup and export",
-  "moreBackupToday": "Last backup today",
-  "moreBackupYesterday": "Last backup yesterday",
-  "moreBackupDays": "Last backup {days} days ago",
-  "moreBackupNone": "No backup yet"
+  "moreBackupToday": "Today",
+  "moreBackupYesterday": "Yesterday",
+  "moreBackupDays": "{days} days ago",
+  "moreBackupNone": "None yet"
 }

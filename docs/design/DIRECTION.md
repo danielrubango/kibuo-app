@@ -71,6 +71,8 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Flèche d'une carte.** Une carte qui ouvre une page finit par une flèche › de 18, grise sur une carte blanche, verte sur une carte menthe, à 12 du bord droit, pour paraître aussi loin du bord que le texte (Disponible, sa bande, le bilan du mois, Je dois et On me doit ; validé le 24 novembre 2026). Les cartes de l'accueil ont toutes 14 de marge à gauche et à droite ; en haut et en bas, 12 pour une carte blanche, 16 pour la carte menthe « Disponible » ; une ligne de « À traiter » commence à 14 et finit son action à 12. Une carte vide de dettes garde ses trois lignes : le titre, « Rien » en gris, un tiret.
 
+**Ligne de réglage.** Au moins 52 de haut, 16 à gauche ; le libellé prend la place qu'il faut, la valeur (14, grise, ambre si elle demande l'attention) se tient à sa largeur contre la flèche ›, à 12 du bord, sans jamais dépasser 45 % de la ligne, coupée par « … » au-delà. Une valeur reste courte : « Aujourd'hui », « Il y a 12 jours », « Automatique » (validé le 24 novembre 2026).
+
 **Barre dans une carte.** Entre le bas d'une barre de progression et le texte dessous, 12, dans toutes les cartes (bilan du mois, projets, fiche d'un projet, fiche d'une dette) ; une barre qui porte un repère garde ses 4 de dépassement dans ces 12 (validé le 24 novembre 2026).
 
 **Action sous une carte.** Un bouton texte posé sous une carte (« Reprendre de l'argent », « Supprimer le projet », « Retirer la date », « Régler sans paiement ») est centré, sa zone de toucher de 44 collée à la carte : le texte est à 12 de la carte et garde 12 avant le bloc suivant. Gris pour une action secondaire, rouge pour supprimer, vert pour une action de saisie (validé le 24 novembre 2026).

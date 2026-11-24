@@ -2025,12 +2025,12 @@
   "@todoBackupAction": {"description": "Backup."},
   "moreBackup": "Sauvegarde et export",
   "@moreBackup": {"description": "Backup."},
-  "moreBackupToday": "Dernière sauvegarde aujourd’hui",
+  "moreBackupToday": "Aujourd’hui",
   "@moreBackupToday": {"description": "Backup."},
-  "moreBackupYesterday": "Dernière sauvegarde hier",
+  "moreBackupYesterday": "Hier",
   "@moreBackupYesterday": {"description": "Backup."},
-  "moreBackupDays": "Dernière sauvegarde il y a {days} jours",
+  "moreBackupDays": "Il y a {days} jours",
   "@moreBackupDays": {"description": "Backup.", "placeholders": {"days": {"type": "int"}}},
-  "moreBackupNone": "Aucune sauvegarde",
+  "moreBackupNone": "Aucune",
   "@moreBackupNone": {"description": "Backup."}
 }
