@@ -32,6 +32,10 @@ abstract final class KibuoColors {
   static const accentDeep = Color(0xFF1F3A30);
 
   /// An opened category's toggle.
+  /// The words of the strip under the available amount (canvas
+  /// Total_positif).
+  static const accentStripInk = Color(0xFF0A5A43);
+
   static const accentTintOpen = Color(0xFFCDEFE0);
 
   /// A draft income's dashes (its card is [accentTint]).
@@ -53,6 +57,9 @@ abstract final class KibuoColors {
   static const projectInk = Color(0xFF33528A);
   static const projectTint = Color(0xFFE1E8F6);
   static const projectLine = Color(0xFF8FA8D6);
+
+  /// A project's empty bar (canvas Projets).
+  static const projectTrack = Color(0xFFE8EDF6);
 
   /// A transfer's amount card and its edge (canvas TransfertMeme).
   static const transferTint = Color(0xFFEEF2FA);

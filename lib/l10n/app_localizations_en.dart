@@ -3266,4 +3266,188 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get projectsTitle => 'Projects';
+
+  @override
+  String get projectsEmpty => 'No project';
+
+  @override
+  String get projectsEmptyHelp =>
+      'Set money aside for a goal: a trip, a purchase, a reserve.';
+
+  @override
+  String get projectsMarkLegend => 'Where you should be today to meet the date';
+
+  @override
+  String get projectsEnded => 'Finished';
+
+  @override
+  String get projectsNew => 'New project';
+
+  @override
+  String projectsSaved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Set aside · $count projects',
+      one: 'Set aside · 1 project',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectsOf(String amount) {
+    return 'of $amount';
+  }
+
+  @override
+  String get projectsOfTotal => 'of the total';
+
+  @override
+  String projectsLeft(String amount) {
+    return 'Left to set aside: $amount';
+  }
+
+  @override
+  String get projectsNoDate => 'No date';
+
+  @override
+  String projectsBefore(String date) {
+    return 'Before $date';
+  }
+
+  @override
+  String get projectsPerWeek => 'a week';
+
+  @override
+  String get projectsPerFortnight => 'a fortnight';
+
+  @override
+  String get projectsPerMonth => 'a month';
+
+  @override
+  String get projectsEndedSpent => 'Spent, finished';
+
+  @override
+  String get projectsEndedReleased => 'Made available, finished';
+
+  @override
+  String get projectsReached => 'Goal reached';
+
+  @override
+  String projectsBehind(String amount) {
+    return '$amount behind';
+  }
+
+  @override
+  String projectsAhead(String amount) {
+    return '$amount ahead';
+  }
+
+  @override
+  String get projectsOwnPace => 'At your own pace';
+
+  @override
+  String get projectsLate => 'Behind';
+
+  @override
+  String get projectIconTitle => 'Change the icon';
+
+  @override
+  String get projectPeriod => 'Divide the plan by';
+
+  @override
+  String get projectWeek => 'Week';
+
+  @override
+  String get projectFortnight => 'Fortnight';
+
+  @override
+  String get projectMonth => 'Month';
+
+  @override
+  String get projectRemindWeek => 'Every Monday';
+
+  @override
+  String get projectRemindFortnight => 'On the 1st and the 15th';
+
+  @override
+  String get projectRemindMonth => 'On the 1st of the month';
+
+  @override
+  String get projectNewTitle => 'New project';
+
+  @override
+  String get projectName => 'Name';
+
+  @override
+  String get projectNameHint => 'Trip, motorbike, rent in advance…';
+
+  @override
+  String get projectNameMissing => 'Give it a name.';
+
+  @override
+  String get projectGoal => 'Goal';
+
+  @override
+  String get projectGoalMissing => 'Type a goal';
+
+  @override
+  String projectFree(String amount) {
+    return '$amount free';
+  }
+
+  @override
+  String get projectOptional => 'optional';
+
+  @override
+  String get projectNoDate => 'Remove the date';
+
+  @override
+  String projectEffort(String amount, String period, String date) {
+    return 'It will take $amount a $period until $date.';
+  }
+
+  @override
+  String get projectRemind => 'Remind me to set money aside';
+
+  @override
+  String get projectCreate => 'Create the project';
+
+  @override
+  String homeTotal(String amount) {
+    return 'Total $amount';
+  }
+
+  @override
+  String homeOfProjects(String amount) {
+    return 'of which projects $amount';
+  }
+
+  @override
+  String get homeNewProject => 'Create a project';
+
+  @override
+  String get homeTotalLabel => 'Total';
+
+  @override
+  String get homeOfProjectsLabel => 'of which projects';
+
+  @override
+  String get projectsOnTrack => 'On track';
+
+  @override
+  String get projectEffortLead => 'It will take ';
+
+  @override
+  String projectEffortAmount(String amount, String period) {
+    return '$amount a $period';
+  }
+
+  @override
+  String projectEffortUntil(String date) {
+    return ' until $date.';
+  }
 }

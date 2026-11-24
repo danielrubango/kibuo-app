@@ -140,6 +140,16 @@ Décidé le 23 novembre 2026 :
 - La date d'un projet est facultative. Avec une date, l'application montre où il devrait en être aujourd'hui, son avance ou son retard, et un plan : le reste à mettre divisé en parts égales par semaine, quinzaine ou mois, au choix de l'utilisateur dans le réglage du projet, avec un rappel au même rythme. Sans date, le projet avance à son rythme.
 - Quand l'objectif est atteint, l'utilisateur choisit : enregistrer la dépense (le projet se termine), garder l'argent de côté, ou le rendre disponible sur le compte. Les projets terminés restent consultables.
 
+Décidé le 24 novembre 2026 :
+
+- La phase se livre en trois temps validés : créer et lister (page Projets, « Nouveau projet », ligne de Plus et tuile du +, disponible de l'accueil moins l'argent mis de côté avec la bande « Total · dont projets ») ; la fiche et l'argent (fiche, plan, « Mettre de côté », « Reprendre de l'argent », objectif atteint, modifier, supprimer) ; autour (« À traiter », rappel au rythme du plan, part réservée dans Comptes).
+- Mettre de côté ne crée aucune opération : l'argent reste sur le compte, le projet note un versement et cette part devient réservée. Jamais plus que ce qui est libre sur le compte (solde moins ce que ses projets retiennent).
+- Un projet est dans la devise de son compte, son objectif aussi, sans conversion.
+- Une dépense n'est jamais refusée à cause d'un projet : si elle entame l'argent réservé, le disponible devient négatif (rose, montant en rouge) et le projet garde ses versements.
+- Objectif atteint : « Je l'ai dépensé » ouvre la saisie d'une dépense pré-remplie (montant, compte, note) ; enregistrée, le projet se termine et sa réserve disparaît. « Le garder de côté » ne change rien. « Le rendre disponible » termine le projet sans rien déplacer. Les projets terminés restent consultables.
+- Supprimer un projet (dans « Modifier », après confirmation) efface le projet et ses versements ; l'argent redevient libre.
+- Premier temps livré le 24 novembre 2026 : la carte dit l'écart en gras (« 27 $ de retard », « 24 $ d'avance », « Dans les temps » le premier jour) puis l'effort par période ; sans date, « À votre rythme ».
+
 ### Rappels et alertes
 
 Notifications locales uniquement :

@@ -279,6 +279,49 @@ class Debts extends Table with SyncColumns {
   DateTimeColumn get forgivenOn => dateTime().nullable()();
 }
 
+/// A savings goal on one account (GLOSSARY: Projet). The money set aside
+/// stays in the account, shown apart as reserved (PRODUCT: Projets).
+@DataClassName('ProjectRow')
+class Projects extends Table with SyncColumns {
+  TextColumn get name => text()();
+
+  /// The Phosphor icon's name.
+  TextColumn get icon => text()();
+  TextColumn get accountId => text()();
+
+  /// In the account's currency, its minor unit.
+  IntColumn get goal => integer()();
+  TextColumn get currency => text()();
+
+  /// The day it began: where a dated plan starts from.
+  DateTimeColumn get startedOn => dateTime()();
+
+  /// Optional: « Avant le 20 décembre ».
+  DateTimeColumn get dueDate => dateTime().nullable()();
+
+  /// « week », « fortnight » or « month »: how its plan is divided.
+  TextColumn get period => text().withDefault(const Constant('week'))();
+
+  /// « Me rappeler de mettre de côté ».
+  BoolColumn get remind => boolean().withDefault(const Constant(true))();
+
+  /// Ended: « spent » (the expense was noted) or « released » (made
+  /// available again); null while running.
+  TextColumn get ending => text().nullable()();
+  DateTimeColumn get endedOn => dateTime().nullable()();
+}
+
+/// Money set aside for a project, or taken back when negative (GLOSSARY:
+/// Versement). Nothing moves on the account.
+@DataClassName('ContributionRow')
+class Contributions extends Table with SyncColumns {
+  TextColumn get projectId => text()();
+
+  /// In the project's currency; negative: taken back.
+  IntColumn get amount => integer()();
+  DateTimeColumn get date => dateTime()();
+}
+
 @DriftDatabase(
   tables: [
     Devices,
@@ -294,6 +337,8 @@ class Debts extends Table with SyncColumns {
     BudgetAmounts,
     RecurringRules,
     Debts,
+    Projects,
+    Contributions,
   ],
 )
 class KibuoDatabase extends _$KibuoDatabase {
@@ -304,7 +349,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -367,6 +412,10 @@ class KibuoDatabase extends _$KibuoDatabase {
           await m.addColumn(schema.debts, schema.debts.forgiven);
           await m.addColumn(schema.debts, schema.debts.forgivenOn);
         }
+      },
+      from12To13: (m, schema) async {
+        await m.createTable(schema.projects);
+        await m.createTable(schema.contributions);
       },
     ),
     beforeOpen: (details) async {

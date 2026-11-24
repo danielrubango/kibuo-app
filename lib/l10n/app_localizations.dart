@@ -5166,6 +5166,312 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{days, plural, =1{C’est demain.} other{Dans {days} jours.}}'**
   String reminderDebtSoon(int days);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Projets'**
+  String get projectsTitle;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun projet'**
+  String get projectsEmpty;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettez de l’argent de côté pour un but : un voyage, un achat, une réserve.'**
+  String get projectsEmptyHelp;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Où vous devriez en être aujourd’hui pour tenir la date'**
+  String get projectsMarkLegend;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminés'**
+  String get projectsEnded;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau projet'**
+  String get projectsNew;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Mis de côté · 1 projet} other{Mis de côté · {count} projets}}'**
+  String projectsSaved(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur {amount}'**
+  String projectsOf(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'du total'**
+  String get projectsOfTotal;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste à mettre : {amount}'**
+  String projectsLeft(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans date'**
+  String get projectsNoDate;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avant le {date}'**
+  String projectsBefore(String date);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'par semaine'**
+  String get projectsPerWeek;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'par quinzaine'**
+  String get projectsPerFortnight;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'par mois'**
+  String get projectsPerMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé, terminé'**
+  String get projectsEndedSpent;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendu disponible, terminé'**
+  String get projectsEndedReleased;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objectif atteint'**
+  String get projectsReached;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} de retard'**
+  String projectsBehind(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} d’avance'**
+  String projectsAhead(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'À votre rythme'**
+  String get projectsOwnPace;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard'**
+  String get projectsLate;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer l’icône'**
+  String get projectIconTitle;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Diviser le plan par'**
+  String get projectPeriod;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine'**
+  String get projectWeek;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quinzaine'**
+  String get projectFortnight;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mois'**
+  String get projectMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque lundi'**
+  String get projectRemindWeek;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le 1er et le 15'**
+  String get projectRemindFortnight;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le 1er du mois'**
+  String get projectRemindMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau projet'**
+  String get projectNewTitle;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get projectName;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voyage, moto, loyer d’avance…'**
+  String get projectNameHint;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donnez-lui un nom.'**
+  String get projectNameMissing;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objectif'**
+  String get projectGoal;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez un objectif'**
+  String get projectGoalMissing;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} libres'**
+  String projectFree(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'facultative'**
+  String get projectOptional;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la date'**
+  String get projectNoDate;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il faudra {amount} par {period} d’ici le {date}.'**
+  String projectEffort(String amount, String period, String date);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me rappeler de mettre de côté'**
+  String get projectRemind;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le projet'**
+  String get projectCreate;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total {amount}'**
+  String homeTotal(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'dont projets {amount}'**
+  String homeOfProjects(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un projet'**
+  String get homeNewProject;
+
+  /// Home strip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total'**
+  String get homeTotalLabel;
+
+  /// Home strip.
+  ///
+  /// In fr, this message translates to:
+  /// **'dont projets'**
+  String get homeOfProjectsLabel;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans les temps'**
+  String get projectsOnTrack;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il faudra '**
+  String get projectEffortLead;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} par {period}'**
+  String projectEffortAmount(String amount, String period);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **' d’ici le {date}.'**
+  String projectEffortUntil(String date);
 }
 
 class _AppLocalizationsDelegate

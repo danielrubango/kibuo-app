@@ -10,6 +10,7 @@ import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
+import 'generated/schema_v13.dart' as v13;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -487,6 +488,35 @@ void main() {
         expect(kept.amount, 50000);
         expect(kept.forgiven, 0);
         expect(kept.forgivenOn, equals(null));
+      },
+    );
+  });
+
+  test('version 12 to 13 keeps the debts, adds projects', () async {
+    const debt = v12.DebtsData(
+      id: 'debt-1',
+      version: 120,
+      deviceId: 'phone-1',
+      deleted: 0,
+      direction: 'owed',
+      person: 'Grâce',
+      amount: 2000,
+      currency: 'CDF',
+      openedOn: 1794700000,
+      forgiven: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 12,
+      newVersion: 13,
+      createOld: v12.DatabaseAtV12.new,
+      createNew: v13.DatabaseAtV13.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) => batch.insert(oldDb.debts, debt),
+      validateItems: (newDb) async {
+        expect((await newDb.select(newDb.debts).get()).single.person, 'Grâce');
+        expect(await newDb.select(newDb.projects).get(), isEmpty);
+        expect(await newDb.select(newDb.contributions).get(), isEmpty);
       },
     );
   });

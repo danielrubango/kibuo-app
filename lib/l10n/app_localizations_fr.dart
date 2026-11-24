@@ -3303,4 +3303,189 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get projectsTitle => 'Projets';
+
+  @override
+  String get projectsEmpty => 'Aucun projet';
+
+  @override
+  String get projectsEmptyHelp =>
+      'Mettez de l’argent de côté pour un but : un voyage, un achat, une réserve.';
+
+  @override
+  String get projectsMarkLegend =>
+      'Où vous devriez en être aujourd’hui pour tenir la date';
+
+  @override
+  String get projectsEnded => 'Terminés';
+
+  @override
+  String get projectsNew => 'Nouveau projet';
+
+  @override
+  String projectsSaved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Mis de côté · $count projets',
+      one: 'Mis de côté · 1 projet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectsOf(String amount) {
+    return 'sur $amount';
+  }
+
+  @override
+  String get projectsOfTotal => 'du total';
+
+  @override
+  String projectsLeft(String amount) {
+    return 'Reste à mettre : $amount';
+  }
+
+  @override
+  String get projectsNoDate => 'Sans date';
+
+  @override
+  String projectsBefore(String date) {
+    return 'Avant le $date';
+  }
+
+  @override
+  String get projectsPerWeek => 'par semaine';
+
+  @override
+  String get projectsPerFortnight => 'par quinzaine';
+
+  @override
+  String get projectsPerMonth => 'par mois';
+
+  @override
+  String get projectsEndedSpent => 'Dépensé, terminé';
+
+  @override
+  String get projectsEndedReleased => 'Rendu disponible, terminé';
+
+  @override
+  String get projectsReached => 'Objectif atteint';
+
+  @override
+  String projectsBehind(String amount) {
+    return '$amount de retard';
+  }
+
+  @override
+  String projectsAhead(String amount) {
+    return '$amount d’avance';
+  }
+
+  @override
+  String get projectsOwnPace => 'À votre rythme';
+
+  @override
+  String get projectsLate => 'En retard';
+
+  @override
+  String get projectIconTitle => 'Changer l’icône';
+
+  @override
+  String get projectPeriod => 'Diviser le plan par';
+
+  @override
+  String get projectWeek => 'Semaine';
+
+  @override
+  String get projectFortnight => 'Quinzaine';
+
+  @override
+  String get projectMonth => 'Mois';
+
+  @override
+  String get projectRemindWeek => 'Chaque lundi';
+
+  @override
+  String get projectRemindFortnight => 'Le 1er et le 15';
+
+  @override
+  String get projectRemindMonth => 'Le 1er du mois';
+
+  @override
+  String get projectNewTitle => 'Nouveau projet';
+
+  @override
+  String get projectName => 'Nom';
+
+  @override
+  String get projectNameHint => 'Voyage, moto, loyer d’avance…';
+
+  @override
+  String get projectNameMissing => 'Donnez-lui un nom.';
+
+  @override
+  String get projectGoal => 'Objectif';
+
+  @override
+  String get projectGoalMissing => 'Indiquez un objectif';
+
+  @override
+  String projectFree(String amount) {
+    return '$amount libres';
+  }
+
+  @override
+  String get projectOptional => 'facultative';
+
+  @override
+  String get projectNoDate => 'Retirer la date';
+
+  @override
+  String projectEffort(String amount, String period, String date) {
+    return 'Il faudra $amount par $period d’ici le $date.';
+  }
+
+  @override
+  String get projectRemind => 'Me rappeler de mettre de côté';
+
+  @override
+  String get projectCreate => 'Créer le projet';
+
+  @override
+  String homeTotal(String amount) {
+    return 'Total $amount';
+  }
+
+  @override
+  String homeOfProjects(String amount) {
+    return 'dont projets $amount';
+  }
+
+  @override
+  String get homeNewProject => 'Créer un projet';
+
+  @override
+  String get homeTotalLabel => 'Total';
+
+  @override
+  String get homeOfProjectsLabel => 'dont projets';
+
+  @override
+  String get projectsOnTrack => 'Dans les temps';
+
+  @override
+  String get projectEffortLead => 'Il faudra ';
+
+  @override
+  String projectEffortAmount(String amount, String period) {
+    return '$amount par $period';
+  }
+
+  @override
+  String projectEffortUntil(String date) {
+    return ' d’ici le $date.';
+  }
 }
