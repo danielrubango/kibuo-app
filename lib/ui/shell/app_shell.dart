@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
+import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/data/budget_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
@@ -24,6 +25,7 @@ import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
+import 'package:kibuo/ui/backup/backup_screen.dart';
 import 'package:kibuo/ui/budgets/budget_alerts.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
@@ -270,6 +272,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       reminders: ReminderStore(db),
       debts: DebtRepository(db),
       projects: ProjectRepository(db),
+      backups: BackupService(db: db, appFolder: getApplicationSupportDirectory),
     );
   }
 
@@ -543,6 +546,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
               ),
             ),
           ),
+        if (_entryData(context)?.backups case final backups?)
+          BackupSettingsRow(service: backups),
       ],
     );
   }

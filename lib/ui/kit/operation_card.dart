@@ -116,12 +116,38 @@ class NoticeCard extends StatelessWidget {
     required this.text,
     this.background = KibuoColors.surface,
     this.ink = KibuoColors.inkSecondary,
+    this.tile,
+    this.iconInk,
+    this.bold,
   });
+
+  /// The part of [text] set in bold (« date de **12 jours** »).
+  final String? bold;
 
   final IconData icon;
   final String text;
   final Color background;
   final Color ink;
+
+  /// The icon in a 40 square of this colour (canvas SauvW2): a reminder
+  /// rather than a state.
+  final Color? tile;
+
+  /// The icon's colour when it differs from the text's.
+  final Color? iconInk;
+
+  TextSpan _spans() {
+    final bold = this.bold;
+    final at = bold == null ? -1 : text.indexOf(bold);
+    if (bold == null || at < 0) return TextSpan(text: text);
+    return TextSpan(
+      children: [
+        TextSpan(text: text.substring(0, at)),
+        TextSpan(text: bold, style: const TextStyle().weight(700)),
+        TextSpan(text: text.substring(at + bold.length)),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,11 +159,22 @@ class NoticeCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: ink),
+          if (tile case final tile?)
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: tile,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Icon(icon, size: 20, color: iconInk ?? ink),
+            )
+          else
+            Icon(icon, size: 20, color: iconInk ?? ink),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              text,
+            child: Text.rich(
+              _spans(),
               style: KibuoType.body.copyWith(height: 20 / 14, color: ink),
             ),
           ),

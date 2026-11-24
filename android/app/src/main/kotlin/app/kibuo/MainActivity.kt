@@ -15,8 +15,20 @@ import io.flutter.plugin.common.MethodChannel
 
 // FragmentActivity: needed by local_auth for the fingerprint prompt.
 class MainActivity : FlutterFragmentActivity() {
+    private val backupFolders = BackupFolders(this)
+
+    @Deprecated("The folder picker answers here.")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (!backupFolders.onResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Sauvegarde: the folder chosen in Android's picker.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/folder")
+            .setMethodCallHandler(backupFolders::handle)
         // The phone's country, to suggest its currency: the SIM or network
         // first (a phone in Congo may be set to French from France), then the
         // system settings, which Kibuo's own language choice does not change.

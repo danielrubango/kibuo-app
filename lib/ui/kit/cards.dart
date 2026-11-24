@@ -231,10 +231,14 @@ class SettingsRow extends StatelessWidget {
     required this.onTap,
     this.value,
     this.danger = false,
+    this.valueColor,
   });
 
   final String label;
   final String? value;
+
+  /// Amber when the value asks for attention (an old backup).
+  final Color? valueColor;
 
   /// Null greys the row out.
   final VoidCallback? onTap;
@@ -242,40 +246,56 @@ class SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The value at its own width against ›, never past 45 % of the row; the
+    // label takes the rest (DIRECTION: Ligne de réglage).
     return InkWell(
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48),
+        constraints: const BoxConstraints(minHeight: 52),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: KibuoType.rowLabel.copyWith(
-                    color: onTap == null
-                        ? KibuoColors.inkMuted
-                        : danger
-                        ? KibuoColors.danger
-                        : null,
+          padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+          child: LayoutBuilder(
+            builder: (context, box) => Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    style: KibuoType.rowLabel.copyWith(
+                      color: onTap == null
+                          ? KibuoColors.inkMuted
+                          : danger
+                          ? KibuoColors.danger
+                          : null,
+                    ),
                   ),
                 ),
-              ),
-              if (value != null) ...[
-                const SizedBox(width: 12),
-                Text(value!, style: KibuoType.caption.copyWith(fontSize: 13)),
+                if (value != null) ...[
+                  const SizedBox(width: 12),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: box.maxWidth * 0.45),
+                    child: Text(
+                      value!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: KibuoType.caption.copyWith(
+                        fontSize: 14,
+                        color: valueColor,
+                      ),
+                    ),
+                  ),
+                ],
+                if (!danger)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 6),
+                    child: Icon(
+                      KibuoIcons.caretRight,
+                      size: 16,
+                      color: KibuoColors.inkMuted,
+                    ),
+                  ),
               ],
-              if (!danger)
-                const Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Icon(
-                    KibuoIcons.caretRight,
-                    size: 16,
-                    color: KibuoColors.inkMuted,
-                  ),
-                ),
-            ],
+            ),
           ),
         ),
       ),

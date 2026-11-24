@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -58,7 +59,8 @@ class FieldLabel extends StatelessWidget {
 }
 
 /// A text field: white, no border at rest, a green border while typing.
-class KibuoTextField extends StatelessWidget {
+/// [secret] hides what is typed, with the eye to show it (canvas RestauC1).
+class KibuoTextField extends StatefulWidget {
   const KibuoTextField({
     super.key,
     this.label,
@@ -71,7 +73,10 @@ class KibuoTextField extends StatelessWidget {
     this.onFocus,
     this.focusNode,
     this.lines = 1,
+    this.secret = false,
   });
+
+  final bool secret;
 
   /// More than one: a message, that grows to this many lines.
   final int lines;
@@ -90,6 +95,13 @@ class KibuoTextField extends StatelessWidget {
   final VoidCallback? onFocus;
 
   @override
+  State<KibuoTextField> createState() => _KibuoTextFieldState();
+}
+
+class _KibuoTextFieldState extends State<KibuoTextField> {
+  bool _shown = false;
+
+  @override
   Widget build(BuildContext context) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
@@ -101,24 +113,40 @@ class KibuoTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (label != null) FieldLabel(label!),
+        if (widget.label != null) FieldLabel(widget.label!),
         Focus(
           canRequestFocus: false,
           skipTraversal: true,
           onFocusChange: (on) {
-            if (on) onFocus?.call();
+            if (on) widget.onFocus?.call();
           },
           child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            minLines: lines > 1 ? 3 : null,
-            maxLines: lines,
-            onChanged: onChanged,
-            autofocus: autofocus,
-            textCapitalization: textCapitalization,
+            controller: widget.controller,
+            focusNode: widget.focusNode,
+            minLines: widget.lines > 1 ? 3 : null,
+            maxLines: widget.lines,
+            onChanged: widget.onChanged,
+            autofocus: widget.autofocus,
+            textCapitalization: widget.textCapitalization,
+            obscureText: widget.secret && !_shown,
+            enableSuggestions: !widget.secret,
+            autocorrect: !widget.secret,
             style: KibuoType.body.copyWith(fontSize: 16),
             decoration: InputDecoration(
-              hintText: hint,
+              suffixIcon: widget.secret
+                  ? IconButton(
+                      tooltip: _shown
+                          ? AppLocalizations.of(context).secretHide
+                          : AppLocalizations.of(context).secretShow,
+                      onPressed: () => setState(() => _shown = !_shown),
+                      icon: Icon(
+                        _shown ? KibuoIcons.eyeSlash : KibuoIcons.eye,
+                        size: 20,
+                        color: KibuoColors.inkSecondary,
+                      ),
+                    )
+                  : null,
+              hintText: widget.hint,
               hintStyle: KibuoType.body.copyWith(
                 fontSize: 16,
                 color: KibuoColors.inkMuted,
@@ -131,17 +159,17 @@ class KibuoTextField extends StatelessWidget {
                 vertical: 15,
               ),
               border: border(KibuoColors.surface, 0),
-              enabledBorder: error == null
+              enabledBorder: widget.error == null
                   ? border(KibuoColors.surface, 0)
                   : border(KibuoColors.danger, 2),
               focusedBorder: border(
-                error == null ? KibuoColors.accent : KibuoColors.danger,
+                widget.error == null ? KibuoColors.accent : KibuoColors.danger,
                 2,
               ),
             ),
           ),
         ),
-        if (error != null) _ErrorLine(error!),
+        if (widget.error != null) _ErrorLine(widget.error!),
       ],
     );
   }
