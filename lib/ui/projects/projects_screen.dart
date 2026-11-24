@@ -494,11 +494,33 @@ class _ProjectCard extends StatelessWidget {
                       style: KibuoType.caption.copyWith(color: restColor),
                     ),
                   ),
-                  if (canAdd)
-                    TextAction(
-                      label: '${l.projectPutAside} ›',
-                      onPressed: onPutAside,
+                  if (canAdd) ...[
+                    const SizedBox(width: 8),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        Haptics.tap();
+                        onPutAside();
+                      },
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minHeight: KibuoTheme.heightTouch,
+                        ),
+                        child: Center(
+                          widthFactor: 1,
+                          child: Text(
+                            '${l.projectPutAside} ›',
+                            style: KibuoType.caption
+                                .copyWith(
+                                  fontSize: 13,
+                                  color: KibuoColors.accent,
+                                )
+                                .weight(700),
+                          ),
+                        ),
+                      ),
                     ),
+                  ],
                 ],
               ),
             ],

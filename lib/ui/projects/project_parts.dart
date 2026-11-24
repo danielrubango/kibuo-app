@@ -163,16 +163,17 @@ String projectWhen(
   ProjectInfo p,
   DateTime now, {
   bool short = true,
+  bool left = true,
 }) {
   final due = p.due;
   if (due == null) return l.projectsNoDate;
   final day = (short ? DateFormat.MMMd(lang) : DateFormat.MMMMd(lang)).format(
     due,
   );
-  final left = projectTimeLeft(l, now, due);
-  return left == null
+  final rest = left ? projectTimeLeft(l, now, due) : null;
+  return rest == null
       ? l.projectsBefore(day)
-      : '${l.projectsBefore(day)} · $left';
+      : '${l.projectsBefore(day)} · $rest';
 }
 
 /// « par semaine », « par quinzaine », « par mois ».

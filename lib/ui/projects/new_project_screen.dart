@@ -15,6 +15,7 @@ import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/projects/project_parts.dart';
 import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -268,10 +269,11 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
         ? null
         : perPeriod(
             goal: _goal.minor,
-            saved: 0,
+            saved: widget.editing?.saved.minor ?? 0,
             today: now,
             due: due,
             period: _period,
+            unit: unitOf(currency.code),
           );
     Widget row({
       required IconData icon,

@@ -37,6 +37,7 @@ Future<bool> putAsideFlow(
   required ProjectRepository projects,
   required ProjectInfo project,
   DateTime Function() now = DateTime.now,
+  Future<void> Function()? onSaved,
 }) async {
   final accounts = [
     for (final a in await data.accounts.accounts())
@@ -60,6 +61,9 @@ Future<bool> putAsideFlow(
   if (done == null || !context.mounted) return false;
   Haptics.confirm();
   showKibuoToast(context, l.projectPutAsideDone(_money(context, done)));
+  // What lies behind is up to date under « Objectif atteint ».
+  await onSaved?.call();
+  if (!context.mounted) return true;
   final after = await projects.project(project.id);
   if (after != null && after.reached && !project.reached && context.mounted) {
     await reachedFlow(
@@ -136,7 +140,13 @@ class _MoneySheetState extends State<_MoneySheet> {
   late AccountInfo? _account =
       widget.accounts.where((a) => a.id == _p.accountId).firstOrNull ??
       widget.accounts.firstOrNull;
-  late Money _amount = Money(_quickValue(_startQuick) ?? 0, _currency);
+  // What is offered first never goes beyond what may be taken: the
+  // refusal is for what one types (owner, 24 November).
+  late Money _amount = () {
+    final start = _quickValue(_startQuick) ?? 0;
+    final most = _most.minor < 0 ? 0 : _most.minor;
+    return Money(start > most ? most : start, _currency);
+  }();
   bool _saving = false;
 
   int get _missing => _p.goal.minor - _p.saved.minor;
@@ -270,6 +280,7 @@ class _MoneySheetState extends State<_MoneySheet> {
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Expanded(
+                    flex: 2,
                     child: Text(
                       _p.name,
                       maxLines: 1,
@@ -279,8 +290,10 @@ class _MoneySheetState extends State<_MoneySheet> {
                   ),
                   const SizedBox(width: 8),
                   Flexible(
+                    flex: 3,
                     child: Text(
-                      projectWhen(l, lang, _p, widget.now()),
+                      projectWhen(l, lang, _p, widget.now(), left: false),
+                      textAlign: TextAlign.right,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: KibuoType.caption,

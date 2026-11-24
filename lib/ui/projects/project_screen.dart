@@ -84,6 +84,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
       projects: widget.projects,
       project: p,
       now: widget.now,
+      onSaved: _changed,
     );
     if (moved) await _changed();
   }
@@ -380,7 +381,7 @@ class _Hero extends StatelessWidget {
             if (pace.late || pace.ahead) TextSpan(text: l.projectOnPace),
           ],
         ),
-        maxLines: 1,
+        maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: small,
       );
@@ -455,12 +456,13 @@ class _Hero extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              Expanded(child: state),
+              Expanded(flex: 3, child: state),
               const SizedBox(width: 8),
               if (p.running && p.reached)
                 TextAction(label: '${l.projectWhatNow} ›', onPressed: onWhatNow)
               else
-                Flexible(
+                Expanded(
+                  flex: 2,
                   child: Text(
                     l.projectOn(p.account),
                     maxLines: 1,
@@ -639,10 +641,14 @@ class _Plan extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        Text(
-                          money(Money(parts[i].amount, cur)),
-                          maxLines: 1,
-                          style: KibuoType.cardTitle.copyWith(fontSize: 16),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            money(Money(parts[i].amount, cur)),
+                            maxLines: 1,
+                            style: KibuoType.cardTitle.copyWith(fontSize: 16),
+                          ),
                         ),
                       ],
                     ),
