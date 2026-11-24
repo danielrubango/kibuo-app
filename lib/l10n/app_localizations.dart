@@ -3514,6 +3514,18 @@ abstract class AppLocalizations {
   /// First launch
   ///
   /// In fr, this message translates to:
+  /// **'Sauvegardes automatiques'**
+  String get firstBackupTitle;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque semaine, dans le dossier de votre choix.'**
+  String get firstBackupHelp;
+
+  /// First launch
+  ///
+  /// In fr, this message translates to:
   /// **'Verrouiller l’application'**
   String get firstLockTitle;
 

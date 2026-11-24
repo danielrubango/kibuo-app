@@ -2122,6 +2122,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.';
 
   @override
+  String get firstBackupTitle => 'Sauvegardes automatiques';
+
+  @override
+  String get firstBackupHelp =>
+      'Chaque semaine, dans le dossier de votre choix.';
+
+  @override
   String get firstLockTitle => 'Verrouiller l’application';
 
   @override

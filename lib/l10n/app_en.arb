@@ -579,6 +579,8 @@
   "firstAccountText": "Start with the one you use most. You can add others later.",
   "firstProtectTitle": "Protect your data",
   "firstProtectText": "Your data stays on this phone. Without a backup, it is lost if you lose the phone.",
+  "firstBackupTitle": "Automatic backups",
+  "firstBackupHelp": "Every week, in the folder of your choice.",
   "firstLockTitle": "Lock the app",
   "firstLockHelp": "PIN or fingerprint. You will be given a recovery code.",
   "firstLater": "You can change these choices at any time in the settings.",

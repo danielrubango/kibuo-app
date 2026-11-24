@@ -190,6 +190,7 @@ La raison est donnée quand elle est écrite dans ce document ou dans PRODUCT ; 
 
 | Écartées | Retenue | Pourquoi |
 |---|---|---|
+| `Lancement4Sauvegarde` 3 B (la carte nomme le dossier choisi) | 3 A (la carte garde « Chaque semaine, dans le dossier de votre choix. ») | Choisie par le propriétaire le 25 novembre 2026 ; raison non écrite. |
 | `MotDePasseRetenu` B (interrupteur « Protéger par mot de passe » des planches Sauvegarde et RestauC1), C (« Retenir ce mot de passe » dans la feuille de sauvegarde) | A (ligne « Mot de passe · Aucun › » dans la carte, qui ouvre une feuille) | Choisie par le propriétaire le 25 novembre 2026 ; raison non écrite. L'interrupteur « Protéger par mot de passe » des planches Sauvegarde et RestauC1 n'est donc pas repris. |
 | `ConfirmB` (message plus grand, posé en bas) | `ConfirmA` (feuille qui se ferme seule) | Un message flottant peut cacher le bouton du bas d'une fiche ; la feuille porte aussi les actions (« Annuler et modifier », « Voir la dette ») (23 nov.). |
 | `OpDetteA` (étiquette), `A1` (fond teinté léger), `A2` (fond teinté, tuile blanche), `A3` (fond teinté, fin contour), `B` (pointillés, montant gris), `C` (montant entouré) | `OpDetteA4` (fin contour seul) | Choix du 23 nov. ; raison non écrite. |

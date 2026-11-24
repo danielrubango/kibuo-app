@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/first_launch_store.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
@@ -18,8 +23,20 @@ import 'package:kibuo/ui/theme/kibuo_theme.dart';
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   late KibuoDatabase db;
+  late _MemoryVault vault;
+  late BackupService backups;
+  late _Folders folders;
+  final scheduled = <bool>[];
   setUp(() async {
     db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
+    vault = _MemoryVault();
+    backups = BackupService(
+      db: db,
+      appFolder: () async => Directory.systemTemp,
+      vault: vault,
+    );
+    folders = _Folders();
+    scheduled.clear();
     // As the app does when its data opens (main.dart).
     await CurrencyRepository(db).ensurePrimaryCurrency('US');
   });
@@ -44,7 +61,14 @@ void main() {
         localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
         home: KibuoData(
           database: db,
-          child: const FirstLaunchGate(child: Text('Accueil')),
+          child: FirstLaunchGate(
+            backups: LaunchBackups(
+              service: (_) => backups,
+              folders: folders,
+              schedule: ({required on}) async => scheduled.add(on),
+            ),
+            child: const Text('Accueil'),
+          ),
         ),
       ),
     );
@@ -96,7 +120,11 @@ void main() {
 
     expect(find.text('Étape 4 sur 4'), findsOneWidget);
     expect(find.text('Verrouiller l’application'), findsOneWidget);
-    expect(find.text('Sauvegardes automatiques'), findsNothing);
+    expect(find.text('Sauvegardes automatiques'), findsOneWidget);
+    expect(
+      find.text('Chaque semaine, dans le dossier de votre choix.'),
+      findsOneWidget,
+    );
     await next(tester, 'Commencer');
     expect(find.text('Accueil'), findsOneWidget);
     expect(await FirstLaunchStore(db).needed(), isFalse);
@@ -187,7 +215,7 @@ void main() {
     testWidgets('the switch shows the lock is on', (tester) async {
       await start(tester, lock: lock);
       expect(find.text('Étape 4 sur 4'), findsOneWidget);
-      expect(tester.widget<Switch>(find.byType(Switch)).value, isTrue);
+      expect(tester.widget<Switch>(find.byType(Switch).first).value, isTrue);
       await next(tester, 'Commencer');
       expect(find.text('Accueil'), findsOneWidget);
       expect(lock.hasPin, isTrue);
@@ -195,11 +223,73 @@ void main() {
 
     testWidgets('turned off, « Commencer » removes the code', (tester) async {
       await start(tester, lock: lock);
-      await tester.tap(find.byType(Switch));
+      await tester.tap(find.byType(Switch).first);
       await tester.pumpAndSettle();
       await next(tester, 'Commencer');
       expect(find.text('Accueil'), findsOneWidget);
       expect(lock.hasPin, isFalse);
+    });
+  });
+
+  group('step 4, automatic backups (PRODUCT, 24 and 25 November)', () {
+    setUp(() => FirstLaunchStore(db).reached(4));
+
+    Switch backupSwitch(WidgetTester tester) =>
+        tester.widget<Switch>(find.byType(Switch).last);
+
+    testWidgets('off at first; without a folder chosen, it stays off', (
+      tester,
+    ) async {
+      await start(tester);
+      expect(backupSwitch(tester).value, isFalse);
+      await tester.tap(find.text('Sauvegardes automatiques'));
+      await tester.pumpAndSettle();
+      expect(folders.asked, 1);
+      expect(backupSwitch(tester).value, isFalse);
+      await next(tester, 'Commencer');
+      expect(find.text('Accueil'), findsOneWidget);
+      expect((await backups.state()).auto, isFalse);
+      expect(scheduled, isEmpty);
+    });
+
+    testWidgets('a folder chosen: on, kept at « Commencer »', (tester) async {
+      folders.toPick = const BackupFolder(
+        uri: 'content://tree/dl',
+        name: 'Download/Kibuo',
+      );
+      await start(tester);
+      await tester.tap(find.text('Sauvegardes automatiques'));
+      await tester.pumpAndSettle();
+      expect(backupSwitch(tester).value, isTrue);
+      // Variant 3 A: the card keeps its words.
+      expect(
+        find.text('Chaque semaine, dans le dossier de votre choix.'),
+        findsOneWidget,
+      );
+      expect((await backups.state()).auto, isFalse, reason: 'not yet');
+      await next(tester, 'Commencer');
+      expect(find.text('Accueil'), findsOneWidget);
+      final state = await backups.state();
+      expect(state.auto, isTrue);
+      expect(state.folder?.name, 'Download/Kibuo');
+      expect(scheduled, [true]);
+    });
+
+    testWidgets('on, then off again: nothing at « Commencer »', (tester) async {
+      folders.toPick = const BackupFolder(
+        uri: 'content://tree/dl',
+        name: 'Download/Kibuo',
+      );
+      await start(tester);
+      await tester.tap(find.text('Sauvegardes automatiques'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sauvegardes automatiques'));
+      await tester.pumpAndSettle();
+      expect(backupSwitch(tester).value, isFalse);
+      expect(folders.asked, 1, reason: 'turning off asks nothing');
+      await next(tester, 'Commencer');
+      expect((await backups.state()).auto, isFalse);
+      expect(scheduled, isEmpty);
     });
   });
 }
@@ -238,4 +328,27 @@ class _NoPrivacy implements PrivacyPlatform {
     required bool hideInRecents,
     required bool androidCopy,
   }) async {}
+}
+
+class _Folders implements BackupFolders {
+  BackupFolder? toPick;
+  int asked = 0;
+
+  @override
+  Future<BackupFolder?> pick() async {
+    asked++;
+    return toPick;
+  }
+
+  @override
+  Future<bool> reachable(BackupFolder folder) async => true;
+
+  @override
+  Future<bool> write(BackupFolder folder, String name, File file) async => true;
+
+  @override
+  Future<List<String>> list(BackupFolder folder) async => const [];
+
+  @override
+  Future<void> delete(BackupFolder folder, String name) async {}
 }

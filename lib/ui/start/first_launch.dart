@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/account_repository.dart';
+import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/first_launch_store.dart';
@@ -8,7 +9,9 @@ import 'package:kibuo/domain/transactions/search.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/backup/auto_backup_task.dart';
 import 'package:kibuo/ui/backup/backup_files.dart';
+import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/backup/start_restore_sheet.dart';
 import 'package:kibuo/ui/brand/kibuo_mark.dart';
 import 'package:kibuo/ui/device_country.dart';
@@ -23,13 +26,37 @@ import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:path_provider/path_provider.dart';
+
+/// What step 4 needs for « Sauvegardes automatiques »: the phone's own by
+/// default, fakes in tests.
+class LaunchBackups {
+  const LaunchBackups({
+    this.service,
+    this.folders = const DeviceBackupFolders(),
+    this.schedule = scheduleAutoBackup,
+  });
+
+  final BackupService Function(KibuoDatabase db)? service;
+  final BackupFolders folders;
+  final Future<void> Function({required bool on}) schedule;
+
+  BackupService serviceFor(KibuoDatabase db) =>
+      service?.call(db) ??
+      BackupService(db: db, appFolder: getApplicationSupportDirectory);
+}
 
 /// Shows the guided first launch on a new app, then [child] (PRODUCT). Also
 /// applies the language chosen in kibuo when Android does not keep it.
 class FirstLaunchGate extends StatefulWidget {
-  const FirstLaunchGate({super.key, required this.child});
+  const FirstLaunchGate({
+    super.key,
+    required this.child,
+    this.backups = const LaunchBackups(),
+  });
 
   final Widget child;
+  final LaunchBackups backups;
 
   @override
   State<FirstLaunchGate> createState() => _FirstLaunchGateState();
@@ -73,6 +100,7 @@ class _FirstLaunchGateState extends State<FirstLaunchGate> {
       true => FirstLaunchFlow(
         db: db,
         step: _step,
+        backups: widget.backups,
         onDone: () => setState(() => _needed = false),
       ),
     };
@@ -87,11 +115,13 @@ class FirstLaunchFlow extends StatefulWidget {
     required this.db,
     required this.step,
     required this.onDone,
+    this.backups = const LaunchBackups(),
   });
 
   final KibuoDatabase db;
   final int step;
   final VoidCallback onDone;
+  final LaunchBackups backups;
 
   @override
   State<FirstLaunchFlow> createState() => _FirstLaunchFlowState();
@@ -152,7 +182,11 @@ class _FirstLaunchFlowState extends State<FirstLaunchFlow> {
         ),
         2 => _CurrencyStep(currencies: _currencies, onNext: () => _go(3)),
         3 => _accountStep(context),
-        _ => _ProtectionStep(onStart: _finish),
+        _ => _ProtectionStep(
+          onStart: _finish,
+          backups: widget.backups,
+          service: widget.backups.serviceFor(widget.db),
+        ),
       },
     );
   }
@@ -438,13 +472,19 @@ class _CurrencyStepState extends State<_CurrencyStep> {
   }
 }
 
-/// Step 4 (canvas Lancement4): « Verrouiller l'application », then
-/// « Commencer », which creates the code first when it is on. Automatic
-/// backups join it with the backups (ROADMAP, phase 6).
+/// Step 4 (canvas Lancement4, Lancement4Sauvegarde 3 A): « Verrouiller
+/// l'application » and « Sauvegardes automatiques », then « Commencer »,
+/// which creates the code first when it is on, and turns the backups on.
 class _ProtectionStep extends StatefulWidget {
-  const _ProtectionStep({required this.onStart});
+  const _ProtectionStep({
+    required this.onStart,
+    required this.backups,
+    required this.service,
+  });
 
   final Future<void> Function() onStart;
+  final LaunchBackups backups;
+  final BackupService service;
 
   @override
   State<_ProtectionStep> createState() => _ProtectionStepState();
@@ -452,7 +492,20 @@ class _ProtectionStep extends StatefulWidget {
 
 class _ProtectionStepState extends State<_ProtectionStep> {
   bool _lock = false;
+  bool _backup = false;
   bool _read = false;
+
+  /// On: Android's folder picker first; none chosen, it stays off.
+  Future<void> _setBackup(bool on) async {
+    if (!on) {
+      setState(() => _backup = false);
+      return;
+    }
+    final picked = await widget.backups.folders.pick();
+    if (picked == null || !mounted) return;
+    await widget.service.setFolder(picked);
+    if (mounted) setState(() => _backup = true);
+  }
 
   @override
   void didChangeDependencies() {
@@ -474,8 +527,44 @@ class _ProtectionStepState extends State<_ProtectionStep> {
       // Given up on the way: the choice stays to be made.
       if (!lock.hasPin) return;
     }
+    if (_backup) {
+      // The first backup follows at kibuo's opening: none was made yet.
+      await widget.service.setAuto(on: true);
+      await widget.backups.schedule(on: true);
+    }
     await widget.onStart();
   }
+
+  /// A choice of step 4: its own white card, title, help, the switch.
+  Widget _choice({
+    required String title,
+    required String help,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) => Material(
+    color: KibuoColors.surface,
+    borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+    clipBehavior: Clip.antiAlias,
+    child: SwitchRow(
+      padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+      value: value,
+      onChanged: onChanged,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: KibuoType.itemName),
+          const SizedBox(height: 4),
+          Text(
+            help,
+            style: KibuoType.body.copyWith(
+              height: 20 / 14,
+              color: KibuoColors.inkSecondary,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -490,29 +579,18 @@ class _ProtectionStepState extends State<_ProtectionStep> {
           text: l.firstProtectText,
         ),
         const SizedBox(height: 20),
-        Material(
-          color: KibuoColors.surface,
-          borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-          clipBehavior: Clip.antiAlias,
-          child: SwitchRow(
-            padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
-            value: _lock,
-            onChanged: (on) => setState(() => _lock = on),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l.firstLockTitle, style: KibuoType.itemName),
-                const SizedBox(height: 4),
-                Text(
-                  l.firstLockHelp,
-                  style: KibuoType.body.copyWith(
-                    height: 20 / 14,
-                    color: KibuoColors.inkSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+        _choice(
+          title: l.firstLockTitle,
+          help: l.firstLockHelp,
+          value: _lock,
+          onChanged: (on) => setState(() => _lock = on),
+        ),
+        const SizedBox(height: 10),
+        _choice(
+          title: l.firstBackupTitle,
+          help: l.firstBackupHelp,
+          value: _backup,
+          onChanged: _setBackup,
         ),
         const SizedBox(height: 16),
         Padding(
