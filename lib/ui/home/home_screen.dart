@@ -15,6 +15,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/home/todo.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
+import 'package:kibuo/ui/kit/card_arrow.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/day_header.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
@@ -32,7 +33,6 @@ import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/recurrences/rhythm_text.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
@@ -490,7 +490,12 @@ class _AvailableCard extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+                padding: const EdgeInsets.fromLTRB(
+                  CardArrow.edge,
+                  16,
+                  CardArrow.edge,
+                  16,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -524,11 +529,7 @@ class _AvailableCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Icon(
-                      KibuoIcons.caretRight,
-                      size: 20,
-                      color: KibuoColors.accent,
-                    ),
+                    const CardArrow(color: KibuoColors.accent),
                   ],
                 ),
               ),
@@ -576,7 +577,12 @@ class _ProjectsStrip extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: KibuoTheme.heightTouch),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            padding: const EdgeInsets.fromLTRB(
+              CardArrow.edge,
+              10,
+              CardArrow.edge,
+              10,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -600,7 +606,7 @@ class _ProjectsStrip extends StatelessWidget {
                         .weight(600),
                   ),
                 const SizedBox(width: 2),
-                const Icon(KibuoIcons.caretRight, size: 16, color: ink),
+                const CardArrow(color: ink),
               ],
             ),
           ),
