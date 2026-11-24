@@ -3951,6 +3951,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupFolderDocuments => 'Documents';
 
   @override
+  String get autoBackup => 'Sauvegarde automatique';
+
+  @override
+  String get autoBackupHelp => 'Chaque semaine';
+
+  @override
+  String get autoBackupImpossible => 'Sauvegarde automatique impossible';
+
+  @override
+  String get autoBackupFolderToast =>
+      'Sauvegarde automatique impossible · Dossier introuvable';
+
+  @override
+  String get autoBackupFailed =>
+      'La sauvegarde automatique n’a pas pu se faire.';
+
+  @override
+  String get autoBackupChannel => 'Sauvegardes';
+
+  @override
   String get todoBackup => 'Sauvegarde';
 
   @override

@@ -17,11 +17,23 @@ class BackupFolder {
 
 /// Where backups stand on this phone.
 class BackupState {
-  const BackupState({this.folder, this.last, this.firstOperation});
+  const BackupState({
+    this.folder,
+    this.last,
+    this.firstOperation,
+    this.auto = false,
+    this.autoFailedAt,
+  });
 
   final BackupFolder? folder;
   final DateTime? last;
   final DateTime? firstOperation;
+
+  /// « Sauvegarde automatique », off until the user turns it on.
+  final bool auto;
+
+  /// When the last automatic backup failed, if none worked since.
+  final DateTime? autoFailedAt;
 
   bool old(DateTime now) =>
       backupIsOld(last: last, firstOperation: firstOperation, now: now);
@@ -48,10 +60,18 @@ class BackupService {
   static const _folderName = 'backup_folder_name';
   static const _last = 'backup_last';
 
+  /// Read with kibuo closed, before the data is opened.
+  static const autoKey = 'backup_auto';
+  static const _auto = autoKey;
+  static const _autoFailed = 'backup_auto_failed';
+  static const _language = 'backup_language';
+
   Future<BackupState> state() async {
     final uri = await _vault.read(_folderUri);
     final name = await _vault.read(_folderName);
     final last = DateTime.tryParse(await _vault.read(_last) ?? '');
+    final failed = DateTime.tryParse(await _vault.read(_autoFailed) ?? '');
+    final auto = await _vault.read(_auto) == 'on';
     final first = await _db
         .customSelect(
           'SELECT min(date) AS first FROM transactions WHERE deleted = 0',
@@ -64,15 +84,19 @@ class BackupService {
           ? null
           : BackupFolder(uri: uri, name: name),
       last: last,
+      auto: auto,
+      autoFailedAt: failed,
       firstOperation: seconds == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(seconds * 1000),
     );
   }
 
+  /// A new folder: the next automatic backup does not wait a week.
   Future<void> setFolder(BackupFolder folder) async {
     await _vault.write(_folderUri, folder.uri);
     await _vault.write(_folderName, folder.name);
+    await _vault.delete(_autoFailed);
   }
 
   /// Writes the backup to a file of the phone's temporary folder, named for
@@ -96,6 +120,26 @@ class BackupService {
     return out;
   }
 
-  /// The backup reached its folder.
-  Future<void> done(DateTime at) => _vault.write(_last, at.toIso8601String());
+  /// The backup reached its folder: a failure before it is forgotten.
+  Future<void> done(DateTime at) async {
+    await _vault.write(_last, at.toIso8601String());
+    await _vault.delete(_autoFailed);
+  }
+
+  /// Turns automatic backups on or off; either way, a past failure is
+  /// forgotten.
+  Future<void> setAuto({required bool on}) async {
+    await _vault.write(_auto, on ? 'on' : 'off');
+    await _vault.delete(_autoFailed);
+  }
+
+  /// An automatic backup failed at [at]: the next try waits a week.
+  Future<void> autoFailed(DateTime at) =>
+      _vault.write(_autoFailed, at.toIso8601String());
+
+  /// kibuo's language, for backups made while it is closed (Android 13 and
+  /// more keep it outside the data).
+  Future<void> rememberLanguage(String code) => _vault.write(_language, code);
+
+  Future<String?> rememberedLanguage() => _vault.read(_language);
 }

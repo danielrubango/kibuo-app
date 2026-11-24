@@ -63,6 +63,12 @@ class _Folders implements BackupFolders {
     wrote = name;
     return ok;
   }
+
+  @override
+  Future<List<String>> list(BackupFolder folder) async => const [];
+
+  @override
+  Future<void> delete(BackupFolder folder, String name) async {}
 }
 
 void main() {

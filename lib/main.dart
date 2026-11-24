@@ -5,6 +5,7 @@ import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/backup/auto_backup_task.dart';
 import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -64,6 +65,14 @@ void main() {
       },
     ),
   );
+}
+
+/// Android's daily call, kibuo closed (AutoBackupWorker): the automatic
+/// backup, without a screen.
+@pragma('vm:entry-point')
+Future<void> autoBackupMain() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await backUpInBackground();
 }
 
 /// Kibuo speaks the phone's language when it is French or English, and

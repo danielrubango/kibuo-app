@@ -13,8 +13,15 @@ abstract interface class BackupFolders {
   /// Whether kibuo can still write in [folder].
   Future<bool> reachable(BackupFolder folder);
 
-  /// Copies [file] into [folder] as [name]; false when it could not.
+  /// Copies [file] into [folder] as [name], in place of a file of that
+  /// name once the copy is whole; false when it could not.
   Future<bool> write(BackupFolder folder, String name, File file);
+
+  /// The names of the files in [folder].
+  Future<List<String>> list(BackupFolder folder);
+
+  /// Deletes the file [name] from [folder], if it is there.
+  Future<void> delete(BackupFolder folder, String name);
 }
 
 class DeviceBackupFolders implements BackupFolders {
@@ -41,6 +48,14 @@ class DeviceBackupFolders implements BackupFolders {
         'path': file.path,
       }) ??
       false;
+
+  @override
+  Future<List<String>> list(BackupFolder folder) async =>
+      await _channel.invokeListMethod<String>('list', folder.uri) ?? const [];
+
+  @override
+  Future<void> delete(BackupFolder folder, String name) =>
+      _channel.invokeMethod<void>('delete', {'uri': folder.uri, 'name': name});
 }
 
 /// « Download/Kibuo » as the user knows it: « Téléchargements/Kibuo ».

@@ -15,7 +15,7 @@ import io.flutter.plugin.common.MethodChannel
 
 // FragmentActivity: needed by local_auth for the fingerprint prompt.
 class MainActivity : FlutterFragmentActivity() {
-    private val backupFolders = BackupFolders(this)
+    private val backupFolders = BackupFolders(this, this)
     private val backupFiles = BackupFiles(this)
 
     @Deprecated("The folder and file pickers answer here.")
@@ -43,6 +43,13 @@ class MainActivity : FlutterFragmentActivity() {
         // Sauvegarde: the folder chosen in Android's picker.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/folder")
             .setMethodCallHandler(backupFolders::handle)
+        // Sauvegardes automatiques: the daily check, kibuo closed.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, AutoBackupWorker.CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method != "schedule") return@setMethodCallHandler result.notImplemented()
+                AutoBackupWorker.schedule(applicationContext, call.arguments as Boolean)
+                result.success(null)
+            }
         // Restauration: a backup chosen, or the file kibuo was opened with.
         backupFiles.attach(
             MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/backup-file"),

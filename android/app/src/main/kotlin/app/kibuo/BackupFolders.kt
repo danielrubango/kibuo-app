@@ -1,6 +1,7 @@
 package app.kibuo
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
@@ -12,8 +13,10 @@ import java.io.File
 
 /// The backups' folder (PRODUCT: Sauvegarde manuelle), through Android's own
 /// folder picker: kibuo keeps a lasting right to write there and never asks
-/// for access to the whole storage.
-class BackupFolders(private val activity: Activity) {
+/// for access to the whole storage. Without [activity] (the automatic
+/// backup, kibuo closed), everything but the picker works.
+class BackupFolders(private val context: Context, private val activity: Activity? = null) {
+    private val resolver get() = context.contentResolver
     private var pending: MethodChannel.Result? = null
     private val main = Handler(Looper.getMainLooper())
 
@@ -27,6 +30,31 @@ class BackupFolders(private val activity: Activity) {
                 Thread {
                     val ok = reachable(uri)
                     main.post { result.success(ok) }
+                }.start()
+            }
+            "list" -> {
+                val uri = Uri.parse(call.arguments as String)
+                Thread {
+                    val names = try {
+                        children(uri).map { it.second }
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
+                    main.post { result.success(names) }
+                }.start()
+            }
+            "delete" -> {
+                val uri = Uri.parse(call.argument<String>("uri")!!)
+                val name = call.argument<String>("name")!!
+                Thread {
+                    try {
+                        children(uri).filter { it.second == name }.forEach {
+                            DocumentsContract.deleteDocument(resolver, it.first)
+                        }
+                    } catch (e: Exception) {
+                        // Stays until next time.
+                    }
+                    main.post { result.success(null) }
                 }.start()
             }
             "write" -> {
@@ -48,6 +76,7 @@ class BackupFolders(private val activity: Activity) {
     }
 
     private fun pick(result: MethodChannel.Result) {
+        val activity = activity ?: return result.success(null)
         pending?.success(null)
         pending = result
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -69,7 +98,7 @@ class BackupFolders(private val activity: Activity) {
             result.success(null)
             return true
         }
-        activity.contentResolver.takePersistableUriPermission(
+        resolver.takePersistableUriPermission(
             uri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
         )
@@ -86,7 +115,7 @@ class BackupFolders(private val activity: Activity) {
     }
 
     private fun reachable(tree: Uri): Boolean {
-        val granted = activity.contentResolver.persistedUriPermissions.any {
+        val granted = resolver.persistedUriPermissions.any {
             it.uri == tree && it.isWritePermission
         }
         if (!granted) return false
@@ -95,7 +124,7 @@ class BackupFolders(private val activity: Activity) {
                 tree,
                 DocumentsContract.getTreeDocumentId(tree),
             )
-            activity.contentResolver.query(doc, null, null, null, null)?.use {
+            resolver.query(doc, null, null, null, null)?.use {
                 it.moveToFirst()
             } ?: false
         } catch (e: Exception) {
@@ -103,25 +132,57 @@ class BackupFolders(private val activity: Activity) {
         }
     }
 
+    /// The files directly in the folder: their address and name.
+    private fun children(tree: Uri): List<Pair<Uri, String>> {
+        val list = DocumentsContract.buildChildDocumentsUriUsingTree(
+            tree,
+            DocumentsContract.getTreeDocumentId(tree),
+        )
+        val found = mutableListOf<Pair<Uri, String>>()
+        resolver.query(
+            list,
+            arrayOf(
+                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            ),
+            null,
+            null,
+            null,
+        )?.use {
+            while (it.moveToNext()) {
+                val uri = DocumentsContract.buildDocumentUriUsingTree(tree, it.getString(0))
+                found += uri to it.getString(1)
+            }
+        }
+        return found
+    }
+
+    /// A file already named [name] (a second automatic backup the same day)
+    /// is replaced, but only once the new copy is whole.
     private fun write(tree: Uri, name: String, source: File): Boolean {
         val parent = DocumentsContract.buildDocumentUriUsingTree(
             tree,
             DocumentsContract.getTreeDocumentId(tree),
         )
+        val before = children(tree).filter { it.second == name }.map { it.first }
         val target = DocumentsContract.createDocument(
-            activity.contentResolver,
+            resolver,
             parent,
             "application/octet-stream",
-            name,
+            if (before.isEmpty()) name else "$name.part",
         ) ?: return false
         try {
-            activity.contentResolver.openOutputStream(target)?.use { out ->
+            resolver.openOutputStream(target)?.use { out ->
                 source.inputStream().use { it.copyTo(out) }
             } ?: throw IllegalStateException("no stream")
         } catch (e: Exception) {
             // No half-written backup left in the folder.
-            DocumentsContract.deleteDocument(activity.contentResolver, target)
+            DocumentsContract.deleteDocument(resolver, target)
             throw e
+        }
+        if (before.isNotEmpty()) {
+            before.forEach { DocumentsContract.deleteDocument(resolver, it) }
+            DocumentsContract.renameDocument(resolver, target, name)
         }
         return true
     }

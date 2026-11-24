@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:kibuo/ui/backup/auto_backup_task.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -119,7 +120,16 @@ class LocalNotifier implements Notifier {
   @override
   Future<void> replace(List<Notice> notices) async {
     if (!_ready) return;
-    await _plugin.cancelAll();
+    // Everything but a failed automatic backup's notice, which stays until
+    // it is touched or a backup works.
+    await _plugin.cancelAllPendingNotifications();
+    for (final shown
+        in await _android?.getActiveNotifications() ??
+            const <ActiveNotification>[]) {
+      if (shown.id case final id? when id != autoBackupNoticeId) {
+        await _plugin.cancel(id: id, tag: shown.tag);
+      }
+    }
     for (final n in notices) {
       await _plugin.zonedSchedule(
         id: n.id,
