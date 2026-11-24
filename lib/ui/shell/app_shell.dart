@@ -25,7 +25,10 @@ import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
+import 'package:kibuo/ui/backup/auto_backup.dart';
+import 'package:kibuo/ui/backup/auto_backup_task.dart';
 import 'package:kibuo/ui/backup/backup_files.dart';
+import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/backup/backup_screen.dart';
 import 'package:kibuo/ui/backup/restore_sheet.dart';
 import 'package:kibuo/ui/budgets/budget_alerts.dart';
@@ -37,6 +40,7 @@ import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
@@ -130,6 +134,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     _thisMonth.dispose();
     DeviceBackupFiles.instance.opened.removeListener(_openedFile);
     _waitingLock?.removeListener(_whenUnlocked);
+    _backupLock?.removeListener(_backupWhenUnlocked);
     super.dispose();
   }
 
@@ -145,6 +150,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     LongAmountsStore(db).read().then((c) => longAmountsChoice.value = c);
     MonthStartStore(db).read().then((d) => monthStartChoice.value = d);
     _open();
+    _autoBackup();
     _saved.addListener(_reschedule);
 
     widget.notifier
@@ -193,6 +199,74 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     await runRestore(context, picked, tools);
   }
 
+  /// The lock the automatic backup waits behind, to say a failure.
+  LockController? _backupLock;
+  bool _backingUp = false;
+
+  void _backupWhenUnlocked() {
+    final lock = _backupLock;
+    if (lock == null || !lock.ready || lock.locked) return;
+    lock.removeListener(_backupWhenUnlocked);
+    _backupLock = null;
+    if (mounted) _autoBackup();
+  }
+
+  /// At every opening and return (PRODUCT: Sauvegardes automatiques): the
+  /// weekly backup if due, once kibuo is unlocked; a failure said at the
+  /// bottom with « Voir », once a week at most.
+  Future<void> _autoBackup() async {
+    final backups = _entryData(context)?.backups;
+    if (backups == null || _backingUp) return;
+    final lock = KibuoLock.maybeControllerOf(context);
+    if (lock != null && (!lock.ready || lock.locked)) {
+      _backupLock?.removeListener(_backupWhenUnlocked);
+      _backupLock = lock..addListener(_backupWhenUnlocked);
+      return;
+    }
+    _backingUp = true;
+    final language = Localizations.localeOf(context).languageCode;
+    try {
+      // For the backups made kibuo closed.
+      await backups.rememberLanguage(language);
+      final state = await backups.state();
+      await scheduleAutoBackup(on: state.auto);
+      final outcome = await AutoBackup(
+        service: backups,
+        folders: const DeviceBackupFolders(),
+      ).run(now: DateTime.now(), language: language);
+      if (!mounted) return;
+      final l = AppLocalizations.of(context);
+      final text = switch (outcome) {
+        AutoBackupOutcome.folderMissing => l.autoBackupFolderToast,
+        AutoBackupOutcome.failed => l.autoBackupFailed,
+        _ => null,
+      };
+      if (text != null) {
+        showKibuoToast(
+          context,
+          text,
+          action: l.budgetAlertSee,
+          onAction: _openBackup,
+        );
+      }
+    } on Object {
+      // No vault or channel (tests): nothing to back up.
+    } finally {
+      _backingUp = false;
+    }
+  }
+
+  Future<void> _openBackup() async {
+    final backups = _entryData(context)?.backups;
+    if (backups == null) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            BackupScreen(service: backups, restore: _restoreTools()),
+      ),
+    );
+  }
+
   /// At opening: thresholds already crossed are said in silence, then the
   /// recurrences arrive (and may cross one, said).
   Future<void> _open() async {
@@ -219,7 +293,9 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   /// A notification touched (PRODUCT: Rappels).
   void _onNotice(String payload) {
     if (!mounted) return;
-    if (payload == ReminderPlanner.entryPayload) {
+    if (payload == autoBackupPayload) {
+      _openBackup();
+    } else if (payload == ReminderPlanner.entryPayload) {
       _openEntry(AddChoice.expense);
     } else if (payload == ReminderPlanner.homePayload) {
       _show(_Tab.home);
@@ -278,7 +354,10 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _catchUp();
+    if (state == AppLifecycleState.resumed) {
+      _catchUp();
+      _autoBackup();
+    }
   }
 
   void _show(_Tab tab) {

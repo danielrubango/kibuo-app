@@ -3912,6 +3912,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupFolderDocuments => 'Documents';
 
   @override
+  String get autoBackup => 'Automatic backup';
+
+  @override
+  String get autoBackupHelp => 'Every week';
+
+  @override
+  String get autoBackupImpossible => 'Automatic backup failed';
+
+  @override
+  String get autoBackupFolderToast =>
+      'Automatic backup failed · Folder not found';
+
+  @override
+  String get autoBackupFailed => 'The automatic backup could not be made.';
+
+  @override
+  String get autoBackupChannel => 'Backups';
+
+  @override
   String get todoBackup => 'Backup';
 
   @override

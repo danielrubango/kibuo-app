@@ -6121,6 +6121,42 @@ abstract class AppLocalizations {
   /// **'Documents'**
   String get backupFolderDocuments;
 
+  /// Automatic backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde automatique'**
+  String get autoBackup;
+
+  /// Automatic backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque semaine'**
+  String get autoBackupHelp;
+
+  /// Automatic backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde automatique impossible'**
+  String get autoBackupImpossible;
+
+  /// Automatic backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde automatique impossible · Dossier introuvable'**
+  String get autoBackupFolderToast;
+
+  /// Automatic backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'La sauvegarde automatique n’a pas pu se faire.'**
+  String get autoBackupFailed;
+
+  /// Automatic backup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardes'**
+  String get autoBackupChannel;
+
   /// Backup.
   ///
   /// In fr, this message translates to:
