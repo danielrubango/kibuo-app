@@ -1930,5 +1930,7 @@
   "projectSpentLine": "Dépensé · {account}",
   "@projectSpentLine": {"description": "Projects.", "placeholders": {"account": {"type": "String"}}},
   "projectProgress": "{saved} sur {goal}",
-  "@projectProgress": {"description": "Projects.", "placeholders": {"saved": {"type": "String"}, "goal": {"type": "String"}}}
+  "@projectProgress": {"description": "Projects.", "placeholders": {"saved": {"type": "String"}, "goal": {"type": "String"}}},
+  "projectsLateBy": "En retard de {amount}",
+  "@projectsLateBy": {"description": "Projects.", "placeholders": {"amount": {"type": "String"}}}
 }

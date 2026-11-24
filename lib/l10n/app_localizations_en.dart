@@ -3747,4 +3747,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String projectProgress(String saved, String goal) {
     return '$saved of $goal';
   }
+
+  @override
+  String projectsLateBy(String amount) {
+    return '$amount behind';
+  }
 }

@@ -971,5 +971,6 @@
   "projectEndedSaved": "{name} has ended",
   "projectReleasedLine": "Made available · {account}",
   "projectSpentLine": "Spent · {account}",
-  "projectProgress": "{saved} of {goal}"
+  "projectProgress": "{saved} of {goal}",
+  "projectsLateBy": "{amount} behind"
 }

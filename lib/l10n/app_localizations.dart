@@ -5868,6 +5868,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{saved} sur {goal}'**
   String projectProgress(String saved, String goal);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard de {amount}'**
+  String projectsLateBy(String amount);
 }
 
 class _AppLocalizationsDelegate

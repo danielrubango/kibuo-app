@@ -148,7 +148,7 @@ Décidé le 24 novembre 2026 :
 - Une dépense n'est jamais refusée à cause d'un projet : si elle entame l'argent réservé, le disponible devient négatif (rose, montant en rouge) et le projet garde ses versements.
 - Objectif atteint : « Je l'ai dépensé » ouvre la saisie d'une dépense pré-remplie (montant, compte, note) ; enregistrée, le projet se termine et sa réserve disparaît. « Le garder de côté » ne change rien. « Le rendre disponible » termine le projet sans rien déplacer. Les projets terminés restent consultables.
 - Supprimer un projet (dans « Modifier », après confirmation) efface le projet et ses versements ; l'argent redevient libre.
-- Premier temps livré le 24 novembre 2026 : la carte dit l'écart en gras (« 27 $ de retard », « 24 $ d'avance », « Dans les temps » le premier jour) puis l'effort par période ; sans date, « À votre rythme ».
+- Premier temps livré le 24 novembre 2026. Sur la page Projets, la dernière ligne d'une carte dit seulement l'état, en gras : « En retard de 27 $ » (rouge), « 24 $ d'avance », « Dans les temps » ; sans date, « À votre rythme » ; puis le lien « Mettre de côté › » ou « Détails › ». L'effort par période reste sur la fiche (décidé le 24 novembre 2026).
 
 Décidé le 24 novembre 2026, pour le deuxième temps (la fiche et l'argent) :
 

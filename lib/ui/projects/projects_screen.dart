@@ -369,16 +369,12 @@ class _ProjectCard extends StatelessWidget {
     final when = due == null
         ? l.projectsNoDate
         : l.projectsBefore(DateFormat.MMMd(lang).format(due));
-    final periodWord = switch (p.period) {
-      PlanPeriod.week => l.projectsPerWeek,
-      PlanPeriod.fortnight => l.projectsPerFortnight,
-      PlanPeriod.month => l.projectsPerMonth,
-    };
-    // « 27 $ de retard · 94 $ par mois »: the gap in bold (canvas Projets).
+    // The state alone; what each period asks is on the project's card
+    // (owner, 24 November).
     final lead = !pace.dated
         ? null
         : pace.late
-        ? l.projectsBehind(money(Money(-pace.gap, p.goal.currency)))
+        ? l.projectsLateBy(money(Money(-pace.gap, p.goal.currency)))
         : pace.ahead
         ? l.projectsAhead(money(Money(pace.gap, p.goal.currency)))
         : l.projectsOnTrack;
@@ -387,7 +383,7 @@ class _ProjectCard extends StatelessWidget {
         : p.reached
         ? l.projectsReached
         : pace.dated
-        ? ' · ${money(Money(pace.per, p.goal.currency))} $periodWord'
+        ? ''
         : l.projectsOwnPace;
     final restColor = !p.running || !pace.dated
         ? KibuoColors.inkSecondary
