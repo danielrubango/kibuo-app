@@ -577,7 +577,6 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         await push(
           SettingsScreen(
             db: db,
-            openAccounts: () => _openAccounts(db),
             lock: KibuoLock.maybeControllerOf(context),
             notifier: widget.notifier,
             onRemindersChanged: _reschedule,

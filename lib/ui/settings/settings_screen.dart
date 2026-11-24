@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/backup_service.dart';
-import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/first_launch_store.dart';
@@ -15,7 +14,6 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/backup/backup_screen.dart';
 import 'package:kibuo/ui/backup/restore_sheet.dart';
-import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -37,7 +35,6 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
     required this.db,
-    required this.openAccounts,
     this.lock,
     this.notifier,
     this.onRemindersChanged,
@@ -50,9 +47,6 @@ class SettingsScreen extends StatefulWidget {
   /// The app lock, read where Plus shows: a pushed screen does not see it
   /// (STATE, pitfalls). No Sécurité section without it.
   final LockController? lock;
-
-  /// Comptes, as the rest of the app opens it.
-  final Future<void> Function() openAccounts;
 
   /// « Rappels et alertes »; no line without it.
   final Notifier? notifier;
@@ -67,7 +61,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  int? _accounts;
   int? _types;
   String? _currency;
 
@@ -80,12 +73,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _load() async {
-    final accounts = await _accountsRepo.accounts();
     final types = await _accountsRepo.types();
     final currency = await CurrencyRepository(widget.db).primaryCurrency();
     if (!mounted) return;
     setState(() {
-      _accounts = accounts.length;
       _types = AccountType.provided.length + types.length;
       _currency = currency;
     });
@@ -116,14 +107,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () => showLanguageSheet(context, FirstLaunchStore(db)),
           ),
           SettingsRow(
-            label: l.accountsTitle,
-            value: _accounts == null ? null : '$_accounts',
-            onTap: () async {
-              await widget.openAccounts();
-              await _load();
-            },
-          ),
-          SettingsRow(
             label: l.typesTitle,
             value: _types == null ? null : '$_types',
             onTap: () => _push(AccountTypesScreen(accounts: _accountsRepo)),
@@ -133,11 +116,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: _currency,
             onTap: () =>
                 _push(CurrenciesScreen(repository: CurrencyRepository(db))),
-          ),
-          SettingsRow(
-            label: l.categoriesTitle,
-            onTap: () =>
-                _push(CategoriesScreen(categories: CategoryRepository(db))),
           ),
           ValueListenableBuilder<int>(
             valueListenable: monthStartChoice,

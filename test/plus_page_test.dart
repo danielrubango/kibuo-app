@@ -167,7 +167,7 @@ void main() {
   group('Réglages (canvas Reglages)', () {
     Future<void> open(WidgetTester tester, {LockController? lock}) => show(
       tester,
-      SettingsScreen(db: db, openAccounts: () async {}, backups: backups),
+      SettingsScreen(db: db, backups: backups),
       lock: lock,
     );
 
@@ -178,10 +178,8 @@ void main() {
       expect(find.text('Général'), findsOneWidget);
       final order = [
         'Langue',
-        'Comptes',
         'Types de compte',
         'Devises',
-        'Catégories',
         'Début du mois',
         'Montants longs',
         'Récurrences et brouillons',
@@ -189,6 +187,9 @@ void main() {
       final tops = [for (final l in order) tester.getTopLeft(find.text(l)).dy];
       expect(tops, [...tops]..sort());
       expect(find.text('Français'), findsOneWidget);
+      // Not settings: they stay in Plus (25 November 2026).
+      expect(find.text('Comptes'), findsNothing);
+      expect(find.text('Catégories'), findsNothing);
       expect(find.text('4'), findsOneWidget, reason: 'the 4 provided types');
       expect(find.text('Données'), findsOneWidget);
       expect(find.text('Sauvegarde et restauration'), findsOneWidget);
