@@ -6,17 +6,18 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/amount_sheet.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
-import 'package:kibuo/ui/kit/haptics.dart';
-import 'package:kibuo/ui/kit/keypad.dart';
+import 'package:kibuo/ui/kit/hatched_bar.dart';
 import 'package:kibuo/ui/kit/scrolling_line.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
+import 'package:kibuo/ui/kit/value_row.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart' show debtWord;
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
@@ -226,7 +227,7 @@ class _DebtScreenState extends State<DebtScreen> {
                     backgroundColor: KibuoColors.accentTintOpen,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
@@ -362,16 +363,8 @@ class _DebtScreenState extends State<DebtScreen> {
               ],
             ),
           // Given up: what is left goes, nothing moves (PRODUCT).
-          if (!d.settled) ...[
-            const SizedBox(height: 12),
-            Center(
-              child: TextAction(
-                label: l.debtForgive,
-                color: KibuoColors.inkSecondary,
-                onPressed: _forgive,
-              ),
-            ),
-          ],
+          if (!d.settled)
+            ActionUnderCard(label: l.debtForgive, onPressed: _forgive),
         ],
       ),
       bottomNavigationBar: d.settled
@@ -630,11 +623,13 @@ class _RepaySheetState extends State<_RepaySheet> {
   }
 
   Future<void> _pickAmount() async {
-    final picked = await _typeAmount(
+    final l = AppLocalizations.of(context);
+    final picked = await typeAmount(
       context,
-      title: AppLocalizations.of(context).entryAmount,
+      title: l.entryAmount,
       start: _amount,
       most: _line.left,
+      cap: l.debtLeftCap,
     );
     if (picked != null) setState(() => _amount = picked);
   }
@@ -726,34 +721,6 @@ class _RepaySheetState extends State<_RepaySheet> {
         _date.year == now.year &&
         _date.month == now.month &&
         _date.day == now.day;
-    Widget row(String label, String value, VoidCallback onTap, {Color? c}) =>
-        InkWell(
-          onTap: onTap,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 44),
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Row(
-              children: [
-                Text(
-                  label,
-                  style: KibuoType.body.copyWith(
-                    color: KibuoColors.inkSecondary,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '$value ›',
-                    textAlign: TextAlign.right,
-                    style: KibuoType.body
-                        .copyWith(color: c ?? KibuoColors.ink)
-                        .weight(700),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -796,7 +763,7 @@ class _RepaySheetState extends State<_RepaySheet> {
                 ],
               ),
               const SizedBox(height: 10),
-              _HatchedBar(
+              HatchedBar(
                 done: total <= 0 ? 1 : paid / total,
                 after: after.clamp(0, 1),
                 ink: ink,
@@ -846,24 +813,29 @@ class _RepaySheetState extends State<_RepaySheet> {
         const SizedBox(height: 12),
         SettingsCard(
           children: [
-            row(l.entryAmount, _money(context, _amount), _pickAmount, c: ink),
-            row(
-              _owe ? l.debtFrom : l.debtTo,
-              _account?.name ?? l.entryNoAccount,
-              _pickAccount,
+            ValueRow(
+              label: l.entryAmount,
+              value: _money(context, _amount),
+              onTap: _pickAmount,
+              color: ink,
             ),
-            row(
-              l.entryDate,
-              today
+            ValueRow(
+              label: _owe ? l.debtFrom : l.debtTo,
+              value: _account?.name ?? l.entryNoAccount,
+              onTap: _pickAccount,
+            ),
+            ValueRow(
+              label: l.entryDate,
+              value: today
                   ? l.entryToday
                   : _upper(DateFormat.MMMd(lang).format(_date)),
-              _pickDate,
+              onTap: _pickDate,
             ),
             if (_converts)
-              row(
-                l.entryRateTitle,
-                _rate == null ? '' : formatRate(_rate!, lang),
-                _pickRate,
+              ValueRow(
+                label: l.entryRateTitle,
+                value: _rate == null ? '' : formatRate(_rate!, lang),
+                onTap: _pickRate,
               ),
           ],
         ),
@@ -877,165 +849,6 @@ class _RepaySheetState extends State<_RepaySheet> {
           label: l.debtLater,
           kind: ButtonKind.secondary,
           onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
-    );
-  }
-}
-
-/// The debt's bar: paid back in full colour, the part being paid hatched.
-class _HatchedBar extends StatelessWidget {
-  const _HatchedBar({
-    required this.done,
-    required this.after,
-    required this.ink,
-    required this.track,
-    required this.hatch,
-  });
-
-  final double done;
-  final double after;
-  final Color ink;
-  final Color track;
-  final Color hatch;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 12,
-    child: CustomPaint(painter: _HatchPainter(done, after, ink, track, hatch)),
-  );
-}
-
-class _HatchPainter extends CustomPainter {
-  _HatchPainter(this.done, this.after, this.ink, this.track, this.hatch);
-
-  final double done;
-  final double after;
-  final Color ink;
-  final Color track;
-  final Color hatch;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final r = RRect.fromRectAndRadius(
-      Offset.zero & size,
-      Radius.circular(size.height / 2),
-    );
-    canvas.save();
-    canvas.clipRRect(r);
-    canvas.drawRect(Offset.zero & size, Paint()..color = track);
-    final doneW = size.width * done;
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, doneW, size.height),
-      Paint()..color = ink,
-    );
-    final part = Rect.fromLTWH(
-      doneW + (doneW > 0 ? 2 : 0),
-      0,
-      (size.width * after - doneW - (doneW > 0 ? 2 : 0)).clamp(0, size.width),
-      size.height,
-    );
-    canvas.save();
-    canvas.clipRect(part);
-    canvas.drawRect(part, Paint()..color = track);
-    final stripe = Paint()
-      ..color = hatch
-      ..strokeWidth = 4;
-    for (
-      var x = part.left - size.height;
-      x < part.right + size.height;
-      x += 8
-    ) {
-      canvas.drawLine(
-        Offset(x, size.height),
-        Offset(x + size.height, 0),
-        stripe,
-      );
-    }
-    canvas.restore();
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(_HatchPainter old) =>
-      old.done != done || old.after != after;
-}
-
-/// An amount typed on Kibuo's keypad, never above [most].
-Future<Money?> _typeAmount(
-  BuildContext context, {
-  required String title,
-  required Money start,
-  required Money most,
-}) => showKibuoSheet<Money>(
-  context,
-  title: title,
-  builder: (_) => _AmountSheet(start: start, most: most),
-);
-
-class _AmountSheet extends StatefulWidget {
-  const _AmountSheet({required this.start, required this.most});
-
-  final Money start;
-  final Money most;
-
-  @override
-  State<_AmountSheet> createState() => _AmountSheetState();
-}
-
-class _AmountSheetState extends State<_AmountSheet> {
-  late final _currency = currencyOf(widget.start.currency);
-  late String _typed = typedFrom(widget.start, _currency);
-
-  Money get _amount => typedMoney(_typed, _currency);
-
-  bool get _over => _amount.minor > widget.most.minor;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final lang = _lang(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ValueField(
-          value: shownTyped(context, _typed),
-          unit: _currency.code,
-          error: _over
-              ? l.debtLeftCap(formatMoney(widget.most, _currency, lang))
-              : null,
-        ),
-        const SizedBox(height: 12),
-        KibuoKeypad(
-          onKey: (k) {
-            final was = _over;
-            setState(
-              () => _typed = typeKey(
-                _typed,
-                k,
-                decimals: _currency.usesDecimals ? _currency.digits : 0,
-              ),
-            );
-            // Above what is left: refused, and felt.
-            if (!was && _over) Haptics.refuse();
-          },
-          onDelete: () => setState(() {
-            if (_typed.isNotEmpty) {
-              _typed = _typed.substring(0, _typed.length - 1);
-            }
-          }),
-          allowDecimal: _currency.usesDecimals,
-          decimalSeparator: NumberFormat.decimalPattern(lang)
-              .symbols
-              .DECIMAL_SEP,
-        ),
-        const SizedBox(height: 12),
-        KibuoButton(
-          label: l.keypadDone,
-          kind: ButtonKind.dark,
-          onPressed: _over || _amount.minor <= 0
-              ? null
-              : () => Navigator.of(context).pop(_amount),
         ),
       ],
     );
@@ -1075,12 +888,11 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
 
   Future<void> _pickAmount() async {
     FocusScope.of(context).unfocus();
-    final picked = await _typeAmount(
+    // No ceiling: the floor is checked below.
+    final picked = await typeAmount(
       context,
       title: AppLocalizations.of(context).entryAmount,
       start: _amount,
-      // No ceiling: the floor is checked below.
-      most: Money(1 << 50, _amount.currency),
     );
     if (picked != null) setState(() => _amount = picked);
   }

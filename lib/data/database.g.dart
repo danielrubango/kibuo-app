@@ -9107,6 +9107,17 @@ class $ContributionsTable extends Contributions
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _fromAccountIdMeta = const VerificationMeta(
+    'fromAccountId',
+  );
+  @override
+  late final GeneratedColumn<String> fromAccountId = GeneratedColumn<String>(
+    'from_account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -9116,6 +9127,7 @@ class $ContributionsTable extends Contributions
     projectId,
     amount,
     date,
+    fromAccountId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -9180,6 +9192,15 @@ class $ContributionsTable extends Contributions
     } else if (isInserting) {
       context.missing(_dateMeta);
     }
+    if (data.containsKey('from_account_id')) {
+      context.handle(
+        _fromAccountIdMeta,
+        fromAccountId.isAcceptableOrUnknown(
+          data['from_account_id']!,
+          _fromAccountIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -9217,6 +9238,10 @@ class $ContributionsTable extends Contributions
         DriftSqlType.dateTime,
         data['${effectivePrefix}date'],
       )!,
+      fromAccountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}from_account_id'],
+      ),
     );
   }
 
@@ -9236,6 +9261,10 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
   /// In the project's currency; negative: taken back.
   final int amount;
   final DateTime date;
+
+  /// Set aside from another account: a transfer brought it to the
+  /// project's account first (PRODUCT: Projets).
+  final String? fromAccountId;
   const ContributionRow({
     required this.id,
     required this.version,
@@ -9244,6 +9273,7 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
     required this.projectId,
     required this.amount,
     required this.date,
+    this.fromAccountId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -9255,6 +9285,9 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
     map['project_id'] = Variable<String>(projectId);
     map['amount'] = Variable<int>(amount);
     map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || fromAccountId != null) {
+      map['from_account_id'] = Variable<String>(fromAccountId);
+    }
     return map;
   }
 
@@ -9267,6 +9300,9 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
       projectId: Value(projectId),
       amount: Value(amount),
       date: Value(date),
+      fromAccountId: fromAccountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fromAccountId),
     );
   }
 
@@ -9283,6 +9319,7 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
       projectId: serializer.fromJson<String>(json['projectId']),
       amount: serializer.fromJson<int>(json['amount']),
       date: serializer.fromJson<DateTime>(json['date']),
+      fromAccountId: serializer.fromJson<String?>(json['fromAccountId']),
     );
   }
   @override
@@ -9296,6 +9333,7 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
       'projectId': serializer.toJson<String>(projectId),
       'amount': serializer.toJson<int>(amount),
       'date': serializer.toJson<DateTime>(date),
+      'fromAccountId': serializer.toJson<String?>(fromAccountId),
     };
   }
 
@@ -9307,6 +9345,7 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
     String? projectId,
     int? amount,
     DateTime? date,
+    Value<String?> fromAccountId = const Value.absent(),
   }) => ContributionRow(
     id: id ?? this.id,
     version: version ?? this.version,
@@ -9315,6 +9354,9 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
     projectId: projectId ?? this.projectId,
     amount: amount ?? this.amount,
     date: date ?? this.date,
+    fromAccountId: fromAccountId.present
+        ? fromAccountId.value
+        : this.fromAccountId,
   );
   ContributionRow copyWithCompanion(ContributionsCompanion data) {
     return ContributionRow(
@@ -9325,6 +9367,9 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
       amount: data.amount.present ? data.amount.value : this.amount,
       date: data.date.present ? data.date.value : this.date,
+      fromAccountId: data.fromAccountId.present
+          ? data.fromAccountId.value
+          : this.fromAccountId,
     );
   }
 
@@ -9337,14 +9382,23 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
           ..write('deleted: $deleted, ')
           ..write('projectId: $projectId, ')
           ..write('amount: $amount, ')
-          ..write('date: $date')
+          ..write('date: $date, ')
+          ..write('fromAccountId: $fromAccountId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, version, deviceId, deleted, projectId, amount, date);
+  int get hashCode => Object.hash(
+    id,
+    version,
+    deviceId,
+    deleted,
+    projectId,
+    amount,
+    date,
+    fromAccountId,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9355,7 +9409,8 @@ class ContributionRow extends DataClass implements Insertable<ContributionRow> {
           other.deleted == this.deleted &&
           other.projectId == this.projectId &&
           other.amount == this.amount &&
-          other.date == this.date);
+          other.date == this.date &&
+          other.fromAccountId == this.fromAccountId);
 }
 
 class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
@@ -9366,6 +9421,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
   final Value<String> projectId;
   final Value<int> amount;
   final Value<DateTime> date;
+  final Value<String?> fromAccountId;
   final Value<int> rowid;
   const ContributionsCompanion({
     this.id = const Value.absent(),
@@ -9375,6 +9431,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
     this.projectId = const Value.absent(),
     this.amount = const Value.absent(),
     this.date = const Value.absent(),
+    this.fromAccountId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ContributionsCompanion.insert({
@@ -9385,6 +9442,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
     required String projectId,
     required int amount,
     required DateTime date,
+    this.fromAccountId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        version = Value(version),
@@ -9400,6 +9458,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
     Expression<String>? projectId,
     Expression<int>? amount,
     Expression<DateTime>? date,
+    Expression<String>? fromAccountId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -9410,6 +9469,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
       if (projectId != null) 'project_id': projectId,
       if (amount != null) 'amount': amount,
       if (date != null) 'date': date,
+      if (fromAccountId != null) 'from_account_id': fromAccountId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -9422,6 +9482,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
     Value<String>? projectId,
     Value<int>? amount,
     Value<DateTime>? date,
+    Value<String?>? fromAccountId,
     Value<int>? rowid,
   }) {
     return ContributionsCompanion(
@@ -9432,6 +9493,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
       projectId: projectId ?? this.projectId,
       amount: amount ?? this.amount,
       date: date ?? this.date,
+      fromAccountId: fromAccountId ?? this.fromAccountId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -9460,6 +9522,9 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
+    if (fromAccountId.present) {
+      map['from_account_id'] = Variable<String>(fromAccountId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -9476,6 +9541,7 @@ class ContributionsCompanion extends UpdateCompanion<ContributionRow> {
           ..write('projectId: $projectId, ')
           ..write('amount: $amount, ')
           ..write('date: $date, ')
+          ..write('fromAccountId: $fromAccountId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -13963,6 +14029,7 @@ typedef $$ContributionsTableCreateCompanionBuilder =
       required String projectId,
       required int amount,
       required DateTime date,
+      Value<String?> fromAccountId,
       Value<int> rowid,
     });
 typedef $$ContributionsTableUpdateCompanionBuilder =
@@ -13974,6 +14041,7 @@ typedef $$ContributionsTableUpdateCompanionBuilder =
       Value<String> projectId,
       Value<int> amount,
       Value<DateTime> date,
+      Value<String?> fromAccountId,
       Value<int> rowid,
     });
 
@@ -14018,6 +14086,11 @@ class $$ContributionsTableFilterComposer
 
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fromAccountId => $composableBuilder(
+    column: $table.fromAccountId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -14065,6 +14138,11 @@ class $$ContributionsTableOrderingComposer
     column: $table.date,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get fromAccountId => $composableBuilder(
+    column: $table.fromAccountId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ContributionsTableAnnotationComposer
@@ -14096,6 +14174,11 @@ class $$ContributionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get fromAccountId => $composableBuilder(
+    column: $table.fromAccountId,
+    builder: (column) => column,
+  );
 }
 
 class $$ContributionsTableTableManager
@@ -14142,6 +14225,7 @@ class $$ContributionsTableTableManager
                 Value<String> projectId = const Value.absent(),
                 Value<int> amount = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
+                Value<String?> fromAccountId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ContributionsCompanion(
                 id: id,
@@ -14151,6 +14235,7 @@ class $$ContributionsTableTableManager
                 projectId: projectId,
                 amount: amount,
                 date: date,
+                fromAccountId: fromAccountId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -14162,6 +14247,7 @@ class $$ContributionsTableTableManager
                 required String projectId,
                 required int amount,
                 required DateTime date,
+                Value<String?> fromAccountId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ContributionsCompanion.insert(
                 id: id,
@@ -14171,6 +14257,7 @@ class $$ContributionsTableTableManager
                 projectId: projectId,
                 amount: amount,
                 date: date,
+                fromAccountId: fromAccountId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

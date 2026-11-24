@@ -5472,6 +5472,408 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **' d’ici le {date}.'**
   String projectEffortUntil(String date);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get projectEdit;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 jour} other{{count} jours}}'**
+  String projectDaysLeft(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 semaine} other{{count} semaines}}'**
+  String projectWeeksLeft(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 mois} other{{count} mois}}'**
+  String projectMonthsLeft(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'En avance'**
+  String get projectAheadTag;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **' sur le rythme'**
+  String get projectOnPace;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur {account}'**
+  String projectOn(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre de côté'**
+  String get projectPutAside;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan'**
+  String get projectPlan;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} restants'**
+  String projectPlanLeft(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'jusqu’au {date}'**
+  String projectUntil(String date);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette sem.'**
+  String get projectThisWeek;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sem. {n}'**
+  String projectWeekN(int n);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette quinz.'**
+  String get projectThisFortnight;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quinz. {n}'**
+  String projectFortnightN(int n);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce mois'**
+  String get projectThisMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Versements'**
+  String get projectPayments;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre de l’argent'**
+  String get projectTakeBack;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repris · {account}'**
+  String projectTakenBack(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{from} → {to}'**
+  String projectFromTo(String from, String to);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Et maintenant ?'**
+  String get projectWhatNow;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé le {date}'**
+  String projectEndedOn(String date);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get projectEndedTag;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé'**
+  String get projectSpentWord;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendu disponible'**
+  String get projectReleasedWord;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Objectif atteint le jour même} =1{Atteint 1 jour avant la date} other{Atteint {count} jours avant la date}}'**
+  String projectReachedEarly(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le projet'**
+  String get projectDelete;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer {name} ?'**
+  String projectDeleteTitle(String name);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Le projet sera effacé.} =1{Le projet et son versement seront effacés.} other{Le projet et ses {count} versements seront effacés.}}'**
+  String projectDeleteText(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **' Les {amount} mis de côté redeviennent libres sur {account}.'**
+  String projectDeleteFree(String amount, String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get projectDeleteAction;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre de côté pour {name}'**
+  String projectPutAsideFor(String name);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} de côté'**
+  String projectSavedAmount(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'ce qui manque'**
+  String get projectQuickMissing;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'cette semaine'**
+  String get projectQuickWeek;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'cette quinzaine'**
+  String get projectQuickFortnight;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'ce mois'**
+  String get projectQuickMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'la moitié'**
+  String get projectQuickHalf;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get projectQuickAll;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pris sur'**
+  String get projectTakenFrom;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un transfert de {from} vers {to} sera enregistré.'**
+  String projectTransferNote(String from, String to);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seulement {amount} libres sur {account}.'**
+  String projectOnlyFree(String amount, String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il restera {amount} disponibles sur {account}.'**
+  String projectWillLeave(String amount, String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur'**
+  String get projectSheetOn;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune opération : les {amount} redeviennent libres sur {account}.'**
+  String projectTakeBackNote(String amount, String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre'**
+  String get projectTakeBackAction;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au plus {amount}, ce qui est de côté'**
+  String projectSavedCap(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au plus {amount}, ce qui est libre'**
+  String projectFreeCap(String amount);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} mis de côté pour {name}.'**
+  String projectReachedText(String amount, String name);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} mis de côté pour {name}, {count, plural, =1{1 jour} other{{count} jours}} avant la date.'**
+  String projectReachedEarlyText(String amount, String name, int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je l’ai dépensé'**
+  String get projectSpent;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer la dépense, le projet se termine'**
+  String get projectSpentHelp;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le garder de côté'**
+  String get projectKeep;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour plus tard, ou augmenter l’objectif'**
+  String get projectKeepHelp;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le rendre disponible'**
+  String get projectRelease;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’argent redevient libre sur {account}'**
+  String projectReleaseHelp(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le projet'**
+  String get projectEditTitle;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get projectSave;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le compte ne change plus après un premier versement.'**
+  String get projectAccountLocked;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails'**
+  String get projectDetails;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mis de côté'**
+  String get projectPutAsideSaved;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Argent repris'**
+  String get projectTakenBackSaved;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} est terminé'**
+  String projectEndedSaved(String name);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendu disponible · {account}'**
+  String projectReleasedLine(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé · {account}'**
+  String projectSpentLine(String account);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'{saved} sur {goal}'**
+  String projectProgress(String saved, String goal);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard de {amount}'**
+  String projectsLateBy(String amount);
 }
 
 class _AppLocalizationsDelegate

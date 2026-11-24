@@ -49,4 +49,78 @@ void main() {
     expect(expectedShare(today: start, start: start, due: due), 0);
     expect(expectedShare(today: DateTime(2027), start: start, due: due), 1);
   });
+
+  test('parts rounded up to the unit, the last takes the rest', () {
+    // 150 $ in 7 weeks: 22 $ six times, then 18 $ (canvas FicheProjet).
+    final parts = planParts(
+      goal: 30000,
+      saved: 15000,
+      today: DateTime(2026, 11, 11),
+      due: DateTime(2027, 1, 1),
+      period: PlanPeriod.week,
+      unit: 100,
+    );
+    expect(parts.map((p) => p.amount), [
+      2200,
+      2200,
+      2200,
+      2200,
+      2200,
+      2200,
+      1800,
+    ]);
+    expect(parts.first.start, DateTime(2026, 11, 11));
+    expect(parts.first.end, DateTime(2026, 11, 17));
+    expect(parts[1].start, DateTime(2026, 11, 18));
+    expect(parts.last.end, DateTime(2026, 12, 31));
+  });
+
+  test('the per period amount follows the same rounding', () {
+    expect(
+      perPeriod(
+        goal: 30000,
+        saved: 15000,
+        today: DateTime(2026, 11, 11),
+        due: DateTime(2027, 1, 1),
+        period: PlanPeriod.week,
+        unit: 100,
+      ),
+      2200,
+    );
+  });
+
+  test('no plan once reached, one part when the date is past', () {
+    expect(
+      planParts(
+        goal: 30000,
+        saved: 30000,
+        today: today,
+        due: DateTime(2026, 12, 20),
+        period: PlanPeriod.week,
+      ),
+      isEmpty,
+    );
+    final late = planParts(
+      goal: 30000,
+      saved: 10000,
+      today: today,
+      due: DateTime(2026, 11, 1),
+      period: PlanPeriod.month,
+      unit: 100,
+    );
+    expect(late.single.amount, 20000);
+  });
+
+  test('a small rest never leaves a part below zero', () {
+    final parts = planParts(
+      goal: 1000,
+      saved: 0,
+      today: today,
+      due: today.add(const Duration(days: 48)),
+      period: PlanPeriod.week,
+      unit: 300,
+    );
+    expect(parts.fold<int>(0, (s, p) => s + p.amount), 1000);
+    expect(parts.every((p) => p.amount >= 0), isTrue);
+  });
 }

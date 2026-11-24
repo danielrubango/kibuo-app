@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/projects/project_plan.dart';
 import 'package:kibuo/domain/sync/hybrid_clock.dart';
@@ -50,6 +51,37 @@ class ProjectInfo {
   /// From 0 to 1.
   double get share =>
       goal.minor <= 0 ? 1 : (saved.minor / goal.minor).clamp(0, 1).toDouble();
+}
+
+/// One line of « Versements »: set aside (positive) or taken back.
+class ContributionLine {
+  const ContributionLine({
+    required this.id,
+    required this.amount,
+    required this.date,
+    required this.account,
+    this.from,
+  });
+
+  final String id;
+  final Money amount;
+  final DateTime date;
+
+  /// The project's account.
+  final String account;
+
+  /// The account a transfer brought it from; null: the project's own.
+  final String? from;
+}
+
+/// What « Mettre de côté » or « Reprendre » wrote, to undo it.
+class MoneyMoved {
+  const MoneyMoved({required this.contributionId, this.transferId});
+
+  final String contributionId;
+
+  /// The transfer that brought it from another account.
+  final String? transferId;
 }
 
 /// Projects and what is set aside for them (PRODUCT: Projets). Nothing
@@ -107,18 +139,30 @@ class ProjectRepository {
     required int amount,
     required DateTime date,
   }) async {
+    await _insertContribution(projectId, amount, date, null);
+  }
+
+  Future<String> _insertContribution(
+    String projectId,
+    int amount,
+    DateTime date,
+    String? from,
+  ) async {
+    final id = const Uuid().v7();
     await _db
         .into(_db.contributions)
         .insert(
           ContributionsCompanion.insert(
-            id: const Uuid().v7(),
+            id: id,
             version: await _nextVersion(),
             deviceId: _db.deviceId,
             projectId: projectId,
             amount: amount,
             date: date.toUtc(),
+            fromAccountId: Value(from),
           ),
         );
+    return id;
   }
 
   /// Every project, running first, with what is set aside.
@@ -127,9 +171,7 @@ class ProjectRepository {
       _db.projects,
     )..where((p) => p.deleted.not())).get();
     final saved = await _saved();
-    final names = {
-      for (final a in await _db.select(_db.accounts).get()) a.id: a.name,
-    };
+    final names = await _accountNames();
     return [
       for (final r in rows)
         ProjectInfo(
@@ -148,6 +190,180 @@ class ProjectRepository {
           endedOn: r.endedOn?.toLocal(),
         ),
     ];
+  }
+
+  /// One project; null once deleted.
+  Future<ProjectInfo?> project(String id) async =>
+      (await projects()).where((p) => p.id == id).firstOrNull;
+
+  Future<Map<String, String>> _accountNames() async => {
+    for (final a in await _db.select(_db.accounts).get()) a.id: a.name,
+  };
+
+  /// What was set aside and taken back, the newest first.
+  Future<List<ContributionLine>> contributions(String projectId) async {
+    final project = await (_db.select(
+      _db.projects,
+    )..where((p) => p.id.equals(projectId))).getSingleOrNull();
+    if (project == null) return const [];
+    final names = await _accountNames();
+    final rows =
+        await (_db.select(_db.contributions)
+              ..where((c) => c.projectId.equals(projectId) & c.deleted.not())
+              ..orderBy([
+                (c) => OrderingTerm.desc(c.date),
+                (c) => OrderingTerm.desc(c.id),
+              ]))
+            .get();
+    return [
+      for (final c in rows)
+        ContributionLine(
+          id: c.id,
+          amount: Money(c.amount, project.currency),
+          date: c.date.toLocal(),
+          account: names[project.accountId] ?? '',
+          from: c.fromAccountId == null ? null : names[c.fromAccountId],
+        ),
+    ];
+  }
+
+  /// « Mettre de côté »: never more than what is free on the account it
+  /// comes from. From another account, a transfer brings it to the
+  /// project's account first (PRODUCT: Projets). Null when refused.
+  Future<MoneyMoved?> putAside(
+    String projectId, {
+    required int amount,
+    required DateTime date,
+    String? fromAccountId,
+  }) async {
+    final p = await project(projectId);
+    if (p == null || amount <= 0) return null;
+    final from = fromAccountId == p.accountId ? null : fromAccountId;
+    if (amount > (await free(from ?? p.accountId)).minor) return null;
+    return _db.transaction(() async {
+      String? transferId;
+      if (from != null) {
+        transferId = await TransactionRepository(_db).createTransfer(
+          fromId: from,
+          toId: p.accountId,
+          sent: Money(amount, p.goal.currency),
+          fees: 0,
+          date: date,
+          note: p.name,
+        );
+      }
+      final id = await _insertContribution(projectId, amount, date, from);
+      return MoneyMoved(contributionId: id, transferId: transferId);
+    });
+  }
+
+  /// « Annuler » on the confirmation: the line goes, and the transfer
+  /// that brought it.
+  Future<void> undo(MoneyMoved moved) async {
+    await _db.transaction(() async {
+      await (_db.update(
+        _db.contributions,
+      )..where((c) => c.id.equals(moved.contributionId))).write(
+        ContributionsCompanion(
+          version: Value(await _nextVersion()),
+          deleted: const Value(true),
+        ),
+      );
+      if (moved.transferId case final t?) {
+        await TransactionRepository(_db).delete(t);
+      }
+    });
+  }
+
+  /// « Annuler » once it was made available: it runs again.
+  Future<void> reopen(String projectId) async {
+    await (_db.update(
+      _db.projects,
+    )..where((p) => p.id.equals(projectId))).write(
+      ProjectsCompanion(
+        version: Value(await _nextVersion()),
+        ending: const Value(null),
+        endedOn: const Value(null),
+      ),
+    );
+  }
+
+  /// « Reprendre de l'argent »: at most what is set aside; nothing moves.
+  /// Null when refused.
+  Future<MoneyMoved?> takeBack(
+    String projectId, {
+    required int amount,
+    required DateTime date,
+  }) async {
+    final p = await project(projectId);
+    if (p == null || amount <= 0 || amount > p.saved.minor) return null;
+    return MoneyMoved(
+      contributionId: await _insertContribution(projectId, -amount, date, null),
+    );
+  }
+
+  /// The goal reached: « spent » or « released »; its reserve goes.
+  Future<void> end(
+    String projectId, {
+    required String ending,
+    required DateTime on,
+  }) async {
+    await (_db.update(
+      _db.projects,
+    )..where((p) => p.id.equals(projectId))).write(
+      ProjectsCompanion(
+        version: Value(await _nextVersion()),
+        ending: Value(ending),
+        endedOn: Value(on.toUtc()),
+      ),
+    );
+  }
+
+  /// « Modifier »: every field; [due] null takes the date away.
+  Future<void> edit(
+    String projectId, {
+    required String name,
+    required String icon,
+    required int goal,
+    required DateTime? due,
+    required PlanPeriod period,
+    required bool remind,
+    required String accountId,
+  }) async {
+    await (_db.update(
+      _db.projects,
+    )..where((p) => p.id.equals(projectId))).write(
+      ProjectsCompanion(
+        version: Value(await _nextVersion()),
+        name: Value(name.trim()),
+        icon: Value(icon),
+        goal: Value(goal),
+        dueDate: Value(due?.toUtc()),
+        period: Value(period.stored),
+        remind: Value(remind),
+        accountId: Value(accountId),
+      ),
+    );
+  }
+
+  /// The project and its lines go; the money is free again.
+  Future<void> delete(String projectId) async {
+    await _db.transaction(() async {
+      final version = await _nextVersion();
+      await (_db.update(
+        _db.projects,
+      )..where((p) => p.id.equals(projectId))).write(
+        ProjectsCompanion(version: Value(version), deleted: const Value(true)),
+      );
+      await (_db.update(
+        _db.contributions,
+      )..where((c) => c.projectId.equals(projectId))).write(
+        ContributionsCompanion(
+          version: Value(await _nextVersion()),
+          deleted: const Value(true),
+        ),
+      );
+    });
   }
 
   Future<Map<String, int>> _saved() async {

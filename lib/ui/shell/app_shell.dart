@@ -30,6 +30,7 @@ import 'package:kibuo/ui/budgets/budgets_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -38,6 +39,7 @@ import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
+import 'package:kibuo/ui/projects/project_money.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart';
 import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
@@ -643,7 +645,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     if (choice == AddChoice.debt && data != null && db != null) {
       return _newDebt(data, db);
     }
-    if (choice == AddChoice.project && data != null) return _newProject();
+    if (choice == AddChoice.project && data != null) return _putAside(data);
     if (data != null && kind != null) {
       // The alert once the saved sheet is gone (PRODUCT: Alertes).
       return runEntry(
@@ -675,6 +677,37 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       ),
     );
     _saved.value++;
+  }
+
+  /// « Projet (mettre de côté) » from the + (PRODUCT): straight to the
+  /// sheet with one running project, a choice with several, « Nouveau
+  /// projet » with none.
+  Future<void> _putAside(EntryData data) async {
+    final projects = data.projects;
+    if (projects == null) return;
+    final open = [
+      for (final p in await projects.projects())
+        if (p.running && !p.reached) p,
+    ];
+    if (!mounted) return;
+    if (open.isEmpty) return _newProject();
+    final l = AppLocalizations.of(context);
+    final picked = open.length == 1
+        ? open.single
+        : await showChoiceSheet<ProjectInfo>(
+            context,
+            title: l.projectPutAside,
+            options: [for (final p in open) (p, p.name)],
+          );
+    if (picked == null || !mounted) return;
+    if (await putAsideFlow(
+      context,
+      data: data,
+      projects: projects,
+      project: picked,
+    )) {
+      _saved.value++;
+    }
   }
 
   /// « Nouveau projet », from the + or the home.

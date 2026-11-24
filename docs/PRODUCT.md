@@ -143,12 +143,23 @@ Décidé le 23 novembre 2026 :
 Décidé le 24 novembre 2026 :
 
 - La phase se livre en trois temps validés : créer et lister (page Projets, « Nouveau projet », ligne de Plus et tuile du +, disponible de l'accueil moins l'argent mis de côté avec la bande « Total · dont projets ») ; la fiche et l'argent (fiche, plan, « Mettre de côté », « Reprendre de l'argent », objectif atteint, modifier, supprimer) ; autour (« À traiter », rappel au rythme du plan, part réservée dans Comptes).
-- Mettre de côté ne crée aucune opération : l'argent reste sur le compte, le projet note un versement et cette part devient réservée. Jamais plus que ce qui est libre sur le compte (solde moins ce que ses projets retiennent).
+- Mettre de côté depuis le compte du projet ne crée aucune opération : l'argent reste sur le compte, le projet note un versement et cette part devient réservée. Depuis un autre compte, un transfert vers le compte du projet s'enregistre d'abord. Jamais plus que ce qui est libre sur le compte (solde moins ce que ses projets retiennent).
 - Un projet est dans la devise de son compte, son objectif aussi, sans conversion.
 - Une dépense n'est jamais refusée à cause d'un projet : si elle entame l'argent réservé, le disponible devient négatif (rose, montant en rouge) et le projet garde ses versements.
 - Objectif atteint : « Je l'ai dépensé » ouvre la saisie d'une dépense pré-remplie (montant, compte, note) ; enregistrée, le projet se termine et sa réserve disparaît. « Le garder de côté » ne change rien. « Le rendre disponible » termine le projet sans rien déplacer. Les projets terminés restent consultables.
 - Supprimer un projet (dans « Modifier », après confirmation) efface le projet et ses versements ; l'argent redevient libre.
-- Premier temps livré le 24 novembre 2026 : la carte dit l'écart en gras (« 27 $ de retard », « 24 $ d'avance », « Dans les temps » le premier jour) puis l'effort par période ; sans date, « À votre rythme ».
+- Premier temps livré le 24 novembre 2026. Sur la page Projets, la dernière ligne d'une carte dit seulement l'état, en gras : « En retard de 27 $ » (rouge), « 24 $ d'avance », « Dans les temps » ; sans date, « À votre rythme » ; puis le lien « Mettre de côté › » ou « Détails › ». L'effort par période reste sur la fiche (décidé le 24 novembre 2026).
+
+Décidé le 24 novembre 2026, pour le deuxième temps (la fiche et l'argent) :
+
+- Le plan de la fiche montre une case par période, de la période en cours jusqu'à la date (« Cette sem. », « Sem. 2 » ; « Cette quinz. », « Quinz. 2 » ; « Ce mois », « Déc. »). Chaque part est arrondie à l'unité supérieure de la devise, la dernière prend le reste ; le plan se recalcule toujours sur ce qui reste à mettre.
+- En haut de la fiche : « En retard » (rouge) avec « 27 $ de retard sur le rythme », « En avance » (vert) avec « 15 $ d'avance », ou rien et « Dans les temps ». Sans date : ni étiquette, ni repère sur la barre, ni plan ; « À votre rythme » et le bouton « Mettre de côté ».
+- « Mettre de côté » : trois montants rapides (ce qui manque, la part de la période, la moitié ; sans date, pas de part), puis le clavier ; versement daté du jour. Au-delà de ce qui est libre, le bouton est grisé et une ligne rouge dit « Seulement 32,40 $ libres sur M-Pesa ». « Il restera … disponibles » passe en ambre sous 10 % du solde du compte.
+- « Pris sur » propose le compte du projet ; un autre compte de la même devise enregistre un transfert ordinaire vers le compte du projet, puis le versement (« M-Pesa dollars → Rawbank »).
+- « Reprendre de l'argent » : même feuille, choix rapide « Tout », au plus ce qui est mis de côté, bouton « Reprendre » ; aucune opération, l'argent redevient libre ; la ligne s'affiche « −50,00 $ » en gris dans les versements.
+- La feuille « Objectif atteint » s'ouvre après le versement qui atteint l'objectif ; ensuite la fiche dit « Objectif atteint » avec « Et maintenant ? › ». Annuler la dépense de « Je l'ai dépensé » ne change rien.
+- « Modifier » reprend le formulaire de création, pré-rempli ; le compte est verrouillé dès le premier versement ; un objectif ramené sous ce qui est mis de côté rend le projet atteint. « Supprimer le projet » en bas, en rouge, avec confirmation. Un projet terminé se lit seulement (« Terminé le 3 déc. · Dépensé » ou « · Rendu disponible »), ses versements et « Supprimer ».
+- La ligne « Me le rappeler » arrive avec les rappels du troisième temps. « Mettre de côté › » s'ajoute aux cartes de la page Projets et à la bande de l'accueil.
 
 ### Rappels et alertes
 

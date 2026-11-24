@@ -13,7 +13,10 @@ import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/projects/project_parts.dart';
+import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -44,18 +47,28 @@ const projectIcons = [
 /// « Nouveau projet » (canvas ProjetNouveau): the name with its icon, the
 /// goal in large, the account with what is free on it, the date
 /// (optional), what the plan asks per period, « Diviser le plan par » and
-/// the reminder; « Créer le projet » at the bottom. Pops true once made.
+/// the reminder; « Créer le projet » at the bottom. Pops true once made,
+/// changed or deleted.
 class NewProjectScreen extends StatefulWidget {
   const NewProjectScreen({
     super.key,
     required this.data,
     required this.projects,
     this.now = DateTime.now,
+    this.editing,
+    this.payments = 0,
   });
 
   final EntryData data;
   final ProjectRepository projects;
   final DateTime Function() now;
+
+  /// « Modifier le projet »: the same form, filled, « Enregistrer », and
+  /// « Supprimer le projet » at the bottom.
+  final ProjectInfo? editing;
+
+  /// Its payments: after the first one, the account no longer changes.
+  final int payments;
 
   @override
   State<NewProjectScreen> createState() => _NewProjectScreenState();
@@ -65,7 +78,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   final _name = TextEditingController();
   final _nameFocus = FocusNode();
   final _goalKey = GlobalKey();
-  String _icon = projectIcons.first;
+  late String _icon = widget.editing?.icon ?? projectIcons.first;
   String _typed = '';
   bool _keypad = false;
   bool _tried = false;
@@ -73,13 +86,17 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   List<AccountInfo> _accounts = const [];
   AccountInfo? _account;
   Money? _free;
-  DateTime? _due;
-  PlanPeriod _period = PlanPeriod.week;
-  bool _remind = true;
+  late DateTime? _due = widget.editing?.due;
+  late PlanPeriod _period = widget.editing?.period ?? PlanPeriod.week;
+  late bool _remind = widget.editing?.remind ?? true;
 
   @override
   void initState() {
     super.initState();
+    if (widget.editing case final p?) {
+      _name.text = p.name;
+      _typed = typedFrom(p.goal, currencyOf(p.goal.currency));
+    }
     _load();
   }
 
@@ -95,7 +112,11 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     if (!mounted) return;
     setState(() {
       _accounts = accounts;
-      _account = accounts.firstOrNull;
+      _account =
+          accounts
+              .where((a) => a.id == widget.editing?.accountId)
+              .firstOrNull ??
+          accounts.firstOrNull;
     });
     await _loadFree();
   }
@@ -138,6 +159,14 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
 
   Future<void> _pickAccount() async {
     _nameFocus.unfocus();
+    // Its money is held on that account (PRODUCT: Projets).
+    if (widget.editing != null && widget.payments > 0) {
+      showKibuoToast(
+        context,
+        AppLocalizations.of(context).projectAccountLocked,
+      );
+      return;
+    }
     final picked = await pickAccount(
       context,
       accounts: _accounts,
@@ -146,8 +175,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     _nameFocus.unfocus();
     if (picked == null) return;
     setState(() {
+      if (picked.currency != _account?.currency) _typed = '';
       _account = picked;
-      _typed = '';
     });
     await _loadFree();
   }
@@ -155,10 +184,12 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   Future<void> _pickDue() async {
     _nameFocus.unfocus();
     final now = widget.now();
+    final first = DateTime(now.year, now.month, now.day + 1);
+    final start = _due ?? DateTime(now.year, now.month + 1, now.day);
     final picked = await showDatePicker(
       context: context,
-      initialDate: _due ?? DateTime(now.year, now.month + 1, now.day),
-      firstDate: DateTime(now.year, now.month, now.day + 1),
+      initialDate: start.isBefore(first) ? first : start,
+      firstDate: first,
       lastDate: DateTime(now.year + 30),
     );
     _nameFocus.unfocus();
@@ -189,6 +220,20 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     setState(() => _tried = true);
     if (!_ready || _saving) return;
     setState(() => _saving = true);
+    if (widget.editing case final p?) {
+      await widget.projects.edit(
+        p.id,
+        name: _name.text,
+        icon: _icon,
+        goal: _goal.minor,
+        due: _due,
+        period: _period,
+        remind: _remind,
+        accountId: _account!.id,
+      );
+      if (mounted) Navigator.of(context).pop(true);
+      return;
+    }
     final now = widget.now();
     await widget.projects.create(
       name: _name.text,
@@ -224,10 +269,11 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
         ? null
         : perPeriod(
             goal: _goal.minor,
-            saved: 0,
+            saved: widget.editing?.saved.minor ?? 0,
             today: now,
             due: due,
             period: _period,
+            unit: unitOf(currency.code),
           );
     Widget row({
       required IconData icon,
@@ -291,7 +337,12 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            FormTopBar(title: l.projectNewTitle, cancel: l.cancel),
+            FormTopBar(
+              title: widget.editing == null
+                  ? l.projectNewTitle
+                  : l.projectEditTitle,
+              cancel: l.cancel,
+            ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
@@ -438,12 +489,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                     ],
                   ),
                   if (due != null)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextAction(
-                        label: l.projectNoDate,
-                        onPressed: () => setState(() => _due = null),
-                      ),
+                    ActionUnderCard(
+                      label: l.projectNoDate,
+                      color: KibuoColors.accent,
+                      onPressed: () => setState(() => _due = null),
                     ),
                   if (per != null && per > 0) ...[
                     const SizedBox(height: 14),
@@ -519,6 +568,22 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       ),
                     ],
                   ),
+                  if (widget.editing case final p?)
+                    ActionUnderCard(
+                      label: l.projectDelete,
+                      color: KibuoColors.danger,
+                      onPressed: () async {
+                        final gone = await deleteProject(
+                          context,
+                          projects: widget.projects,
+                          project: p,
+                          payments: widget.payments,
+                        );
+                        if (gone && context.mounted) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
+                    ),
                 ],
               ),
             ),
@@ -554,7 +619,9 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                   MediaQuery.viewInsetsOf(context).bottom > 0 ? 8 : 24,
                 ),
                 child: KibuoButton(
-                  label: l.projectCreate,
+                  label: widget.editing == null
+                      ? l.projectCreate
+                      : l.projectSave,
                   onPressed: _saving ? null : _save,
                 ),
               ),

@@ -3488,4 +3488,306 @@ class AppLocalizationsFr extends AppLocalizations {
   String projectEffortUntil(String date) {
     return ' d’ici le $date.';
   }
+
+  @override
+  String get projectEdit => 'Modifier';
+
+  @override
+  String projectDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jours',
+      one: '1 jour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectWeeksLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count semaines',
+      one: '1 semaine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectMonthsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mois',
+      one: '1 mois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get projectAheadTag => 'En avance';
+
+  @override
+  String get projectOnPace => ' sur le rythme';
+
+  @override
+  String projectOn(String account) {
+    return 'Sur $account';
+  }
+
+  @override
+  String get projectPutAside => 'Mettre de côté';
+
+  @override
+  String get projectPlan => 'Le plan';
+
+  @override
+  String projectPlanLeft(String amount) {
+    return '$amount restants';
+  }
+
+  @override
+  String projectUntil(String date) {
+    return 'jusqu’au $date';
+  }
+
+  @override
+  String get projectThisWeek => 'Cette sem.';
+
+  @override
+  String projectWeekN(int n) {
+    return 'Sem. $n';
+  }
+
+  @override
+  String get projectThisFortnight => 'Cette quinz.';
+
+  @override
+  String projectFortnightN(int n) {
+    return 'Quinz. $n';
+  }
+
+  @override
+  String get projectThisMonth => 'Ce mois';
+
+  @override
+  String get projectPayments => 'Versements';
+
+  @override
+  String get projectTakeBack => 'Reprendre de l’argent';
+
+  @override
+  String projectTakenBack(String account) {
+    return 'Repris · $account';
+  }
+
+  @override
+  String projectFromTo(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get projectWhatNow => 'Et maintenant ?';
+
+  @override
+  String projectEndedOn(String date) {
+    return 'Terminé le $date';
+  }
+
+  @override
+  String get projectEndedTag => 'Terminé';
+
+  @override
+  String get projectSpentWord => 'Dépensé';
+
+  @override
+  String get projectReleasedWord => 'Rendu disponible';
+
+  @override
+  String projectReachedEarly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Atteint $count jours avant la date',
+      one: 'Atteint 1 jour avant la date',
+      zero: 'Objectif atteint le jour même',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get projectDelete => 'Supprimer le projet';
+
+  @override
+  String projectDeleteTitle(String name) {
+    return 'Supprimer $name ?';
+  }
+
+  @override
+  String projectDeleteText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Le projet et ses $count versements seront effacés.',
+      one: 'Le projet et son versement seront effacés.',
+      zero: 'Le projet sera effacé.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String projectDeleteFree(String amount, String account) {
+    return ' Les $amount mis de côté redeviennent libres sur $account.';
+  }
+
+  @override
+  String get projectDeleteAction => 'Supprimer';
+
+  @override
+  String projectPutAsideFor(String name) {
+    return 'Mettre de côté pour $name';
+  }
+
+  @override
+  String projectSavedAmount(String amount) {
+    return '$amount de côté';
+  }
+
+  @override
+  String get projectQuickMissing => 'ce qui manque';
+
+  @override
+  String get projectQuickWeek => 'cette semaine';
+
+  @override
+  String get projectQuickFortnight => 'cette quinzaine';
+
+  @override
+  String get projectQuickMonth => 'ce mois';
+
+  @override
+  String get projectQuickHalf => 'la moitié';
+
+  @override
+  String get projectQuickAll => 'Tout';
+
+  @override
+  String get projectTakenFrom => 'Pris sur';
+
+  @override
+  String projectTransferNote(String from, String to) {
+    return 'Un transfert de $from vers $to sera enregistré.';
+  }
+
+  @override
+  String projectOnlyFree(String amount, String account) {
+    return 'Seulement $amount libres sur $account.';
+  }
+
+  @override
+  String projectWillLeave(String amount, String account) {
+    return 'Il restera $amount disponibles sur $account.';
+  }
+
+  @override
+  String get projectSheetOn => 'Sur';
+
+  @override
+  String projectTakeBackNote(String amount, String account) {
+    return 'Aucune opération : les $amount redeviennent libres sur $account.';
+  }
+
+  @override
+  String get projectTakeBackAction => 'Reprendre';
+
+  @override
+  String projectSavedCap(String amount) {
+    return 'Au plus $amount, ce qui est de côté';
+  }
+
+  @override
+  String projectFreeCap(String amount) {
+    return 'Au plus $amount, ce qui est libre';
+  }
+
+  @override
+  String projectReachedText(String amount, String name) {
+    return '$amount mis de côté pour $name.';
+  }
+
+  @override
+  String projectReachedEarlyText(String amount, String name, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jours',
+      one: '1 jour',
+    );
+    return '$amount mis de côté pour $name, $_temp0 avant la date.';
+  }
+
+  @override
+  String get projectSpent => 'Je l’ai dépensé';
+
+  @override
+  String get projectSpentHelp => 'Enregistrer la dépense, le projet se termine';
+
+  @override
+  String get projectKeep => 'Le garder de côté';
+
+  @override
+  String get projectKeepHelp => 'Pour plus tard, ou augmenter l’objectif';
+
+  @override
+  String get projectRelease => 'Le rendre disponible';
+
+  @override
+  String projectReleaseHelp(String account) {
+    return 'L’argent redevient libre sur $account';
+  }
+
+  @override
+  String get projectEditTitle => 'Modifier le projet';
+
+  @override
+  String get projectSave => 'Enregistrer';
+
+  @override
+  String get projectAccountLocked =>
+      'Le compte ne change plus après un premier versement.';
+
+  @override
+  String get projectDetails => 'Détails';
+
+  @override
+  String get projectPutAsideSaved => 'Mis de côté';
+
+  @override
+  String get projectTakenBackSaved => 'Argent repris';
+
+  @override
+  String projectEndedSaved(String name) {
+    return '$name est terminé';
+  }
+
+  @override
+  String projectReleasedLine(String account) {
+    return 'Rendu disponible · $account';
+  }
+
+  @override
+  String projectSpentLine(String account) {
+    return 'Dépensé · $account';
+  }
+
+  @override
+  String projectProgress(String saved, String goal) {
+    return '$saved sur $goal';
+  }
+
+  @override
+  String projectsLateBy(String amount) {
+    return 'En retard de $amount';
+  }
 }
