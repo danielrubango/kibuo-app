@@ -6,6 +6,7 @@ import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/card_arrow.dart';
+import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -137,6 +138,13 @@ class _ProjectScreenState extends State<ProjectScreen> {
     if (done == true) await _changed();
   }
 
+  Future<void> _setRemind(bool on) async {
+    final p = _p;
+    if (p == null) return;
+    await widget.projects.setRemind(p.id, remind: on);
+    await _changed();
+  }
+
   Future<void> _delete() async {
     final p = _p;
     if (p == null) return;
@@ -190,7 +198,23 @@ class _ProjectScreenState extends State<ProjectScreen> {
           _Hero(project: p, now: now, money: _money, onWhatNow: _whatNow),
           if (ProjectPace.of(p, now).dated) ...[
             const SizedBox(height: 14),
-            _Plan(project: p, now: now, money: _money),
+            _Plan(
+              project: p,
+              now: now,
+              money: _money,
+              remind: _RemindRow(project: p, onChanged: _setRemind),
+            ),
+          ] else if (p.running && !p.reached) ...[
+            // Without a plan, its own small card (PRODUCT: Projets).
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
+              decoration: BoxDecoration(
+                color: KibuoColors.surface,
+                borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+              ),
+              child: _RemindRow(project: p, onChanged: _setRemind),
+            ),
           ],
           if (_lines.isNotEmpty) ...[
             const SizedBox(height: GroupTitle.gap),
@@ -493,11 +517,19 @@ class _Hero extends StatelessWidget {
 /// « Le plan · par semaine », what is left, the part per period in large,
 /// then a tile per period from the one running today, sliding sideways.
 class _Plan extends StatelessWidget {
-  const _Plan({required this.project, required this.now, required this.money});
+  const _Plan({
+    required this.project,
+    required this.now,
+    required this.money,
+    required this.remind,
+  });
 
   final ProjectInfo project;
   final DateTime now;
   final String Function(Money) money;
+
+  /// « Me le rappeler », at the bottom (canvas FicheProjet).
+  final Widget remind;
 
   @override
   Widget build(BuildContext context) {
@@ -656,6 +688,38 @@ class _Plan extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          const Divider(height: 1, color: KibuoColors.background),
+          Padding(padding: const EdgeInsets.only(top: 4), child: remind),
+        ],
+      ),
+    );
+  }
+}
+
+/// « Me le rappeler » and its rhythm under it, with its switch.
+class _RemindRow extends StatelessWidget {
+  const _RemindRow({required this.project, required this.onChanged});
+
+  final ProjectInfo project;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return SwitchRow(
+      value: project.remind,
+      onChanged: onChanged,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l.projectRemindShort, style: KibuoType.rowLabel),
+          Text(switch (project.period) {
+            PlanPeriod.week => l.projectRemindWeek,
+            PlanPeriod.fortnight => l.projectRemindFortnight,
+            PlanPeriod.month => l.projectRemindMonth,
+          }, style: KibuoType.caption),
         ],
       ),
     );

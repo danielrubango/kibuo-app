@@ -972,5 +972,17 @@
   "projectReleasedLine": "Made available · {account}",
   "projectSpentLine": "Spent · {account}",
   "projectProgress": "{saved} of {goal}",
-  "projectsLateBy": "{amount} behind"
+  "projectsLateBy": "{amount} behind",
+  "todoProjectLate": "Project · behind",
+  "todoProjectLateLeft": "{count, plural, =1{Project · behind, 1 day left} other{Project · behind, {count} days left}}",
+  "projectQuickLate": "catch up",
+  "reminderProjectWeek": "{amount} to put aside this week",
+  "reminderProjectFortnight": "{amount} to put aside these two weeks",
+  "reminderProjectMonth": "{amount} to put aside this month",
+  "reminderProjectFreeWeek": "A little aside this week?",
+  "reminderProjectFreeFortnight": "A little aside these two weeks?",
+  "reminderProjectFreeMonth": "A little aside this month?",
+  "projectRemindShort": "Remind me",
+  "accountsAvailable": "Available",
+  "accountsReserved": "Held for projects"
 }

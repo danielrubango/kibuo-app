@@ -5874,6 +5874,78 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En retard de {amount}'**
   String projectsLateBy(String amount);
+
+  /// À traiter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Projet · en retard'**
+  String get todoProjectLate;
+
+  /// À traiter.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Projet · en retard, 1 jour restant} other{Projet · en retard, {count} jours restants}}'**
+  String todoProjectLateLeft(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'le retard'**
+  String get projectQuickLate;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} à mettre de côté cette semaine'**
+  String reminderProjectWeek(String amount);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} à mettre de côté cette quinzaine'**
+  String reminderProjectFortnight(String amount);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} à mettre de côté ce mois-ci'**
+  String reminderProjectMonth(String amount);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un peu de côté cette semaine ?'**
+  String get reminderProjectFreeWeek;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un peu de côté cette quinzaine ?'**
+  String get reminderProjectFreeFortnight;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un peu de côté ce mois-ci ?'**
+  String get reminderProjectFreeMonth;
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me le rappeler'**
+  String get projectRemindShort;
+
+  /// Accounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible'**
+  String get accountsAvailable;
+
+  /// Accounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservé aux projets'**
+  String get accountsReserved;
 }
 
 class _AppLocalizationsDelegate

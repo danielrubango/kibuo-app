@@ -3752,4 +3752,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String projectsLateBy(String amount) {
     return '$amount behind';
   }
+
+  @override
+  String get todoProjectLate => 'Project · behind';
+
+  @override
+  String todoProjectLateLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Project · behind, $count days left',
+      one: 'Project · behind, 1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get projectQuickLate => 'catch up';
+
+  @override
+  String reminderProjectWeek(String amount) {
+    return '$amount to put aside this week';
+  }
+
+  @override
+  String reminderProjectFortnight(String amount) {
+    return '$amount to put aside these two weeks';
+  }
+
+  @override
+  String reminderProjectMonth(String amount) {
+    return '$amount to put aside this month';
+  }
+
+  @override
+  String get reminderProjectFreeWeek => 'A little aside this week?';
+
+  @override
+  String get reminderProjectFreeFortnight => 'A little aside these two weeks?';
+
+  @override
+  String get reminderProjectFreeMonth => 'A little aside this month?';
+
+  @override
+  String get projectRemindShort => 'Remind me';
+
+  @override
+  String get accountsAvailable => 'Available';
+
+  @override
+  String get accountsReserved => 'Held for projects';
 }

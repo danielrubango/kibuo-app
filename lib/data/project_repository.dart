@@ -346,6 +346,18 @@ class ProjectRepository {
     );
   }
 
+  /// « Me le rappeler », from the card.
+  Future<void> setRemind(String projectId, {required bool remind}) async {
+    await (_db.update(
+      _db.projects,
+    )..where((p) => p.id.equals(projectId))).write(
+      ProjectsCompanion(
+        version: Value(await _nextVersion()),
+        remind: Value(remind),
+      ),
+    );
+  }
+
   /// The project and its lines go; the money is free again.
   Future<void> delete(String projectId) async {
     await _db.transaction(() async {

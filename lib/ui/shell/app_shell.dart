@@ -40,6 +40,7 @@ import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
 import 'package:kibuo/ui/projects/project_money.dart';
+import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart';
 import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
@@ -175,6 +176,21 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
       _openEntry(AddChoice.expense);
     } else if (payload == ReminderPlanner.homePayload) {
       _show(_Tab.home);
+    } else if (payload.startsWith('project:')) {
+      final data = _entryData(context);
+      if (data?.projects == null) return;
+      Navigator.of(context)
+          .push<void>(
+            MaterialPageRoute(
+              builder: (_) => ProjectScreen(
+                data: data!,
+                projects: data.projects!,
+                id: payload.substring(8),
+                onChanged: () => _saved.value++,
+              ),
+            ),
+          )
+          .then((_) => _saved.value++);
     } else if (payload.startsWith('rule:')) {
       final data = _entryData(context);
       if (data == null) return;
@@ -231,6 +247,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
             currencies: CurrencyRepository(db),
             categories: CategoryRepository(db),
             transactions: TransactionRepository(db),
+            data: _entryData(context),
           ),
         ),
       )

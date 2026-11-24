@@ -18,6 +18,9 @@ enum TodoKind {
   debtSoon(TodoGroup.week),
   shortfall(TodoGroup.week),
   budgetNear(TodoGroup.week),
+
+  /// A project behind by a whole part of its plan: « Mettre de côté ».
+  projectLate(TodoGroup.reminders),
   oldRate(TodoGroup.reminders);
 
   const TodoKind(this.group);

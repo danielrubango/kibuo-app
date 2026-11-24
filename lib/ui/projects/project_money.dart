@@ -184,7 +184,7 @@ Future<bool> takeBackFlow(
   return true;
 }
 
-enum _Quick { missing, period, half, all }
+enum _Quick { late, missing, period, half, all }
 
 class _MoneySheet extends StatefulWidget {
   const _MoneySheet({
@@ -233,11 +233,14 @@ class _MoneySheetState extends State<_MoneySheet> {
 
   _Quick get _startQuick => !widget.put
       ? _Quick.all
+      : _pace.late && _quickValue(_Quick.late) != null
+      ? _Quick.late
       : _pace.per > 0 && _pace.per < _missing
       ? _Quick.period
       : _Quick.missing;
 
   int? _quickValue(_Quick q) => switch (q) {
+    _Quick.late => _pace.late && -_pace.gap < _missing ? -_pace.gap : null,
     _Quick.missing => _missing > 0 ? _missing : null,
     _Quick.period => _pace.per > 0 && _pace.per < _missing ? _pace.per : null,
     _Quick.half => () {
@@ -322,15 +325,19 @@ class _MoneySheetState extends State<_MoneySheet> {
     final after = widget.put ? saved + _amount.minor : saved - _amount.minor;
     final ink = widget.put ? KibuoColors.projectInk : KibuoColors.inkSecondary;
     final quick = <QuickAmount<_Quick>>[
+      // Late: catching up first (PRODUCT: Projets).
       for (final q
-          in widget.put
-              ? const [_Quick.missing, _Quick.period, _Quick.half]
-              : const [_Quick.all])
+          in !widget.put
+              ? const [_Quick.all]
+              : _pace.late
+              ? const [_Quick.late, _Quick.period, _Quick.missing]
+              : const [_Quick.missing, _Quick.period, _Quick.half])
         if (_quickValue(q) case final v?)
           QuickAmount(
             value: q,
             amount: _m(v),
             label: switch (q) {
+              _Quick.late => l.projectQuickLate,
               _Quick.missing => l.projectQuickMissing,
               _Quick.period => switch (_p.period) {
                 PlanPeriod.week => l.projectQuickWeek,
@@ -378,7 +385,8 @@ class _MoneySheetState extends State<_MoneySheet> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Flexible(
+                  // Tight, so its text reaches the right edge.
+                  Expanded(
                     flex: 3,
                     child: Text(
                       projectWhen(l, lang, _p, widget.now(), left: false),

@@ -223,6 +223,13 @@ void main() {
       expect((await projects.free(mpesa)).minor, 50000);
     });
 
+    test('its reminder switched off and on', () async {
+      await projects.setRemind(trip, remind: false);
+      expect((await projects.project(trip))!.remind, isFalse);
+      await projects.setRemind(trip, remind: true);
+      expect((await projects.project(trip))!.remind, isTrue);
+    });
+
     test('reopened after being made available', () async {
       await projects.end(trip, ending: 'released', on: DateTime(2026, 11, 4));
       await projects.reopen(trip);

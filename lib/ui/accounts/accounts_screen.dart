@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/accounts/account_total.dart';
 import 'package:kibuo/domain/money/currency.dart';
@@ -16,10 +17,13 @@ import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/projects/project_parts.dart';
+import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/transactions/entry_screen.dart';
 
 /// Plus › Comptes (canvas: Comptes): chips by type, the total of the
 /// accounts, then one card per account, grouped by type under « Tous ».
@@ -30,10 +34,15 @@ class AccountsScreen extends StatefulWidget {
     required this.currencies,
     this.categories,
     this.transactions,
+    this.data,
   });
 
   final AccountRepository accounts;
   final CurrencyRepository currencies;
+
+  /// With projects: what each account holds back, and the projects
+  /// under it (PRODUCT: Projets).
+  final EntryData? data;
 
   /// For « Solde actuel » in an account's form.
   final CategoryRepository? categories;
@@ -52,6 +61,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
   bool _allInMain = false;
   AccountType? _chip;
   final _folded = <AccountType>{};
+
+  /// Running projects with money set aside, by account.
+  Map<String, List<ProjectInfo>> _held = const {};
 
   @override
   void initState() {
@@ -73,8 +85,15 @@ class _AccountsScreenState extends State<AccountsScreen> {
       final rate = await widget.currencies.latestRate(mainCode, code);
       if (rate != null) rates[code] = rate.rate;
     }
+    final held = <String, List<ProjectInfo>>{};
+    for (final p
+        in await widget.data?.projects?.projects() ?? const <ProjectInfo>[]) {
+      if (!p.running || p.saved.minor <= 0) continue;
+      (held[p.accountId] ??= []).add(p);
+    }
     if (!mounted) return;
     setState(() {
+      _held = held;
       _list = list;
       _custom = custom;
       _main = main;
@@ -229,6 +248,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       : l.accountsTotalOf(_lowerFirst(labels.name(_chip!))),
                   long: isLong(_total(shown).amount),
                   amount: (short) => _money(_total(shown).amount, short: short),
+                  split: _split(l, shown),
                 ),
                 if (_total(shown).withoutRate.isNotEmpty) ...[
                   const SizedBox(height: 8),
@@ -263,6 +283,41 @@ class _AccountsScreenState extends State<AccountsScreen> {
               ],
             ),
     );
+  }
+
+  /// « Disponible » and « Réservé aux projets » under the total, when
+  /// [accounts] hold projects' money.
+  _Split? _split(AppLocalizations l, List<AccountInfo> accounts) {
+    final main = _main!;
+    var held = 0;
+    for (final a in accounts) {
+      for (final p in _held[a.id] ?? const <ProjectInfo>[]) {
+        held += _inMain(p.saved)?.minor ?? 0;
+      }
+    }
+    if (held <= 0) return null;
+    final total = _total(accounts).amount.minor;
+    final free = total - held;
+    return _Split(
+      free: _money(Money(free, main.code)),
+      held: _money(Money(held, main.code)),
+      freeShare: total <= 0 ? 0 : (free / total).clamp(0, 1).toDouble(),
+      negative: free < 0,
+      freeLabel: l.accountsAvailable,
+      heldLabel: l.accountsReserved,
+    );
+  }
+
+  Future<void> _openProject(ProjectInfo p) async {
+    final data = widget.data;
+    if (data?.projects == null) return;
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) =>
+            ProjectScreen(data: data!, projects: data.projects!, id: p.id),
+      ),
+    );
+    await _load();
   }
 
   static String _lowerFirst(String s) =>
@@ -336,10 +391,32 @@ class _AccountsScreenState extends State<AccountsScreen> {
         : o.unlimited
         ? l.overdraftCaptionNoLimit
         : l.overdraftCaptionUpTo(_money(Money(o.limit!, a.currency)));
+    // « 20,00 $ libres » when projects hold some of it (canvas Comptes).
+    final held = _held[a.id] ?? const <ProjectInfo>[];
+    final free = held.isEmpty
+        ? null
+        : l.projectFree(
+            _money(
+              Money(
+                a.balance.minor -
+                    held.fold<int>(0, (s, p) => s + p.saved.minor),
+                a.currency,
+              ),
+            ),
+          );
     return _AccountCard(
       name: a.name,
       code: a.currency,
-      detail: [?detail, ?overdraft].join(' · ').ifEmpty,
+      detail: [?free, ?detail, ?overdraft].join(' · ').ifEmpty,
+      projects: [
+        for (final p in held)
+          _HeldProject(
+            icon: p.icon,
+            name: p.name,
+            amount: _money(p.saved),
+            onTap: () => _openProject(p),
+          ),
+      ],
       amount: amount,
       long: long,
       muted: muted,
@@ -427,16 +504,39 @@ class _Chips extends StatelessWidget {
   }
 }
 
+/// What the total splits into once projects hold money.
+class _Split {
+  const _Split({
+    required this.free,
+    required this.held,
+    required this.freeShare,
+    required this.negative,
+    required this.freeLabel,
+    required this.heldLabel,
+  });
+
+  final String free;
+  final String held;
+  final double freeShare;
+
+  /// Projects hold more than there is: the available amount in red.
+  final bool negative;
+  final String freeLabel;
+  final String heldLabel;
+}
+
 class _TotalCard extends StatelessWidget {
   const _TotalCard({
     required this.label,
     required this.amount,
     required this.long,
+    this.split,
   });
 
   final String label;
   final String Function(bool short) amount;
   final bool long;
+  final _Split? split;
 
   @override
   Widget build(BuildContext context) {
@@ -459,10 +559,129 @@ class _TotalCard extends StatelessWidget {
             style: KibuoType.highlight.copyWith(fontSize: 30),
             span: (short) => TextSpan(text: amount(short)),
           ),
+          if (split case final s?) ...[
+            const SizedBox(height: 12),
+            // Available in mint, held back in the projects' blue.
+            SizedBox(
+              height: 8,
+              child: Row(
+                children: [
+                  if (s.freeShare > 0) ...[
+                    Expanded(
+                      flex: (s.freeShare * 1000).round(),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: KibuoColors.mint,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                  ],
+                  Expanded(
+                    flex: ((1 - s.freeShare) * 1000).round().clamp(1, 1000),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: KibuoColors.projectLine,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _Part(
+                    dot: KibuoColors.mint,
+                    label: s.freeLabel,
+                    amount: s.free,
+                    color: s.negative ? KibuoColors.danger : null,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _Part(
+                    dot: KibuoColors.projectLine,
+                    label: s.heldLabel,
+                    amount: s.held,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
   }
+}
+
+/// A dot, its label, and its amount under it.
+class _Part extends StatelessWidget {
+  const _Part({
+    required this.dot,
+    required this.label,
+    required this.amount,
+    this.color,
+  });
+
+  final Color dot;
+  final String label;
+  final String amount;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: KibuoType.caption.copyWith(fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 2),
+      FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Text(
+          amount,
+          maxLines: 1,
+          style: KibuoType.cardTitle.copyWith(fontSize: 17, color: color),
+        ),
+      ),
+    ],
+  );
+}
+
+/// A project under its account: its tile, name, and what it holds.
+class _HeldProject {
+  const _HeldProject({
+    required this.icon,
+    required this.name,
+    required this.amount,
+    required this.onTap,
+  });
+
+  final String icon;
+  final String name;
+  final String amount;
+  final VoidCallback onTap;
 }
 
 class _AccountCard extends StatelessWidget {
@@ -475,7 +694,11 @@ class _AccountCard extends StatelessWidget {
     this.detail,
     this.muted = false,
     this.negative = false,
+    this.projects = const [],
   });
+
+  /// The projects it holds money for, under it (canvas Comptes).
+  final List<_HeldProject> projects;
 
   final String name;
   final String code;
@@ -490,59 +713,110 @@ class _AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final row = Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: KibuoType.rowLabel.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontVariations: const [FontVariation.weight(600)],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: code,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontVariations: [FontVariation.weight(600)],
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                    if (detail != null) TextSpan(text: ' · $detail'),
+                  ],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: KibuoType.help,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        FitAmount(
+          long: long,
+          alignment: Alignment.centerRight,
+          maxWidth: MediaQuery.sizeOf(context).width * 0.45,
+          style: muted
+              ? KibuoType.buttonSmall.copyWith(color: KibuoColors.inkMuted)
+              : KibuoType.cardTitle.copyWith(
+                  color: negative ? KibuoColors.danger : null,
+                ),
+          span: (short) => TextSpan(text: amount(short)),
+        ),
+      ],
+    );
     return KibuoCard(
       onTap: onTap,
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: projects.isEmpty
+          ? row
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: KibuoType.rowLabel.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontVariations: const [FontVariation.weight(600)],
+                row,
+                const SizedBox(height: 8),
+                // A thin line on the left ties them to their account.
+                Container(
+                  padding: const EdgeInsets.only(left: 10),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      left: BorderSide(color: KibuoColors.line, width: 2),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text.rich(
-                  TextSpan(
+                  child: Column(
                     children: [
-                      TextSpan(
-                        text: code,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontVariations: [FontVariation.weight(600)],
-                          letterSpacing: 0.4,
+                      for (final p in projects)
+                        InkWell(
+                          onTap: p.onTap,
+                          borderRadius: BorderRadius.circular(8),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: 40),
+                            child: Row(
+                              children: [
+                                ProjectTile(icon: p.icon, size: 26),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    p.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: KibuoType.body,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  p.amount,
+                                  style: KibuoType.body
+                                      .copyWith(color: KibuoColors.projectInk)
+                                      .weight(700),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      if (detail != null) TextSpan(text: ' · $detail'),
                     ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: KibuoType.help,
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 12),
-          FitAmount(
-            long: long,
-            alignment: Alignment.centerRight,
-            maxWidth: MediaQuery.sizeOf(context).width * 0.45,
-            style: muted
-                ? KibuoType.buttonSmall.copyWith(color: KibuoColors.inkMuted)
-                : KibuoType.cardTitle.copyWith(
-                    color: negative ? KibuoColors.danger : null,
-                  ),
-            span: (short) => TextSpan(text: amount(short)),
-          ),
-        ],
-      ),
     );
   }
 }

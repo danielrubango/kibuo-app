@@ -1,9 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/project_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart' show projectIcon;
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -54,13 +51,6 @@ class ProjectPace {
 
   bool get late => dated && gap < 0;
   bool get ahead => dated && gap > 0;
-}
-
-/// One whole unit of [currency] in its minor unit: 100 for the dollar,
-/// 1 for the franc.
-int unitOf(String currency) {
-  final c = currencyOf(currency);
-  return c.usesDecimals ? math.pow(10, c.digits).toInt() : 1;
 }
 
 /// The project's icon on its tint, rounded at a third.

@@ -130,6 +130,11 @@ void main() {
     expect(find.text('Le plan'), findsNothing); // a rich text
     expect(find.textContaining('Le plan'), findsOneWidget);
     expect(find.text('Cette sem.'), findsOneWidget);
+    expect(find.text('Me le rappeler'), findsOneWidget);
+    expect(find.text('Chaque lundi'), findsOneWidget);
+    await tester.tap(find.byType(Switch));
+    await settle(tester);
+    expect((await projects.projects()).single.remind, isFalse);
     expect(find.textContaining('Versements'), findsOneWidget);
     expect(shown('+150,00 \$'), findsOneWidget);
   });
