@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Verrouillage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 64px 24px 24px; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 16px">
+  <svg viewBox="0 0 96 96" width="64" height="64" aria-hidden="true"><rect width="96" height="96" rx="22" fill="#0E1320"></rect><circle cx="48" cy="48" r="25" fill="#5EEAB5"></circle><path d="M42 35A10 10 0 1 1 54 35Z" fill="#FFC247" stroke="#0E1320" stroke-width="2.5"></path><path d="M45 28.5h6" stroke="#0E1320" stroke-width="1.8" stroke-linecap="round" opacity="0.45"></path><rect x="37" y="35" width="22" height="5" rx="2.5" fill="#0E1320"></rect></svg>
+  <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700">Entrez votre code</h1>
+  <div aria-label="{{filledLabel}}" style="display: flex; gap: 16px; margin: 8px 0 16px">
+    <sc-for list="{{dots}}" as="d" hint-placeholder-count="4">
+      <span style="width: 16px; height: 16px; border-radius: 8px; border: 2px solid #0E1320; background: {{d.bg}}"></span>
+    </sc-for>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 12px 24px">
+    <sc-for list="{{keys}}" as="k" hint-placeholder-count="12">
+      <button type="button" onClick="{{k.press}}" aria-label="{{k.aria}}" style="width: 80px; height: 64px; border: 0; border-radius: 20px; background: {{k.bg}}; color: #0E1320; font: 500 26px 'Space Grotesk', sans-serif">{{k.label}}</button>
+    </sc-for>
+  </div>
+  <span style="font-size: 13px; color: #525D73; margin-top: -4px">Les chiffres changent de place à chaque fois.</span>
+  <button type="button" style="min-height: 44px; border: 0; background: transparent; font: 600 15px Inter, sans-serif; color: #0A7355">Utiliser l'empreinte</button>
+  <a href="CodeRecup.dc.html" style="min-height: 44px; display: flex; align-items: center; font-size: 14px; color: #525D73">Code oublié ?</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { n: 0, digits: this.shuffle() };
+  }
+  shuffle() {
+    // digits change place on every opening and after every attempt, so the code can't be read from finger positions
+    var d = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    for (var i = d.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = d[i]; d[i] = d[j]; d[j] = t; }
+    return d;
+  }
+  renderVals() {
+    var self = this;
+    var n = this.state.n;
+    var dots = [0, 1, 2, 3].map(function (i) { return { bg: i < n ? '#0E1320' : 'transparent' }; });
+    var d = this.state.digits;
+    var layout = d.slice(0, 9).concat(['', d[9], 'del']);
+    var keys = layout.map(function (k) {
+      return {
+        label: k === 'del' ? '←' : k,
+        aria: k === 'del' ? 'Effacer' : (k === '' ? 'Vide' : k),
+        bg: k === '' ? 'transparent' : '#FFFFFF',
+        press: function () {
+          if (k === '') { return; }
+          if (k === 'del') { self.setState({ n: Math.max(0, self.state.n - 1) }); return; }
+          if (self.state.n >= 3) { self.setState({ n: 0, digits: self.shuffle() }); return; }
+          self.setState({ n: self.state.n + 1 });
+        }
+      };
+    });
+    return { dots: dots, keys: keys, filledLabel: n + ' chiffres sur 4' };
+  }
+}
+</script>
+</body>
+</html>

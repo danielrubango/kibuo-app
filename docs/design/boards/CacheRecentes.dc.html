@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Écran de masquage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}
+.key{width:80px;height:60px;border:0;border-radius:20px;background:#FFFFFF;color:#0E1320;font:500 26px 'Space Grotesk',sans-serif;cursor:pointer}
+.key.empty{background:transparent;cursor:default}
+.key:disabled{color:#B6BDCB;background:#E4E8F0;cursor:default}
+.primary{width:100%;min-height:52px;border:0;border-radius:16px;background:#5EEAB5;color:#0E1320;font:600 16px Inter,sans-serif;cursor:pointer}
+.primary.off{background:#DDE2EC;color:#8A93A6;cursor:default}
+.ghost{min-height:44px;border:0;background:transparent;font:600 15px Inter,sans-serif;color:#0A7355;cursor:pointer}
+.chip{min-width:72px;min-height:48px;border-radius:14px;border:1.5px solid #C9CFDB;background:#FFFFFF;font:600 18px 'Space Grotesk',sans-serif;color:#0E1320;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:#0E1320;background:#0E1320;color:#FFFFFF}
+.card{background:#FFFFFF;border-radius:18px;padding:2px 16px;display:flex;flex-direction:column}
+.row{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#0E1320;font-size:16px;text-decoration:none}
+.row+.row{border-top:1px solid #EEF1F7}
+.help{font-size:13px;line-height:18px;color:#525D73;padding:0 4px}
+.sw{width:48px;height:28px;border-radius:14px;border:0;padding:0;position:relative;cursor:pointer;flex:none}
+.sw span{position:absolute;top:3px;width:22px;height:22px;border-radius:11px;background:#FFFFFF;box-shadow:0 1px 2px rgba(14,19,32,.25)}
+.note{font-size:12px;font-weight:600;color:#525D73;border:1px dashed #C9CFDB;border-radius:999px;padding:3px 9px;background:rgba(255,255,255,.6)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 96px 40px; background: #1C2233; font-family: Inter, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 18px"><span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; color: #FFFFFF; font-size: 14px; font-weight: 600"><svg viewBox="0 0 96 96" width="22" height="22" aria-hidden="true"><rect width="96" height="96" rx="22" fill="#0E1320"></rect><circle cx="48" cy="48" r="25" fill="#5EEAB5"></circle><path d="M42 35A10 10 0 1 1 54 35Z" fill="#FFC247" stroke="#0E1320" stroke-width="2.5"></path><rect x="37" y="35" width="22" height="5" rx="2.5" fill="#0E1320"></rect></svg>Kibuo</span><div style="width: 100%; flex: 1; border-radius: 28px; background: #EEF1F7; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.35)"><svg viewBox="0 0 96 96" width="88" height="88" aria-hidden="true"><circle cx="48" cy="48" r="25" fill="#5EEAB5"></circle><path d="M42 35A10 10 0 1 1 54 35Z" fill="#FFC247" stroke="#0E1320" stroke-width="2.5"></path><path d="M45 28.5h6" stroke="#0E1320" stroke-width="1.8" stroke-linecap="round" opacity="0.45"></path><rect x="37" y="35" width="22" height="5" rx="2.5" fill="#0E1320"></rect></svg><span style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #0E1320">Kibuo</span></div><span style="color: #B6BDCB; font-size: 13px">Aperçu dans les applications récentes</span></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

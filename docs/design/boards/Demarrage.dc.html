@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Démarrage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}
+.tog{border:1px solid #C9CFDB;background:#FFFFFF;color:#0E1320;border-radius:999px;padding:8px 14px;font:600 13px Inter,sans-serif;cursor:pointer}
+
+@keyframes chipA0{0%,35.7%{opacity:1}36.4%,100%{opacity:0}}
+@keyframes chipK0{0%,35.7%{opacity:0}36.4%,100%{opacity:1}}
+@keyframes coin0{0%,35.7%{transform:none}51.8%,100%{transform:translateY(3px)}}
+@keyframes name0{0%,44.6%{opacity:0;transform:translateY(8px)}62.5%,100%{opacity:1;transform:none}}
+@keyframes home0{0%,89.3%{opacity:0;visibility:hidden}89.6%{opacity:0;visibility:visible}100%{opacity:1;visibility:visible}}
+
+@keyframes chipA1{0%,35.7%{opacity:1}36.4%,100%{opacity:0}}
+@keyframes chipK1{0%,35.7%{opacity:0}36.4%,100%{opacity:1}}
+@keyframes coin1{0%,35.7%{transform:none}51.8%,100%{transform:translateY(3px)}}
+@keyframes name1{0%,44.6%{opacity:0;transform:translateY(8px)}62.5%,100%{opacity:1;transform:none}}
+@keyframes home1{0%,89.3%{opacity:0;visibility:hidden}89.6%{opacity:0;visibility:visible}100%{opacity:1;visibility:visible}}
+</style>
+</helmet>
+<div class="kb-root" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif"><div style="position: absolute; inset: 0; background: #EEF1F7"><div style="position: absolute; left: 50%; top: 50%; width: 288px; height: 288px; margin: -144px 0 0 -144px; transform: scale(0.947)"><svg viewBox="0 0 108 108" width="288" height="288" aria-hidden="true" style="display: block"><defs><clipPath id="aboveSlot"><rect x="0" y="0" width="96" height="35"/></clipPath></defs><g transform="translate(54 54) scale(1.1) translate(-48 -48)"><circle cx="48" cy="48" r="25" fill="#5EEAB5"/><g clip-path="url(#aboveSlot)"><g style="animation: {{coinAnim}}"><circle cx="48" cy="27" r="10" fill="#FFC247" stroke="#0E1320" stroke-width="2.5"/><path d="M45 28.5h6" stroke="#0E1320" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/></g><line x1="38" y1="35" x2="58" y2="35" stroke="#0E1320" stroke-width="2.5"/></g><rect x="37" y="35" width="22" height="5" rx="2.5" fill="#0E1320"/></g></svg></div><div style="position: absolute; left: 0; right: 0; top: calc(50% + 98px); text-align: center; animation: {{nameAnim}}"><div style="font-family: 'Space Grotesk', sans-serif; font-size: 40px; font-weight: 700; letter-spacing: -0.5px; color: #0E1320">Kibuo</div></div><div style="position: absolute; left: 16px; right: 16px; top: 54px; display: flex; justify-content: center"><span style="display: grid; font-size: 12px; font-weight: 600; color: #525D73; border: 1px dashed #C9CFDB; border-radius: 999px; padding: 4px 10px; background: rgba(255,255,255,0.6)"><span style="grid-area: 1 / 1; text-align: center; animation: {{chipA}}">Écran d’Android</span><span style="grid-area: 1 / 1; text-align: center; animation: {{chipK}}">Écran Kibuo · 1,5 s au moins</span></span></div><div style="position: absolute; inset: 0; background: #EEF1F7; padding: 72px 20px; box-sizing: border-box; animation: {{homeAnim}}"><div style="font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; color: #0E1320">Aujourd’hui</div><div style="margin-top: 16px; height: 150px; border-radius: 18px; background: #FFFFFF; border: 1px solid #C9CFDB"></div></div><div style="position: absolute; left: 16px; right: 16px; bottom: 20px; display: flex; justify-content: center"><button type="button" class="tog" onClick="{{replay}}">Rejouer</button></div></div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { n: 0 }; }
+  renderVals() {
+    var self = this, p = this.state.n % 2, t = ' 2.8s linear both';
+    return {
+      chipA: 'chipA' + p + t, chipK: 'chipK' + p + t, coinAnim: 'coin' + p + t,
+      nameAnim: 'name' + p + t, homeAnim: 'home' + p + t,
+      replay: function () { self.setState({ n: self.state.n + 1 }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

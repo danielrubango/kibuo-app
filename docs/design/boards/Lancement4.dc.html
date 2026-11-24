@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Premier lancement, protection</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 32px 24px 24px; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column">
+  <span style="font-size: 14px; font-weight: 600; color: #0A7355">Étape 4 sur 4</span>
+  <h1 style="margin: 12px 0 8px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; line-height: 34px; font-weight: 700">Protégez vos données</h1>
+  <p style="margin: 0 0 20px; font-size: 15px; line-height: 22px; color: #525D73">Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.</p>
+  <div style="display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto">
+    <sc-for list="{{opts}}" as="o" hint-placeholder-count="2">
+      <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 12px">
+        <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 16px; font-weight: 600">{{o.title}}</span><span style="font-size: 14px; line-height: 20px; color: #525D73">{{o.help}}</span></div>
+        <button type="button" onClick="{{o.toggle}}" aria-pressed="{{o.on}}" aria-label="{{o.title}}" style="width: 52px; height: 44px; flex: 0 0 52px; border: 0; background: transparent; padding: 0; display: flex; align-items: center"><span style="width: 52px; height: 32px; border-radius: 16px; background: {{o.track}}; display: flex; align-items: center; justify-content: {{o.side}}; padding: 0 3px; box-sizing: border-box"><span style="width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF"></span></span></button>
+      </div>
+    </sc-for>
+    <p style="margin: 6px 4px 0; font-size: 14px; line-height: 20px; color: #525D73">Vous pourrez changer ces choix à tout moment dans les réglages.</p>
+  </div>
+  <a href="Aujourdhui.dc.html" style="height: 56px; border-radius: 18px; background: #5EEAB5; color: #0E1320; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Commencer</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lock: false, backup: false };
+  }
+  renderVals() {
+    var self = this;
+    var make = function (key, title, help) {
+      var on = self.state[key];
+      return { title: title, help: help, on: on, track: on ? '#0A7355' : '#8A93A6', side: on ? 'flex-end' : 'flex-start', toggle: function () { var s = {}; s[key] = !self.state[key]; self.setState(s); } };
+    };
+    return {
+      opts: [
+        make('lock', 'Verrouiller l\'application', 'PIN ou empreinte. Un code de récupération vous sera remis.'),
+        make('backup', 'Sauvegardes automatiques', 'Chaque semaine, dans le dossier de votre choix.')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

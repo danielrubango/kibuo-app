@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Petit écran : Nouvelle récurrence</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>@property --fl{syntax:'<length>';inherits:false;initial-value:0px}@property --fr{syntax:'<length>';inherits:false;initial-value:0px}@keyframes rc-fade{from{--fl:0px;--fr:32px}to{--fl:32px;--fr:0px}}.rc-days{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);animation:rc-fade linear both;animation-timeline:scroll(self inline)}body{margin:0}.rc-root{container-type:inline-size;container-name:rec}.rc-short{display:none}@container rec (max-width: 359px){.rc-long{display:none}.rc-short{display:inline}}.hs{scrollbar-width:none}.hs::-webkit-scrollbar{display:none}</style>
+</helmet>
+<div class="rc-root" style="width: 340px; height: 844px; position: relative; overflow: hidden; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif">
+  <div class="hs" style="position: absolute; inset: 0; overflow-y: auto">
+    <div style="box-sizing: border-box; padding: 16px 16px 100px; display: flex; flex-direction: column; gap: 12px">
+      <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+        <a href="PlusBtnB1.dc.html" aria-label="Retour à la saisie" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+        <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Nouvelle récurrence</h1>
+      </header>
+      <section style="background: #FFFFFF; border-radius: 18px; padding: 4px 16px; display: flex; flex-direction: column">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+          <div style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; font-size: 15px; border-top: {{r.border}}"><span style="color: #525D73">{{r.label}}</span><span style="font-weight: 500">{{r.value}}</span></div>
+        </sc-for>
+      </section>
+
+      <h2 style="margin: 6px 4px 0; font-size: 14px; font-weight: 600">Répéter</h2>
+      <section style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #EEF1F7; border-radius: 14px; padding: 4px">
+          <sc-for list="{{units}}" as="u" hint-placeholder-count="4">
+            <button type="button" onClick="{{u.pick}}" aria-pressed="{{u.on}}" aria-label="{{u.label}}" style="height: 40px; border: 0; border-radius: 11px; font: 600 14px Inter, sans-serif; background: {{u.bg}}; color: {{u.fg}}"><span class="rc-long">{{u.label}}</span><span class="rc-short">{{u.short}}</span></button>
+          </sc-for>
+        </div>
+        <sc-if value="{{isWeek}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #525D73">{{daysHelp}}</span>
+            <div class="hs rc-days" style="display: flex; gap: 4px; overflow-x: auto; scroll-snap-type: x proximity">
+              <sc-for list="{{weekdays}}" as="w" hint-placeholder-count="7">
+                <button type="button" onClick="{{w.toggle}}" aria-pressed="{{w.on}}" aria-label="{{w.name}}" style="flex: 1 0 44px; min-width: 44px; height: 44px; border: 0; border-radius: 22px; font: 600 14px Inter, sans-serif; background: {{w.bg}}; color: {{w.fg}}; scroll-snap-align: start">{{w.letter}}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span style="flex: 1 1 auto; font-size: 15px; font-weight: 500">{{everyLabel}}</span>
+          <div style="display: flex; align-items: center; gap: 4px; background: #EEF1F7; border-radius: 14px; padding: 2px">
+            <button type="button" onClick="{{minus}}" aria-label="Moins" style="width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; font: 600 20px Inter, sans-serif; color: {{minusFg}}">−</button>
+            <span style="min-width: 28px; text-align: center; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700">{{every}}</span>
+            <button type="button" onClick="{{plus}}" aria-label="Plus" style="width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; font: 600 20px Inter, sans-serif; color: #0E1320">+</button>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; min-height: 40px; border-top: 1px solid #EEF1F7; padding-top: 8px; font-size: 15px"><span style="color: #525D73">Première fois</span><span style="font-weight: 500">{{start}}</span></div>
+      </section>
+
+      <h2 style="margin: 6px 4px 0; font-size: 14px; font-weight: 600">Fin</h2>
+      <section style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; background: #EEF1F7; border-radius: 14px; padding: 4px">
+          <sc-for list="{{ends}}" as="e" hint-placeholder-count="3">
+            <button type="button" onClick="{{e.pick}}" aria-pressed="{{e.on}}" style="height: 40px; border: 0; border-radius: 11px; font: 600 13px Inter, sans-serif; background: {{e.bg}}; color: {{e.fg}}" aria-label="{{e.label}}"><span class="rc-long">{{e.label}}</span><span class="rc-short">{{e.short}}</span></button>
+          </sc-for>
+        </div>
+        <sc-if value="{{endCount}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span style="flex: 1 1 auto; font-size: 15px; font-weight: 500">Nombre de fois</span>
+            <div style="display: flex; align-items: center; gap: 4px; background: #EEF1F7; border-radius: 14px; padding: 2px">
+              <button type="button" onClick="{{countMinus}}" aria-label="Une fois de moins" style="width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; font: 600 20px Inter, sans-serif; color: #0E1320">−</button>
+              <span style="min-width: 28px; text-align: center; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700">{{count}}</span>
+              <button type="button" onClick="{{countPlus}}" aria-label="Une fois de plus" style="width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; font: 600 20px Inter, sans-serif; color: #0E1320">+</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{endDate}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; font-size: 15px"><span style="font-weight: 500">Dernière date possible</span><span style="font-weight: 600; color: #0A7355">8 juin 2027</span></div>
+        </sc-if>
+        <span style="font-size: 13px; line-height: 18px; color: #525D73">{{endHelp}}</span>
+      </section>
+
+      <section style="background: #5EEAB5; border-radius: 18px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 15px; font-weight: 600">{{summary}}</span>
+        <span style="font-size: 13px">Prochaines dates : {{next}}</span>
+      </section>
+
+      <h2 style="margin: 6px 4px 0; font-size: 14px; font-weight: 600">À chaque échéance</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #FFFFFF; border-radius: 16px; padding: 4px">
+        <sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
+          <button type="button" onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="height: 44px; border: 0; border-radius: 12px; font: 600 14px Inter, sans-serif; background: {{m.bg}}; color: {{m.fg}}">{{m.label}}</button>
+        </sc-for>
+      </div>
+      <span style="margin: 0 4px; font-size: 14px; line-height: 20px; color: #525D73">{{modeHelp}}</span>
+    </div>
+  </div>
+  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: linear-gradient(rgba(238,241,247,0), #EEF1F7 45%); pointer-events: none"></div>
+  <button type="button" style="position: absolute; left: 16px; right: 16px; bottom: 16px; height: 54px; border: 0; border-radius: 18px; background: #5EEAB5; color: #0E1320; font: 600 16px Inter, sans-serif">Enregistrer</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":340,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { unit: 'week', every: 1, end: 'never', count: 6, mode: 'direct', days: [0, 3] };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var U = {
+      day:   { label: 'Jour',    one: 'jour',    many: 'jours',   start: new Date(2026, 10, 11) },
+      week:  { label: 'Semaine', one: 'semaine', many: 'semaines', start: new Date(2026, 10, 16) },
+      month: { label: 'Mois',    one: 'mois',    many: 'mois',    start: new Date(2026, 11, 8) },
+      year:  { label: 'Année',   one: 'an',      many: 'ans',     start: new Date(2027, 10, 8) }
+    };
+    var u = U[st.unit];
+    var n = st.every;
+    var add = function (d, k) {
+      var x = new Date(d.getTime());
+      if (st.unit === 'day') x.setDate(x.getDate() + k * n);
+      if (st.unit === 'week') x.setDate(x.getDate() + 7 * k * n);
+      if (st.unit === 'month') x.setMonth(x.getMonth() + k * n);
+      if (st.unit === 'year') x.setFullYear(x.getFullYear() + k * n);
+      return x;
+    };
+    var fmt = function (d) {
+      var s = d.getDate() + ' ' + ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'][d.getMonth()];
+      return d.getFullYear() !== 2026 ? s + ' ' + d.getFullYear() : s;
+    };
+    var limit = new Date(2027, 5, 8);
+    var DAYS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+    var days = (st.days || [0]).slice().sort();
+    var list = [];
+    if (st.unit === 'week') {
+      var ref = new Date(2026, 10, 16);  // the Monday of the first week
+      for (var i = 0; list.length < 3 && i < 400; i++) {
+        var x = new Date(2026, 10, 16 + i);
+        var wd = (x.getDay() + 6) % 7, wk = Math.floor(i / 7);
+        if (days.indexOf(wd) >= 0 && wk % n === 0) list.push(x);
+      }
+    } else {
+      for (var k2 = 0; k2 < 3; k2++) list.push(add(u.start, k2));
+    }
+    var dates = [];
+    for (var k = 0; k < list.length; k++) {
+      if (st.end === 'count' && k >= st.count) break;
+      if (st.end === 'date' && list[k] > limit) break;
+      dates.push(fmt(list[k]));
+    }
+    var dayNames = days.map(function (i) { return DAYS[i]; });
+    var dayText = dayNames.length === 1 ? dayNames[0] : dayNames.slice(0, -1).join(', ') + ' et ' + dayNames[dayNames.length - 1];
+    var leNames = dayNames.map(function (x) { return 'le ' + x; });
+    var leText = leNames.length === 1 ? leNames[0] : leNames.slice(0, -1).join(', ') + ' et ' + leNames[leNames.length - 1];
+    leText = leText.charAt(0).toUpperCase() + leText.slice(1);
+    var rhythm = {
+      day: n === 1 ? 'Chaque jour' : 'Tous les ' + n + ' jours',
+      week: n === 1 ? 'Chaque ' + dayText : (n === 2 ? leText + ', une semaine sur deux' : leText + ', toutes les ' + n + ' semaines'),
+      month: n === 1 ? 'Le 8 de chaque mois' : 'Le 8, tous les ' + n + ' mois',
+      year: n === 1 ? 'Chaque 8 novembre' : 'Le 8 novembre, tous les ' + n + ' ans'
+    }[st.unit];
+    var endText = st.end === 'never' ? ', sans fin' : (st.end === 'count' ? ', ' + st.count + ' fois en tout' : ', jusqu’au 8 juin 2027');
+    var rows = [
+      { label: 'Libellé', value: 'Internet' },
+      { label: 'Montant', value: '30,00 $' },
+      { label: 'Compte', value: 'M-Pesa, USD' },
+      { label: 'Catégorie', value: 'Logement' }
+    ].map(function (r, i) { r.border = i === 0 ? '0' : '1px solid #EEF1F7'; return r; });
+    var seg = function (on) { return { bg: on ? '#0E1320' : 'transparent', fg: on ? '#FFFFFF' : '#0E1320' }; };
+    return {
+      rows: rows,
+      units: ['day', 'week', 'month', 'year'].map(function (id) {
+        var s = seg(st.unit === id);
+        return { label: U[id].label, short: U[id].label.charAt(0), on: st.unit === id, bg: s.bg, fg: s.fg, pick: function () { self.setState({ unit: id }); } };
+      }),
+      every: String(n),
+      everyLabel: n === 1 ? { day: 'Tous les jours', week: 'Toutes les semaines', month: 'Tous les mois', year: 'Tous les ans' }[st.unit] : (st.unit === 'week' ? 'Toutes les ' : 'Tous les ') + n + ' ' + u.many,
+      skipHelp: n === 1 ? 'Rien n’est sauté' : (n - 1) + ' ' + (n - 1 > 1 ? u.many : u.one) + ' sauté' + (st.unit === 'week' ? 'e' : '') + (n - 1 > 1 ? 's' : '') + ' entre deux fois',
+      minusFg: n === 1 ? '#B6BDCB' : '#0E1320',
+      minus: function () { self.setState({ every: Math.max(1, self.state.every - 1) }); },
+      plus: function () { self.setState({ every: Math.min(12, self.state.every + 1) }); },
+      start: fmt(list[0]),
+      isWeek: st.unit === 'week',
+      daysHelp: (days.length === 1 ? 'Le ' + dayText : 'Le ' + leText.slice(3)) + (n === 1 ? ', chaque semaine' : ', toutes les ' + n + ' semaines'),
+      weekdays: DAYS.map(function (name, i) {
+        var on = days.indexOf(i) >= 0;
+        return { name: name.charAt(0).toUpperCase() + name.slice(1), letter: name.charAt(0).toUpperCase(), on: on,
+          bg: on ? '#0A7355' : '#EEF1F7', fg: on ? '#FFFFFF' : '#0E1320',
+          toggle: function () { var d2 = days.slice(); var k3 = d2.indexOf(i); if (k3 >= 0) { if (d2.length > 1) d2.splice(k3, 1); } else d2.push(i); self.setState({ days: d2 }); } };
+      }),
+      ends: [{ id: 'never', label: 'Jamais', short: 'Jamais' }, { id: 'count', label: 'Après X fois', short: 'X fois' }, { id: 'date', label: 'À une date', short: 'À une date' }].map(function (e) {
+        var s = seg(st.end === e.id);
+        return { label: e.label, short: e.short, on: st.end === e.id, bg: s.bg, fg: s.fg, pick: function () { self.setState({ end: e.id }); } };
+      }),
+      endCount: st.end === 'count', endDate: st.end === 'date',
+      count: String(st.count),
+      countMinus: function () { self.setState({ count: Math.max(1, self.state.count - 1) }); },
+      countPlus: function () { self.setState({ count: self.state.count + 1 }); },
+      endHelp: st.end === 'never' ? 'La récurrence continue jusqu’à ce que vous l’arrêtiez.' : (st.end === 'count' ? 'Utile pour un crédit ou des mensualités : elle s’arrête toute seule.' : 'Aucune opération ne sera créée après cette date.'),
+      summary: rhythm + endText,
+      next: dates.join(', '),
+      modes: [{ id: 'direct', label: 'Enregistrer' }, { id: 'draft', label: 'Préparer un brouillon' }].map(function (m) {
+        var on = st.mode === m.id;
+        return { label: m.label, on: on, bg: on ? '#0E1320' : 'transparent', fg: on ? '#FFFFFF' : '#0E1320', pick: function () { self.setState({ mode: m.id }); } };
+      }),
+      modeHelp: st.mode === 'direct' ? 'L’opération est ajoutée automatiquement à sa date.' : 'Un brouillon attend votre validation, utile si le montant varie.'
+    };
+  }
+}
+</script>
+</body>
+</html>

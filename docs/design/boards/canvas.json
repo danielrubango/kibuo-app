@@ -1,0 +1,2903 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "APropos.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "À propos : logo, version, confidentialité, licences",
+      "w": 390,
+      "x": 1880,
+      "y": 2700
+    },
+    "AffichageIcones.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Affichage de la liste : brouillons et opérations prévues",
+      "w": 390,
+      "x": 2820,
+      "y": 2700
+    },
+    "AideSupport.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Aide et support : questions fréquentes, WhatsApp et e-mail",
+      "w": 390,
+      "x": 1410,
+      "y": 2700
+    },
+    "ApercuP2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Retenu · ‹ période › à droite du titre, onglets Évolution, Catégories, Patrimoine",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "ApercuP2Ouvert.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Retenu · la période touchée : période, regroupement, comparaison",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "ApercuTAn.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Points suivis · 1 an : épargne, moyenne par mois, patrimoine",
+      "w": 390,
+      "x": 940,
+      "y": 1480
+    },
+    "ApercuTJour.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Points suivis · Aujourd’hui : comparé à une journée moyenne, ce qui reste, ce qui arrive",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "ApercuTMois.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Points suivis · 1 mois : 4 tuiles, « Voir les 4 autres » déplie le reste",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "ApercuTPerso.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Points suivis · période personnalisée (73 jours) : se règle sur sa longueur",
+      "w": 390,
+      "x": 1410,
+      "y": 1480
+    },
+    "ApercuTSuivre.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Points suivis · « Suivre » : choisir ses tuiles, dont celles de l’écran 4",
+      "w": 390,
+      "x": 940,
+      "y": 260
+    },
+    "ApercuTuile.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "apercu",
+      "title": "Une tuile agrandie : carte au centre, fond flouté, la suivante dépasse",
+      "w": 390,
+      "x": 1410,
+      "y": 260
+    },
+    "ApresFeuilleB.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "10. Enregistrée : retour sur Opérations",
+      "w": 390,
+      "x": 4230,
+      "y": 3920
+    },
+    "ApresRevenu.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "8. Enregistré : retour sur Opérations",
+      "w": 390,
+      "x": 3290,
+      "y": 5140
+    },
+    "ApresTransfert.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "7. Enregistré : retour sur Opérations",
+      "w": 390,
+      "x": 2820,
+      "y": 6360
+    },
+    "Aujourdhui.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Accueil « Aujourd’hui » : disponible, bilan du mois, dettes et créances, à traiter, à venir",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "BarreIconesA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 8460,
+      "y": 120
+    },
+    "BarreIconesB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 8930,
+      "y": 120
+    },
+    "BarreIconesC.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 9400,
+      "y": 120
+    },
+    "BarreIconesPh.dc.html": {
+      "h": 844,
+      "page": "accueil",
+      "title": "Barre du bas · Phosphor et pastille (validée)",
+      "w": 390,
+      "x": 1410,
+      "y": 7580
+    },
+    "BrouS1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "plusieurs brouillons : cocher, toucher pour ouvrir la fiche",
+      "w": 390,
+      "x": 0,
+      "y": 3920
+    },
+    "BrouS1Un.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "un seul brouillon : la ligne ouvre la fiche, « Valider »",
+      "w": 390,
+      "x": 470,
+      "y": 3920
+    },
+    "BrouillonA3.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Brouillons : à leur date, Ignorer ou Valider",
+      "w": 390,
+      "x": 1880,
+      "y": 2700
+    },
+    "BudgetDetail.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "Un budget : bilan, graphique « Total », opérations par jour",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "BudgetJourReplie.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "Un budget : un jour replié dans la liste",
+      "w": 390,
+      "x": 940,
+      "y": 1480
+    },
+    "BudgetNouveau.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "Nouveau budget : montant avec la moyenne, catégorie, période, alertes",
+      "w": 390,
+      "x": 1410,
+      "y": 260
+    },
+    "BudgetRythme.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "Un budget : graphique sur « Rythme »",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "Budgets.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "Budgets : tuiles par défaut, bilan du mois, trait du jour",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "BudgetsAffichage.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "« Affichage des budgets » : disposition et ordre",
+      "w": 390,
+      "x": 940,
+      "y": 260
+    },
+    "BudgetsListe.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "budgets",
+      "title": "Budgets en liste, groupée par état",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "CacheRecentes.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Kibuo masqué dans les applications récentes",
+      "w": 390,
+      "x": 3760,
+      "y": 3920
+    },
+    "CatModif.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Modifier la catégorie (validé)",
+      "w": 390,
+      "x": 7990,
+      "y": 260
+    },
+    "CatNouvelle.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Nouvelle sous-catégorie (validé)",
+      "w": 390,
+      "x": 7520,
+      "y": 260
+    },
+    "Categories.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Catégories",
+      "w": 390,
+      "x": 3760,
+      "y": 260
+    },
+    "CentimesA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 9870,
+      "y": 120
+    },
+    "CentimesB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 10340,
+      "y": 120
+    },
+    "CodeOublie.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "« Code oublié ? »",
+      "w": 390,
+      "x": 3290,
+      "y": 3920
+    },
+    "CodeRecup.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Code de récupération",
+      "w": 390,
+      "x": 4700,
+      "y": 260
+    },
+    "CompteModifA.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Modifier le compte : type et nom, puis « Archiver » en ligne rouge (le solde de départ ne se modifie plus)",
+      "w": 390,
+      "x": 6110,
+      "y": 260
+    },
+    "CompteModifB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 10810,
+      "y": 120
+    },
+    "CompteNouveau.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Nouveau compte (validé le 15 novembre)",
+      "w": 390,
+      "x": 5640,
+      "y": 260
+    },
+    "Comptes.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Comptes : un compte par carte, projets dessous, puces qui changent le total",
+      "w": 390,
+      "x": 1880,
+      "y": 260
+    },
+    "ComptesAffichage.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Comptes : « Affichage des comptes », seulement avec plusieurs devises",
+      "w": 390,
+      "x": 2820,
+      "y": 260
+    },
+    "ComptesRepli.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Comptes : types repliés (nom, nombre de comptes, total)",
+      "w": 390,
+      "x": 2350,
+      "y": 260
+    },
+    "ConfirmA.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "A · Feuille qui se ferme seule, avec actions",
+      "w": 390,
+      "x": 0,
+      "y": 6216
+    },
+    "ConfirmArchive.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Archiver un compte",
+      "w": 390,
+      "x": 470,
+      "y": 8188
+    },
+    "ConfirmB.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "B · Message plus grand, posé en bas",
+      "w": 390,
+      "x": 430,
+      "y": 6216
+    },
+    "ConfirmCategorie.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Supprimer une catégorie",
+      "w": 390,
+      "x": 940,
+      "y": 8188
+    },
+    "ConfirmDevises.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Retirer des devises",
+      "w": 390,
+      "x": 1410,
+      "y": 8188
+    },
+    "DSBoutons.dc.html": {
+      "h": 900,
+      "page": "systeme",
+      "title": "Boutons",
+      "w": 900,
+      "x": 980,
+      "y": 1260
+    },
+    "DSChamps.dc.html": {
+      "h": 900,
+      "page": "systeme",
+      "title": "Champs de saisie",
+      "w": 900,
+      "x": 0,
+      "y": 1260
+    },
+    "DSCouleurs.dc.html": {
+      "h": 1000,
+      "page": "systeme",
+      "title": "Couleurs",
+      "w": 1300,
+      "x": 0,
+      "y": 160
+    },
+    "DSEspaces.dc.html": {
+      "h": 760,
+      "page": "systeme",
+      "title": "Espaces, coins et hauteurs",
+      "w": 1000,
+      "x": 2560,
+      "y": 160
+    },
+    "DSFeuilles.dc.html": {
+      "h": 720,
+      "page": "systeme",
+      "title": "Feuilles, clavier et en-têtes",
+      "w": 900,
+      "x": 2940,
+      "y": 1260
+    },
+    "DSListes.dc.html": {
+      "h": 1100,
+      "page": "systeme",
+      "title": "Listes et cartes",
+      "w": 900,
+      "x": 1960,
+      "y": 1260
+    },
+    "DSPolices.dc.html": {
+      "h": 760,
+      "page": "systeme",
+      "title": "Polices : C retenue",
+      "w": 1340,
+      "x": 0,
+      "y": 2600
+    },
+    "DSTextes.dc.html": {
+      "h": 1000,
+      "page": "systeme",
+      "title": "Textes",
+      "w": 1100,
+      "x": 1380,
+      "y": 160
+    },
+    "DecouvertA.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Découvert : la limite dans la carte",
+      "w": 390,
+      "x": 0,
+      "y": 6100
+    },
+    "DecouvertComptes.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Comptes : le découvert de chaque compte",
+      "w": 390,
+      "x": 940,
+      "y": 6100
+    },
+    "DecouvertSaisieA.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Saisie refusée sous le plancher",
+      "w": 390,
+      "x": 0,
+      "y": 7400
+    },
+    "DecouvertSousZero.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Retirer le découvert d’un compte sous zéro",
+      "w": 390,
+      "x": 470,
+      "y": 6100
+    },
+    "DecouvertSuppressionA.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Suppression refusée sous le plancher",
+      "w": 390,
+      "x": 470,
+      "y": 7400
+    },
+    "DelA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 11280,
+      "y": 120
+    },
+    "DelB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 11750,
+      "y": 120
+    },
+    "DelConfirm.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Puis cette confirmation",
+      "w": 390,
+      "x": 1410,
+      "y": 8444
+    },
+    "DelaiA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 12220,
+      "y": 120
+    },
+    "DelaiB.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Sécurité › Verrouillage (délai dans une feuille)",
+      "w": 390,
+      "x": 470,
+      "y": 3920
+    },
+    "DelaiC.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 12690,
+      "y": 120
+    },
+    "Demarrage.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "identite",
+      "title": "Démarrage : écran d’Android puis écran Kibuo (validé)",
+      "w": 390,
+      "x": 1040,
+      "y": 260
+    },
+    "DemarrageEC.dc.html": {
+      "h": 950,
+      "page": "identite",
+      "title": "Démarrage : rebond de la pièce, tirelire qui s’aplatit, nom en ressort (validé le 17 novembre)",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "DettesAffichage.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "dettes",
+      "title": "Dettes : affichage des soldées",
+      "w": 390,
+      "x": 1880,
+      "y": 260
+    },
+    "DettesCarteOuverte.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "dettes",
+      "title": "Dettes : une dette ouverte",
+      "w": 390,
+      "x": 1410,
+      "y": 260
+    },
+    "DettesCartes.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Dettes et créances (première visite guidée)",
+      "w": 390,
+      "x": 2350,
+      "y": 260
+    },
+    "DettesListeCreances.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "« On me doit › » : la liste ouverte sur On me doit",
+      "w": 390,
+      "x": 470,
+      "y": 5140
+    },
+    "DettesListeDois.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "« Je dois › » : la liste ouverte sur Je dois",
+      "w": 390,
+      "x": 0,
+      "y": 5140
+    },
+    "Devises.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Devises",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "EditDevA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 13160,
+      "y": 120
+    },
+    "EditDevB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 13630,
+      "y": 120
+    },
+    "EditDevC.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Devises › Modifier : « Retirer » à droite (validé)",
+      "w": 390,
+      "x": 7050,
+      "y": 260
+    },
+    "EditDevN.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Devises : « Modifier » en haut à droite (validé)",
+      "w": 390,
+      "x": 6580,
+      "y": 260
+    },
+    "EtatBarre.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Totaux : la barre se colore seulement en alerte",
+      "w": 390,
+      "x": 470,
+      "y": 2700
+    },
+    "ExportCSV.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Exporter en CSV : période, comptes, brouillons et notes ; « Exporter » en bas",
+      "w": 390,
+      "x": 940,
+      "y": 2700
+    },
+    "FicheDette.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Fiche d'une dette",
+      "w": 390,
+      "x": 2820,
+      "y": 260
+    },
+    "FicheDettePetit.dc.html": {
+      "h": 720,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Fiche d'une dette, petit écran (340 px)",
+      "w": 340,
+      "x": 3290,
+      "y": 260
+    },
+    "FicheProjet.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "page": "projets",
+      "title": "Un projet : bilan, « Mettre de côté », le plan (par semaine), versements",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "FicheProjetMois.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "page": "projets",
+      "title": "Le plan par mois",
+      "w": 390,
+      "x": 940,
+      "y": 1480
+    },
+    "FicheProjetQuinzaine.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "page": "projets",
+      "title": "Le plan par quinzaine",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "FicheProjetSansDate.dc.html": {
+      "h": 844,
+      "page": "projets",
+      "title": "Sans date : « À votre rythme », pas de plan, un versement repris en gris",
+      "w": 390,
+      "x": 0,
+      "y": 2600
+    },
+    "FiltreMenuC.dc.html": {
+      "h": 1000,
+      "page": "operations",
+      "title": "Menu des filtres : les catégories du mois, les autres en feuille (validé le 17 novembre)",
+      "w": 390,
+      "x": 470,
+      "y": 9488
+    },
+    "FraisFeuille.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "5. Frais supplémentaires, dans la devise du compte",
+      "w": 390,
+      "x": 1880,
+      "y": 3920
+    },
+    "JoursRepliables.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Liste : replier un jour, solde du jour sans les transferts",
+      "w": 390,
+      "x": 0,
+      "y": 9488
+    },
+    "Lancement1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "lancement",
+      "title": "1. Langue",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "Lancement2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "lancement",
+      "title": "2. Devise principale",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "Lancement3.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "lancement",
+      "title": "3. Premier compte",
+      "w": 390,
+      "x": 940,
+      "y": 260
+    },
+    "Lancement3Decouvert.dc.html": {
+      "h": 920,
+      "page": "lancement",
+      "title": "3. Premier compte : le découvert (fermé, ouvert)",
+      "w": 820,
+      "x": 0,
+      "y": 1300
+    },
+    "Lancement4.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "lancement",
+      "title": "4. Protection",
+      "w": 390,
+      "x": 1410,
+      "y": 260
+    },
+    "ListeAnneePrec.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "3. Dans le choix : année précédente",
+      "w": 390,
+      "x": 940,
+      "y": 1480
+    },
+    "ListeFiltreOuvert.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Filtre ouvert : Tous, nombres, coche ou point",
+      "w": 390,
+      "x": 940,
+      "y": 2700
+    },
+    "ListeMoisOuvert.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "2. Titre touché : choix flottant, année et 12 mois",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "ListeMoisPasse.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "4. Après un glissement : octobre, « Ce mois-ci » pour revenir",
+      "w": 390,
+      "x": 1410,
+      "y": 1480
+    },
+    "ListeOnboard.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "1. Première visite : le geste montré, le fond en retrait",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "ListeOperations.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Liste du mois : totaux, filtres, lignes",
+      "w": 390,
+      "x": 0,
+      "y": 2700
+    },
+    "ListePetit.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "5. Petit écran (340 px)",
+      "w": 340,
+      "x": 1880,
+      "y": 1480
+    },
+    "LogoA1.dc.html": {
+      "h": 420,
+      "page": "identite",
+      "title": "Logo retenu et icône Android : formes, petites tailles, icône à thème",
+      "w": 920,
+      "x": 0,
+      "y": 800
+    },
+    "LogoCentrage.dc.html": {
+      "h": 640,
+      "w": 1040,
+      "x": 14100,
+      "y": 120
+    },
+    "Main.dc.html": {
+      "h": 420,
+      "page": "identite",
+      "title": "Logo retenu",
+      "w": 900,
+      "x": 0,
+      "y": 260
+    },
+    "MontantsAutoA.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Automatique (d’office)",
+      "w": 390,
+      "x": 430,
+      "y": 10336
+    },
+    "MontantsJamais.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Jamais",
+      "w": 390,
+      "x": 1290,
+      "y": 10336
+    },
+    "MontantsReglage.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Réglages › Montants longs (validé le 17 novembre)",
+      "w": 390,
+      "x": 0,
+      "y": 10336
+    },
+    "MontantsToujoursA.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Toujours, dès 10 000",
+      "w": 390,
+      "x": 860,
+      "y": 10336
+    },
+    "NomChoix.dc.html": {
+      "h": 900,
+      "page": "identite",
+      "title": "Le nom : kibuo gardé face à bombika, akibao, tirelia (17 novembre)",
+      "w": 1560,
+      "x": 860,
+      "y": 1480
+    },
+    "NomMinusculeB.dc.html": {
+      "h": 1130,
+      "page": "identite",
+      "title": "kibuo en minuscules, la pièce en point du i (validé le 17 novembre)",
+      "w": 390,
+      "x": 430,
+      "y": 1480
+    },
+    "NoterKibuo.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Noter Kibuo : une feuille, les étoiles, puis le Play Store",
+      "w": 390,
+      "x": 2350,
+      "y": 2700
+    },
+    "NouvelleDette.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "dettes",
+      "title": "Nouvelle dette",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "OpDetteA.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "A · Étiquette",
+      "w": 390,
+      "x": 0,
+      "y": 3808
+    },
+    "OpDetteA1.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "A1 · Fond teinté léger",
+      "w": 390,
+      "x": 0,
+      "y": 5012
+    },
+    "OpDetteA2.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "A2 · Fond teinté, tuile blanche",
+      "w": 390,
+      "x": 430,
+      "y": 5012
+    },
+    "OpDetteA3.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "A3 · Fond teinté, fin contour",
+      "w": 390,
+      "x": 860,
+      "y": 5012
+    },
+    "OpDetteA4.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "A4 · Fin contour seul",
+      "w": 390,
+      "x": 1290,
+      "y": 5012
+    },
+    "OpDetteB.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "B · Pointillés, montant gris",
+      "w": 390,
+      "x": 430,
+      "y": 3808
+    },
+    "OpDetteC.dc.html": {
+      "h": 844,
+      "page": "en-cours",
+      "title": "C · Montant entouré",
+      "w": 390,
+      "x": 860,
+      "y": 3808
+    },
+    "OperationCarteBrouillon.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Brouillon de récurrence, à valider",
+      "w": 390,
+      "x": 1410,
+      "y": 260
+    },
+    "OperationCarteIgnoree.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Brouillon ignoré : on le valide depuis son détail",
+      "w": 390,
+      "x": 2350,
+      "y": 2700
+    },
+    "OperationCarteRevenu.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Revenu",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "OperationCarteTransfert.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Transfert",
+      "w": 390,
+      "x": 940,
+      "y": 260
+    },
+    "OperationCopieSaisie.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Dupliquer : la saisie, préremplie à la date du jour",
+      "w": 390,
+      "x": 2350,
+      "y": 260
+    },
+    "OperationDetailBas.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Dépense",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "OperationEdition.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Modifier : la saisie, préremplie",
+      "w": 390,
+      "x": 1880,
+      "y": 260
+    },
+    "Operations.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Opérations",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "PJLignes.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "8. Pièces jointes : lignes avec aperçu, 5 au plus",
+      "w": 390,
+      "x": 3290,
+      "y": 3920
+    },
+    "PJSelBarre.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "9. Pièces jointes : plusieurs choisies, barre en bas",
+      "w": 390,
+      "x": 3760,
+      "y": 3920
+    },
+    "PJVoirPdf.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Voir un PDF : la première page, « Ouvrir avec… » (une appli du téléphone)",
+      "w": 390,
+      "x": 470,
+      "y": 8444
+    },
+    "PJVoirPhoto.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Voir une photo : en grand, rien à modifier ici (on touche la pièce dans le détail ; à la saisie ou dans « Modifier », «",
+      "w": 390,
+      "x": 0,
+      "y": 8444
+    },
+    "ParcoursDevise.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "2. Payé en francs : choisir la devise",
+      "w": 390,
+      "x": 470,
+      "y": 3920
+    },
+    "ParcoursFC.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "3. Montant en francs, conversion en direct",
+      "w": 390,
+      "x": 940,
+      "y": 3920
+    },
+    "ParcoursTaux.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "4. Au besoin, changer le taux",
+      "w": 390,
+      "x": 1410,
+      "y": 3920
+    },
+    "ParcoursUSD.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "1. Dépense en dollars : clavier ouvert, « Terminé » le range",
+      "w": 390,
+      "x": 0,
+      "y": 3920
+    },
+    "PinAttente.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 15220,
+      "y": 120
+    },
+    "PinAttenteC2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Après 5 codes faux : attendre",
+      "w": 390,
+      "x": 2820,
+      "y": 3920
+    },
+    "PinCreaA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 15690,
+      "y": 120
+    },
+    "PinCreaB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 16160,
+      "y": 120
+    },
+    "PinCreaC.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 16630,
+      "y": 120
+    },
+    "PinCreaC1.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 17100,
+      "y": 120
+    },
+    "PinCreaC2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Créer le code (4 à 6 chiffres, puis « Valider »)",
+      "w": 390,
+      "x": 1410,
+      "y": 3920
+    },
+    "PinCreaC3.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 17570,
+      "y": 120
+    },
+    "PinEmpreinte.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Proposer l’empreinte, juste après le code",
+      "w": 390,
+      "x": 1880,
+      "y": 3920
+    },
+    "Plus.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Plus : mes espaces, Réglages et Sauvegarde sur une ligne chacun, aide",
+      "w": 390,
+      "x": 0,
+      "y": 6360
+    },
+    "PlusAncienne.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Sauvegarde ancienne : point ambre sur l’icône, texte en ambre",
+      "w": 390,
+      "x": 470,
+      "y": 6360
+    },
+    "PlusBtnB1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Toucher + : la feuille « Ajouter », Dépense en grand, « Refaire »",
+      "w": 390,
+      "x": 0,
+      "y": 7580
+    },
+    "PlusBtnC1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Maintenir + : l’éventail, glisser vers un choix",
+      "w": 390,
+      "x": 470,
+      "y": 7580
+    },
+    "PlusBtnC2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Astuce de l’appui long, après quelques ouvertures du menu",
+      "w": 390,
+      "x": 940,
+      "y": 7580
+    },
+    "ProjetAtteint.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "projets",
+      "title": "Objectif atteint : dépensé, gardé, ou rendu disponible",
+      "w": 390,
+      "x": 1410,
+      "y": 1480
+    },
+    "ProjetMettreRefus.dc.html": {
+      "h": 980,
+      "page": "projets",
+      "title": "Mettre de côté depuis un autre compte : transfert annoncé, refus au-delà du libre",
+      "w": 390,
+      "x": 470,
+      "y": 2600
+    },
+    "ProjetNouveau.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "projets",
+      "title": "Nouveau projet : nom et icône, objectif, compte, date, division du plan, rappel",
+      "w": 390,
+      "x": 470,
+      "y": 260
+    },
+    "ProjetP1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "progression, montant et compte à toucher, « Mettre de côté »",
+      "w": 390,
+      "x": 2820,
+      "y": 3920
+    },
+    "ProjetReprendre.dc.html": {
+      "h": 980,
+      "page": "projets",
+      "title": "Reprendre de l’argent : « Tout », aucune opération",
+      "w": 390,
+      "x": 940,
+      "y": 2600
+    },
+    "ProjetSupprimer.dc.html": {
+      "h": 844,
+      "page": "projets",
+      "title": "Supprimer : la confirmation",
+      "w": 390,
+      "x": 1880,
+      "y": 2600
+    },
+    "ProjetTermine.dc.html": {
+      "h": 844,
+      "page": "projets",
+      "title": "Projet terminé : lecture seule, « Supprimer le projet »",
+      "w": 390,
+      "x": 1410,
+      "y": 2600
+    },
+    "Projets.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "projets",
+      "title": "Projets : bilan, une carte par projet, trait « où vous devriez en être »",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "ProtectionCodeB.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Puis le code, dans une feuille",
+      "w": 390,
+      "x": 1880,
+      "y": 8188
+    },
+    "Rappels.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Rappels",
+      "w": 390,
+      "x": 940,
+      "y": 260
+    },
+    "RechercheR2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Recherche : tous les mois, le mois affiché d’abord",
+      "w": 390,
+      "x": 3290,
+      "y": 2700
+    },
+    "ReclamerR1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "la personne et le retard, le message, « Envoyer »",
+      "w": 390,
+      "x": 1880,
+      "y": 3920
+    },
+    "RecuTotal.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "7. Décompte replié sur le total",
+      "w": 390,
+      "x": 2820,
+      "y": 3920
+    },
+    "RecupIllisible.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Données illisibles · avec le code de récupération",
+      "w": 390,
+      "x": 0,
+      "y": 4960
+    },
+    "RecupPreuve.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Prouver qu’on a noté le code",
+      "w": 390,
+      "x": 940,
+      "y": 4960
+    },
+    "RecupReglage.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Sécurité › Code de récupération",
+      "w": 390,
+      "x": 1410,
+      "y": 4960
+    },
+    "RecupSaisie.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Saisir le code de récupération",
+      "w": 390,
+      "x": 470,
+      "y": 4960
+    },
+    "Recurrence.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "dettes",
+      "title": "Nouvelle récurrence",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "RecurrenceFiche.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "en-cours",
+      "title": "La fiche d’une récurrence : prochaines fois, dernières fois, Arrêter",
+      "w": 390,
+      "x": 860,
+      "y": 2604
+    },
+    "RecurrencePetit.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "dettes",
+      "title": "Nouvelle récurrence, petit écran (340 px)",
+      "w": 340,
+      "x": 2350,
+      "y": 260
+    },
+    "RecurrencesA.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "en-cours",
+      "title": "A · retenue : Récurrences groupées par type",
+      "w": 390,
+      "x": 0,
+      "y": 2604
+    },
+    "RecurrencesB.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "en-cours",
+      "title": "B · non retenue",
+      "w": 390,
+      "x": 430,
+      "y": 2604
+    },
+    "ReglageDebutMois.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Début du mois : une feuille sur Réglages, une roue qui défile, « Enregistrer »",
+      "w": 390,
+      "x": 470,
+      "y": 2700
+    },
+    "ReglageLangue.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Langue : une feuille sur Réglages, liste qui défile, la langue choisie cochée",
+      "w": 390,
+      "x": 0,
+      "y": 2700
+    },
+    "Reglages.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Réglages",
+      "w": 390,
+      "x": 0,
+      "y": 260
+    },
+    "ReglagesBrouillons.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Réglages › Récurrences et brouillons",
+      "w": 390,
+      "x": 5170,
+      "y": 260
+    },
+    "RegulFeuille.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Enregistrer : la différence devient une opération",
+      "w": 390,
+      "x": 470,
+      "y": 7144
+    },
+    "RegulFormA.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "« Solde actuel », un champ sous le nom",
+      "w": 390,
+      "x": 0,
+      "y": 7144
+    },
+    "RegulFormB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 18040,
+      "y": 120
+    },
+    "RegulListe.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "Dans la liste",
+      "w": 390,
+      "x": 1880,
+      "y": 8444
+    },
+    "RembourserV3.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "progression de la dette, montant, compte, date, « Rembourser »",
+      "w": 390,
+      "x": 2350,
+      "y": 3920
+    },
+    "RepeterA.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "en-cours",
+      "title": "A · retenue : une ligne « Répéter » qui ouvre Nouvelle récurrence",
+      "w": 390,
+      "x": 0,
+      "y": 1460
+    },
+    "RepeterB.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "en-cours",
+      "title": "B · non retenue",
+      "w": 390,
+      "x": 430,
+      "y": 1460
+    },
+    "RepeterC.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "en-cours",
+      "title": "C · non retenue",
+      "w": 390,
+      "x": 860,
+      "y": 1460
+    },
+    "RestauC1.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Restaurer : la frise (gardé jusqu’à la sauvegarde, remplacé ensuite), le mot de passe, « Maintenir pour remplacer »",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "RestauC1Err.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Restaurer : mauvais mot de passe",
+      "w": 390,
+      "x": 940,
+      "y": 1480
+    },
+    "RestauC2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Restaurer : appui long en cours, la barre se remplit",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "RestauC3.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Restaurer : c’est fait, ce qui est revenu et où est la copie d’avant",
+      "w": 390,
+      "x": 1410,
+      "y": 1480
+    },
+    "RestauNeuf.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "lancement",
+      "title": "« J’ai une sauvegarde » : contenu flouté et « Restaurer » grisé tant que le mot de passe n’est pas bon",
+      "w": 390,
+      "x": 1880,
+      "y": 260
+    },
+    "RevenuCategorie.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "6. Catégorie de revenu",
+      "w": 390,
+      "x": 2350,
+      "y": 5140
+    },
+    "RevenuDecompte.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "7. Décompte déroulé : ajouté au compte",
+      "w": 390,
+      "x": 2820,
+      "y": 5140
+    },
+    "RevenuDevise.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "2. Reçu en francs : choisir la devise",
+      "w": 390,
+      "x": 470,
+      "y": 5140
+    },
+    "RevenuFC.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "3. Montant en francs, conversion en direct",
+      "w": 390,
+      "x": 940,
+      "y": 5140
+    },
+    "RevenuFrais.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "5. Frais déduits, dans la devise du compte",
+      "w": 390,
+      "x": 1880,
+      "y": 5140
+    },
+    "RevenuTaux.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "4. Au besoin, changer le taux",
+      "w": 390,
+      "x": 1410,
+      "y": 5140
+    },
+    "RevenuUSD.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "1. Revenu en dollars : clavier ouvert",
+      "w": 390,
+      "x": 0,
+      "y": 5140
+    },
+    "RevueCodeOublie.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Code oublié · Proche",
+      "w": 1260,
+      "x": 2680,
+      "y": 2280
+    },
+    "RevueCodeRecup.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Noter le code de récupération · Écart voulu",
+      "w": 1260,
+      "x": 2680,
+      "y": 3340
+    },
+    "RevueDelaiB.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Verrouillage · Proche",
+      "w": 1260,
+      "x": 1340,
+      "y": 1220
+    },
+    "RevueDevises.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Devises · À revoir",
+      "w": 1260,
+      "x": 0,
+      "y": 160
+    },
+    "RevueLancement2.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Choix d’une devise · Écart voulu",
+      "w": 1260,
+      "x": 2680,
+      "y": 160
+    },
+    "RevuePinCreaC2.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Créer le code · Proche",
+      "w": 1260,
+      "x": 0,
+      "y": 3340
+    },
+    "RevuePinEmpreinte.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Proposer l’empreinte · Proche",
+      "w": 1260,
+      "x": 1340,
+      "y": 3340
+    },
+    "RevueRecupIllisible.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Données illisibles · Proche",
+      "w": 1260,
+      "x": 2680,
+      "y": 4400
+    },
+    "RevueRecupPreuve.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Prouver qu’on a noté le code · Proche",
+      "w": 1260,
+      "x": 0,
+      "y": 4400
+    },
+    "RevueRecupReglage.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Code de récupération (réglage) · Proche",
+      "w": 1260,
+      "x": 0,
+      "y": 2280
+    },
+    "RevueRecupSaisie.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Saisir le code de récupération · Proche",
+      "w": 1260,
+      "x": 1340,
+      "y": 4400
+    },
+    "RevueSecuConfid.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Confidentialité · Proche",
+      "w": 1260,
+      "x": 2680,
+      "y": 1220
+    },
+    "RevueSecurite.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Sécurité · À revoir",
+      "w": 1260,
+      "x": 0,
+      "y": 1220
+    },
+    "RevueTauxReglages.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Feuille du taux · À revoir",
+      "w": 1260,
+      "x": 1340,
+      "y": 160
+    },
+    "RevueVerrouC2.dc.html": {
+      "h": 960,
+      "page": "revue",
+      "title": "Déverrouiller · Proche",
+      "w": 1260,
+      "x": 1340,
+      "y": 2280
+    },
+    "SaisieCategorie.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "6. Choisir la catégorie (ou toute la catégorie)",
+      "w": 390,
+      "x": 2350,
+      "y": 3920
+    },
+    "SauvW2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "déjà une sauvegarde : rappel, dossier « Changer », chiffrement",
+      "w": 390,
+      "x": 940,
+      "y": 3920
+    },
+    "SauvW2Premiere.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "première sauvegarde : « Sélectionner » un dossier",
+      "w": 390,
+      "x": 1410,
+      "y": 3920
+    },
+    "Sauvegarde.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Sauvegarde",
+      "w": 390,
+      "x": 1410,
+      "y": 260
+    },
+    "SecuConfid.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Sécurité › Confidentialité",
+      "w": 390,
+      "x": 940,
+      "y": 3920
+    },
+    "SecuOptA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 18510,
+      "y": 120
+    },
+    "SecuOptB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 18980,
+      "y": 120
+    },
+    "SecuOptC.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 19450,
+      "y": 120
+    },
+    "SecuProtection.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 19920,
+      "y": 120
+    },
+    "SecuProtectionSansCode.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 20390,
+      "y": 120
+    },
+    "SecuVerrou.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 20860,
+      "y": 120
+    },
+    "Securite.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Sécurité",
+      "w": 390,
+      "x": 0,
+      "y": 3920
+    },
+    "SigneA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 24620,
+      "y": 120
+    },
+    "SigneB.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 25090,
+      "y": 120
+    },
+    "SigneC.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 25560,
+      "y": 120
+    },
+    "SigneD.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "Solde actuel : maintenir « , » pour « − » (avec découvert seulement)",
+      "w": 390,
+      "x": 0,
+      "y": 9232
+    },
+    "SplitA1.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 21330,
+      "y": 120
+    },
+    "SplitA2.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 21800,
+      "y": 120
+    },
+    "SplitB1.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 22270,
+      "y": 120
+    },
+    "SplitB2.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 22740,
+      "y": 120
+    },
+    "Suivi.dc.html": {
+      "h": 1080,
+      "page": "en-cours",
+      "title": "Suivi : les étapes en attente",
+      "w": 720,
+      "x": 0,
+      "y": 120
+    },
+    "TauxReglages.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Réglages › Devises › Modifier",
+      "w": 390,
+      "x": 3760,
+      "y": 3920
+    },
+    "TauxTraiter.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "« À traiter » › Modifier",
+      "w": 390,
+      "x": 3290,
+      "y": 3920
+    },
+    "Total_negatif.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Disponible négatif",
+      "w": 390,
+      "x": 2350,
+      "y": 1480
+    },
+    "Total_positif.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Situation normale",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "Total_projetzero.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Projets à 0",
+      "w": 390,
+      "x": 1410,
+      "y": 1480
+    },
+    "Total_sansprojet.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Aucun projet",
+      "w": 390,
+      "x": 940,
+      "y": 1480
+    },
+    "Total_zero.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Tout à zéro",
+      "w": 390,
+      "x": 1880,
+      "y": 1480
+    },
+    "TraiterEtatMixte.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "1 urgence : elle passe en tête, puis la semaine",
+      "w": 390,
+      "x": 940,
+      "y": 2700
+    },
+    "TraiterEtatRappels.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Seulement des rappels : pas de point",
+      "w": 390,
+      "x": 1880,
+      "y": 2700
+    },
+    "TraiterEtatSemaine.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Rien d’urgent : point ambre, cette semaine",
+      "w": 390,
+      "x": 1410,
+      "y": 2700
+    },
+    "TraiterEtatUrgent.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "Avec des urgences : point rouge, les 3 urgences",
+      "w": 390,
+      "x": 470,
+      "y": 2700
+    },
+    "TraiterListe.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "accueil",
+      "title": "La liste complète : lignes blanches, couleur dans l’icône, actions en lien",
+      "w": 390,
+      "x": 0,
+      "y": 2700
+    },
+    "TransfertDecompte.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "6. Décompte déroulé : retiré et arrivé",
+      "w": 390,
+      "x": 2350,
+      "y": 6360
+    },
+    "TransfertDevise.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "3. Vers un compte en francs : conversion",
+      "w": 390,
+      "x": 940,
+      "y": 6360
+    },
+    "TransfertFrais.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "5. Frais, dans la devise du compte de départ",
+      "w": 390,
+      "x": 1880,
+      "y": 6360
+    },
+    "TransfertMeme.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "1. Entre deux comptes en dollars",
+      "w": 390,
+      "x": 0,
+      "y": 6360
+    },
+    "TransfertTaux.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "4. Au besoin, changer le taux",
+      "w": 390,
+      "x": 1410,
+      "y": 6360
+    },
+    "TransfertVers.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "2. Choisir le compte d’arrivée",
+      "w": 390,
+      "x": 470,
+      "y": 6360
+    },
+    "TypeCompte.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Nouveau type de compte",
+      "w": 390,
+      "x": 3290,
+      "y": 260
+    },
+    "Verrou.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 23210,
+      "y": 120
+    },
+    "VerrouC2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "reglages",
+      "title": "Déverrouiller",
+      "w": 390,
+      "x": 2350,
+      "y": 3920
+    },
+    "VerrouProtection.dc.html": {
+      "h": 844,
+      "page": "reglages",
+      "title": "dans Verrouillage, seulement avec un code",
+      "w": 390,
+      "x": 0,
+      "y": 8188
+    },
+    "VideA.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 23680,
+      "y": 120
+    },
+    "VideB.dc.html": {
+      "h": 844,
+      "page": "operations",
+      "title": "B · une feuille explique avant la saisie : « D’abord, un compte »",
+      "w": 390,
+      "x": 940,
+      "y": 8444
+    },
+    "VideC.dc.html": {
+      "h": 844,
+      "w": 390,
+      "x": 24150,
+      "y": 120
+    },
+    "VideSobre.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "operations",
+      "title": "Liste vide : pointillés gris, l’action utile",
+      "w": 390,
+      "x": 1410,
+      "y": 2700
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-11-09T12:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "page": "en-cours",
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "principaux",
+    "lancement",
+    "reglages",
+    "details",
+    "operation",
+    "parcours",
+    "parcoursRevenu",
+    "parcoursTransfert",
+    "parcoursMois",
+    "listeOperations",
+    "apercuG1",
+    "apercuG2",
+    "accueilG1",
+    "accueilG2",
+    "accueilG3",
+    "accueilG4",
+    "accueilG5",
+    "reglagesRestau",
+    "accueilG6",
+    "budgetsG1",
+    "budgetsG2",
+    "projetsG1",
+    "projetsG2",
+    "reglagesSecond",
+    "reglagesSecu",
+    "reglagesRecup",
+    "revueTitre",
+    "systemeTitre",
+    "decouvert_reglages",
+    "decouvert_operations",
+    "valides_operations_1611",
+    "valides_reglages_1611",
+    "reglages_protect",
+    "enCoursB",
+    "operations_jours",
+    "identiteNom",
+    "reglagesMontants",
+    "enCoursRepeter",
+    "enCoursRecurrences",
+    "reglages_signe",
+    "enCoursOpDette",
+    "enCoursOpDetteA",
+    "enCoursConfirm"
+  ],
+  "notes": {
+    "accueilG1": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "accueil",
+      "text": "Accueil « Aujourd’hui » et les 5 situations du disponible",
+      "w": 240,
+      "x": 0,
+      "y": 1220
+    },
+    "accueilG2": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "accueil",
+      "text": "À traiter : la liste complète et ce que montre l’accueil",
+      "w": 240,
+      "x": 0,
+      "y": 2440
+    },
+    "accueilG3": {
+      "kind": "title1",
+      "maxW": 4150,
+      "page": "accueil",
+      "text": "Les actions de « À traiter »",
+      "w": 240,
+      "x": 0,
+      "y": 3660
+    },
+    "accueilG4": {
+      "kind": "title1",
+      "maxW": 860,
+      "page": "accueil",
+      "text": "Dettes et créances, ouvertes depuis l’accueil",
+      "w": 240,
+      "x": 0,
+      "y": 4880
+    },
+    "accueilG5": {
+      "kind": "title1",
+      "maxW": 860,
+      "page": "accueil",
+      "text": "Plus",
+      "w": 240,
+      "x": 0,
+      "y": 6100
+    },
+    "accueilG6": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "accueil",
+      "text": "Bouton + : toucher pour le menu, maintenir pour l’éventail · icônes de la barre (Phosphor et pastille)",
+      "w": 240,
+      "x": 0,
+      "y": 7320
+    },
+    "apercuG1": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "apercu",
+      "text": "Aperçu : période, vues, graphique, choix des points suivis",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "apercuG2": {
+      "kind": "title1",
+      "maxW": 1810,
+      "page": "apercu",
+      "text": "Points suivis selon la période : aujourd’hui, 1 mois, 1 an, personnalisée",
+      "w": 240,
+      "x": 0,
+      "y": 1220
+    },
+    "budgetsG1": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "budgets",
+      "text": "Les budgets du mois",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "budgetsG2": {
+      "kind": "title1",
+      "maxW": 1330,
+      "page": "budgets",
+      "text": "Un budget",
+      "w": 240,
+      "x": 0,
+      "y": 1220
+    },
+    "decouvert_operations": {
+      "kind": "title1",
+      "maxW": 1400,
+      "page": "operations",
+      "text": "Découvert des comptes",
+      "w": 240,
+      "x": 0,
+      "y": 7280
+    },
+    "decouvert_reglages": {
+      "kind": "title1",
+      "maxW": 1400,
+      "page": "reglages",
+      "text": "Découvert des comptes",
+      "w": 240,
+      "x": 0,
+      "y": 5980
+    },
+    "details": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "dettes",
+      "text": "Détails et formulaires",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "enCoursB": {
+      "kind": "title1",
+      "maxW": 800,
+      "page": "en-cours",
+      "text": "Suivi",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "enCoursConfirm": {
+      "kind": "title1",
+      "maxW": 900,
+      "page": "en-cours",
+      "text": "Dettes · confirmer un remboursement : A ou B",
+      "w": 240,
+      "x": 0,
+      "y": 5976
+    },
+    "enCoursOpDette": {
+      "kind": "title1",
+      "maxW": 1300,
+      "page": "en-cours",
+      "text": "Dettes · une opération de dette dans Opérations : A, B ou C",
+      "w": 240,
+      "x": 0,
+      "y": 3568
+    },
+    "enCoursOpDetteA": {
+      "kind": "title1",
+      "maxW": 1300,
+      "page": "en-cours",
+      "text": "Dettes · A avec un fond teinté : A1, A2 ou A3",
+      "w": 240,
+      "x": 0,
+      "y": 4772
+    },
+    "enCoursRecurrences": {
+      "kind": "title1",
+      "maxW": 1300,
+      "page": "en-cours",
+      "text": "Récurrences · la page : A retenue, B non retenue ; et la fiche",
+      "w": 240,
+      "x": 0,
+      "y": 2484
+    },
+    "enCoursRepeter": {
+      "kind": "title1",
+      "maxW": 1300,
+      "page": "en-cours",
+      "text": "Récurrences · « Répéter » : A retenue ; B et C non retenues, à nettoyer",
+      "w": 240,
+      "x": 0,
+      "y": 1340
+    },
+    "identiteNom": {
+      "kind": "title1",
+      "maxW": 2600,
+      "page": "identite",
+      "text": "Démarrage et nom",
+      "w": 240,
+      "x": 0,
+      "y": 1360
+    },
+    "lancement": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "lancement",
+      "text": "Premier lancement",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "listeOperations": {
+      "kind": "title1",
+      "maxW": 3680,
+      "page": "operations",
+      "text": "Liste des opérations",
+      "w": 240,
+      "x": 0,
+      "y": 2440
+    },
+    "operation": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "operations",
+      "text": "Détail d’une opération, modification et copie",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "operations_jours": {
+      "kind": "title1",
+      "maxW": 1400,
+      "page": "operations",
+      "text": "Liste des opérations : jours repliables et menu des filtres (validés les 16 et 17 novembre)",
+      "w": 240,
+      "x": 0,
+      "y": 9368
+    },
+    "parcours": {
+      "kind": "title1",
+      "maxW": 4620,
+      "page": "operations",
+      "text": "Saisie d’une dépense",
+      "w": 240,
+      "x": 0,
+      "y": 3660
+    },
+    "parcoursMois": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "operations",
+      "text": "Liste des opérations : changer de mois",
+      "w": 240,
+      "x": 0,
+      "y": 1220
+    },
+    "parcoursRevenu": {
+      "kind": "title1",
+      "maxW": 3680,
+      "page": "operations",
+      "text": "Saisie d’un revenu",
+      "w": 240,
+      "x": 0,
+      "y": 4880
+    },
+    "parcoursTransfert": {
+      "kind": "title1",
+      "maxW": 3210,
+      "page": "operations",
+      "text": "Saisie d’un transfert",
+      "w": 240,
+      "x": 0,
+      "y": 6100
+    },
+    "principaux": {
+      "kind": "title1",
+      "maxW": 3680,
+      "page": "accueil",
+      "text": "Écrans principaux",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "projetsG1": {
+      "kind": "title1",
+      "maxW": 860,
+      "page": "projets",
+      "text": "Les projets",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "projetsG2": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "projets",
+      "text": "Un projet",
+      "w": 240,
+      "x": 0,
+      "y": 1220
+    },
+    "reglages": {
+      "kind": "title1",
+      "maxW": 5560,
+      "page": "reglages",
+      "text": "Réglages",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "reglagesMontants": {
+      "kind": "title1",
+      "maxW": 2600,
+      "page": "reglages",
+      "text": "Montants longs : écriture courte A, dans le même style",
+      "w": 240,
+      "x": 0,
+      "y": 10216
+    },
+    "reglagesRecup": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "reglages",
+      "text": "Code de récupération",
+      "w": 240,
+      "x": 0,
+      "y": 4840
+    },
+    "reglagesRestau": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "reglages",
+      "text": "Restaurer une sauvegarde (depuis Sauvegarde › « Choisir un fichier »)",
+      "w": 240,
+      "x": 0,
+      "y": 1220
+    },
+    "reglagesSecond": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "reglages",
+      "text": "Les écrans secondaires de Plus et de Réglages",
+      "w": 240,
+      "x": 0,
+      "y": 2440
+    },
+    "reglagesSecu": {
+      "kind": "title1",
+      "maxW": 4100,
+      "page": "reglages",
+      "text": "Sécurité et verrouillage",
+      "w": 240,
+      "x": 0,
+      "y": 3660
+    },
+    "reglages_protect": {
+      "kind": "title1",
+      "maxW": 2300,
+      "page": "reglages",
+      "text": "Confirmer et protéger les actions importantes",
+      "w": 240,
+      "x": 0,
+      "y": 8068
+    },
+    "reglages_signe": {
+      "kind": "title1",
+      "maxW": 1000,
+      "page": "reglages",
+      "text": "Solde négatif (validé le 16 novembre)",
+      "w": 240,
+      "x": 0,
+      "y": 9112
+    },
+    "revueTitre": {
+      "kind": "title1",
+      "maxW": 3940,
+      "page": "revue",
+      "text": "Revue de fidélité · maquette validée, appli, écarts",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "systemeTitre": {
+      "kind": "title1",
+      "maxW": 3840,
+      "page": "systeme",
+      "text": "Système de design · validé le 15 novembre (aussi dans l’appli : Plus › Système de design)",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "valides_operations_1611": {
+      "kind": "title1",
+      "maxW": 1400,
+      "page": "operations",
+      "text": "Validés le 16 novembre",
+      "w": 240,
+      "x": 0,
+      "y": 8324
+    },
+    "valides_reglages_1611": {
+      "kind": "title1",
+      "maxW": 1400,
+      "page": "reglages",
+      "text": "Validés le 16 novembre",
+      "w": 240,
+      "x": 0,
+      "y": 7024
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Operations.dc.html",
+    "Budgets.dc.html",
+    "Projets.dc.html",
+    "DettesCartes.dc.html",
+    "FicheDette.dc.html",
+    "FicheDettePetit.dc.html",
+    "Lancement1.dc.html",
+    "Lancement2.dc.html",
+    "Lancement3.dc.html",
+    "Lancement4.dc.html",
+    "Reglages.dc.html",
+    "Devises.dc.html",
+    "Rappels.dc.html",
+    "Sauvegarde.dc.html",
+    "Comptes.dc.html",
+    "TypeCompte.dc.html",
+    "Categories.dc.html",
+    "CodeRecup.dc.html",
+    "Recurrence.dc.html",
+    "NouvelleDette.dc.html",
+    "FicheProjet.dc.html",
+    "DettesCarteOuverte.dc.html",
+    "DettesAffichage.dc.html",
+    "RecurrencePetit.dc.html",
+    "OperationDetailBas.dc.html",
+    "OperationCarteRevenu.dc.html",
+    "OperationCarteTransfert.dc.html",
+    "OperationCarteBrouillon.dc.html",
+    "OperationEdition.dc.html",
+    "OperationCopieSaisie.dc.html",
+    "ParcoursUSD.dc.html",
+    "ParcoursDevise.dc.html",
+    "ParcoursFC.dc.html",
+    "ParcoursTaux.dc.html",
+    "FraisFeuille.dc.html",
+    "SaisieCategorie.dc.html",
+    "RecuTotal.dc.html",
+    "PJLignes.dc.html",
+    "PJSelBarre.dc.html",
+    "ApresFeuilleB.dc.html",
+    "RevenuUSD.dc.html",
+    "RevenuDevise.dc.html",
+    "RevenuFC.dc.html",
+    "RevenuTaux.dc.html",
+    "RevenuFrais.dc.html",
+    "RevenuCategorie.dc.html",
+    "RevenuDecompte.dc.html",
+    "ApresRevenu.dc.html",
+    "TransfertMeme.dc.html",
+    "TransfertVers.dc.html",
+    "TransfertDevise.dc.html",
+    "TransfertTaux.dc.html",
+    "TransfertFrais.dc.html",
+    "TransfertDecompte.dc.html",
+    "ApresTransfert.dc.html",
+    "ListeOnboard.dc.html",
+    "ListeMoisOuvert.dc.html",
+    "ListeAnneePrec.dc.html",
+    "ListeMoisPasse.dc.html",
+    "ListePetit.dc.html",
+    "ListeOperations.dc.html",
+    "EtatBarre.dc.html",
+    "ListeFiltreOuvert.dc.html",
+    "VideSobre.dc.html",
+    "BrouillonA3.dc.html",
+    "OperationCarteIgnoree.dc.html",
+    "ReglagesBrouillons.dc.html",
+    "AffichageIcones.dc.html",
+    "RechercheR2.dc.html",
+    "Aujourdhui.dc.html",
+    "Plus.dc.html",
+    "Total_positif.dc.html",
+    "Total_sansprojet.dc.html",
+    "Total_projetzero.dc.html",
+    "Total_zero.dc.html",
+    "Total_negatif.dc.html",
+    "DettesListeDois.dc.html",
+    "DettesListeCreances.dc.html",
+    "TraiterListe.dc.html",
+    "TraiterEtatUrgent.dc.html",
+    "TraiterEtatMixte.dc.html",
+    "TraiterEtatSemaine.dc.html",
+    "TraiterEtatRappels.dc.html",
+    "BrouS1.dc.html",
+    "BrouS1Un.dc.html",
+    "RembourserV3.dc.html",
+    "SauvW2.dc.html",
+    "SauvW2Premiere.dc.html",
+    "ReclamerR1.dc.html",
+    "ProjetP1.dc.html",
+    "TauxReglages.dc.html",
+    "TauxTraiter.dc.html",
+    "ApercuP2.dc.html",
+    "ApercuP2Ouvert.dc.html",
+    "ApercuTJour.dc.html",
+    "ApercuTMois.dc.html",
+    "ApercuTAn.dc.html",
+    "ApercuTSuivre.dc.html",
+    "ApercuTPerso.dc.html",
+    "PlusAncienne.dc.html",
+    "ComptesRepli.dc.html",
+    "ComptesAffichage.dc.html",
+    "RestauC1.dc.html",
+    "RestauC2.dc.html",
+    "RestauC3.dc.html",
+    "RestauC1Err.dc.html",
+    "RestauNeuf.dc.html",
+    "PlusBtnB1.dc.html",
+    "PlusBtnC1.dc.html",
+    "PlusBtnC2.dc.html",
+    "BudgetNouveau.dc.html",
+    "BudgetsListe.dc.html",
+    "BudgetsAffichage.dc.html",
+    "BudgetDetail.dc.html",
+    "BudgetRythme.dc.html",
+    "BudgetJourReplie.dc.html",
+    "ProjetNouveau.dc.html",
+    "ProjetAtteint.dc.html",
+    "FicheProjetQuinzaine.dc.html",
+    "FicheProjetMois.dc.html",
+    "ApercuTuile.dc.html",
+    "ReglageLangue.dc.html",
+    "ReglageDebutMois.dc.html",
+    "ExportCSV.dc.html",
+    "AideSupport.dc.html",
+    "APropos.dc.html",
+    "NoterKibuo.dc.html",
+    "LogoA1.dc.html",
+    "BarreIconesPh.dc.html",
+    "Demarrage.dc.html",
+    "PinEmpreinte.dc.html",
+    "CodeOublie.dc.html",
+    "Securite.dc.html",
+    "SecuConfid.dc.html",
+    "CacheRecentes.dc.html",
+    "PinCreaC2.dc.html",
+    "VerrouC2.dc.html",
+    "PinAttenteC2.dc.html",
+    "DelaiB.dc.html",
+    "RecupIllisible.dc.html",
+    "RecupSaisie.dc.html",
+    "RecupPreuve.dc.html",
+    "RecupReglage.dc.html",
+    "RevueDevises.dc.html",
+    "RevueTauxReglages.dc.html",
+    "RevueLancement2.dc.html",
+    "RevueSecurite.dc.html",
+    "RevueDelaiB.dc.html",
+    "RevueSecuConfid.dc.html",
+    "RevueRecupReglage.dc.html",
+    "RevueVerrouC2.dc.html",
+    "RevueCodeOublie.dc.html",
+    "RevuePinCreaC2.dc.html",
+    "RevuePinEmpreinte.dc.html",
+    "RevueCodeRecup.dc.html",
+    "RevueRecupPreuve.dc.html",
+    "RevueRecupSaisie.dc.html",
+    "RevueRecupIllisible.dc.html",
+    "DSCouleurs.dc.html",
+    "DSTextes.dc.html",
+    "DSEspaces.dc.html",
+    "DSChamps.dc.html",
+    "DSBoutons.dc.html",
+    "DSListes.dc.html",
+    "DSFeuilles.dc.html",
+    "DSPolices.dc.html",
+    "CompteNouveau.dc.html",
+    "CompteModifA.dc.html",
+    "EditDevN.dc.html",
+    "EditDevC.dc.html",
+    "CatNouvelle.dc.html",
+    "CatModif.dc.html",
+    "VideB.dc.html",
+    "DelConfirm.dc.html",
+    "PJVoirPhoto.dc.html",
+    "PJVoirPdf.dc.html",
+    "DecouvertA.dc.html",
+    "DecouvertSousZero.dc.html",
+    "DecouvertComptes.dc.html",
+    "DecouvertSaisieA.dc.html",
+    "DecouvertSuppressionA.dc.html",
+    "RegulFormA.dc.html",
+    "RegulFeuille.dc.html",
+    "RegulListe.dc.html",
+    "Suivi.dc.html",
+    "ConfirmArchive.dc.html",
+    "ConfirmCategorie.dc.html",
+    "ConfirmDevises.dc.html",
+    "ProtectionCodeB.dc.html",
+    "JoursRepliables.dc.html",
+    "VerrouProtection.dc.html",
+    "SigneD.dc.html",
+    "BarreIconesA.dc.html",
+    "BarreIconesB.dc.html",
+    "BarreIconesC.dc.html",
+    "CentimesA.dc.html",
+    "CentimesB.dc.html",
+    "CompteModifB.dc.html",
+    "DelA.dc.html",
+    "DelB.dc.html",
+    "DelaiA.dc.html",
+    "DelaiC.dc.html",
+    "EditDevA.dc.html",
+    "EditDevB.dc.html",
+    "LogoCentrage.dc.html",
+    "PinAttente.dc.html",
+    "PinCreaA.dc.html",
+    "PinCreaB.dc.html",
+    "PinCreaC.dc.html",
+    "PinCreaC1.dc.html",
+    "PinCreaC3.dc.html",
+    "RegulFormB.dc.html",
+    "SecuOptA.dc.html",
+    "SecuOptB.dc.html",
+    "SecuOptC.dc.html",
+    "SecuProtection.dc.html",
+    "SecuProtectionSansCode.dc.html",
+    "SecuVerrou.dc.html",
+    "SplitA1.dc.html",
+    "SplitA2.dc.html",
+    "SplitB1.dc.html",
+    "SplitB2.dc.html",
+    "Verrou.dc.html",
+    "VideA.dc.html",
+    "VideC.dc.html",
+    "FiltreMenuC.dc.html",
+    "DemarrageEC.dc.html",
+    "NomMinusculeB.dc.html",
+    "Lancement3Decouvert.dc.html",
+    "NomChoix.dc.html",
+    "MontantsJamais.dc.html",
+    "MontantsAutoA.dc.html",
+    "MontantsToujoursA.dc.html",
+    "MontantsReglage.dc.html",
+    "RepeterA.dc.html",
+    "RepeterB.dc.html",
+    "RepeterC.dc.html",
+    "RecurrencesA.dc.html",
+    "RecurrencesB.dc.html",
+    "RecurrenceFiche.dc.html",
+    "OpDetteA.dc.html",
+    "OpDetteB.dc.html",
+    "OpDetteC.dc.html",
+    "OpDetteA1.dc.html",
+    "OpDetteA2.dc.html",
+    "OpDetteA3.dc.html",
+    "OpDetteA4.dc.html",
+    "ConfirmA.dc.html",
+    "ConfirmB.dc.html",
+    "FicheProjetSansDate.dc.html",
+    "ProjetMettreRefus.dc.html",
+    "ProjetReprendre.dc.html",
+    "ProjetTermine.dc.html",
+    "ProjetSupprimer.dc.html",
+    "SigneA.dc.html",
+    "SigneB.dc.html",
+    "SigneC.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "identite",
+      "name": "Identité"
+    },
+    {
+      "id": "systeme",
+      "name": "Système de design"
+    },
+    {
+      "id": "revue",
+      "name": "Revue de fidélité"
+    },
+    {
+      "id": "accueil",
+      "name": "Accueil et navigation"
+    },
+    {
+      "id": "lancement",
+      "name": "Premier lancement"
+    },
+    {
+      "id": "reglages",
+      "name": "Réglages"
+    },
+    {
+      "id": "dettes",
+      "name": "Dettes, projets et récurrences"
+    },
+    {
+      "id": "operations",
+      "name": "Opérations"
+    },
+    {
+      "id": "apercu",
+      "name": "Aperçu"
+    },
+    {
+      "id": "budgets",
+      "name": "Budgets"
+    },
+    {
+      "id": "projets",
+      "name": "Projets"
+    },
+    {
+      "id": "en-cours",
+      "name": "En cours"
+    }
+  ],
+  "title": "Kibuo - Identité et directions"
+}

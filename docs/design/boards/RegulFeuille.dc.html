@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Enregistrer : la différence devient une opération</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; background: rgba(14,19,32,.42); font-family: Inter, sans-serif; color: #0E1320; overflow: hidden">
+<div style="position: absolute; left: 0; right: 0; bottom: 0; background: #EEF1F7; border-radius: 26px 26px 0 0; padding: 12px 16px 48px; display: flex; flex-direction: column; gap: 12px">
+<div style="width: 36px; height: 4px; border-radius: 2px; background: #C9CFDB; margin: 0 auto 8px"></div>
+<div style="display: flex; align-items: center"><span style="flex: 1; font: 700 20px 'Plus Jakarta Sans', sans-serif">Corriger le solde de M-Pesa ?</span><span style="font-size: 22px; color: #525D73">✕</span></div>
+<div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border-radius: 18px; padding: 12px 16px"><div style="flex: 1"><div style="font-size: 12px; color: #525D73">Dans Kibuo</div><div style="font: 700 20px 'Plus Jakarta Sans', sans-serif; color: #8A93A6">45,00 $</div></div><span style="color: #525D73; font-size: 18px">→</span><div style="flex: 1"><div style="font-size: 12px; color: #525D73">Solde réel</div><div style="font: 700 20px 'Plus Jakarta Sans', sans-serif">50,00 $</div></div></div><div style="font-size: 13px; color: #525D73; margin: 0 4px">La différence est ajoutée comme une opération, que vous pourrez modifier ensuite.</div><div style="background: #FFFFFF; border-radius: 18px; padding: 4px 16px"><div style="display: flex; align-items: center; min-height: 44px; padding: 4px 0"><div style="flex: 1"><div style="font-size: 12px; color: #525D73">Revenu</div><div style="font-size: 16px; font-weight: 600; color: #0A7355">+5,00 $</div></div></div><div style="border-top: 1px solid #EEF1F7"></div><div style="display: flex; align-items: center; min-height: 44px; padding: 4px 0"><div style="flex: 1"><div style="font-size: 12px; color: #525D73">Catégorie</div><div style="font-size: 16px; font-weight: 600; color: #0E1320">Régularisation</div></div><span style="color: #8A93A6; margin-left: 8px">›</span></div><div style="border-top: 1px solid #EEF1F7"></div><div style="display: flex; align-items: center; min-height: 44px; padding: 4px 0"><div style="flex: 1"><div style="font-size: 12px; color: #525D73">Note</div><div style="font-size: 14px; font-weight: 400; color: #0E1320">Solde corrigé : 45,00 $ → 50,00 $</div></div></div></div>
+<div style="height: 54px; border-radius: 18px; background: #5EEAB5; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px; margin-top: 12px">Ajouter la régularisation</div>
+</div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Récurrences et brouillons</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden auto; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif"><main style="box-sizing: border-box; padding: 16px 16px 32px; display: flex; flex-direction: column; gap: 14px"><header style="display: flex; align-items: center; gap: 4px; height: 44px"><a href="Reglages.dc.html" aria-label="Retour aux réglages" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #0E1320"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a><h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">Récurrences et brouillons</h1></header><sc-for list="{{prefs}}" as="p" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; font-weight: 600; padding-left: 4px">{{p.title}}</span><div style="background: #FFFFFF; border-radius: 18px; padding: 2px 14px 2px 10px; display: flex; flex-direction: column"><sc-for list="{{p.opts}}" as="m" hint-placeholder-count="2"><button type="button" onClick="{{m.pick}}" role="radio" aria-checked="{{m.on}}" style="min-height: 54px; border: 0; border-top: {{m.border}}; background: transparent; padding: 7px 0; display: flex; align-items: center; gap: 12px; text-align: left; font-family: Inter, sans-serif; color: #0E1320"><span aria-hidden="true" style="width: 36px; height: 36px; flex: 0 0 36px; border-radius: 12px; background: {{m.tBg}}; color: {{m.tFg}}; display: flex; align-items: center; justify-content: center"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.ico}}"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">{{m.label}}</span><span style="font-size: 12px; line-height: 16px; color: #525D73">{{m.help}}</span></span><span aria-hidden="true" style="width: 22px; height: 22px; flex: 0 0 22px; box-sizing: border-box; border-radius: 11px; border: 2px solid {{m.ring}}; display: flex; align-items: center; justify-content: center"><span style="width: 10px; height: 10px; border-radius: 5px; background: {{m.dot}}"></span></span></button></sc-for></div></div></sc-for><span style="font-size: 13px; line-height: 18px; color: #525D73; padding: 0 4px">Ces choix se retrouvent dans l’affichage de la liste des opérations. Chaque récurrence peut demander sa propre validation, dans sa fiche.</span></main></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { val: 'auto', grp: 'date', fut: 'show' };
+  }
+  renderVals() {
+    var self = this, st = this.state;
+    return {
+      
+      prefs: [
+        { key: 'val', title: 'Quand une récurrence arrive à sa date', opts: [['auto', 'Valider automatiquement', 'Automatique', 'L’opération est créée et comptée, sauf pour les récurrences qui demandent une validation.'], ['ask', 'Toujours demander', 'Toujours demander', 'Chaque opération arrive en brouillon et attend votre accord.']] },
+        { key: 'grp', title: 'Brouillons à valider', opts: [['date', 'À leur date', 'À leur date', 'Chaque brouillon reste au jour prévu.'], ['top', 'Groupés en haut', 'Groupés en haut', 'Ceux en retard et du jour sont réunis en haut de la liste.']] },
+        { key: 'fut', title: 'Opérations prévues ce mois-ci', opts: [['show', 'À leur date', 'Visibles', 'Elles restent au jour prévu, en pointillés, marquées « Prévu ».'], ['hide', 'Masquées', 'Masquées', 'Elles n’apparaissent qu’une fois leur date arrivée.']] }
+      ].map(function (p) {
+        var cur = st[p.key], help = '';
+        return { title: p.title, now: (p.opts.filter(function (o) { return o[0] === cur; })[0] || p.opts[0])[3], opts: p.opts.map(function (o, i) {
+          var on = cur === o[0];
+          var up = {}; up[p.key] = o[0];
+          return { ico: ({ auto: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8 12l3 3 5-6', ask: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v6M12 16.5h.01', date: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', top: 'M4 4h16M12 8v12M7 13l5-5 5 5', show: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z', hide: 'M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.2 3.9M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2' })[o[0]], sh: ({ auto: 'Créée et comptée à sa date.', ask: 'Arrive en brouillon, à valider.', date: 'Au jour prévu, dans la liste.', top: 'En retard et du jour, en haut.', show: 'En pointillés, marquées « Prévu ».', hide: 'Visibles une fois la date arrivée.' })[o[0]], tBg: on ? '#E9F8F1' : '#EEF1F7', tFg: on ? '#0A7355' : '#525D73', label: o[1], short: o[2], help: o[3], on: on, ring: on ? '#0A7355' : '#B6BDCB', dot: on ? '#0A7355' : 'transparent', border: i ? '1px solid #EEF1F7' : '0', bg: on ? '#0E1320' : 'transparent', fg: on ? '#FFFFFF' : '#0E1320', pick: function () { self.setState(up); } };
+        }) };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Code de récupération</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px; position: relative; background: #EEF1F7; color: #0E1320; font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 16px">
+  <header style="display: flex; align-items: center; gap: 4px; height: 44px">
+    <a href="Reglages.dc.html" aria-label="Retour aux réglages" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #0E1320"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Code de récupération</h1>
+  </header>
+  <p style="margin: 0 4px; font-size: 15px; line-height: 22px; color: #525D73">Il permet de retrouver l'accès si vous oubliez votre code et que l'empreinte ne fonctionne pas. Notez-le sur papier et gardez-le en lieu sûr.</p>
+  <section style="background: #FFFFFF; border-radius: 22px; padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 14px">
+    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; line-height: 36px; font-weight: 700; letter-spacing: 2px; text-align: center">KB7Q-4M2X<br>9TPA-H3WD</span>
+    <button type="button" style="min-height: 44px; border: 0; background: transparent; font: 600 15px Inter, sans-serif; color: #0A7355">Copier le code</button>
+  </section>
+  <section style="background: #FFE0D8; border-radius: 18px; padding: 14px 16px; font-size: 14px; line-height: 20px; color: #7C1F0C">Sans ce code ni empreinte, un code oublié obligera à effacer l'application puis à restaurer une sauvegarde.</section>
+  <button type="button" style="position: absolute; left: 16px; right: 16px; bottom: 16px; height: 54px; border: 0; border-radius: 18px; background: #5EEAB5; color: #0E1320; font: 600 16px Inter, sans-serif">J'ai noté mon code</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
