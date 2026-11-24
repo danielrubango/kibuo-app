@@ -47,7 +47,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ## Questions ouvertes (attendent le propriétaire)
 
-- Sauvegardes automatiques : ce que dit kibuo quand le dossier n'est plus accessible lors d'une sauvegarde faite en arrière-plan (PRODUCT, Protection des données).
+- Aucune pour l'instant (l'échec d'une sauvegarde automatique est tranché le 24 novembre : PRODUCT, Protection des données).
 
 ## Défauts connus et dettes
 
