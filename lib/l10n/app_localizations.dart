@@ -5874,6 +5874,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En retard de {amount}'**
   String projectsLateBy(String amount);
+
+  /// À traiter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Projet · en retard'**
+  String get todoProjectLate;
+
+  /// À traiter.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Projet · en retard, 1 jour restant} other{Projet · en retard, {count} jours restants}}'**
+  String todoProjectLateLeft(int count);
+
+  /// Projects.
+  ///
+  /// In fr, this message translates to:
+  /// **'le retard'**
+  String get projectQuickLate;
 }
 
 class _AppLocalizationsDelegate

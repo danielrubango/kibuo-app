@@ -1932,5 +1932,11 @@
   "projectProgress": "{saved} sur {goal}",
   "@projectProgress": {"description": "Projects.", "placeholders": {"saved": {"type": "String"}, "goal": {"type": "String"}}},
   "projectsLateBy": "En retard de {amount}",
-  "@projectsLateBy": {"description": "Projects.", "placeholders": {"amount": {"type": "String"}}}
+  "@projectsLateBy": {"description": "Projects.", "placeholders": {"amount": {"type": "String"}}},
+  "todoProjectLate": "Projet · en retard",
+  "todoProjectLateLeft": "{count, plural, =1{Projet · en retard, 1 jour restant} other{Projet · en retard, {count} jours restants}}",
+  "@todoProjectLate": {"description": "À traiter."},
+  "@todoProjectLateLeft": {"description": "À traiter.", "placeholders": {"count": {"type": "int"}}},
+  "projectQuickLate": "le retard",
+  "@projectQuickLate": {"description": "Projects."}
 }

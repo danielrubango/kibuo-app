@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/debt_repository.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
 import 'package:kibuo/domain/money/currency.dart';
+import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/todo/todo.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
@@ -22,6 +24,10 @@ import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/obligations/claim_sheet.dart';
 import 'package:kibuo/ui/obligations/debt_screen.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
+import 'package:kibuo/ui/projects/project_money.dart';
+import 'package:kibuo/ui/projects/project_parts.dart';
+import 'package:kibuo/ui/projects/project_screen.dart';
+import 'package:kibuo/ui/projects/projects_screen.dart' show projectIcon;
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/reminders/due_forecast.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
@@ -41,6 +47,8 @@ class HomeTodo extends TodoItem {
       due = null,
       dueName = '',
       debt = null,
+      project = null,
+      projectLate = null,
       super(
         kind: over ? TodoKind.budgetOver : TodoKind.budgetNear,
         key: 'budget:${budget?.budget.id}',
@@ -53,6 +61,8 @@ class HomeTodo extends TodoItem {
       due = null,
       dueName = '',
       debt = null,
+      project = null,
+      projectLate = null,
       super(kind: TodoKind.drafts, key: 'drafts');
 
   HomeTodo.recovery()
@@ -63,6 +73,8 @@ class HomeTodo extends TodoItem {
       due = null,
       dueName = '',
       debt = null,
+      project = null,
+      projectLate = null,
       super(kind: TodoKind.recovery, key: 'recovery');
 
   HomeTodo.rate(this.currency, this.rateDays)
@@ -71,6 +83,8 @@ class HomeTodo extends TodoItem {
       due = null,
       dueName = '',
       debt = null,
+      project = null,
+      projectLate = null,
       super(kind: TodoKind.oldRate, key: 'rate:${currency?.code}');
 
   /// A date to come that would leave its account short (PRODUCT).
@@ -80,6 +94,8 @@ class HomeTodo extends TodoItem {
       currency = null,
       rateDays = 0,
       debt = null,
+      project = null,
+      projectLate = null,
       super(kind: TodoKind.shortfall, key: due.key);
 
   /// A debt or receivable late, due today or this week (PRODUCT).
@@ -90,7 +106,25 @@ class HomeTodo extends TodoItem {
       rateDays = 0,
       due = null,
       dueName = '',
+      project = null,
+      projectLate = null,
       super(kind: kind, key: 'debt:${debt.id}');
+
+  /// A project behind by a whole part of its plan (PRODUCT: Projets).
+  HomeTodo.project(ProjectInfo this.project, this.projectLate)
+    : budget = null,
+      drafts = const [],
+      currency = null,
+      rateDays = 0,
+      due = null,
+      dueName = '',
+      debt = null,
+      super(kind: TodoKind.projectLate, key: 'project:${project.id}');
+
+  final ProjectInfo? project;
+
+  /// How far behind, in the project's currency.
+  final Money? projectLate;
 
   final DebtLine? debt;
 
@@ -161,6 +195,23 @@ class TodoLoader {
       } else if (days != null && days <= 7) {
         items.add(HomeTodo.debt(d, TodoKind.debtSoon));
       }
+    }
+    // Projects behind by a whole part of their plan.
+    for (final p in await data.projects?.projects() ?? const <ProjectInfo>[]) {
+      final due = p.due;
+      if (!p.running || due == null) continue;
+      if (!lateForTodo(
+        goal: p.goal.minor,
+        saved: p.saved.minor,
+        start: p.startedOn,
+        due: due,
+        today: now,
+        period: p.period,
+      )) {
+        continue;
+      }
+      final pace = ProjectPace.of(p, now);
+      items.add(HomeTodo.project(p, Money(-pace.gap, p.goal.currency)));
     }
     final lock = this.lock;
     if (lock != null &&
@@ -248,7 +299,30 @@ class TodoActions {
                 DebtScreen(data: data, debts: data.debts!, id: item.debt!.id),
           ),
         );
+      case TodoKind.projectLate:
+        await Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) => ProjectScreen(
+              data: data,
+              projects: data.projects!,
+              id: item.project!.id,
+            ),
+          ),
+        );
     }
+    await reload();
+  }
+
+  /// The line's action: for a late project, straight to « Mettre de
+  /// côté »; for the others, where the line leads.
+  Future<void> act(BuildContext context, HomeTodo item) async {
+    if (item.kind != TodoKind.projectLate) return open(context, item);
+    await putAsideFlow(
+      context,
+      data: data,
+      projects: data.projects!,
+      project: item.project!,
+    );
     await reload();
   }
 
@@ -389,6 +463,30 @@ class TodoLook {
           },
           name: d.person,
           subColor: urgent ? KibuoColors.danger : null,
+        );
+      case TodoKind.projectLate:
+        final p = item.project!;
+        final late = item.projectLate!;
+        final due = p.due!;
+        final days = DateTime.utc(due.year, due.month, due.day)
+            .difference(
+              DateTime.utc(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+              ),
+            )
+            .inDays;
+        return TodoLook._(
+          icon: projectIcon(p.icon),
+          tint: KibuoColors.projectTint,
+          ink: KibuoColors.projectInk,
+          title:
+              '${p.name} · ${formatMoney(late, currencyOf(late.currency), lang)}',
+          subtitle: days > 0 ? l.todoProjectLateLeft(days) : l.todoProjectLate,
+          action: l.projectPutAside,
+          name: p.name,
+          subColor: KibuoColors.danger,
         );
       case TodoKind.oldRate:
         final title = l.todoRate(
@@ -534,7 +632,7 @@ class _TodoRow extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               InkWell(
-                onTap: () => actions.open(context, item),
+                onTap: () => actions.act(context, item),
                 borderRadius: BorderRadius.circular(KibuoTheme.radiusPill),
                 child: SizedBox(
                   height: KibuoTheme.heightTouch,

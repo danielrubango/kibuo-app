@@ -123,4 +123,22 @@ void main() {
     expect(parts.fold<int>(0, (s, p) => s + p.amount), 1000);
     expect(parts.every((p) => p.amount >= 0), isTrue);
   });
+
+  test('late enough for « À traiter »: behind by a whole part of the plan', () {
+    final start = DateTime(2026, 11, 1);
+    final due = DateTime(2027, 1, 1);
+    // 30 000 over 61 days, 9 weeks: a part is 3 334; 23 days gone,
+    // 11 311 expected.
+    bool late(int saved) => lateForTodo(
+      goal: 30000,
+      saved: saved,
+      start: start,
+      due: due,
+      today: today,
+      period: PlanPeriod.week,
+    );
+    expect(late(10000), isFalse); // 1 311 behind
+    expect(late(7000), isTrue); // 4 311 behind
+    expect(late(30000), isFalse);
+  });
 }

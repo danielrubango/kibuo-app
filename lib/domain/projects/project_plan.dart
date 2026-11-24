@@ -120,3 +120,23 @@ int projectGap({
   required int saved,
   required double share,
 }) => saved - (goal * share).round();
+
+/// Behind enough to show in « À traiter » (PRODUCT: Projets): by at least
+/// one part of the plan as it was set, the goal over its periods.
+bool lateForTodo({
+  required int goal,
+  required int saved,
+  required DateTime start,
+  required DateTime due,
+  required DateTime today,
+  required PlanPeriod period,
+}) {
+  if (saved >= goal) return false;
+  final gap = projectGap(
+    goal: goal,
+    saved: saved,
+    share: expectedShare(today: today, start: start, due: due),
+  );
+  final part = (goal / periodsLeft(period, start, due)).ceil();
+  return -gap >= part;
+}

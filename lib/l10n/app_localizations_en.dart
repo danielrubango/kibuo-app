@@ -3752,4 +3752,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String projectsLateBy(String amount) {
     return '$amount behind';
   }
+
+  @override
+  String get todoProjectLate => 'Project · behind';
+
+  @override
+  String todoProjectLateLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Project · behind, $count days left',
+      one: 'Project · behind, 1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get projectQuickLate => 'catch up';
 }

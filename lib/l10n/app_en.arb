@@ -972,5 +972,8 @@
   "projectReleasedLine": "Made available · {account}",
   "projectSpentLine": "Spent · {account}",
   "projectProgress": "{saved} of {goal}",
-  "projectsLateBy": "{amount} behind"
+  "projectsLateBy": "{amount} behind",
+  "todoProjectLate": "Project · behind",
+  "todoProjectLateLeft": "{count, plural, =1{Project · behind, 1 day left} other{Project · behind, {count} days left}}",
+  "projectQuickLate": "catch up"
 }

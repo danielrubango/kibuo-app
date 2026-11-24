@@ -3790,4 +3790,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String projectsLateBy(String amount) {
     return 'En retard de $amount';
   }
+
+  @override
+  String get todoProjectLate => 'Projet · en retard';
+
+  @override
+  String todoProjectLateLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Projet · en retard, $count jours restants',
+      one: 'Projet · en retard, 1 jour restant',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get projectQuickLate => 'le retard';
 }
