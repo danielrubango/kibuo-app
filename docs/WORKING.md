@@ -43,6 +43,7 @@ Le design se fait sur un artifact « Design » de claude.ai (« Kibuo - Identit�
 - Il demande **2 ou 3 variantes nommées** (A, B, C), côte à côte. Il en choisit une, souvent avec des variantes de la variante (A1, A2…). Garder les variantes non retenues jusqu'à ce qu'il dise « nettoyer ».
 - Le travail en cours vit sur la page **« En cours »** ; une planche validée part sur la page de son domaine (Accueil, Opérations, Réglages…).
 - Chaque règle validée s'écrit dans [PRODUCT.md](PRODUCT.md) ou [design/DIRECTION.md](design/DIRECTION.md) dans la même étape, avec sa date.
+- Quand il écarte une variante, sa raison s'écrit le jour même dans DIRECTION, section « Variantes écartées et pourquoi » (décidé le 24 novembre 2026). On ne reconstitue pas de mémoire une raison qui n'a pas été notée.
 - Les planches ont un titre qui dit ce qu'elles montrent ; « retenue » / « non retenue » sur la page En cours.
 
 ## Environnement
@@ -51,7 +52,7 @@ Le design se fait sur un artifact « Design » de claude.ai (« Kibuo - Identit�
 |---|---|
 | Flutter | 3.47.9, canal stable, Dart 3.13.7, installé par fvm (`~/fvm/default/bin` dans le PATH) |
 | Émulateur | AVD `Pixel_10_Kibuo`, en anglais, `emulator-5554` |
-| Utilisateur Android d'essai | `kibuo-essai` (id 10) sur l'émulateur, pour tester un premier lancement sans toucher au profil principal |
+| Utilisateur Android d'essai | `kibuo-essai` (id 10) sur l'émulateur, pour tester un premier lancement sans toucher au profil principal ; gardé jusqu'à la fin de la phase 6, puis supprimé avec l'accord du propriétaire (décidé le 24 novembre 2026) |
 | Téléphone du propriétaire | Xiaomi Poco X3 NFC (M2007J20CG), Android 15, série adb `abe5999d` |
 | Dépôt de l'app | https://github.com/danielrubango/kibuo-app (`origin`), privé |
 | Dépôt serveur | https://github.com/danielrubango/kibuo-api : le futur serveur de synchro (Laravel) et le site public (confidentialité, conditions, suppression de compte, contact), voir [backlog/site-public.md](backlog/site-public.md) |

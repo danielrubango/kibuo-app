@@ -48,6 +48,10 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Confirmer une action sur l'argent.** Mettre de côté, reprendre, rendre disponible, rembourser : la feuille de confirmation qui se ferme seule, avec la ligne de ce qui a été fait et « Annuler » ; jamais un message flottant, qui peut cacher le bouton du bas d'une fiche.
 
+**Interrupteur.** Toute la ligne d'un interrupteur réagit au toucher, pas seulement l'interrupteur ; le rendu ne change pas (décidé le 24 novembre 2026, pas encore construit).
+
+**Bouton qui ne peut pas encore enregistrer.** Le bouton principal reste actif dès que quelque chose est saisi ; le toucher quand il manque une information met le premier champ manquant en rouge avec sa ligne rouge dessous et la vibration de refus, comme un montant refusé. Il n'est grisé que tant que rien n'est saisi (décidé le 24 novembre 2026 ; planches à montrer sur deux écrans, nouvelle dépense et nouveau projet, avant de coder).
+
 **Retour au toucher.** Trois forces de vibration, selon le réglage du téléphone : légère (touches, choix, onglets, ouvrir une ligne), plus franche (ce qui enregistre), marquée (un refus, un glissement qui passe son seuil).
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.

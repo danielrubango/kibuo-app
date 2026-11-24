@@ -26,11 +26,11 @@ Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une
 
 - Aucune branche de code en attente : toutes sont fusionnées dans `main`.
 - `docs/handoff` : cette documentation de passation (planches exportées, STATE, WORKING, SYSTEM, DIRECTION, AGENTS). À fusionner après validation du propriétaire.
-- Sur l'émulateur : un utilisateur Android d'essai `kibuo-essai` (id 10), arrêté, avec des données de test restaurées. À garder pour tester un premier lancement (voir [WORKING.md](WORKING.md)).
+- Sur l'émulateur : un utilisateur Android d'essai `kibuo-essai` (id 10), arrêté, avec des données de test restaurées. Gardé jusqu'à la fin de la phase 6 (voir [WORKING.md](WORKING.md)).
 
 ## Prochaines étapes
 
-1. **Sauvegardes automatiques optionnelles** (phase 6) : hebdomadaires, dans le dossier choisi, avec un rappel si la dernière date trop ; leur interrupteur dans l'écran Sauvegarde et à l'étape 4 du premier lancement ([PRODUCT.md](PRODUCT.md), section Sauvegarde ; planches `SauvW2`, `RestauC1` qui montre déjà « Sauvegarde automatique · Chaque semaine »). Pas de travail en arrière-plan dans la V1 : à cadrer avec le propriétaire (à vérifier : « hebdomadaire » au lancement de l'app, ou en arrière-plan).
+1. **Sauvegardes automatiques optionnelles** (phase 6) : à l'ouverture de kibuo quand la dernière a 7 jours ou plus, et en arrière-plan chaque semaine ; leur interrupteur dans l'écran Sauvegarde et à l'étape 4 du premier lancement ([PRODUCT.md](PRODUCT.md), Protection des données ; planches `SauvW2`, `RestauC1` qui montre déjà « Sauvegarde automatique · Chaque semaine »). Le mot de passe retenu reste à cadrer (Questions ouvertes).
 2. **Export CSV** (phase 6) : planche `ExportCSV` (période, comptes, brouillons et notes, « Exporter » en bas).
 3. **Phase 7 · Stabilisation** : tableaux de bord, parcours complets sur le Poco X3 NFC et un Android 8, guide des notifications selon les marques, APK à 5 à 10 testeurs.
 4. Reste de la phase 1 : vérifier les marques et réserver les domaines ([BRAND.md](BRAND.md)).
@@ -47,19 +47,18 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ## Questions ouvertes (attendent le propriétaire)
 
-- Sauvegardes automatiques : déclenchement (au lancement de l'app ou en arrière-plan), et emplacement exact de l'interrupteur à l'étape 4 du premier lancement.
-- Les défauts connus ci-dessous qui demandent un choix de design (interrupteur sur toute la ligne, bouton grisé qui ne dit pas ce qui manque) ne lui ont pas encore été proposés.
-- Garder ou supprimer l'utilisateur Android d'essai `kibuo-essai` à terme.
+- Sauvegardes automatiques (déclenchement décidé le 24 novembre : à l'ouverture et en arrière-plan ; chiffrement possible avec un mot de passe retenu) : où garder ce mot de passe, s'il sert aussi aux sauvegardes manuelles, s'il est oublié ou changé, combien de sauvegardes garder, quoi dire quand le dossier est perdu (PRODUCT, Protection des données).
+- Le moment du travail sur le premier lancement ([backlog/premier-lancement.md](backlog/premier-lancement.md)).
 
 ## Défauts connus et dettes
 
 - **Pas vu sur un vrai téléphone** : ouvrir kibuo en touchant un `.kibuo` dans Fichiers ou WhatsApp (simulé sur l'émulateur par une intention `VIEW`, à vérifier sur le Poco X3).
 - **Vu seulement par les tests** : la langue rendue par une restauration ; la feuille de départ avec une sauvegarde chiffrée ; « J'ai une sauvegarde » sur l'écran des données illisibles.
 - Les sauvegardes faites avant le 24 novembre (soir) ne portent pas la langue.
-- Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; changer est un choix de design, pas encore proposé).
+- Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; décidé le 24 novembre que toute la ligne réagira, à construire).
 - Si kibuo est fermé pendant que le code de récupération est affiché, le code n'a jamais été confirmé.
 - Les groupes de comptes repliés ne sont pas retenus ; un compte archivé ne peut pas être rétabli.
-- Un « Enregistrer » grisé ne dit pas ce qui manque.
+- Un « Enregistrer » grisé ne dit pas ce qui manque (décidé le 24 novembre : bouton actif et premier champ manquant en rouge, planches à montrer, puis à construire).
 - 36 des 258 planches du canvas ne sont rattachées à aucune page : variantes écartées, classées dans [DIRECTION.md](design/DIRECTION.md#variantes-écartées-et-pourquoi), souvent sans raison écrite.
 - La planche P1 du chiffrement de sauvegarde (`sauvegarde-variantes.html`) n'est ni dans le canvas exporté ni dans le dépôt.
 - iOS : chaque API propre à Android est notée dans [backlog/ios.md](backlog/ios.md) ; rien n'est porté.
