@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:kibuo/data/backup_file.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/data/recovery_store.dart';
@@ -80,6 +81,60 @@ final class Unreadable extends OpenResult {
 }
 
 const _fileName = 'kibuo.db';
+
+/// The backup comes from a newer kibuo: its tables cannot be read here.
+class BackupTooNew implements Exception {}
+
+/// Replaces the data in [folder] by an opened backup (ADR 0006): its
+/// database, encrypted here with this phone's key, and its attachments;
+/// then opens it, an older one updated by the usual migrations. The
+/// current database must be closed first. Nothing is touched when the
+/// backup comes from a newer kibuo.
+Future<OpenResult> replaceWithBackup({
+  required Directory folder,
+  required BackupContents contents,
+  KeyVault vault = const SecureKeyVault(),
+  bool inBackground = true,
+}) async {
+  final incoming = File(p.join(folder.path, 'kibuo-restoring.db'));
+  if (incoming.existsSync()) incoming.deleteSync();
+  await contents.database.copy(incoming.path);
+  var key = await vault.read(KeyVault.databaseKey);
+  if (key == null) {
+    key = _newKey();
+    await vault.write(KeyVault.databaseKey, key);
+  }
+  final raw = sqlite.sqlite3.open(incoming.path);
+  try {
+    final version = raw.select('PRAGMA user_version').single['user_version'];
+    if (version is! int || version > KibuoDatabase.currentSchema) {
+      throw BackupTooNew();
+    }
+    // Encrypted in place with the phone's key, like its own file.
+    raw.execute("PRAGMA hexrekey = '$key'");
+  } on Object {
+    raw.close();
+    incoming.deleteSync();
+    rethrow;
+  }
+  raw.close();
+  for (final suffix in ['', '-wal', '-shm', '-journal']) {
+    final old = File(p.join(folder.path, '$_fileName$suffix'));
+    if (old.existsSync()) old.deleteSync();
+  }
+  await incoming.rename(p.join(folder.path, _fileName));
+  final attachments = Directory(p.join(folder.path, 'attachments'));
+  if (attachments.existsSync()) attachments.deleteSync(recursive: true);
+  attachments.createSync();
+  for (final file in contents.attachments.listSync().whereType<File>()) {
+    await file.copy(p.join(attachments.path, p.basename(file.path)));
+  }
+  return openKibuoDatabase(
+    folder: folder,
+    vault: vault,
+    inBackground: inBackground,
+  );
+}
 
 /// Deletes the database and every file set aside, and forgets all keys, then
 /// opens an empty database: « Effacer et repartir de zéro ».

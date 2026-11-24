@@ -351,9 +351,12 @@ class KibuoDatabase extends _$KibuoDatabase {
   /// This device, as recorded in the [Devices] table.
   final String deviceId;
 
+  /// The tables' version this kibuo reads; a backup above it is refused.
   /// Bump with every change to the tables, and add the step to [migration].
+  static const currentSchema = 14;
+
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => currentSchema;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
