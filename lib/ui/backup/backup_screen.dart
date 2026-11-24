@@ -215,6 +215,7 @@ class _BackupScreenState extends State<BackupScreen> {
                           ),
                         ),
                       ),
+                      _cardDivider,
                       // MotDePasseRetenu, variant A.
                       _PasswordRow(
                         has: state.hasPassword,
@@ -227,6 +228,7 @@ class _BackupScreenState extends State<BackupScreen> {
                           }
                         },
                       ),
+                      _cardDivider,
                       _FolderRow(
                         folder: folder,
                         missing: folder != null && !_reachable,
@@ -271,6 +273,57 @@ class _BackupScreenState extends State<BackupScreen> {
   }
 }
 
+/// A line of the backup card (MotDePasseRetenu A1): its label at 600, a
+/// grey value at the right, then [trailing] (›, or « Sélectionner »).
+class _CardLine extends StatelessWidget {
+  const _CardLine({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    this.valueStyle,
+    this.trailing,
+  });
+
+  final String label;
+  final String value;
+  final TextStyle? valueStyle;
+  final Widget? trailing;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final trailing = this.trailing;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 52),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: trailing is TextAction ? 4 : 16,
+        ),
+        child: Row(
+          children: [
+            Text(label, style: KibuoType.rowLabel.weight(600)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    valueStyle ??
+                    KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// « Mot de passe · Aucun › » or « Retenu › » (MotDePasseRetenu A1).
 class _PasswordRow extends StatelessWidget {
   const _PasswordRow({required this.has, required this.onTap});
@@ -281,30 +334,16 @@ class _PasswordRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return InkWell(
+    return _CardLine(
+      label: l.backupPassword,
+      value: has ? l.backupPasswordKept : l.backupPasswordNone,
       onTap: onTap,
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 52),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                l.backupPassword,
-                style: KibuoType.rowLabel.weight(600),
-              ),
-            ),
-            Text(
-              has ? l.backupPasswordKept : l.backupPasswordNone,
-              style: KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
-            ),
-            const SizedBox(width: 6),
-            const Icon(
-              KibuoIcons.caretRight,
-              size: 16,
-              color: KibuoColors.inkMuted,
-            ),
-          ],
+      trailing: const Padding(
+        padding: EdgeInsets.only(left: 6),
+        child: Icon(
+          KibuoIcons.caretRight,
+          size: 16,
+          color: KibuoColors.inkMuted,
         ),
       ),
     );
@@ -328,43 +367,35 @@ class _FolderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final folder = this.folder;
-    return InkWell(
+    return _CardLine(
+      label: l.backupFolder,
+      value: folder == null
+          ? l.backupNoFolder
+          : missing
+          ? l.backupFolderMissing
+          : folderLabel(l, folder),
+      valueStyle: missing
+          ? KibuoType.body.copyWith(color: KibuoColors.danger).weight(600)
+          : folder == null
+          ? KibuoType.body.copyWith(color: KibuoColors.inkMuted)
+          : null,
       onTap: onTap,
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 52),
-        padding: EdgeInsets.only(left: 16, right: missing ? 4 : 16),
-        child: Row(
-          children: [
-            Text(l.backupFolder, style: KibuoType.rowLabel.weight(600)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                folder == null
-                    ? l.backupNoFolder
-                    : missing
-                    ? l.backupFolderMissing
-                    : folderLabel(l, folder),
-                textAlign: TextAlign.right,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: missing
-                    ? KibuoType.body
-                          .copyWith(color: KibuoColors.danger)
-                          .weight(600)
-                    : KibuoType.body.copyWith(
-                        color: folder == null
-                            ? KibuoColors.inkMuted
-                            : KibuoColors.inkSecondary,
-                      ),
-              ),
-            ),
-            if (missing) TextAction(label: l.backupSelect, onPressed: onTap),
-          ],
-        ),
-      ),
+      trailing: missing
+          ? TextAction(label: l.backupSelect, onPressed: onTap)
+          : null,
     );
   }
 }
+
+/// The thin line between two lines of the backup card, 16 from its edges
+/// (MotDePasseRetenu A1, 25 November 2026).
+const _cardDivider = Divider(
+  height: 1,
+  thickness: 1,
+  indent: 16,
+  endIndent: 16,
+  color: KibuoColors.background,
+);
 
 /// « Sauvegarde et export » on Plus, with when the last backup was, in
 /// amber once it is old (canvas Plus, PlusAncienne).

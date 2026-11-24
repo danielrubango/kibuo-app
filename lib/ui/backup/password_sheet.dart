@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
-import 'package:kibuo/ui/backup/backup_sheet.dart';
+import 'package:kibuo/ui/backup/backup_password_fields.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
-import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -89,26 +88,14 @@ class _PasswordSheetState extends State<_PasswordSheet> {
           ),
         ),
         const SizedBox(height: 12),
-        KibuoTextField(
-          key: const ValueKey('remember-password'),
-          hint: l.backupPassword,
-          controller: _password,
-          secret: true,
-          textCapitalization: TextCapitalization.none,
-          onChanged: (_) => setState(() {}),
+        BackupPasswordFields(
+          password: _password,
+          again: _again,
+          keyName: 'remember-password',
+          onChanged: () => setState(() {}),
         ),
+        // 12 before the button, as in A2 and SauvW2 (25 November).
         const SizedBox(height: 12),
-        KibuoTextField(
-          key: const ValueKey('remember-password-again'),
-          hint: l.backupPasswordAgain,
-          controller: _again,
-          secret: true,
-          textCapitalization: TextCapitalization.none,
-          onChanged: (_) => setState(() {}),
-        ),
-        const SizedBox(height: 12),
-        BackupWarning(l.backupPasswordWarning),
-        const SizedBox(height: 24),
         KibuoButton(
           label: widget.has ? l.backupPasswordChange : l.backupPasswordKeep,
           onPressed: _ready ? _keep : null,

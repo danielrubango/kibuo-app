@@ -3,11 +3,11 @@ import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
+import 'package:kibuo/ui/backup/backup_password_fields.dart';
 import 'package:kibuo/ui/backup/password_sheet.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/confirm_sheet.dart';
-import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/operation_card.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
@@ -233,25 +233,11 @@ class _BackupSheetState extends State<_BackupSheet> {
             ),
             if (_encrypt && _remembered == null) ...[
               const SizedBox(height: 12),
-              KibuoTextField(
-                key: const ValueKey('backup-password'),
-                hint: l.backupPassword,
-                controller: _password,
-                secret: true,
-                textCapitalization: TextCapitalization.none,
-                onChanged: (_) => setState(() {}),
+              BackupPasswordFields(
+                password: _password,
+                again: _again,
+                onChanged: () => setState(() {}),
               ),
-              const SizedBox(height: 12),
-              KibuoTextField(
-                key: const ValueKey('backup-password-again'),
-                hint: l.backupPasswordAgain,
-                controller: _again,
-                secret: true,
-                textCapitalization: TextCapitalization.none,
-                onChanged: (_) => setState(() {}),
-              ),
-              const SizedBox(height: 12),
-              BackupWarning(l.backupPasswordWarning),
             ],
             if (!typing) ...[
               const SizedBox(height: 12),
@@ -426,36 +412,4 @@ class _OptionsCard extends StatelessWidget {
       ),
     );
   }
-}
-
-/// « Sans ce mot de passe… », small and amber, with its sign.
-class BackupWarning extends StatelessWidget {
-  const BackupWarning(this.text, {super.key});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 1),
-          child: Icon(
-            KibuoIcons.warning,
-            size: 14,
-            color: KibuoColors.warningInk,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            text,
-            style: KibuoType.caption.copyWith(color: KibuoColors.warningInk),
-          ),
-        ),
-      ],
-    ),
-  );
 }

@@ -36,13 +36,16 @@ Future<T?> showKibuoSheet<T>(
 
 /// A sheet's margins: 16 on the sides, and 24 above the phone's own bar
 /// (gestures or buttons), so the last button never sits on the screen's
-/// edge (DIRECTION).
+/// edge. With the keyboard open, the bar is under it: 8 above the keyboard,
+/// as on a screen (DIRECTION, 25 November 2026).
 EdgeInsets sheetPadding(BuildContext context, {double top = 0}) =>
     EdgeInsets.fromLTRB(
       16,
       top,
       16,
-      24 + MediaQuery.viewPaddingOf(context).bottom,
+      MediaQuery.viewInsetsOf(context).bottom > 0
+          ? 8
+          : 24 + MediaQuery.viewPaddingOf(context).bottom,
     );
 
 /// The main action at the bottom of a screen: 8 above it, and 24 above
