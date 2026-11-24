@@ -16,12 +16,26 @@ import io.flutter.plugin.common.MethodChannel
 // FragmentActivity: needed by local_auth for the fingerprint prompt.
 class MainActivity : FlutterFragmentActivity() {
     private val backupFolders = BackupFolders(this)
+    private val backupFiles = BackupFiles(this)
 
-    @Deprecated("The folder picker answers here.")
+    @Deprecated("The folder and file pickers answer here.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (!backupFolders.onResult(requestCode, resultCode, data)) {
+        if (!backupFolders.onResult(requestCode, resultCode, data) &&
+            !backupFiles.onResult(requestCode, resultCode, data)
+        ) {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Opened with a .kibuo file (PRODUCT: Restauration).
+        if (savedInstanceState == null) backupFiles.onIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        backupFiles.onIntent(intent)
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -29,6 +43,10 @@ class MainActivity : FlutterFragmentActivity() {
         // Sauvegarde: the folder chosen in Android's picker.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/folder")
             .setMethodCallHandler(backupFolders::handle)
+        // Restauration: a backup chosen, or the file kibuo was opened with.
+        backupFiles.attach(
+            MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kibuo/backup-file"),
+        )
         // The phone's country, to suggest its currency: the SIM or network
         // first (a phone in Congo may be set to French from France), then the
         // system settings, which Kibuo's own language choice does not change.

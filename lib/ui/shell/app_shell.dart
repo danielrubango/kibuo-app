@@ -25,7 +25,9 @@ import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
+import 'package:kibuo/ui/backup/backup_files.dart';
 import 'package:kibuo/ui/backup/backup_screen.dart';
+import 'package:kibuo/ui/backup/restore_sheet.dart';
 import 'package:kibuo/ui/budgets/budget_alerts.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
@@ -126,6 +128,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     _saved.dispose();
     _homeShown.dispose();
     _thisMonth.dispose();
+    DeviceBackupFiles.instance.opened.removeListener(_openedFile);
+    _waitingLock?.removeListener(_whenUnlocked);
     super.dispose();
   }
 
@@ -146,6 +150,47 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     widget.notifier
         ?.start(_onNotice)
         .then((payload) => payload == null ? null : _onNotice(payload));
+    // A .kibuo file kibuo was opened with, now or later (PRODUCT).
+    DeviceBackupFiles.instance.opened.addListener(_openedFile);
+    _openedFile();
+  }
+
+  /// The lock a file waits behind; let go once unlocked or gone.
+  LockController? _waitingLock;
+
+  void _whenUnlocked() {
+    final lock = _waitingLock;
+    if (lock == null || !lock.ready || lock.locked) return;
+    lock.removeListener(_whenUnlocked);
+    _waitingLock = null;
+    if (mounted) _openedFile();
+  }
+
+  /// What a restore needs, from this screen that sees the data.
+  RestoreTools? _restoreTools() {
+    final data = _entryData(context);
+    final replace = KibuoRestore.maybeOf(context)?.replace;
+    final backups = data?.backups;
+    if (data == null || replace == null || backups == null) return null;
+    return RestoreTools(
+      service: backups,
+      transactions: data.transactions,
+      replace: replace,
+    );
+  }
+
+  Future<void> _openedFile() async {
+    // Never over the lock: the file waits until kibuo is unlocked.
+    final lock = KibuoLock.maybeControllerOf(context);
+    if (lock != null && (!lock.ready || lock.locked)) {
+      _waitingLock?.removeListener(_whenUnlocked);
+      _waitingLock = lock..addListener(_whenUnlocked);
+      return;
+    }
+    final picked = await DeviceBackupFiles.instance.takeOpened();
+    final tools = picked == null || !mounted ? null : _restoreTools();
+    if (picked == null || tools == null || !mounted) return;
+    await runRestore(context, picked, tools);
   }
 
   /// At opening: thresholds already crossed are said in silence, then the
@@ -547,7 +592,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
             ),
           ),
         if (_entryData(context)?.backups case final backups?)
-          BackupSettingsRow(service: backups),
+          BackupSettingsRow(service: backups, restore: _restoreTools()),
       ],
     );
   }

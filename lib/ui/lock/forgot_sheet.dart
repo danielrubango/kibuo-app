@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/hold_button.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
@@ -132,74 +133,6 @@ class _ForgotSheet extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// A button that acts only after being held for 1.2 s, filling up meanwhile.
-class HoldToConfirm extends StatefulWidget {
-  const HoldToConfirm({
-    super.key,
-    required this.label,
-    required this.onConfirmed,
-  });
-
-  final String label;
-  final VoidCallback onConfirmed;
-
-  @override
-  State<HoldToConfirm> createState() => _HoldToConfirmState();
-}
-
-class _HoldToConfirmState extends State<HoldToConfirm>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _hold =
-      AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 1200),
-      )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) widget.onConfirmed();
-      });
-
-  @override
-  void dispose() {
-    _hold.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: widget.label,
-      // Starts filling the moment the finger lands; letting go early undoes it.
-      child: Listener(
-        onPointerDown: (_) => _hold.forward(),
-        onPointerUp: (_) => _hold.isCompleted ? null : _hold.reverse(),
-        onPointerCancel: (_) => _hold.isCompleted ? null : _hold.reverse(),
-        child: AnimatedBuilder(
-          animation: _hold,
-          builder: (context, _) => Container(
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: KibuoColors.danger, width: 1.5),
-              gradient: LinearGradient(
-                colors: const [KibuoColors.dangerTint, KibuoColors.surface],
-                stops: [_hold.value, _hold.value],
-              ),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              widget.label,
-              style: const TextStyle(
-                color: KibuoColors.danger,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
         ),
       ),
     );

@@ -3947,4 +3947,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moreBackupNone => 'None yet';
+
+  @override
+  String get restoreTitle => 'Restore a backup';
+
+  @override
+  String get restoreBody =>
+      'All the current data will be replaced. A copy of it is saved just before.';
+
+  @override
+  String get restoreChoose => 'Choose a file';
+
+  @override
+  String restoreSheetTitle(String date) {
+    return 'Go back to $date?';
+  }
+
+  @override
+  String restoreSavedOn(String date, String time) {
+    return 'Saved on $date at $time';
+  }
+
+  @override
+  String restoreBackupDay(String date) {
+    return 'Backup · $date';
+  }
+
+  @override
+  String get restoreKept => 'Restored as it was';
+
+  @override
+  String restoreReplacedCount(int days, int ops) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+      zero: 'Today',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      ops,
+      locale: localeName,
+      other: '$ops operations',
+      one: '1 operation',
+      zero: 'no operation',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get restoreReplaced => 'Replaced';
+
+  @override
+  String get restorePassword => 'The backup’s password';
+
+  @override
+  String get restorePasswordHelp => 'The one chosen when it was saved.';
+
+  @override
+  String get restoreWrongPassword =>
+      'That’s not the right password. Try again.';
+
+  @override
+  String get restoreCopyNote =>
+      'A copy of your current data is made just before.';
+
+  @override
+  String get restoreNoFolder =>
+      'First choose the folder for the copy made before.';
+
+  @override
+  String get restoreHold => 'Hold to replace';
+
+  @override
+  String get restoreHolding => 'Keep holding…';
+
+  @override
+  String get restoreReplace => 'Replace';
+
+  @override
+  String get restoreNotKibuo =>
+      'This file is not a kibuo backup, or it is damaged.';
+
+  @override
+  String get restoreTooNew =>
+      'This backup comes from a newer kibuo. Update kibuo to open it.';
+
+  @override
+  String get restoreCopyFailed =>
+      'The copy made before failed: nothing was replaced.';
+
+  @override
+  String get restoreDoneTitle => 'Data restored';
+
+  @override
+  String get restoreDoneBefore => 'Your data from ';
+
+  @override
+  String get restoreDoneAfter => ' is back.';
+
+  @override
+  String get restoreAccounts => 'Accounts';
+
+  @override
+  String get restoreOperations => 'Operations';
+
+  @override
+  String get restoreProjects => 'Projects';
+
+  @override
+  String restoreCopyWhere(String folder) {
+    return 'Copy made before, in $folder';
+  }
+
+  @override
+  String get restoreGoHome => 'See my data';
+
+  @override
+  String get protectRestore => 'To restore a backup';
 }

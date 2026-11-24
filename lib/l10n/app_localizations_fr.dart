@@ -3986,4 +3986,122 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get moreBackupNone => 'Aucune';
+
+  @override
+  String get restoreTitle => 'Restaurer une sauvegarde';
+
+  @override
+  String get restoreBody =>
+      'Toutes les données actuelles seront remplacées. Une copie de leur état sera sauvegardée juste avant.';
+
+  @override
+  String get restoreChoose => 'Choisir un fichier';
+
+  @override
+  String restoreSheetTitle(String date) {
+    return 'Revenir au $date ?';
+  }
+
+  @override
+  String restoreSavedOn(String date, String time) {
+    return 'Sauvegardée le $date à $time';
+  }
+
+  @override
+  String restoreBackupDay(String date) {
+    return 'Sauvegarde · $date';
+  }
+
+  @override
+  String get restoreKept => 'Restauré tel quel';
+
+  @override
+  String restoreReplacedCount(int days, int ops) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days jours',
+      one: '1 jour',
+      zero: 'Aujourd’hui',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      ops,
+      locale: localeName,
+      other: '$ops opérations',
+      one: '1 opération',
+      zero: 'aucune opération',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get restoreReplaced => 'Remplacés';
+
+  @override
+  String get restorePassword => 'Mot de passe de la sauvegarde';
+
+  @override
+  String get restorePasswordHelp => 'Celui choisi au moment de la sauvegarde.';
+
+  @override
+  String get restoreWrongPassword =>
+      'Ce n’est pas le bon mot de passe. Réessayez.';
+
+  @override
+  String get restoreCopyNote =>
+      'Une copie de vos données actuelles est faite juste avant.';
+
+  @override
+  String get restoreNoFolder =>
+      'Choisissez d’abord le dossier où ranger la copie d’avant.';
+
+  @override
+  String get restoreHold => 'Maintenir pour remplacer';
+
+  @override
+  String get restoreHolding => 'Continuez d’appuyer…';
+
+  @override
+  String get restoreReplace => 'Remplacer';
+
+  @override
+  String get restoreNotKibuo =>
+      'Ce fichier n’est pas une sauvegarde kibuo, ou il est abîmé.';
+
+  @override
+  String get restoreTooNew =>
+      'Cette sauvegarde vient d’une version plus récente de kibuo. Mettez kibuo à jour pour l’ouvrir.';
+
+  @override
+  String get restoreCopyFailed =>
+      'La copie d’avant n’a pas pu être faite : rien n’a été remplacé.';
+
+  @override
+  String get restoreDoneTitle => 'Données restaurées';
+
+  @override
+  String get restoreDoneBefore => 'Vous retrouvez vos données du ';
+
+  @override
+  String get restoreDoneAfter => '.';
+
+  @override
+  String get restoreAccounts => 'Comptes';
+
+  @override
+  String get restoreOperations => 'Opérations';
+
+  @override
+  String get restoreProjects => 'Projets';
+
+  @override
+  String restoreCopyWhere(String folder) {
+    return 'Copie d’avant, dans $folder';
+  }
+
+  @override
+  String get restoreGoHome => 'Voir mes données';
+
+  @override
+  String get protectRestore => 'Pour restaurer une sauvegarde';
 }

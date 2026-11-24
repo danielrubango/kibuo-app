@@ -3,8 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/backup/backup_files.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/backup/backup_sheet.dart';
+import 'package:kibuo/ui/backup/restore_sheet.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -19,11 +21,19 @@ class BackupScreen extends StatefulWidget {
     required this.service,
     this.folders = const DeviceBackupFolders(),
     this.now = DateTime.now,
+    this.restore,
+    this.files,
   });
 
   final BackupService service;
   final BackupFolders folders;
   final DateTime Function() now;
+
+  /// « Restaurer une sauvegarde »; none, no restore card.
+  final RestoreTools? restore;
+
+  /// Where the backup to restore is chosen.
+  final BackupFiles? files;
 
   @override
   State<BackupScreen> createState() => _BackupScreenState();
@@ -51,6 +61,15 @@ class _BackupScreenState extends State<BackupScreen> {
       now: widget.now,
     );
     await _load();
+  }
+
+  Future<void> _restore() async {
+    final tools = widget.restore;
+    if (tools == null) return;
+    final picked = await (widget.files ?? DeviceBackupFiles.instance).pick();
+    if (picked == null || !mounted) return;
+    await runRestore(context, picked, tools);
+    if (mounted) await _load();
   }
 
   Future<void> _pick() async {
@@ -144,6 +163,36 @@ class _BackupScreenState extends State<BackupScreen> {
                     ),
                   ),
                 ),
+                if (widget.restore != null) ...[
+                  const SizedBox(height: 12),
+                  // Canvas Sauvegarde: what restoring means, then the file.
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: KibuoColors.surface,
+                      borderRadius: BorderRadius.circular(
+                        KibuoTheme.radiusCard,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          l.restoreTitle,
+                          style: KibuoType.rowLabel.weight(600),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(l.restoreBody, style: KibuoType.help),
+                        const SizedBox(height: 12),
+                        KibuoButton(
+                          label: l.restoreChoose,
+                          kind: ButtonKind.danger,
+                          onPressed: _restore,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
     );
@@ -153,9 +202,12 @@ class _BackupScreenState extends State<BackupScreen> {
 /// « Sauvegarde et export » on Plus, with when the last backup was, in
 /// amber once it is old (canvas Plus, PlusAncienne).
 class BackupSettingsRow extends StatefulWidget {
-  const BackupSettingsRow({super.key, required this.service});
+  const BackupSettingsRow({super.key, required this.service, this.restore});
 
   final BackupService service;
+
+  /// Passed on to the screen: « Restaurer une sauvegarde ».
+  final RestoreTools? restore;
 
   @override
   State<BackupSettingsRow> createState() => _BackupSettingsRowState();
@@ -198,7 +250,8 @@ class _BackupSettingsRowState extends State<BackupSettingsRow> {
       onTap: () async {
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => BackupScreen(service: widget.service),
+            builder: (_) =>
+                BackupScreen(service: widget.service, restore: widget.restore),
           ),
         );
         await _load();

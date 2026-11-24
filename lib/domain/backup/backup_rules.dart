@@ -35,3 +35,8 @@ bool backupIsOld({
 /// Whether « Sauvegarder » can go with these two typed passwords.
 bool backupPasswordReady(String password, String again) =>
     password.runes.length >= backupPasswordMinLength && password == again;
+
+/// The copy made just before a restore (PRODUCT: Restauration):
+/// « kibuo-avant-restauration-2026-11-24-1723.kibuo ».
+String restoreCopyName(DateTime at) =>
+    backupFileName(at).replaceFirst('kibuo-', 'kibuo-avant-restauration-');

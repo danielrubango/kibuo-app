@@ -6174,6 +6174,180 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune'**
   String get moreBackupNone;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer une sauvegarde'**
+  String get restoreTitle;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les données actuelles seront remplacées. Une copie de leur état sera sauvegardée juste avant.'**
+  String get restoreBody;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un fichier'**
+  String get restoreChoose;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir au {date} ?'**
+  String restoreSheetTitle(String date);
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardée le {date} à {time}'**
+  String restoreSavedOn(String date, String time);
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde · {date}'**
+  String restoreBackupDay(String date);
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restauré tel quel'**
+  String get restoreKept;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days, plural, =0{Aujourd’hui} =1{1 jour} other{{days} jours}} · {ops, plural, =0{aucune opération} =1{1 opération} other{{ops} opérations}}'**
+  String restoreReplacedCount(int days, int ops);
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacés'**
+  String get restoreReplaced;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe de la sauvegarde'**
+  String get restorePassword;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Celui choisi au moment de la sauvegarde.'**
+  String get restorePasswordHelp;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce n’est pas le bon mot de passe. Réessayez.'**
+  String get restoreWrongPassword;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une copie de vos données actuelles est faite juste avant.'**
+  String get restoreCopyNote;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez d’abord le dossier où ranger la copie d’avant.'**
+  String get restoreNoFolder;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maintenir pour remplacer'**
+  String get restoreHold;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuez d’appuyer…'**
+  String get restoreHolding;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer'**
+  String get restoreReplace;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce fichier n’est pas une sauvegarde kibuo, ou il est abîmé.'**
+  String get restoreNotKibuo;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette sauvegarde vient d’une version plus récente de kibuo. Mettez kibuo à jour pour l’ouvrir.'**
+  String get restoreTooNew;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'La copie d’avant n’a pas pu être faite : rien n’a été remplacé.'**
+  String get restoreCopyFailed;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données restaurées'**
+  String get restoreDoneTitle;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous retrouvez vos données du '**
+  String get restoreDoneBefore;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'.'**
+  String get restoreDoneAfter;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes'**
+  String get restoreAccounts;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Opérations'**
+  String get restoreOperations;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Projets'**
+  String get restoreProjects;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copie d’avant, dans {folder}'**
+  String restoreCopyWhere(String folder);
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir mes données'**
+  String get restoreGoHome;
+
+  /// Restore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour restaurer une sauvegarde'**
+  String get protectRestore;
 }
 
 class _AppLocalizationsDelegate
