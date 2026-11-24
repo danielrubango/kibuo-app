@@ -197,11 +197,20 @@ class _BackupScreenState extends State<BackupScreen> {
                     children: [
                       ConstrainedBox(
                         constraints: const BoxConstraints(minHeight: 64),
-                        child: SettingsSwitch(
-                          label: l.autoBackup,
-                          help: l.autoBackupHelp,
+                        // Canvas Sauvegarde: the title at 600, like Dossier.
+                        child: SwitchRow(
                           value: state.auto,
                           onChanged: _setAuto,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l.autoBackup,
+                                style: KibuoType.rowLabel.weight(600),
+                              ),
+                              Text(l.autoBackupHelp, style: KibuoType.caption),
+                            ],
+                          ),
                         ),
                       ),
                       _FolderRow(
