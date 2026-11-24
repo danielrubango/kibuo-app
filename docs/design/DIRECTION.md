@@ -71,6 +71,12 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Flèche d'une carte.** Une carte qui ouvre une page finit par une flèche › de 18, grise sur une carte blanche, verte sur une carte menthe, à 12 du bord droit, pour paraître aussi loin du bord que le texte (Disponible, sa bande, le bilan du mois, Je dois et On me doit ; validé le 24 novembre 2026). Les cartes de l'accueil ont toutes 14 de marge à gauche et à droite ; en haut et en bas, 12 pour une carte blanche, 16 pour la carte menthe « Disponible » ; une ligne de « À traiter » commence à 14 et finit son action à 12. Une carte vide de dettes garde ses trois lignes : le titre, « Rien » en gris, un tiret.
 
+**Action sous une carte.** Un bouton texte posé sous une carte (« Reprendre de l'argent », « Supprimer le projet », « Retirer la date », « Régler sans paiement ») est centré, sa zone de toucher de 44 collée à la carte : le texte est à 12 de la carte et garde 12 avant le bloc suivant. Gris pour une action secondaire, rouge pour supprimer, vert pour une action de saisie (validé le 24 novembre 2026).
+
+**Lien en fin de carte.** Une carte d'une liste qui a une action finit sa dernière ligne par un lien vert en 13 gras (« Mettre de côté › ») ; quand l'action n'a plus lieu d'être, le lien devient « Détails › », pour qu'il y ait toujours un lien au même endroit. Une ligne qui ouvre une suite dans une carte (« Objectif atteint · Et maintenant ? ») porte la flèche de carte au bord droit.
+
+**Confirmer une action sur l'argent.** Mettre de côté, reprendre, rendre disponible, rembourser : la feuille de confirmation qui se ferme seule, avec la ligne de ce qui a été fait et « Annuler » ; jamais un message flottant, qui peut cacher le bouton du bas d'une fiche.
+
 **Retour au toucher.** Trois forces de vibration, selon le réglage du téléphone : légère (touches, choix, onglets, ouvrir une ligne), plus franche (ce qui enregistre), marquée (un refus, un glissement qui passe son seuil).
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.
