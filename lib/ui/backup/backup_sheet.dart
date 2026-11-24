@@ -130,6 +130,8 @@ class _BackupSheetState extends State<_BackupSheet> {
       final file = await widget.service.write(
         now: at,
         password: _encrypt ? _password.text : null,
+        // Android 13 and more keep the language outside the data.
+        language: Localizations.localeOf(context).languageCode,
       );
       final name = file.uri.pathSegments.last;
       final bool ok;

@@ -1051,5 +1051,12 @@
   "restoreProjects": "Projects",
   "restoreCopyWhere": "Copy made before, in {folder}",
   "restoreGoHome": "See my data",
-  "protectRestore": "To restore a backup"
+  "protectRestore": "To restore a backup",
+  "startRestoreLink": "I have a backup",
+  "startRestoreTitle": "Restore this backup?",
+  "startRestoreContent": "Contents",
+  "startRestoreCounts": "{accounts, plural, =1{1 account} other{{accounts} accounts}} · {ops, plural, =0{no operation} =1{1 operation} other{{ops} operations}}",
+  "startRestoreHidden": "• accounts · • operations",
+  "startRestoreNote": "You get back the backup’s language, currency and settings; the next steps are skipped.",
+  "startRestoreAction": "Restore"
 }

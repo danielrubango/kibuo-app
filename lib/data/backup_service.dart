@@ -77,7 +77,11 @@ class BackupService {
 
   /// Writes the backup to a file of the phone's temporary folder, named for
   /// [now], for the folder to copy; the caller deletes it.
-  Future<File> write({required DateTime now, String? password}) async {
+  Future<File> write({
+    required DateTime now,
+    String? password,
+    String? language,
+  }) async {
     final work = await Directory.systemTemp.createTemp('kibuo-out-');
     final out = File(p.join(work.path, backupFileName(now)));
     await writeBackup(
@@ -86,6 +90,7 @@ class BackupService {
       out: out,
       createdAt: now,
       password: password,
+      language: language,
       rounds: rounds,
     );
     return out;

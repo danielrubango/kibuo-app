@@ -43,6 +43,7 @@ class BackupManifest {
     required this.accounts,
     required this.operations,
     required this.projects,
+    this.language,
   });
 
   factory BackupManifest._fromJson(Map<String, dynamic> json) => BackupManifest(
@@ -51,6 +52,7 @@ class BackupManifest {
     accounts: json['accounts'] as int,
     operations: json['operations'] as int,
     projects: json['projects'] as int,
+    language: json['language'] as String?,
   );
 
   final DateTime createdAt;
@@ -59,7 +61,12 @@ class BackupManifest {
   final int operations;
   final int projects;
 
+  /// kibuo's language when it was saved: Android 13 and more keep it
+  /// outside the data, so it travels here (PRODUCT: Restauration).
+  final String? language;
+
   Map<String, Object> _toJson() => {
+    'language': ?language,
     'createdAt': createdAt.toIso8601String(),
     'schemaVersion': schemaVersion,
     'accounts': accounts,
@@ -99,13 +106,14 @@ Future<void> writeBackup(
   required File out,
   required DateTime createdAt,
   String? password,
+  String? language,
   int rounds = 300000,
 }) async {
   final work = await Directory.systemTemp.createTemp('kibuo-backup-');
   try {
     final plain = p.join(work.path, _databaseName);
     await _copyInClear(db, plain);
-    final manifest = _manifestOf(plain, createdAt);
+    final manifest = _manifestOf(plain, createdAt, language);
     await Isolate.run(
       () => _seal(
         manifest: manifest,
@@ -173,7 +181,7 @@ Future<void> _copyInClear(KibuoDatabase db, String path) async {
   }
 }
 
-BackupManifest _manifestOf(String path, DateTime createdAt) {
+BackupManifest _manifestOf(String path, DateTime createdAt, String? language) {
   final copy = sqlite.sqlite3.open(path, mode: sqlite.OpenMode.readOnly);
   try {
     int count(String table) =>
@@ -188,6 +196,7 @@ BackupManifest _manifestOf(String path, DateTime createdAt) {
       accounts: count('accounts'),
       operations: count('transactions'),
       projects: count('projects'),
+      language: language,
     );
   } finally {
     copy.close();

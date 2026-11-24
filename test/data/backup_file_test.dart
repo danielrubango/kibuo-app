@@ -185,4 +185,18 @@ void main() {
     final other = File('${scratch.path}/photo.jpg')..writeAsBytesSync(photo);
     await expectLater(peekBackup(other), throwsA(isA<BackupNotKibuo>()));
   });
+
+  test('the app\'s language travels with the backup', () async {
+    final out = File('${scratch.path}/fr.kibuo');
+    await writeBackup(
+      db,
+      appFolder: folder,
+      out: out,
+      createdAt: createdAt,
+      language: 'fr',
+      rounds: 1000,
+    );
+    final opened = await openBackup(out, into: into());
+    expect(opened.manifest.language, 'fr');
+  });
 }

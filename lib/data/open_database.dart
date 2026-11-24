@@ -61,6 +61,31 @@ final class Unreadable extends OpenResult {
   /// Sets the unreadable file (and its locked key) aside, without deleting
   /// it, and starts with an empty database and a new key.
   Future<OpenResult> startOver() async {
+    await _setAside();
+    return openKibuoDatabase(
+      folder: _folder,
+      vault: _vault,
+      inBackground: _inBackground,
+      recoveryRounds: _rounds,
+    );
+  }
+
+  /// « J'ai une sauvegarde » on unreadable data (PRODUCT: Restauration):
+  /// the unreadable file is set aside, never erased, and the backup takes
+  /// its place under a new key. A backup too new is refused first.
+  Future<OpenResult> restore(BackupContents contents) async {
+    if (backupTooNew(contents)) throw BackupTooNew();
+    await _setAside();
+    return replaceWithBackup(
+      folder: _folder,
+      contents: contents,
+      vault: _vault,
+      inBackground: _inBackground,
+    );
+  }
+
+  /// The unreadable file and its locked key, renamed aside; a new key.
+  Future<void> _setAside() async {
     final stamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
     await File(p.join(_folder.path, _fileName))
         .rename(p.join(_folder.path, 'kibuo-unreadable-$stamp.db'));
@@ -71,12 +96,6 @@ final class Unreadable extends OpenResult {
       );
     }
     await _vault.write(KeyVault.databaseKey, _newKey());
-    return openKibuoDatabase(
-      folder: _folder,
-      vault: _vault,
-      inBackground: _inBackground,
-      recoveryRounds: _rounds,
-    );
   }
 }
 

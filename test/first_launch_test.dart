@@ -71,7 +71,8 @@ void main() {
   ) async {
     await start(tester);
     expect(find.text('Bienvenue sur kibuo'), findsOneWidget);
-    expect(find.text('J’ai une sauvegarde'), findsNothing, reason: 'later');
+    // Under « Continuer », at the first step only (PRODUCT: Restauration).
+    expect(find.text('J’ai une sauvegarde'), findsOneWidget);
 
     await next(tester);
     expect(find.text('Étape 2 sur 4'), findsOneWidget);
