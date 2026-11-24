@@ -5,6 +5,7 @@ import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/project_repository.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
 
 void main() {
@@ -71,5 +72,142 @@ void main() {
     expect((await projects.projects()).single.saved, const Money(15000, 'USD'));
     expect(await projects.reserved(), {mpesa: 15000});
     expect(await projects.free(mpesa), const Money(35000, 'USD'));
+  });
+
+  group('the card and its money', () {
+    late String rawbank;
+    late String trip;
+
+    setUp(() async {
+      rawbank = await AccountRepository(db).create(
+        name: 'Rawbank',
+        type: AccountType.bank,
+        opening: const Money(10000, 'USD'),
+        openingDate: DateTime.utc(2026),
+      );
+      trip = await projects.create(
+        name: 'Voyage',
+        icon: 'airplane',
+        accountId: rawbank,
+        goal: 30000,
+        startedOn: DateTime(2026, 11, 1),
+        due: DateTime(2027, 1, 1),
+      );
+    });
+
+    test('set aside on its own account: no operation, held back', () async {
+      final ok = await projects.putAside(
+        trip,
+        amount: 6000,
+        date: DateTime(2026, 11, 24),
+      );
+      expect(ok, isTrue);
+      expect((await projects.project(trip))!.saved.minor, 6000);
+      expect((await projects.free(rawbank)).minor, 4000);
+      expect(await TransactionRepository(db).all(), isEmpty);
+      final line = (await projects.contributions(trip)).single;
+      expect(line.from, equals(null));
+      expect(line.account, 'Rawbank');
+    });
+
+    test('never more than what is free on the account', () async {
+      final ok = await projects.putAside(
+        trip,
+        amount: 10001,
+        date: DateTime(2026, 11, 24),
+      );
+      expect(ok, isFalse);
+      expect(await projects.contributions(trip), isEmpty);
+    });
+
+    test('from another account: a transfer first, then the line', () async {
+      final ok = await projects.putAside(
+        trip,
+        amount: 20000,
+        date: DateTime(2026, 11, 24),
+        fromAccountId: mpesa,
+      );
+      expect(ok, isTrue);
+      final moved = (await TransactionRepository(db).all()).single;
+      expect(moved.accountId, mpesa);
+      expect(moved.toAccountId, rawbank);
+      expect((await projects.free(rawbank)).minor, 10000);
+      expect((await projects.free(mpesa)).minor, 30000);
+      final line = (await projects.contributions(trip)).single;
+      expect(line.from, 'M-Pesa');
+      expect(line.account, 'Rawbank');
+    });
+
+    test('from another account, only what is free there', () async {
+      final ok = await projects.putAside(
+        trip,
+        amount: 50001,
+        date: DateTime(2026, 11, 24),
+        fromAccountId: mpesa,
+      );
+      expect(ok, isFalse);
+      expect(await TransactionRepository(db).all(), isEmpty);
+    });
+
+    test('taken back: never more than set aside, newest first', () async {
+      await projects.putAside(trip, amount: 6000, date: DateTime(2026, 11, 2));
+      expect(
+        await projects.takeBack(
+          trip,
+          amount: 6001,
+          date: DateTime(2026, 11, 3),
+        ),
+        isFalse,
+      );
+      expect(
+        await projects.takeBack(
+          trip,
+          amount: 2000,
+          date: DateTime(2026, 11, 3),
+        ),
+        isTrue,
+      );
+      final lines = await projects.contributions(trip);
+      expect(lines.map((c) => c.amount.minor), [-2000, 6000]);
+      expect((await projects.free(rawbank)).minor, 6000);
+    });
+
+    test('ended: nothing held back any more, still readable', () async {
+      await projects.putAside(trip, amount: 6000, date: DateTime(2026, 11, 2));
+      await projects.end(trip, ending: 'released', on: DateTime(2026, 11, 4));
+      final p = (await projects.project(trip))!;
+      expect(p.running, isFalse);
+      expect(p.ending, 'released');
+      expect(p.endedOn, DateTime(2026, 11, 4));
+      expect((await projects.free(rawbank)).minor, 10000);
+    });
+
+    test('changed: name, goal, date removed; account kept', () async {
+      await projects.edit(
+        trip,
+        name: ' Goma ',
+        icon: 'car',
+        goal: 40000,
+        due: null,
+        period: PlanPeriod.month,
+        remind: false,
+        accountId: rawbank,
+      );
+      final p = (await projects.project(trip))!;
+      expect(p.name, 'Goma');
+      expect(p.icon, 'car');
+      expect(p.goal.minor, 40000);
+      expect(p.due, equals(null));
+      expect(p.period, PlanPeriod.month);
+      expect(p.remind, isFalse);
+    });
+
+    test('deleted with its lines: the money is free again', () async {
+      await projects.putAside(trip, amount: 6000, date: DateTime(2026, 11, 2));
+      await projects.delete(trip);
+      expect(await projects.project(trip), equals(null));
+      expect(await projects.projects(), isEmpty);
+      expect((await projects.free(rawbank)).minor, 10000);
+    });
   });
 }

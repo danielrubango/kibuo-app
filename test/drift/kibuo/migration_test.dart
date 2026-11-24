@@ -11,6 +11,7 @@ import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v13.dart' as v13;
+import 'generated/schema_v14.dart' as v14;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -517,6 +518,53 @@ void main() {
         expect((await newDb.select(newDb.debts).get()).single.person, 'Grâce');
         expect(await newDb.select(newDb.projects).get(), isEmpty);
         expect(await newDb.select(newDb.contributions).get(), isEmpty);
+      },
+    );
+  });
+
+  test('version 13 to 14 keeps the contributions, with no source', () async {
+    const project = v13.ProjectsData(
+      id: 'project-1',
+      version: 130,
+      deviceId: 'phone-1',
+      deleted: 0,
+      name: 'Voyage',
+      icon: 'airplane',
+      accountId: 'account-1',
+      goal: 30000,
+      currency: 'USD',
+      startedOn: 1794700000,
+      period: 'week',
+      remind: 1,
+    );
+    const contribution = v13.ContributionsData(
+      id: 'contribution-1',
+      version: 131,
+      deviceId: 'phone-1',
+      deleted: 0,
+      projectId: 'project-1',
+      amount: 5000,
+      date: 1794800000,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 13,
+      newVersion: 14,
+      createOld: v13.DatabaseAtV13.new,
+      createNew: v14.DatabaseAtV14.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.projects, project);
+        batch.insert(oldDb.contributions, contribution);
+      },
+      validateItems: (newDb) async {
+        final kept = (await newDb.select(newDb.contributions).get()).single;
+        expect(kept.amount, 5000);
+        expect(kept.fromAccountId, equals(null));
+        expect(
+          (await newDb.select(newDb.projects).get()).single.name,
+          'Voyage',
+        );
       },
     );
   });

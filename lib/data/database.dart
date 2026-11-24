@@ -320,6 +320,10 @@ class Contributions extends Table with SyncColumns {
   /// In the project's currency; negative: taken back.
   IntColumn get amount => integer()();
   DateTimeColumn get date => dateTime()();
+
+  /// Set aside from another account: a transfer brought it to the
+  /// project's account first (PRODUCT: Projets).
+  TextColumn get fromAccountId => text().nullable()();
 }
 
 @DriftDatabase(
@@ -349,7 +353,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// Bump with every change to the tables, and add the step to [migration].
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -416,6 +420,12 @@ class KibuoDatabase extends _$KibuoDatabase {
       from12To13: (m, schema) async {
         await m.createTable(schema.projects);
         await m.createTable(schema.contributions);
+      },
+      from13To14: (m, schema) async {
+        await m.addColumn(
+          schema.contributions,
+          schema.contributions.fromAccountId,
+        );
       },
     ),
     beforeOpen: (details) async {
