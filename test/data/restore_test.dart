@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/backup_file.dart';
@@ -115,5 +116,53 @@ void main() {
     );
     db = await open();
     expect((await AccountRepository(db).accounts()).length, 2);
+  });
+
+  test('unreadable data: set aside, never erased, then the backup', () async {
+    final contents = await backupNow();
+    await db.close();
+    // The key is gone from the phone: the data cannot be opened.
+    await vault.delete(KeyVault.databaseKey);
+    final unreadable = await openKibuoDatabase(
+      folder: folder,
+      vault: vault,
+      inBackground: false,
+    );
+    expect(unreadable, isA<Unreadable>());
+
+    final result = await (unreadable as Unreadable).restore(contents);
+    db = (result as Opened).database;
+    expect(
+      [for (final a in await AccountRepository(db).accounts()) a.name],
+      ['M-Pesa'],
+    );
+    expect(
+      folder.listSync().where(
+        (f) => f.uri.pathSegments.last.startsWith('kibuo-unreadable-'),
+      ),
+      isNotEmpty,
+    );
+  });
+
+  test('unreadable data and a backup too new: nothing set aside', () async {
+    final contents = await backupNow();
+    final raw = sqlite3.open(contents.database.path);
+    raw.execute('PRAGMA user_version = 999');
+    raw.close();
+    await db.close();
+    await vault.delete(KeyVault.databaseKey);
+    final unreadable = await openKibuoDatabase(
+      folder: folder,
+      vault: vault,
+      inBackground: false,
+    ) as Unreadable;
+    await expectLater(
+      unreadable.restore(contents),
+      throwsA(isA<BackupTooNew>()),
+    );
+    expect(File('${folder.path}/kibuo.db').existsSync(), isTrue);
+    // For the tear-down: an open database again.
+    await vault.write(KeyVault.databaseKey, 'unused');
+    db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'p');
   });
 }
