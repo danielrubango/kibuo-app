@@ -23,6 +23,7 @@ import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
+import 'package:kibuo/ui/settings/language_sheet.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -308,12 +309,7 @@ class _LanguageStep extends StatelessWidget {
 
   static const _names = {'fr': 'Français', 'en': 'English'};
 
-  Future<void> _pick(String code) async {
-    appLanguageChoice.value = Locale(code);
-    // Android 13+ keeps it, and kibuo then follows Android's setting.
-    final android = await setAndroidAppLanguage(code);
-    await store.setLanguage(android ? null : code);
-  }
+  Future<void> _pick(String code) => chooseAppLanguage(store, code);
 
   @override
   Widget build(BuildContext context) {

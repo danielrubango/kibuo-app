@@ -243,8 +243,6 @@ void main() {
 
   testWidgets('Security screens', (tester) async {
     final c = await lock();
-    await show(tester, SecurityScreen(lock: c));
-    await snap(tester, 'Securite');
     await show(tester, LockSettingsScreen(lock: c));
     await snap(tester, 'DelaiB');
     await tester.tap(find.text('Verrouiller après'));

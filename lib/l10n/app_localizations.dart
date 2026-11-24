@@ -6229,6 +6229,126 @@ abstract class AppLocalizations {
   /// **'Pour retirer le mot de passe des sauvegardes'**
   String get protectBackupPasswordRemove;
 
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes espaces'**
+  String get plusSpaces;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages'**
+  String get plusSettings;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'kibuo {version} · Vos données restent sur ce téléphone'**
+  String plusFooter(String version);
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde aujourd’hui'**
+  String get plusBackupToday;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde hier'**
+  String get plusBackupYesterday;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière sauvegarde il y a {days} jours'**
+  String plusBackupDays(int days);
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sauvegarde'**
+  String get plusBackupNone;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'{day, plural, =1{début le 1er} other{début le {day}}}'**
+  String plusMonthStart(int day);
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'verrouillage'**
+  String get plusLock;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Général'**
+  String get settingsGeneral;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get settingsNotifications;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité'**
+  String get settingsSecurity;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données'**
+  String get settingsData;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get settingsLanguage;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde et restauration'**
+  String get settingsBackup;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activé'**
+  String get settingsLockOn;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactivé'**
+  String get settingsLockOff;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les nombres et les dates suivent la langue.'**
+  String get languageHelp;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Français'**
+  String get languageFrenchIn;
+
+  /// Plus and Réglages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anglais'**
+  String get languageEnglishIn;
+
   /// Backup.
   ///
   /// In fr, this message translates to:

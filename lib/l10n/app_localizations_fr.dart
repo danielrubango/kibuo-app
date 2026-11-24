@@ -4011,6 +4011,78 @@ class AppLocalizationsFr extends AppLocalizations {
       'Pour retirer le mot de passe des sauvegardes';
 
   @override
+  String get plusSpaces => 'Mes espaces';
+
+  @override
+  String get plusSettings => 'Réglages';
+
+  @override
+  String plusFooter(String version) {
+    return 'kibuo $version · Vos données restent sur ce téléphone';
+  }
+
+  @override
+  String get plusBackupToday => 'Dernière sauvegarde aujourd’hui';
+
+  @override
+  String get plusBackupYesterday => 'Dernière sauvegarde hier';
+
+  @override
+  String plusBackupDays(int days) {
+    return 'Dernière sauvegarde il y a $days jours';
+  }
+
+  @override
+  String get plusBackupNone => 'Aucune sauvegarde';
+
+  @override
+  String plusMonthStart(int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      day,
+      locale: localeName,
+      other: 'début le $day',
+      one: 'début le 1er',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plusLock => 'verrouillage';
+
+  @override
+  String get settingsGeneral => 'Général';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsSecurity => 'Sécurité';
+
+  @override
+  String get settingsData => 'Données';
+
+  @override
+  String get settingsLanguage => 'Langue';
+
+  @override
+  String get settingsBackup => 'Sauvegarde et restauration';
+
+  @override
+  String get settingsLockOn => 'Activé';
+
+  @override
+  String get settingsLockOff => 'Désactivé';
+
+  @override
+  String get languageHelp => 'Les nombres et les dates suivent la langue.';
+
+  @override
+  String get languageFrenchIn => 'Français';
+
+  @override
+  String get languageEnglishIn => 'Anglais';
+
+  @override
   String get todoBackup => 'Sauvegarde';
 
   @override

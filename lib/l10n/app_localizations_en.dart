@@ -3968,6 +3968,77 @@ class AppLocalizationsEn extends AppLocalizations {
   String get protectBackupPasswordRemove => 'To remove the backup password';
 
   @override
+  String get plusSpaces => 'My spaces';
+
+  @override
+  String get plusSettings => 'Settings';
+
+  @override
+  String plusFooter(String version) {
+    return 'kibuo $version · Your data stays on this phone';
+  }
+
+  @override
+  String get plusBackupToday => 'Last backup today';
+
+  @override
+  String get plusBackupYesterday => 'Last backup yesterday';
+
+  @override
+  String plusBackupDays(int days) {
+    return 'Last backup $days days ago';
+  }
+
+  @override
+  String get plusBackupNone => 'No backup yet';
+
+  @override
+  String plusMonthStart(int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      day,
+      locale: localeName,
+      other: 'starts on day $day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plusLock => 'lock';
+
+  @override
+  String get settingsGeneral => 'General';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsData => 'Data';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsBackup => 'Backup and restore';
+
+  @override
+  String get settingsLockOn => 'On';
+
+  @override
+  String get settingsLockOff => 'Off';
+
+  @override
+  String get languageHelp => 'Numbers and dates follow the language.';
+
+  @override
+  String get languageFrenchIn => 'French';
+
+  @override
+  String get languageEnglishIn => 'English';
+
+  @override
   String get todoBackup => 'Backup';
 
   @override
