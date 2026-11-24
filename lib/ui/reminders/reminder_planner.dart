@@ -1,9 +1,11 @@
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/debt_repository.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/projects/project_reminder.dart';
 import 'package:kibuo/domain/reminders/due_reminder.dart';
 import 'package:kibuo/domain/reminders/entry_reminder.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -37,6 +39,9 @@ class ReminderPlanner {
   static const homePayload = 'home';
   static String rulePayload(String id) => 'rule:$id';
 
+  /// A project's reminder opens its card.
+  static String projectPayload(String id) => 'project:$id';
+
   Future<void> refresh(AppLocalizations l, DateTime now) async {
     final notices = <Notice>[];
     if (await store.entryOn() && await notifier.allowed()) {
@@ -67,6 +72,7 @@ class ReminderPlanner {
     if (data case final data? when await notifier.allowed()) {
       notices.addAll(await _dues(data, l, now));
       notices.addAll(await _debts(data, l, now));
+      notices.addAll(await _projects(data, l, now));
     }
     await notifier.replace(notices);
   }
@@ -107,6 +113,75 @@ class ReminderPlanner {
           payload: homePayload,
         ),
       );
+    }
+    return notices;
+  }
+
+  /// Each project's reminder at its plan's rhythm, at 9 (PRODUCT:
+  /// Projets): what the period asks; nothing once its part is set aside,
+  /// for a project reached or ended, or switched off.
+  Future<List<Notice>> _projects(
+    EntryData data,
+    AppLocalizations l,
+    DateTime now,
+  ) async {
+    final projects = data.projects;
+    if (projects == null) return const [];
+    final lang = l.localeName;
+    final notices = <Notice>[];
+    for (final p in await projects.projects()) {
+      if (!p.running || p.reached || !p.remind) continue;
+      final due = p.due;
+      final lines = await projects.contributions(p.id);
+      for (final at in projectReminderTimes(p.period, now)) {
+        if (due != null && !at.isBefore(due)) break;
+        final String body;
+        if (due == null) {
+          body = switch (p.period) {
+            PlanPeriod.week => l.reminderProjectFreeWeek,
+            PlanPeriod.fortnight => l.reminderProjectFreeFortnight,
+            PlanPeriod.month => l.reminderProjectFreeMonth,
+          };
+        } else {
+          final per = perPeriod(
+            goal: p.goal.minor,
+            saved: p.saved.minor,
+            today: at,
+            due: due,
+            period: p.period,
+            unit: unitOf(p.goal.currency),
+          );
+          // Its part already set aside in that period: nothing to say.
+          final end = reminderPeriodEnd(p.period, at);
+          final inPeriod = lines
+              .where(
+                (c) =>
+                    !c.date.isBefore(DateTime(at.year, at.month, at.day)) &&
+                    c.date.isBefore(end),
+              )
+              .fold<int>(0, (s, c) => s + c.amount.minor);
+          if (per <= 0 || inPeriod >= per) continue;
+          final amount = formatMoney(
+            Money(per, p.goal.currency),
+            currencyOf(p.goal.currency),
+            lang,
+          );
+          body = switch (p.period) {
+            PlanPeriod.week => l.reminderProjectWeek(amount),
+            PlanPeriod.fortnight => l.reminderProjectFortnight(amount),
+            PlanPeriod.month => l.reminderProjectMonth(amount),
+          };
+        }
+        notices.add(
+          Notice(
+            id: 4000 + notices.length,
+            at: at,
+            title: p.name,
+            body: body,
+            payload: projectPayload(p.id),
+          ),
+        );
+      }
     }
     return notices;
   }

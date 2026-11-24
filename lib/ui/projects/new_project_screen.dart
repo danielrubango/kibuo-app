@@ -15,7 +15,6 @@ import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/money/money_format.dart';
-import 'package:kibuo/ui/projects/project_parts.dart';
 import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';

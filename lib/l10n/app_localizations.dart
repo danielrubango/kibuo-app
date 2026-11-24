@@ -5892,6 +5892,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'le retard'**
   String get projectQuickLate;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} à mettre de côté cette semaine'**
+  String reminderProjectWeek(String amount);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} à mettre de côté cette quinzaine'**
+  String reminderProjectFortnight(String amount);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} à mettre de côté ce mois-ci'**
+  String reminderProjectMonth(String amount);
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un peu de côté cette semaine ?'**
+  String get reminderProjectFreeWeek;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un peu de côté cette quinzaine ?'**
+  String get reminderProjectFreeFortnight;
+
+  /// Reminders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un peu de côté ce mois-ci ?'**
+  String get reminderProjectFreeMonth;
 }
 
 class _AppLocalizationsDelegate

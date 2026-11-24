@@ -3769,4 +3769,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectQuickLate => 'catch up';
+
+  @override
+  String reminderProjectWeek(String amount) {
+    return '$amount to put aside this week';
+  }
+
+  @override
+  String reminderProjectFortnight(String amount) {
+    return '$amount to put aside these two weeks';
+  }
+
+  @override
+  String reminderProjectMonth(String amount) {
+    return '$amount to put aside this month';
+  }
+
+  @override
+  String get reminderProjectFreeWeek => 'A little aside this week?';
+
+  @override
+  String get reminderProjectFreeFortnight => 'A little aside these two weeks?';
+
+  @override
+  String get reminderProjectFreeMonth => 'A little aside this month?';
 }

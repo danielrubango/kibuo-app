@@ -1,3 +1,7 @@
+import 'dart:math' as math;
+
+import 'package:kibuo/domain/money/currency.dart';
+
 /// How a dated project's plan is divided (PRODUCT: Projets).
 enum PlanPeriod {
   week('week', 7),
@@ -139,4 +143,11 @@ bool lateForTodo({
   );
   final part = (goal / periodsLeft(period, start, due)).ceil();
   return -gap >= part;
+}
+
+/// One whole unit of [currency] in its minor unit: 100 for the dollar,
+/// 1 for the franc.
+int unitOf(String currency) {
+  final c = currencyOf(currency);
+  return c.usesDecimals ? math.pow(10, c.digits).toInt() : 1;
 }

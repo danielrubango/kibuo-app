@@ -3807,4 +3807,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get projectQuickLate => 'le retard';
+
+  @override
+  String reminderProjectWeek(String amount) {
+    return '$amount à mettre de côté cette semaine';
+  }
+
+  @override
+  String reminderProjectFortnight(String amount) {
+    return '$amount à mettre de côté cette quinzaine';
+  }
+
+  @override
+  String reminderProjectMonth(String amount) {
+    return '$amount à mettre de côté ce mois-ci';
+  }
+
+  @override
+  String get reminderProjectFreeWeek => 'Un peu de côté cette semaine ?';
+
+  @override
+  String get reminderProjectFreeFortnight => 'Un peu de côté cette quinzaine ?';
+
+  @override
+  String get reminderProjectFreeMonth => 'Un peu de côté ce mois-ci ?';
 }
