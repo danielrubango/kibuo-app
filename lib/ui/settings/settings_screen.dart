@@ -38,6 +38,7 @@ class SettingsScreen extends StatefulWidget {
     super.key,
     required this.db,
     required this.openAccounts,
+    this.lock,
     this.notifier,
     this.onRemindersChanged,
     this.backups,
@@ -45,6 +46,10 @@ class SettingsScreen extends StatefulWidget {
   });
 
   final KibuoDatabase db;
+
+  /// The app lock, read where Plus shows: a pushed screen does not see it
+  /// (STATE, pitfalls). No Sécurité section without it.
+  final LockController? lock;
 
   /// Comptes, as the rest of the app opens it.
   final Future<void> Function() openAccounts;
@@ -96,7 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final db = widget.db;
-    final lock = KibuoLock.maybeControllerOf(context);
+    final lock = widget.lock ?? KibuoLock.maybeControllerOf(context);
     final language = switch (Localizations.localeOf(context).languageCode) {
       'en' => 'English',
       _ => 'Français',
