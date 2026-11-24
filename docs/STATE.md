@@ -18,6 +18,10 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 
 Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 672 tests verts à la dernière fusion.
 
+## Dessiné mais pas encore construit
+
+Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une liste provisoire de lignes : comptes, budgets, dettes, projets, récurrences, catégories, types, devises, début du mois, montants longs, rappels, sécurité, sauvegarde), la page **Réglages** et le choix de la langue après le premier lancement, l'**Aperçu** (écran d'attente, phase 7 « Tableaux de bord »), l'**export CSV**, Aide et support, À propos, Noter kibuo. Liste des planches : [design/DIRECTION.md](design/DIRECTION.md#écrans-livrés-et-leur-planche).
+
 ## En cours ou non fusionné
 
 - Aucune branche de code en attente : toutes sont fusionnées dans `main`.
@@ -56,7 +60,8 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Si kibuo est fermé pendant que le code de récupération est affiché, le code n'a jamais été confirmé.
 - Les groupes de comptes repliés ne sont pas retenus ; un compte archivé ne peut pas être rétabli.
 - Un « Enregistrer » grisé ne dit pas ce qui manque.
-- 36 planches du canvas ne sont rattachées à aucune page : variantes écartées, à classer ([design/boards/README.md](design/boards/README.md)).
+- 36 des 258 planches du canvas ne sont rattachées à aucune page : variantes écartées, classées dans [DIRECTION.md](design/DIRECTION.md#variantes-écartées-et-pourquoi), souvent sans raison écrite.
+- La planche P1 du chiffrement de sauvegarde (`sauvegarde-variantes.html`) n'est ni dans le canvas exporté ni dans le dépôt.
 - iOS : chaque API propre à Android est notée dans [backlog/ios.md](backlog/ios.md) ; rien n'est porté.
 
 ## Pièges rencontrés et leur solution

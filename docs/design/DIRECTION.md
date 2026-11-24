@@ -1,51 +1,18 @@
 # Direction visuelle
 
-Direction retenue : **variante Blocs, thème clair**. Le thème sombre viendra plus tard ([backlog](../backlog/theme-sombre.md)). Les maquettes de référence sont sur la [planche kibuo](https://claude.ai/artifact/CiWTkb7rvvSx7Vy8nxZwdm) (privée).
+Direction retenue : **variante Blocs, thème clair**. Le thème sombre viendra plus tard ([backlog](../backlog/theme-sombre.md)).
 
-## Couleurs
-
-| Rôle | Valeur |
-|---|---|
-| Fond | `#EEF1F7` |
-| Surface et barre de navigation | `#FFFFFF` |
-| Texte | `#0E1320` |
-| Texte secondaire | `#525D73` |
-| Accent (texte, jauges) | `#0A7355` |
-| Piste des jauges | `#DDE2EC` |
-| Budget à 80 % | `#D99A1C` |
-| Retard ou dépassement | `#B3321A` |
-
-Le menthe `#5EEAB5` avec un texte `#0E1320` sert au bloc du total, au bouton + et à l'action principale.
+Ce document garde les **règles et décisions** visuelles, avec leur date. Les **valeurs** (couleurs, styles de texte, espaces, rayons, hauteurs, icônes, composants du kit) sont dans [SYSTEM.md](SYSTEM.md). Les planches du canvas sont copiées dans [boards/](boards/), avec leur état et le code qui les implémente ; le canvas lui-même est un artifact privé de claude.ai.
 
 ## Système de design
 
 Validé le 15 novembre 2026, sur la page « Système de design » de la planche et sur l'écran du même nom de l'appli (Plus, version d'essai seulement). Chaque écran se construit avec ces pièces ; tout écart passe d'abord par une proposition.
 
-**Polices.** Plus Jakarta Sans pour les titres, les montants et les touches du clavier ; Inter pour le reste. Le nom « kibuo » à côté du logo garde Space Grotesk.
-
-**Une taille par rôle.**
-
-| Rôle | Style |
-|---|---|
-| Titre d'onglet | Plus Jakarta 24 gras |
-| Titre d'écran, avec ‹ | Plus Jakarta 22 gras |
-| Titre de feuille, avec ✕ | Plus Jakarta 20 gras |
-| Grand montant | Plus Jakarta 34 gras |
-| Montant ou code mis en avant | Plus Jakarta 28 gras |
-| Valeur saisie | Plus Jakarta 26 gras |
-| Titre de carte | Plus Jakarta 17 gras |
-| Nom d'élément | Inter 16 demi-gras |
-| Libellé de ligne | Inter 15 moyen |
-| Texte | Inter 14 |
-| Titre de section | Inter 13 demi-gras, gris |
-| Aide | Inter 13, gris |
-| Légende | Inter 12, gris |
-| Bouton | Inter 16 demi-gras (15 pour les secondaires) |
-| Touche du clavier | Plus Jakarta 22 |
+**Polices et tailles.** Plus Jakarta Sans pour les titres, les montants et les touches du clavier ; Inter pour le reste ; Space Grotesk pour le nom à côté du logo. Une taille par rôle, sans exception : la liste des 16 styles est dans [SYSTEM.md](SYSTEM.md#typographie).
 
 **Espaces, coins et hauteurs.** Une seule échelle d'espaces (validée le 15 novembre 2026), dans le thème : 4 et 8 à l'intérieur d'un groupe (libellé et valeur, icône et texte), 12 entre deux cartes ou deux champs, 16 pour les marges d'écran (tous les écrans, y compris ceux du code) et l'intérieur des cartes, 24 avant le bouton principal et sous le contenu d'une feuille (en plus de la barre du téléphone), 32 entre deux grandes parties d'un écran. Entre les blocs d'un écran, aucune autre valeur. À l'intérieur d'un composant dessiné et validé sur le canvas (menu, ligne, carte, en-tête de jour, barre), ses propres mesures font foi, même hors de l'échelle (6, 10, 14) ; elles vivent dans le composant du kit, une seule fois (décidé le 18 novembre 2026). Coins : 12 pastille, 14 champ texte, 16 champ de montant et touche, 18 carte et bouton principal, 22 carte mise en avant, 26 feuille. Hauteurs : 44 zone tactile, 48 bouton secondaire, 50 touche, 52 champ texte, 54 bouton principal.
 
-**Couleurs.** Celles du tableau ci-dessus, plus le voile derrière une feuille : l'encre à 42 %.
+**Couleurs.** Une couleur a un rôle, et une teinte va avec son encre : la liste est dans [SYSTEM.md](SYSTEM.md#couleurs). Derrière une feuille, le voile est l'encre à 42 %.
 
 **Boutons.** Principal (menthe, un seul par écran, en bas), secondaire (blanc : Plus tard), contour (choix lourd mais sans danger), sombre (Terminé), danger (contour rouge ; appui maintenu pour un geste lourd sans feuille de confirmation, comme restaurer une sauvegarde ou tout effacer ; un simple toucher quand une feuille confirme déjà), créer (pointillés), et l'action texte verte.
 
@@ -116,7 +83,7 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 - Un taux se modifie toujours dans la même feuille, qu'on vienne de Réglages › Devises ou de « À traiter » : le champ « 1 $ = … FC » à contour vert de la saisie, le clavier dessous, l'ancien taux et sa date avec l'écart, puis « Enregistrer le taux ».
 - Mettre de côté pour un projet se fait dans une feuille : la barre de progression du projet (la part ajoutée en hachuré), deux lignes à toucher (montant, compte), une alerte seulement si le compte devient bas, puis « Mettre de côté ».
 - Lancer une sauvegarde se fait dans une feuille : un rappel (ambre « Votre dernière sauvegarde date de 12 jours », ou bleu « Aucune sauvegarde pour l'instant »), le dossier avec « Changer » (ou « Aucun dossier choisi » et « Sélectionner »), l'interrupteur « Chiffrer avec un mot de passe », une phrase qui dit que tout est sauvegardé, sans chiffres. « Sauvegarder » reste grisé tant qu'aucun dossier n'est choisi.
-- Quand « Chiffrer avec un mot de passe » est allumé (il est éteint par défaut), deux champs suivent la carte dans la feuille (validé le 24 novembre 2026, planche sauvegarde P1, `docs/design/boards/sauvegarde-variantes.html`) : le mot de passe, au contour vert du champ actif et avec l'œil pour l'afficher, puis « Confirmer le mot de passe », et l'avertissement ambre « Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte. ». La feuille monte au-dessus du clavier, sans le rappel du haut ; « Sauvegarder » reste grisé tant que les deux ne sont pas identiques et longs d'au moins 8 caractères.
+- Quand « Chiffrer avec un mot de passe » est allumé (il est éteint par défaut), deux champs suivent la carte dans la feuille (validé le 24 novembre 2026, planche sauvegarde P1 ; cette planche de variantes n'est pas dans l'export du canvas, à vérifier) : le mot de passe, au contour vert du champ actif et avec l'œil pour l'afficher, puis « Confirmer le mot de passe », et l'avertissement ambre « Sans ce mot de passe, la sauvegarde ne pourra pas être ouverte. ». La feuille monte au-dessus du clavier, sans le rappel du haut ; « Sauvegarder » reste grisé tant que les deux ne sont pas identiques et longs d'au moins 8 caractères.
 - Une sauvegarde faite se confirme dans la feuille commune de ConfirmA (planche R1) : « Sauvegarde faite », la coche menthe, le nom du fichier, le dossier et l'heure, un cadenas si elle est chiffrée, puis la barre qui se vide, sans action.
 - Si le dossier retenu n'est plus accessible, la feuille écrit « Dossier introuvable » en rouge (icône comprise), avec « Téléchargements/Kibuo n'est plus accessible. » dessous, et « Sélectionner » à la place de « Changer ».
 - Tant que les sauvegardes automatiques, la restauration et l'export ne sont pas livrés, la page Sauvegarde ne montre que la carte menthe (« Dernière sauvegarde », la date ou « Jamais », « Sauvegarder maintenant ») et la ligne Dossier (« Aucun dossier choisi » en gris) (planche S1). L'interrupteur « Protéger par mot de passe » de la page est retiré : le mot de passe se choisit dans la feuille, à chaque sauvegarde.
@@ -178,3 +145,60 @@ Logo et icônes : voir [BRAND.md](../BRAND.md).
 ## Actions d'en-tête
 
 - Une action en haut à droite d'un écran (Modifier, par exemple) est un lien texte vert (#0A7355), sans fond ni bordure, d'au moins 44 px de haut. Les icônes d'action d'en-tête (⋯) suivent la même couleur, sans fond.
+
+## Écrans livrés et leur planche
+
+Une ligne par écran livré : la planche retenue (dans [boards/](boards/), avec sa capture quand elle existe dans `boards/captures/`), la date de validation quand elle est écrite (sinon « à vérifier » : la planche est retenue, la date n'a pas été notée), la date de fusion dans `main` (d'après `git log`), et où lire la règle. L'état de toutes les planches est dans le [README des planches](boards/README.md).
+
+| Écran | Planche retenue | Validée | Fusionné | Règle |
+|---|---|---|---|---|
+| Système de design (thème, kit) | `DSCouleurs`, `DSTextes`, `DSEspaces`, `DSChamps`, `DSBoutons`, `DSListes`, `DSFeuilles`, `DSPolices` (C) | 15 nov. | 15 nov. | « Système de design » ci-dessus ; [SYSTEM.md](SYSTEM.md) |
+| Logo, icône Android, nom | `LogoA1`, `Main`, `NomMinusculeB` | 17 nov. (nom) | avant le 15 nov. | [BRAND.md](../BRAND.md) |
+| Démarrage animé | `DemarrageEC` (avec `Demarrage`) | 17 nov. | 17 nov. | « Icônes et animations » |
+| Barre du bas et + | `BarreIconesPh`, `PlusBtnB1`, `PlusBtnC1`, `PlusBtnC2` | à vérifier | 15 au 17 nov. | Règles d'écran (barre, feuille « Ajouter ») |
+| Verrouillage, code, récupération | `PinCreaC2`, `PinEmpreinte`, `VerrouC2`, `PinAttenteC2`, `CodeOublie`, `CodeRecup`, `RecupPreuve`, `RecupSaisie`, `RecupIllisible`, `RecupReglage` | à vérifier (revue de fidélité le 15 nov.) | 15 nov. | « Icônes et animations » (écrans du code) |
+| Sécurité, confidentialité | `Securite`, `DelaiB`, `SecuConfid`, `CacheRecentes`, `ProtectionCodeB`, `VerrouProtection` | à vérifier | 15 et 16 nov. | PRODUCT, Sécurité |
+| Devises et taux | `Devises`, `EditDevN`, `EditDevC`, `ConfirmDevises`, `TauxReglages`, `TauxTraiter` | à vérifier | 15 nov. | Règles d'écran (taux) |
+| Comptes, types, découvert, régularisation | `Comptes`, `ComptesRepli`, `ComptesAffichage`, `CompteNouveau`, `CompteModifA`, `TypeCompte`, `DecouvertA`, `DecouvertComptes`, `SigneD`, `RegulFormA`, `RegulFeuille` | 15 nov. (`CompteNouveau`) | 15 et 16 nov. | Règles d'écran (Comptes) |
+| Catégories | `Categories`, `CatNouvelle`, `CatModif`, `ConfirmCategorie` | à vérifier | 15 nov. | PRODUCT |
+| Saisie : dépense, revenu, transfert, frais, pièces jointes | `ParcoursUSD` à `ParcoursTaux`, `Revenu*`, `Transfert*`, `FraisFeuille`, `SaisieCategorie`, `PJLignes`, `PJSelBarre`, `PJVoirPhoto`, `PJVoirPdf`, `ApresFeuilleB` | à vérifier | 15 et 16 nov. | Règles d'écran (champs d'une opération, « Enregistrer ») |
+| Fiche d'une opération | `OperationDetailBas`, `OperationCarteRevenu`, `OperationCarteTransfert`, `OperationEdition`, `OperationCopieSaisie`, `DelConfirm` | à vérifier | 15 au 16 nov. | PRODUCT |
+| Liste des opérations, mois, filtres | `ListeOperations`, `ListeOnboard`, `ListeMoisOuvert`, `ListeAnneePrec`, `ListeMoisPasse`, `ListePetit`, `ListeFiltreOuvert`, `FiltreMenuC`, `JoursRepliables`, `EtatBarre`, `VideSobre` | 17 nov. (`FiltreMenuC`) | 17 nov. | Règles d'écran (filtres, liste vide, mois) |
+| Recherche | `RechercheR2` | à vérifier | 17 nov. | Règles d'écran (recherche) |
+| Premier lancement | `Lancement1` à `Lancement4`, `Lancement3Decouvert`, `VideB` | à vérifier | 17 nov. | PRODUCT, Au départ |
+| Accueil | `Aujourdhui`, `Total_*`, `TraiterEtat*`, `TraiterListe`, `BrouS1`, `BrouS1Un` | à vérifier ; marges unifiées le 24 nov. | 17 nov. | Règles d'écran (accueil, À traiter) ; « Flèche d'une carte » |
+| Montants longs | `MontantsReglage`, `MontantsAutoA`, `MontantsJamais`, `MontantsToujoursA` | 17 nov. | 17 nov. | PRODUCT |
+| Budgets | `Budgets`, `BudgetsListe`, `BudgetsAffichage`, `BudgetDetail`, `BudgetRythme`, `BudgetJourReplie`, `BudgetNouveau` | à vérifier | 17 et 18 nov. | Règles d'écran (Budgets, détail) |
+| Récurrences et brouillons | `RepeterA`, `Recurrence`, `RecurrencePetit`, `RecurrencesA`, `RecurrenceFiche`, `BrouillonA3`, `OperationCarteBrouillon`, `OperationCarteIgnoree`, `AffichageIcones`, `ReglagesBrouillons` | à vérifier | 18 nov. | Règles d'écran (brouillons) |
+| Rappels | `Rappels` | à vérifier | 19 nov. | PRODUCT, Rappels |
+| Dettes et créances | `DettesListeDois`, `DettesListeCreances`, `DettesCarteOuverte`, `DettesAffichage`, `NouvelleDette`, `FicheDette`, `FicheDettePetit`, `RembourserV3`, `ReclamerR1`, `DettesCartes`, `OpDetteA4`, `ConfirmA` | 23 nov. (ligne ouverte, `ConfirmA`, `OpDetteA4`) | 23 nov. | « Ligne qui s'ouvre sur place », « Confirmer une création », « Opérations d'une dette » |
+| Projets | `Projets`, `ProjetNouveau`, `FicheProjet`, `FicheProjetMois`, `FicheProjetQuinzaine`, `FicheProjetSansDate`, `ProjetP1`, `ProjetMettreRefus`, `ProjetReprendre`, `ProjetAtteint`, `ProjetTermine`, `ProjetSupprimer` | 24 nov. (barre, action et lien de carte, confirmations) | 24 nov. | Règles d'écran (Projets, fiche) ; « Barre dans une carte », « Action sous une carte », « Lien en fin de carte » |
+| Sauvegarde manuelle | `Sauvegarde`, `SauvW2`, `SauvW2Premiere`, `PlusAncienne` ; chiffrement : planche P1 (non exportée) | 24 nov. | 24 nov. | Règles d'écran (sauvegarde) ; « Ligne de réglage » |
+| Restauration | `RestauC1`, `RestauC1Err`, `RestauC2`, `RestauC3`, `RestauNeuf` | 24 nov. | 24 nov. | Règles d'écran (restaurer) ; PRODUCT, Restauration |
+
+Dessinés et validés, pas encore construits : la page Plus (`Plus`) et Réglages (`Reglages`, `ReglageLangue`), l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, À propos, Noter kibuo. Dans l'app, l'onglet Plus est une liste provisoire de lignes, et l'Aperçu un écran d'attente.
+
+## Variantes écartées et pourquoi
+
+La raison est donnée quand elle est écrite dans ce document ou dans PRODUCT ; sinon « raison non écrite ». Les planches sont dans [boards/](boards/).
+
+| Écartées | Retenue | Pourquoi |
+|---|---|---|
+| `ConfirmB` (message plus grand, posé en bas) | `ConfirmA` (feuille qui se ferme seule) | Un message flottant peut cacher le bouton du bas d'une fiche ; la feuille porte aussi les actions (« Annuler et modifier », « Voir la dette ») (23 nov.). |
+| `OpDetteA` (étiquette), `A1` (fond teinté léger), `A2` (fond teinté, tuile blanche), `A3` (fond teinté, fin contour), `B` (pointillés, montant gris), `C` (montant entouré) | `OpDetteA4` (fin contour seul) | Choix du 23 nov. ; raison non écrite. |
+| `RepeterB`, `RepeterC` | `RepeterA` (une ligne « Répéter » qui ouvre Nouvelle récurrence) | Raison non écrite. |
+| `RecurrencesB` | `RecurrencesA` (groupées par type) | Les listes se rangent par groupes, avec le même composant partout (« Groupes », 18 nov.). |
+| `BarreIconesA`, `B`, `C` (icônes dessinées pour kibuo) | `BarreIconesPh` (Phosphor et pastille) | Phosphor pour la barre, comme pour le reste des icônes ; les dessins propres à kibuo sont gardés pour les moments forts (« Icônes et animations »). |
+| `PinCreaA`, `B`, `C`, `C1`, `C3` ; `PinAttente` ; `Verrou` | `PinCreaC2`, `PinAttenteC2`, `VerrouC2` | Raison non écrite ; la règle retenue est dans « Icônes et animations » (écrans du code). |
+| `DelaiA`, `DelaiC` | `DelaiB` (délai dans une feuille) | Un réglage à choix unique s'ouvre en feuille. |
+| `SecuOptA`, `B`, `C`, `SecuProtection`, `SecuProtectionSansCode`, `SecuVerrou` | `Securite`, `VerrouProtection`, `ProtectionCodeB` | Raison non écrite. |
+| `EditDevA`, `EditDevB` | `EditDevN` (« Modifier » en haut à droite), `EditDevC` (« Retirer » à droite) | Une action d'en-tête est un lien texte vert (« Actions d'en-tête »). |
+| `CentimesA`, `CentimesB` (arrondi des centimes dans Devises) ; `SplitA1`, `A2`, `B1`, `B2` (Devises avec « Mes devises » à part) | `Devises` | Raison non écrite. |
+| `SigneA`, `B`, `C` | `SigneD` (maintenir « , » pour « − », seulement avec découvert) | Raison non écrite. |
+| `RegulFormB` | `RegulFormA` (« Solde actuel » sous le nom) | Raison non écrite. |
+| `CompteModifB` | `CompteModifA` (« Archiver » en ligne rouge ; le solde de départ ne se modifie plus) | Raison non écrite. |
+| `DelA`, `DelB` | `DelConfirm` | Raison non écrite. |
+| `VideA` (dans la saisie), `VideC` (la feuille « Ajouter » montre la première étape) | `VideB` (une feuille explique avant la saisie : « D'abord, un compte ») | Raison non écrite. |
+| `LogoCentrage` (où placer la pièce) | `LogoA1` | Planche d'étude ; le choix est dans BRAND. |
+
+Écartée hors canvas : le mot de passe de sauvegarde comme interrupteur de la page Sauvegarde, remplacé par le choix dans la feuille à chaque sauvegarde (24 nov., voir Règles d'écran).
