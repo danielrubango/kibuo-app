@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
@@ -95,7 +94,6 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
   /// saved, what deleting does to its account, then « Supprimer ».
   Future<void> _confirmDelete() async {
     final saved = _t!;
-    final lang = Localizations.localeOf(context).languageCode;
     final l = AppLocalizations.of(context);
     final labels = await OperationLabels.of(context, widget.data, saved);
     // Deleting an income (or what a transfer brought) may take its account
@@ -108,11 +106,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
       date: saved.date,
     );
     if (!mounted) return;
-    final amount = formatMoney(
-      saved.total.total,
-      currencyOf(saved.total.total.currency),
-      lang,
-    );
+    final amount = context.money(saved.total.total);
     final choice = await showKibuoSheet<_DeleteChoice>(
       context,
       title: switch (saved.kind) {
@@ -176,11 +170,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                   child: Text(
                     l.overdraftWouldGo(
                       refusal.account.name,
-                      formatMoney(
-                        refusal.after,
-                        currencyOf(refusal.after.currency),
-                        lang,
-                      ),
+                      context.money(refusal.after),
                     ),
                     style: KibuoType.body.copyWith(
                       fontSize: 14,
@@ -225,11 +215,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                 labels.account,
                 amount,
                 labels.toAccount ?? '',
-                formatMoney(
-                  saved.arrived!,
-                  currencyOf(saved.arrived!.currency),
-                  lang,
-                ),
+                context.money(saved.arrived!),
               ),
             }, style: KibuoType.help),
             const SizedBox(height: 16),
@@ -284,7 +270,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
     final expense = t.kind == EntryKind.expense;
     final transfer = t.kind == EntryKind.transfer;
     final (:tint, :edge, :ink) = kindColors(t.kind);
-    String money(Money m) => formatMoney(m, currencyOf(m.currency), lang);
+    String money(Money m) => context.money(m);
     final date = t.date.toLocal();
     final dateText = DateFormat.yMMMMEEEEd(lang).format(date);
     return Scaffold(
@@ -416,11 +402,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                   EntryField(
                     icon: KibuoIcons.receipt,
                     label: l.entryFees,
-                    value: formatMoney(
-                      t.total.fees,
-                      currencyOf(t.total.fees.currency),
-                      lang,
-                    ),
+                    value: context.money(t.total.fees),
                   ),
               ],
             ),

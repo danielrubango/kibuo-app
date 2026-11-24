@@ -429,9 +429,7 @@ class TodoLook {
           title: '$name · ${line.status.percent} %',
           subtitle: over
               ? l.todoBudgetOverSub
-              : l.todoBudgetNearSub(
-                  formatMoney(left, currencyOf(left.currency), lang),
-                ),
+              : l.todoBudgetNearSub(context.money(left)),
           action: l.todoSee,
           name: name,
         );
@@ -461,7 +459,7 @@ class TodoLook {
             DateFormat.MMMd(lang).format(due.planned.day),
           ),
           subtitle: l.todoShortfallSub(
-            formatMoney(missing, currencyOf(missing.currency), lang),
+            context.money(missing),
             due.account.name,
           ),
           action: l.todoSee,
@@ -489,7 +487,7 @@ class TodoLook {
           ink: owe ? KibuoColors.debtInk : KibuoColors.accent,
           title:
               '${d.person} · '
-              '${formatMoney(d.left, currencyOf(d.left.currency), lang)}',
+              '${context.money(d.left)}',
           subtitle:
               '${owe ? l.debtTagOwe : l.debtTagOwed} · '
               '${word[0].toLowerCase()}${word.substring(1)}',
@@ -518,8 +516,7 @@ class TodoLook {
           icon: projectIcon(p.icon),
           tint: KibuoColors.projectTint,
           ink: KibuoColors.projectInk,
-          title:
-              '${p.name} · ${formatMoney(late, currencyOf(late.currency), lang)}',
+          title: '${p.name} · ${context.money(late)}',
           subtitle: days > 0 ? l.todoProjectLateLeft(days) : l.todoProjectLate,
           action: l.projectPutAside,
           name: p.name,

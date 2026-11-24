@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/debt_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/fields.dart';
@@ -61,7 +60,7 @@ class _ClaimSheetState extends State<_ClaimSheet> {
     final l = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
     final d = widget.debt;
-    final amount = formatMoney(d.left, currencyOf(d.left.currency), lang);
+    final amount = context.money(d.left);
     final due = d.due;
     _message = TextEditingController(
       text: due == null
@@ -83,9 +82,8 @@ class _ClaimSheetState extends State<_ClaimSheet> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final lang = Localizations.localeOf(context).languageCode;
     final d = widget.debt;
-    final amount = formatMoney(d.left, currencyOf(d.left.currency), lang);
+    final amount = context.money(d.left);
     final (state, _) = debtState(d, widget.now());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

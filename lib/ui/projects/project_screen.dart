@@ -69,10 +69,6 @@ class _ProjectScreenState extends State<ProjectScreen> {
     });
   }
 
-  String get _lang => Localizations.localeOf(context).languageCode;
-
-  String _money(Money m) => formatMoney(m, currencyOf(m.currency), _lang);
-
   Future<void> _changed() async {
     widget.onChanged?.call();
     await _load();
@@ -195,13 +191,18 @@ class _ProjectScreenState extends State<ProjectScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          _Hero(project: p, now: now, money: _money, onWhatNow: _whatNow),
+          _Hero(
+            project: p,
+            now: now,
+            money: context.money,
+            onWhatNow: _whatNow,
+          ),
           if (ProjectPace.of(p, now).dated) ...[
             const SizedBox(height: 14),
             _Plan(
               project: p,
               now: now,
-              money: _money,
+              money: context.money,
               remind: _RemindRow(project: p, onChanged: _setRemind),
             ),
           ] else if (p.running && !p.reached) ...[
@@ -219,7 +220,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
           if (_lines.isNotEmpty) ...[
             const SizedBox(height: GroupTitle.gap),
             GroupTitle(title: l.projectPayments, count: '${_lines.length}'),
-            _Payments(lines: _lines, money: _money),
+            _Payments(lines: _lines, money: context.money),
           ],
           if (p.running && p.saved.minor > 0)
             ActionUnderCard(label: l.projectTakeBack, onPressed: _takeBack),

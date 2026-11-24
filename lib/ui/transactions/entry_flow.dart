@@ -432,7 +432,7 @@ class _SavedSheet extends StatelessWidget {
     final t = saved;
     final expense = t.kind == EntryKind.expense;
     final transfer = t.kind == EntryKind.transfer;
-    String money(Money m) => formatMoney(m, currencyOf(m.currency), lang);
+    String money(Money m) => context.money(m);
     final details = <(String, String, bool)>[
       // A transfer (canvas ApresTransfert): what arrived, the frozen rate.
       if (transfer && t.rate != null) ...[
@@ -444,11 +444,7 @@ class _SavedSheet extends StatelessWidget {
         ),
       ],
       if (!transfer && t.rate != null) ...[
-        (
-          expense ? l.entryPaid : l.entryReceived,
-          formatMoney(t.paid, currencyOf(t.paid.currency), lang),
-          false,
-        ),
+        (expense ? l.entryPaid : l.entryReceived, context.money(t.paid), false),
         (
           l.entryRateFrozen(currencyOf(t.rate!.base).symbol),
           formatRate(t.rate!, lang).split(' = ').last,

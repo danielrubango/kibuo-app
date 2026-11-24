@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
@@ -117,3 +118,13 @@ String _withSymbol(String sign, String number, String symbol, String locale) {
 }
 
 num _pow10(int digits) => [1, 10, 100, 1000, 10000][digits];
+
+/// An amount as every screen writes it, in the app's language: the one way
+/// to turn a [Money] into text (« 30,00 $ », « 2 800 FC »).
+extension MoneyText on BuildContext {
+  String money(Money m) => formatMoney(
+    m,
+    currencyOf(m.currency),
+    Localizations.localeOf(this).languageCode,
+  );
+}

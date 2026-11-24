@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
-import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
@@ -216,7 +215,7 @@ class _DraftScreenState extends State<DraftScreen> {
     final (:card, :dash) = draftColors(t.kind);
     final ink = kindColors(t.kind).ink;
     final rule = _rule;
-    String money(Money m) => formatMoney(m, currencyOf(m.currency), lang);
+    String money(Money m) => context.money(m);
     final noRate = waitsForRate(t, labels);
     final refusal = _refusal;
     final blocked = noRate || refusal != null;

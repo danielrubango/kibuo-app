@@ -139,8 +139,6 @@ class _DebtsScreenState extends State<DebtsScreen> {
 
   String get _lang => Localizations.localeOf(context).languageCode;
 
-  String _money(Money m) => formatMoney(m, currencyOf(m.currency), _lang);
-
   /// [m] in the main currency, and whether it was converted; null without
   /// a rate.
   (Money, bool)? _inMain(Money m) {
@@ -165,7 +163,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
       sum += m.$1.minor;
       about = about || m.$2;
     }
-    final text = _money(Money(sum, main));
+    final text = context.money(Money(sum, main));
     return about ? AppLocalizations.of(context).debtsAbout(text) : text;
   }
 
@@ -345,7 +343,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
     line: d,
     now: now,
     open: live && d.id == _open,
-    amount: _money(d.left),
+    amount: context.money(d.left),
     details: live && d.id == _lifted ? _details(l, d, now) : null,
     detailsAbove: _detailsAbove,
     onTap: () => _toggle(d.id),
@@ -686,12 +684,12 @@ class _DebtsScreenState extends State<DebtsScreen> {
     final paid = Money(d.amount.minor - d.left.minor, d.amount.currency);
     final main = _inMain(d.left);
     final payLine = main != null && main.$2 && !d.settled
-        ? l.debtAboutLine(_money(main.$1))
+        ? l.debtAboutLine(context.money(main.$1))
         : paid.minor <= 0
         ? (owe ? l.debtNothingRepaid : l.debtNothingReceived)
         : owe
-        ? l.debtRepaidLine(_money(paid), _money(d.amount))
-        : l.debtReceivedLine(_money(paid), _money(d.amount));
+        ? l.debtRepaidLine(context.money(paid), context.money(d.amount))
+        : l.debtReceivedLine(context.money(paid), context.money(d.amount));
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -721,7 +719,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_money(paid)} / ${_money(d.amount)}',
+                  '${context.money(paid)} / ${context.money(d.amount)}',
                   style: KibuoType.caption
                       .copyWith(color: KibuoColors.ink)
                       .weight(600),

@@ -32,9 +32,6 @@ import 'package:kibuo/ui/transactions/operation_screens.dart';
 String _lang(BuildContext context) =>
     Localizations.localeOf(context).languageCode;
 
-String _money(BuildContext context, Money m) =>
-    formatMoney(m, currencyOf(m.currency), _lang(context));
-
 String _upper(String t) => t.isEmpty ? t : t[0].toUpperCase() + t.substring(1);
 
 String _lower(String t) => t.isEmpty ? t : t[0].toLowerCase() + t.substring(1);
@@ -118,7 +115,7 @@ class _DebtScreenState extends State<DebtScreen> {
     if (detail == null) return;
     final l = AppLocalizations.of(context);
     final d = detail.line;
-    final left = _money(context, d.left);
+    final left = context.money(d.left);
     final sure = await confirmRemoval(
       context,
       title: l.debtForgive,
@@ -211,7 +208,7 @@ class _DebtScreenState extends State<DebtScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  _money(context, d.left),
+                  context.money(d.left),
                   style: KibuoType.bigAmount.copyWith(
                     fontSize: 38,
                     height: 44 / 38,
@@ -234,12 +231,12 @@ class _DebtScreenState extends State<DebtScreen> {
                       child: Text(
                         owe
                             ? l.debtRepaidOf(
-                                _money(context, paid),
-                                _money(context, d.amount),
+                                context.money(paid),
+                                context.money(d.amount),
                               )
                             : l.debtReceivedOf(
-                                _money(context, paid),
-                                _money(context, d.amount),
+                                context.money(paid),
+                                context.money(d.amount),
                               ),
                         style: KibuoType.body.copyWith(
                           fontSize: 13,
@@ -261,7 +258,7 @@ class _DebtScreenState extends State<DebtScreen> {
                   Text(
                     l.debtForgivenOn(
                       DateFormat.MMMMd(_lang(context)).format(d.settledOn!),
-                      _money(context, d.forgiven!),
+                      context.money(d.forgiven!),
                     ),
                     style: KibuoType.body
                         .copyWith(fontSize: 13, color: KibuoColors.accent)
@@ -353,7 +350,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             ),
                           ),
                           Text(
-                            _money(context, r.amount),
+                            context.money(r.amount),
                             style: KibuoType.rowLabel.weight(600),
                           ),
                         ],
@@ -501,7 +498,7 @@ Future<_AfterRepay?> _confirmRepaid(
         SavedLine(
           title: debtTitle(l, owe ? 'debtOut' : 'receivableIn', d.person),
           subtitle: '$account · ${operationWhen(context, done.date, now)}',
-          amount: '${owe ? '−' : '+'}${_money(context, done.amount)}',
+          amount: '${owe ? '−' : '+'}${context.money(done.amount)}',
         ),
         const SizedBox(height: 10),
         ClipRRect(
@@ -518,10 +515,7 @@ Future<_AfterRepay?> _confirmRepaid(
           children: [
             Expanded(
               child: Text(
-                l.debtLeftOf(
-                  _money(context, d.left),
-                  _money(context, d.amount),
-                ),
+                l.debtLeftOf(context.money(d.left), context.money(d.amount)),
                 style: KibuoType.caption,
               ),
             ),
@@ -670,7 +664,7 @@ class _RepaySheetState extends State<_RepaySheet> {
     final choice = await pickEntryRate(
       context,
       income: !_owe,
-      paid: _money(context, _amount),
+      paid: context.money(_amount),
       base: base,
       quote: quote,
       today: _today,
@@ -777,18 +771,12 @@ class _RepaySheetState extends State<_RepaySheet> {
                     child: Text(
                       _owe
                           ? l.debtRepaidOf(
-                              _money(
-                                context,
-                                Money(paid, _line.amount.currency),
-                              ),
-                              _money(context, _line.amount),
+                              context.money(Money(paid, _line.amount.currency)),
+                              context.money(_line.amount),
                             )
                           : l.debtReceivedOf(
-                              _money(
-                                context,
-                                Money(paid, _line.amount.currency),
-                              ),
-                              _money(context, _line.amount),
+                              context.money(Money(paid, _line.amount.currency)),
+                              context.money(_line.amount),
                             ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -797,7 +785,7 @@ class _RepaySheetState extends State<_RepaySheet> {
                   ),
                   Text.rich(
                     TextSpan(
-                      text: '+${_money(context, _amount)}',
+                      text: '+${context.money(_amount)}',
                       style: TextStyle(color: ink).weight(700),
                       children: [
                         TextSpan(text: ' · ${(after * 100).round()} %'),
@@ -815,7 +803,7 @@ class _RepaySheetState extends State<_RepaySheet> {
           children: [
             ValueRow(
               label: l.entryAmount,
-              value: _money(context, _amount),
+              value: context.money(_amount),
               onTap: _pickAmount,
               color: ink,
             ),
@@ -934,7 +922,7 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
       summary: Row(
         children: [
           Expanded(child: Text(_line.person, style: KibuoType.itemName)),
-          Text(_money(context, _line.left), style: KibuoType.cardTitle),
+          Text(context.money(_line.left), style: KibuoType.cardTitle),
         ],
       ),
       text: l.debtDeleteText(widget.detail.operations),
@@ -984,11 +972,11 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
                     focused: false,
                     onTap: _pickAmount,
                     error: below
-                        ? l.debtAmountMin(_money(context, _repaid))
+                        ? l.debtAmountMin(context.money(_repaid))
                         : null,
                     note: below || _repaid.minor == 0
                         ? null
-                        : l.debtAmountMin(_money(context, _repaid)),
+                        : l.debtAmountMin(context.money(_repaid)),
                   ),
                   const SizedBox(height: 16),
                   FieldLabel(l.debtDue),
