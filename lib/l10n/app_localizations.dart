@@ -6340,7 +6340,7 @@ abstract class AppLocalizations {
   /// Restore.
   ///
   /// In fr, this message translates to:
-  /// **'Aller à l’accueil'**
+  /// **'Voir mes données'**
   String get restoreGoHome;
 
   /// Restore.

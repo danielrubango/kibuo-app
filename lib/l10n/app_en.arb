@@ -1050,6 +1050,6 @@
   "restoreOperations": "Operations",
   "restoreProjects": "Projects",
   "restoreCopyWhere": "Copy made before, in {folder}",
-  "restoreGoHome": "Go to the home",
+  "restoreGoHome": "See my data",
   "protectRestore": "To restore a backup"
 }

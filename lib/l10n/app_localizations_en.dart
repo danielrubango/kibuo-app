@@ -4061,7 +4061,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get restoreGoHome => 'Go to the home';
+  String get restoreGoHome => 'See my data';
 
   @override
   String get protectRestore => 'To restore a backup';

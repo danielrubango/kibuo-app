@@ -2087,7 +2087,7 @@
   "@restoreProjects": {"description": "Restore."},
   "restoreCopyWhere": "Copie d’avant, dans {folder}",
   "@restoreCopyWhere": {"description": "Restore.", "placeholders": {"folder": {"type": "String"}}},
-  "restoreGoHome": "Aller à l’accueil",
+  "restoreGoHome": "Voir mes données",
   "@restoreGoHome": {"description": "Restore."},
   "protectRestore": "Pour restaurer une sauvegarde",
   "@protectRestore": {"description": "Restore."}

@@ -4100,7 +4100,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get restoreGoHome => 'Aller à l’accueil';
+  String get restoreGoHome => 'Voir mes données';
 
   @override
   String get protectRestore => 'Pour restaurer une sauvegarde';

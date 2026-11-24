@@ -181,7 +181,7 @@ void main() {
     expect(replaced.single.manifest.accounts, 1);
     expect(folders.wrote, startsWith('kibuo-avant-restauration-2026-11-24'));
     expect(find.text('Données restaurées'), findsOneWidget);
-    expect(find.text('Aller à l’accueil'), findsOneWidget);
+    expect(find.text('Voir mes données'), findsOneWidget);
   });
 
   testWidgets('a locked backup with the wrong password: said, nothing '
