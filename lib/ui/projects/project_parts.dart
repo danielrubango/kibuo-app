@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/project_repository.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart' show projectIcon;
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -135,11 +136,7 @@ class ProjectBar extends StatelessWidget {
 
 /// « 9 jours », « 7 semaines », « 4 mois » until [due]; null once past.
 String? projectTimeLeft(AppLocalizations l, DateTime now, DateTime due) {
-  final days = DateTime.utc(
-    due.year,
-    due.month,
-    due.day,
-  ).difference(DateTime.utc(now.year, now.month, now.day)).inDays;
+  final days = calendarDays(now, due);
   if (days <= 0) return null;
   if (days < 14) return l.projectDaysLeft(days);
   if (days < 70) return l.projectWeeksLeft((days / 7).round());

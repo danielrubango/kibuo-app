@@ -1,3 +1,4 @@
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/money.dart';
 
 /// Who owes (GLOSSARY: Dette, Créance).
@@ -208,12 +209,7 @@ int _byDue(DebtLine a, DebtLine b) {
 
 DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
 
-/// Whole days, whatever the clock change in between.
-int _days(DateTime from, DateTime to) => DateTime.utc(
-  to.year,
-  to.month,
-  to.day,
-).difference(DateTime.utc(from.year, from.month, from.day)).inDays;
+int _days(DateTime from, DateTime to) => calendarDays(from, to);
 
 /// For sorting and matching names: lower case, without accents.
 String _fold(String name) {

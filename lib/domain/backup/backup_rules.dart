@@ -1,6 +1,8 @@
 /// Rules of the manual backup (PRODUCT, « Sauvegarde manuelle »).
 library;
 
+import 'package:kibuo/domain/calendar.dart';
+
 /// Beyond this many days, a backup is old: Plus turns amber and « À traiter »
 /// shows « Sauvegarde ancienne ».
 const backupOldAfterDays = 7;
@@ -16,11 +18,7 @@ String backupFileName(DateTime at) {
 }
 
 /// Whole days on the calendar from [from] to [to], whatever the hours.
-int backupAgeDays(DateTime from, DateTime to) => DateTime.utc(
-  to.year,
-  to.month,
-  to.day,
-).difference(DateTime.utc(from.year, from.month, from.day)).inDays;
+int backupAgeDays(DateTime from, DateTime to) => calendarDays(from, to);
 
 /// Whether the reminder to back up shows: the last backup is more than
 /// [backupOldAfterDays] old or, without any, the first operation is.

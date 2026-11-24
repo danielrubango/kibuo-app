@@ -1,3 +1,5 @@
+import 'package:kibuo/domain/calendar.dart';
+
 /// A month that starts on the chosen day (GLOSSARY: Période budgétaire),
 /// named after the month it ends in: from the 25th, November runs from
 /// 25 October to 24 November.
@@ -39,22 +41,14 @@ class BudgetPeriod {
   /// Its last day.
   DateTime get last => DateTime(_next.year, _next.month, _next.day - 1);
 
-  int get days => DateTime.utc(
-    _next.year,
-    _next.month,
-    _next.day,
-  ).difference(DateTime.utc(first.year, first.month, first.day)).inDays;
+  int get days => calendarDays(first, _next);
 
   bool contains(DateTime moment) =>
       !moment.isBefore(first) && moment.isBefore(_next);
 
   /// How far into it [day] is, that day included.
   double elapsed(DateTime day) {
-    final done = DateTime.utc(
-      day.year,
-      day.month,
-      day.day,
-    ).difference(DateTime.utc(first.year, first.month, first.day)).inDays;
+    final done = calendarDays(first, day);
     return ((done + 1) / days).clamp(0, 1).toDouble();
   }
 }

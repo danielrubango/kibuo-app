@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/amount_sheet.dart';
@@ -537,13 +538,7 @@ Future<bool> reachedFlow(
   final l = AppLocalizations.of(context);
   final today = now();
   final due = project.due;
-  final early = due == null
-      ? 0
-      : DateTime.utc(
-          due.year,
-          due.month,
-          due.day,
-        ).difference(DateTime.utc(today.year, today.month, today.day)).inDays;
+  final early = due == null ? 0 : calendarDays(today, due);
   final amount = context.money(project.saved);
   final text = early > 0
       ? l.projectReachedEarlyText(amount, project.name, early)

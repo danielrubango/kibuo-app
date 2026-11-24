@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/project_repository.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -356,12 +357,7 @@ class _Hero extends StatelessWidget {
       state = Text(
         p.reached && endedOn != null && p.due != null
             ? l.projectReachedEarly(
-                DateTime.utc(p.due!.year, p.due!.month, p.due!.day)
-                    .difference(
-                      DateTime.utc(endedOn.year, endedOn.month, endedOn.day),
-                    )
-                    .inDays
-                    .clamp(0, 99999),
+                calendarDays(endedOn, p.due!).clamp(0, 99999),
               )
             : '',
         style: small,

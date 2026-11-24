@@ -6,6 +6,7 @@ import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/todo/todo.dart';
@@ -503,15 +504,7 @@ class TodoLook {
         final p = item.project!;
         final late = item.projectLate!;
         final due = p.due!;
-        final days = DateTime.utc(due.year, due.month, due.day)
-            .difference(
-              DateTime.utc(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
-              ),
-            )
-            .inDays;
+        final days = calendarDays(DateTime.now(), due);
         return TodoLook._(
           icon: projectIcon(p.icon),
           tint: KibuoColors.projectTint,

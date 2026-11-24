@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/budgets/budget_curve.dart';
 import 'package:kibuo/domain/budgets/budget_status.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
@@ -253,17 +254,7 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
     final s = line.status;
     final period = book.period;
     final now = DateTime.now();
-    final today = _current
-        ? DateTime.utc(now.year, now.month, now.day)
-              .difference(
-                DateTime.utc(
-                  period.first.year,
-                  period.first.month,
-                  period.first.day,
-                ),
-              )
-              .inDays
-        : null;
+    final today = _current ? calendarDays(period.first, now) : null;
     final steps = cumulative(period, [
       for (final (t, _) in _ops)
         (

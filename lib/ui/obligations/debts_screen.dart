@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/preference_store.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
@@ -862,11 +863,7 @@ String debtWord(AppLocalizations l, DebtLine d, DateTime now) {
     DebtState.none => l.debtsNoDue,
     DebtState.paid => () {
       final on = d.settledOn ?? DateTime(now.year, now.month, now.day);
-      final ago = DateTime.utc(
-        now.year,
-        now.month,
-        now.day,
-      ).difference(DateTime.utc(on.year, on.month, on.day)).inDays;
+      final ago = calendarDays(on, now);
       return d.direction == DebtDirection.owe
           ? l.debtWordSettled(ago)
           : l.debtWordReceived(ago);
