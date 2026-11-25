@@ -306,7 +306,9 @@ class ValueField extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (label != null) FieldLabel(label!),
-          Container(
+          AnimatedContainer(
+            duration: missingFade(context),
+            curve: Curves.easeOutCubic,
             constraints: const BoxConstraints(minHeight: 60),
             padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
             decoration: BoxDecoration(
@@ -398,7 +400,9 @@ class OperationAmountField extends StatelessWidget {
     final tint = income ? KibuoColors.accentTint : KibuoColors.debtTint;
     final line = income ? KibuoColors.accentTintStrong : KibuoColors.debtEdge;
     final ink = income ? KibuoColors.accent : KibuoColors.debtInk;
-    return Container(
+    return AnimatedContainer(
+      duration: missingFade(context),
+      curve: Curves.easeOutCubic,
       padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
       decoration: BoxDecoration(
         color: tint,
@@ -619,9 +623,18 @@ class DateField extends StatelessWidget {
   }
 }
 
+/// How long the red of a missing field takes to appear: soft, not abrupt
+/// (owner, 25 November 2026); at once when the phone asks for fewer
+/// animations.
+Duration missingFade(BuildContext context) =>
+    MediaQuery.disableAnimationsOf(context)
+    ? Duration.zero
+    : const Duration(milliseconds: 280);
+
 /// A required line of a card (Compte, Catégorie…) left empty when saving:
 /// underlined in red, nothing written (DIRECTION, « Bouton qui ne peut pas
-/// encore enregistrer », 25 November 2026).
+/// encore enregistrer », 25 November 2026). The line grows from the middle
+/// as it fades in.
 class MissingUnderline extends StatelessWidget {
   const MissingUnderline({
     super.key,
@@ -633,17 +646,38 @@ class MissingUnderline extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => missing
-      ? DecoratedBox(
-          position: DecorationPosition.foreground,
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: KibuoColors.danger, width: 2),
-            ),
-          ),
-          child: child,
-        )
-      : child;
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(end: missing ? 1 : 0),
+    duration: missingFade(context),
+    curve: Curves.easeOutCubic,
+    child: child,
+    builder: (context, shown, child) => CustomPaint(
+      foregroundPainter: shown == 0 ? null : _Underline(shown),
+      child: child,
+    ),
+  );
+}
+
+class _Underline extends CustomPainter {
+  const _Underline(this.shown);
+
+  final double shown;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final half = size.width * shown / 2;
+    final middle = size.width / 2;
+    canvas.drawLine(
+      Offset(middle - half, size.height - 1),
+      Offset(middle + half, size.height - 1),
+      Paint()
+        ..color = KibuoColors.danger.withValues(alpha: shown)
+        ..strokeWidth = 2,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_Underline old) => old.shown != shown;
 }
 
 /// Saving with a field missing: the refusal is felt, and the page scrolls

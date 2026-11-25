@@ -362,8 +362,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                 children: [
-                  Container(
+                  AnimatedContainer(
                     key: _nameKey,
+                    duration: missingFade(context),
+                    curve: Curves.easeOutCubic,
                     padding: const EdgeInsets.fromLTRB(10, 10, 14, 10),
                     decoration: BoxDecoration(
                       color: KibuoColors.surface,
@@ -372,17 +374,18 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       ),
                     ),
                     // Drawn over the card, so nothing in it moves.
-                    foregroundDecoration: _tried && _name.text.trim().isEmpty
-                        ? BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              KibuoTheme.radiusCard,
-                            ),
-                            border: Border.all(
-                              color: KibuoColors.danger,
-                              width: 2,
-                            ),
-                          )
-                        : null,
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        KibuoTheme.radiusCard,
+                      ),
+                      border: Border.all(
+                        // Fades in, from transparent.
+                        color: _tried && _name.text.trim().isEmpty
+                            ? KibuoColors.danger
+                            : KibuoColors.danger.withValues(alpha: 0),
+                        width: 2,
+                      ),
+                    ),
                     child: Row(
                       children: [
                         Semantics(

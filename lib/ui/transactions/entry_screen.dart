@@ -1333,7 +1333,9 @@ class _AmountCard extends StatelessWidget {
       EntryKind.income => '+',
       EntryKind.transfer => '',
     };
-    return Container(
+    return AnimatedContainer(
+      duration: missingFade(context),
+      curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
         color: tint,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
