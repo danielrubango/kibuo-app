@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/backup_service.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
+import 'package:kibuo/domain/usage/usage_event.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/backup/backup_folders.dart';
 import 'package:kibuo/ui/backup/backup_password_fields.dart';
@@ -15,6 +16,7 @@ import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart' show operationWhen;
+import 'package:kibuo/ui/usage/usage_measure.dart';
 
 /// A backup that reached its folder.
 class _Done {
@@ -170,9 +172,11 @@ class _BackupSheetState extends State<_BackupSheet> {
       }
       if (!ok) throw StateError('not written');
       await widget.service.done(at);
+      usage.track(UsageEvent.backup(automatic: false, done: true));
       if (!mounted) return;
       Navigator.of(context).pop(_Done(name, folder, at, encrypted: _encrypted));
     } on Object {
+      usage.track(UsageEvent.backup(automatic: false, done: false));
       if (!mounted) return;
       setState(() => _saving = false);
       showKibuoToast(context, AppLocalizations.of(context).backupFailed);

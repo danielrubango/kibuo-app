@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/backup_file.dart';
 import 'package:kibuo/data/currency_repository.dart';
@@ -17,6 +19,8 @@ import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/start/first_launch.dart';
 import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/usage/posthog_sender.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// The app's navigator, to show screens from outside a screen's context.
@@ -26,6 +30,20 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   registerBundledLicences();
   const vault = SecureKeyVault();
+  // « Aider à améliorer kibuo » (ADR 0013): nothing leaves before a yes.
+  usage.attach(
+    vault: vault,
+    sink: PostHogSender(vault: vault, folder: getApplicationSupportDirectory()),
+  );
+  final showError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    showError?.call(details);
+    usage.error(details.exception, details.stack);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    usage.error(error, stack);
+    return false;
+  };
   final folder = getApplicationSupportDirectory();
   final lock = LockController(
     vault: vault,

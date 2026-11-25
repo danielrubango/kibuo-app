@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/about`, qui porte aussi `feat/plus-page` et `fix/lock-above-screens`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/usage-measure`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -16,9 +16,9 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 | 5 · Dettes, créances, projets | Dettes et créances en trois livraisons (liste, fiche et remboursements, autour : cartes de l'accueil, À traiter, rappels, réclamer), cartes de l'accueil aux marges unifiées, projets en trois livraisons (créer et lister ; fiche, mettre de côté, reprendre, objectif atteint, modifier, supprimer ; À traiter, rappels au rythme du plan, réservé dans Comptes) | 23 et 24 nov. |
 | 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier), sauvegardes automatiques, première livraison sur trois (interrupteur de l'écran Sauvegarde, sauvegarde à l'ouverture et en arrière-plan chaque semaine, 4 gardées, échecs signalés une fois par semaine) ; mot de passe retenu (variante A : ligne « Mot de passe » de l'écran Sauvegarde, sa feuille, la feuille manuelle « Chiffrée avec votre mot de passe », restauration qui l'essaie d'abord, copie d'avant restauration chiffrée) ; feuilles à 8 au-dessus du clavier ; « Sauvegardes automatiques » à l'étape 4 du premier lancement (variante 3 A) | 24 et 25 nov. |
 
-| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app) | 25 nov. |
+| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app), mesure d'usage anonyme avec accord (feuille « Aider à améliorer kibuo ? », interrupteur dans Confidentialité, envoi par kibuo lui-même à PostHog Europe, ADR 0013), « Dollar américain » | 25 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 734 tests verts à la dernière fusion.
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 766 tests verts à la dernière fusion.
 
 ## Dessiné mais pas encore construit
 
@@ -46,7 +46,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Les règles des agents vivent dans `AGENTS.md`, que `CLAUDE.md` importe.
 - Le plan de publication (0.1 sur Google Play, 0.2 à 0.5, puis 1.0 stable) : [ROADMAP.md](ROADMAP.md), 25 novembre.
 - Plus, Réglages (Comptes et Catégories restés dans Plus), À propos et sa politique de confidentialité : PRODUCT, 25 novembre.
-- La mesure d'usage, seulement avec l'accord de l'utilisateur (PostHog envisagé), est notée sans version : [backlog/mesure-usage.md](backlog/mesure-usage.md).
+- La mesure d'usage anonyme et les erreurs, avec accord, dans la 0.1 : [ADR 0013](adr/0013-mesure-d-usage-anonyme.md), 25 novembre.
 
 ## Questions ouvertes (attendent le propriétaire)
 
@@ -79,7 +79,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - **Déposer un fichier chez l'utilisateur d'essai** : `adb push` vers `/storage/emulated/<id>/` est refusé. Pousser dans `/data/local/tmp/`, `chmod 644`, puis l'ouvrir dans kibuo : `adb shell am start --user <id> -a android.intent.action.VIEW -d file:///data/local/tmp/x.kibuo -t application/octet-stream -n app.kibuo/.MainActivity`.
 - **Langue sur Android 13+** : la langue choisie est gardée par Android (`setAndroidAppLanguage`), pas dans la base ; d'où sa présence dans le résumé du fichier de sauvegarde.
 - **Lancer la sauvegarde de fond à la main** : `adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler app.kibuo <id>` (l'id se lit dans `dumpsys jobscheduler`, ligne `#AutoBackupWorker#`). Avant l'échéance, WorkManager la repousse (« executed before schedule ») ; éteindre puis rallumer l'interrupteur la relance aussitôt. `cmd time_detector suggest_manual_time` est refusé au shell : on ne peut pas avancer l'horloge par adb.
-- **kibuo n'a pas accès à Internet** dans la version publiée (vérifié le 25 novembre 2026 dans le manifeste fusionné de `release` ; seules les versions `debug` et `profile` l'ont, pour les outils de Flutter). La politique de confidentialité le dit (« Rien ne part ») : après tout nouveau module, relancer `./gradlew :app:processReleaseManifest` dans `android/` et vérifier qu'aucun `android.permission.INTERNET` n'apparaît dans `build/app/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml`.
+- **Internet, seulement pour la mesure d'usage** (ADR 0013, depuis le 25 novembre 2026) : l'autorisation `INTERNET` est dans le manifeste pour les messages que kibuo envoie lui-même à PostHog Europe (`lib/ui/usage/posthog_sender.dart`, sans module PostHog), après un « oui » seulement. La clé du projet (région EU, vérifiée le 25 novembre) est dans ce fichier (`postHogKey`). Tout nouvel événement passe par `lib/domain/usage/usage_event.dart`, dont les tests refusent un montant ou un texte saisi. Le module officiel de PostHog a été écarté : il ajoutait l'opérateur, le fuseau horaire et la signature technique du téléphone ; un nouveau module qui enverrait autre chose rendrait la politique fausse.
 - **Coordonnées adb** : les captures sont réduites à 540 de large (×2 environ pour taper) ; avec deux appareils branchés, toujours `-s`.
 
 ### Base chiffrée (SQLite3 Multiple Ciphers)

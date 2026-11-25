@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Only for « Aider à améliorer kibuo »: kibuo's own messages to PostHog, after the user's yes (ADR 0013). -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Reminders (PRODUCT: Rappels): scheduled again after a restart. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- open_filex asks for these; Kibuo only hands over its own copy of a

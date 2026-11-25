@@ -20,6 +20,7 @@ import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
+import 'package:kibuo/domain/usage/usage_event.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/backup/auto_backup.dart';
@@ -32,6 +33,7 @@ import 'package:kibuo/ui/budgets/budget_alerts.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
+import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -65,6 +67,8 @@ import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operations_list.dart';
 import 'package:kibuo/ui/transactions/redo.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
+import 'package:kibuo/ui/usage/usage_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 
 enum _Tab { home, operations, overview, more }
@@ -133,6 +137,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     DeviceBackupFiles.instance.opened.removeListener(_openedFile);
     _waitingLock?.removeListener(_whenUnlocked);
     _backupLock?.removeListener(_backupWhenUnlocked);
+    _usageLock?.removeListener(_usageWhenUnlocked);
+    usage.removeListener(_usageLoaded);
     super.dispose();
   }
 
@@ -149,6 +155,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     MonthStartStore(db).read().then((d) => monthStartChoice.value = d);
     _open();
     _autoBackup();
+    _describeUsage(db);
+    _askUsage();
     _saved.addListener(_reschedule);
 
     widget.notifier
@@ -232,6 +240,17 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         service: backups,
         folders: const DeviceBackupFolders(),
       ).run(now: DateTime.now(), language: language);
+      if (outcome
+          case AutoBackupOutcome.done ||
+              AutoBackupOutcome.failed ||
+              AutoBackupOutcome.folderMissing) {
+        usage.track(
+          UsageEvent.backup(
+            automatic: true,
+            done: outcome == AutoBackupOutcome.done,
+          ),
+        );
+      }
       if (!mounted) return;
       final l = AppLocalizations.of(context);
       final text = switch (outcome) {
@@ -252,6 +271,69 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     } finally {
       _backingUp = false;
     }
+  }
+
+  /// What every message says of the phone (ADR 0013); nothing leaves
+  /// before a yes.
+  Future<void> _describeUsage(KibuoDatabase db) async {
+    final language = Localizations.localeOf(context).languageCode;
+    String? currency;
+    try {
+      currency = await CurrencyRepository(db).primaryCurrency();
+    } on Object {
+      currency = null;
+    }
+    await usage.describe(
+      language: language,
+      country: await deviceCountry(),
+      currency: currency,
+    );
+  }
+
+  /// The lock the question of « Aider à améliorer kibuo » waits behind.
+  LockController? _usageLock;
+  bool _asking = false;
+
+  void _usageWhenUnlocked() {
+    final lock = _usageLock;
+    if (lock == null || !lock.ready || lock.locked) return;
+    lock.removeListener(_usageWhenUnlocked);
+    _usageLock = null;
+    if (mounted) _askUsage();
+  }
+
+  /// Asked once (ADR 0013): after the first launch, or at the next opening
+  /// for who already had kibuo; never over the lock or another sheet.
+  Future<void> _askUsage() async {
+    if (_asking) return;
+    if (!usage.toAsk) {
+      if (usage.consent == null) usage.addListener(_usageLoaded);
+      return;
+    }
+    final lock = KibuoLock.maybeControllerOf(context);
+    if (lock != null && (!lock.ready || lock.locked)) {
+      _usageLock?.removeListener(_usageWhenUnlocked);
+      _usageLock = lock..addListener(_usageWhenUnlocked);
+      return;
+    }
+    _asking = true;
+    try {
+      // Once the home has shown.
+      await Future<void>.delayed(const Duration(milliseconds: 800));
+      if (!mounted || !usage.toAsk) return;
+      // Another sheet or screen on top: next time.
+      if (!(ModalRoute.of(context)?.isCurrent ?? true)) return;
+      await askUsageConsent(context, usage);
+    } finally {
+      _asking = false;
+    }
+  }
+
+  /// The answer read from the vault, after the shell first showed.
+  void _usageLoaded() {
+    if (!usage.toAsk && usage.consent == null) return;
+    usage.removeListener(_usageLoaded);
+    if (mounted && usage.toAsk) _askUsage();
   }
 
   Future<void> _openBackup() async {
@@ -353,12 +435,18 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      usage.track(UsageEvent.opened);
       _catchUp();
       _autoBackup();
+      _askUsage();
     }
+    if (state == AppLifecycleState.paused) usage.flush();
   }
 
   void _show(_Tab tab) {
+    if (tab != _tab) {
+      usage.track(UsageEvent.tab(UsageTab.values.byName(tab.name)));
+    }
     if (tab == _Tab.home && _tab != _Tab.home) _homeShown.value++;
     if (tab == _Tab.more && _tab != _Tab.more) _plusShown.value++;
     setState(() => _tab = tab);
@@ -548,6 +636,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
 
   /// A line of Plus touched (canvas Plus).
   Future<void> _openPlus(PlusEntry entry) async {
+    usage.track(UsageEvent.place(UsagePlace.values.byName(entry.name)));
     final db = KibuoData.maybeOf(context);
     final data = _entryData(context);
     if (db == null || data == null) return;

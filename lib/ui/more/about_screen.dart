@@ -172,6 +172,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
       (l.privacyKeepsTitle, l.privacyKeepsBody),
       (l.privacyWhereTitle, l.privacyWhereBody),
       (l.privacyNothingTitle, l.privacyNothingBody),
+      (l.privacyStatsTitle, l.privacyStatsBody),
       (l.privacyBackupsTitle, l.privacyBackupsBody),
       (l.privacyAndroidTitle, l.privacyAndroidBody),
       (l.privacyDeviceTitle, l.privacyDeviceBody),

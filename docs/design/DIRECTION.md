@@ -56,6 +56,8 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 **Cartes.** Les réglages se groupent dans une carte blanche, une ligne par réglage. Les éléments qu'on gère (devises, comptes) ont chacun leur carte : nom en gras, une ou deux lignes dessous, action verte à droite. Une valeur mise en avant va dans une carte menthe.
 
+**Demander un accord** (validé le 25 novembre 2026, variante B de `MesureUsage-variantes.html`). Une feuille du kit : titre et ✕, une phrase à 4 de la marge, une carte blanche de lignes à tuile de 36 (ce qui est accepté, ce qui ne l'est jamais), un lien de lecture en action secondaire grise sous la carte (règle « Action sous une carte »), puis les deux réponses côte à côte comme ConfirmA (blanche à gauche, menthe à droite, 48 de haut, 8 entre elles). Refuser doit être aussi facile qu'accepter ; fermer vaut refuser.
+
 **Feuilles.** Poignée claire, titre avec ✕, puis le contenu ; le clavier kibuo est le même partout (1 à 9, virgule, 0, ←). Une feuille n'a pas de bouton « Annuler » : on la quitte par le ✕, un toucher à côté, un glissement vers le bas ou le geste retour. Un second bouton n'y reste que s'il dit autre chose que fermer (« Plus tard »).
 
 **Icônes.** Toutes de Phosphor, y compris ‹ pour revenir et ← pour effacer.

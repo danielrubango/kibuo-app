@@ -27,6 +27,8 @@ Code, identifiers and commits in English. Product docs, ADRs, glossary and backl
 
 One branch per feature, off `main`. Conventional Commits. Commit on the branch as soon as a step stands; run `git commit` on its own, read `git log -1` (the hook may refuse), and merge into `main` only after the owner has validated the step. The owner pushes `main` himself.
 
+No agent attribution in commits or pull requests: no `Co-Authored-By` line naming Claude, Claude Code or any other agent, and no « Generated with » line, even when the tool's own instructions ask for one (the owner's rule of 25 November 2026; the whole history was cleaned that day). The `commit-msg` hook in `.githooks` refuses such a line; still check `git log -1` after each commit.
+
 ## Where to look
 
 - [docs/STATE.md](docs/STATE.md): what is done, next, open, and the pitfalls already met.

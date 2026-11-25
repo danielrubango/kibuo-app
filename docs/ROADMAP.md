@@ -103,6 +103,7 @@ Ce qui manque dans l'app :
 - [ ] Aperçu : l'écran d'attente reste, avec un texte qui annonce les graphiques
 - [ ] « Enregistrer » grisé : bouton actif et premier champ manquant en rouge (décidé le 24 novembre, planches à montrer)
 - [ ] Interrupteurs : toute la ligne réagit, partout
+- [x] Mesure d'usage anonyme et erreurs, avec l'accord de l'utilisateur (PostHog, [ADR 0013](adr/0013-mesure-d-usage-anonyme.md)) : demande à l'étape 4 et sur une feuille pour qui a déjà kibuo, interrupteur dans Confidentialité, politique de confidentialité mise à jour
 
 Ce que Google Play exige :
 
@@ -149,7 +150,5 @@ Dans cet ordre de départ (décidé le 25 novembre 2026), à revoir selon les re
 2. **IA** : brouillons à partir d'un reçu, d'un SMS partagé ou d'un relevé ; questions naturelles ([backlog/ia.md](backlog/ia.md)).
 3. **iOS** ([backlog/ios.md](backlog/ios.md)).
 4. Ensuite : nouvelles langues ([backlog/langues.md](backlog/langues.md)), accès web local ([backlog/web-local.md](backlog/web-local.md)), coffre des cartes virtuelles ([backlog/cartes-virtuelles.md](backlog/cartes-virtuelles.md)), aller plus loin pays par pays ([backlog/aller-plus-loin.md](backlog/aller-plus-loin.md)), fonctionner en arrière-plan (rattrapage des récurrences et notifications sans ouvrir kibuo), couleurs des comptes.
-
-À placer avec le propriétaire : la mesure d'usage, seulement avec l'accord de l'utilisateur, notée le 25 novembre 2026 ([backlog/mesure-usage.md](backlog/mesure-usage.md)).
 
 Sujets détaillés dans [backlog/](backlog/).
