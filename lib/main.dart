@@ -125,6 +125,9 @@ class KibuoApp extends StatelessWidget {
         locale: language,
         title: 'kibuo',
         navigatorKey: navigator,
+        // The lock above every screen and sheet, once Accueil hands it over
+        // (lib/ui/lock/lock_gate.dart).
+        builder: (context, child) => LockLayer(child: child!),
         debugShowCheckedModeBanner: false,
         theme: KibuoTheme.light(),
         localizationsDelegates: AppLocalizations.localizationsDelegates,

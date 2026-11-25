@@ -256,7 +256,8 @@ class LockController extends ChangeNotifier {
 class KibuoLock extends InheritedNotifier<LockController> {
   const KibuoLock({
     super.key,
-    required LockController controller,
+    // Null in the layer above the screens until Accueil hands it the lock.
+    required LockController? controller,
     required this.eraseAll,
     required super.child,
   }) : super(notifier: controller);
