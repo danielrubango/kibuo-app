@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/first_launch_store.dart';
+import 'package:kibuo/domain/usage/usage_event.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
 
 /// Makes [code] kibuo's language at once (PRODUCT): Android 13 and more
 /// keep it as the app's own language, and kibuo follows; older ones, kibuo
@@ -54,5 +56,6 @@ Future<void> showLanguageSheet(
   );
   if (picked != null && picked != current) {
     await chooseAppLanguage(store, picked);
+    usage.track(UsageEvent.language(picked));
   }
 }

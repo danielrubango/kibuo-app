@@ -6,6 +6,7 @@ import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/usage/usage_event.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/account_form_screen.dart';
 import 'package:kibuo/ui/categories/category_form_screen.dart';
@@ -19,6 +20,7 @@ import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
 
 /// What the screens show of an operation: its names, ready to read.
 class OperationLabels {
@@ -227,6 +229,12 @@ Future<void> runEntry(
       ),
     );
     if (id == null || !context.mounted) return;
+    usage.track(
+      UsageEvent.operationSaved(
+        UsageOperation.values.byName(nextKind.name),
+        edited: nextEditing,
+      ),
+    );
     onSaved?.call();
     if (nextEditing && editing) return;
     final saved = await data.transactions.get(id);

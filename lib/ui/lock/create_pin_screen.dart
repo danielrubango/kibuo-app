@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/domain/lock/lock_rules.dart';
+import 'package:kibuo/domain/usage/usage_event.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/pin_pad.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
 
 /// Creates (or changes) the code: 4 to 6 digits then « Valider », typed
 /// again to confirm, then the fingerprint is offered when the phone has one.
@@ -39,7 +41,9 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     final entry = _entry + d;
     if (first != null && entry.length == first.length) {
       if (entry == first) {
+        final had = widget.controller.hasPin;
         await widget.controller.setPin(entry);
+        if (!had) usage.track(UsageEvent.lockOn);
         if (!mounted) return;
         await _done();
       } else {

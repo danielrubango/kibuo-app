@@ -6724,13 +6724,13 @@ abstract class AppLocalizations {
   /// Privacy policy (À propos).
   ///
   /// In fr, this message translates to:
-  /// **'Rien ne part'**
+  /// **'Rien d’autre ne part'**
   String get privacyNothingTitle;
 
   /// Privacy policy (À propos).
   ///
   /// In fr, this message translates to:
-  /// **'kibuo n’a pas accès à Internet : il ne peut rien envoyer, ni à nous ni à personne. Pas de compte, pas de publicité, pas de mesure d’audience.'**
+  /// **'Sans votre accord, kibuo n’envoie rien, ni à nous ni à personne. Pas de compte, pas de publicité, et rien n’est vendu.'**
   String get privacyNothingBody;
 
   /// Privacy policy (À propos).
@@ -6792,6 +6792,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Écrivez-nous à {email}.'**
   String privacyContactBody(String email);
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Aider à améliorer kibuo ?'**
+  String get usageTitle;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'kibuo peut nous envoyer des statistiques anonymes, pour voir ce qui marche et ce qui bloque.'**
+  String get usageIntro;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce qui part'**
+  String get usageSentTitle;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Les écrans ouverts, les actions faites et les erreurs, avec un numéro tiré au sort.'**
+  String get usageSentText;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Jamais'**
+  String get usageNeverTitle;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos montants, vos noms, vos notes, votre position.'**
+  String get usageNeverText;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire la politique de confidentialité'**
+  String get usageReadPolicy;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Non merci'**
+  String get usageNo;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui, partager'**
+  String get usageYes;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Aider à améliorer kibuo'**
+  String get usageSwitch;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Statistiques anonymes et erreurs, avec un numéro tiré au sort. Jamais vos montants, vos noms, vos notes ni votre position. '**
+  String get usageHelp;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get usagePolicyLink;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Statistiques, si vous l’acceptez'**
+  String get privacyStatsTitle;
+
+  /// Usage measure (ADR 0013).
+  ///
+  /// In fr, this message translates to:
+  /// **'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le modèle du téléphone, la langue, le pays et le code de la devise principale. Ces envois portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro est alors oublié.'**
+  String get privacyStatsBody;
 }
 
 class _AppLocalizationsDelegate

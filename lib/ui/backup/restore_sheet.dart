@@ -8,6 +8,7 @@ import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/backup/backup_rules.dart';
 import 'package:kibuo/domain/calendar.dart';
+import 'package:kibuo/domain/usage/usage_event.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/backup/backup_files.dart';
@@ -25,6 +26,7 @@ import 'package:kibuo/ui/lock/protect_sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
 
 /// What a restore needs from the app: the backups' service and folders,
 /// the current operations, and the way to put a backup in place.
@@ -112,6 +114,7 @@ Future<void> runRestore(
     ),
   );
   if (done == null || !context.mounted) return;
+  usage.track(UsageEvent.restored);
   await applyBackupLanguage(done.manifest);
   if (!context.mounted) return;
   await showRestoredSheet(

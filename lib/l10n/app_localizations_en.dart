@@ -4292,11 +4292,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'On this phone only, in an encrypted database. Its key is kept by Android, in the phone’s secure vault.';
 
   @override
-  String get privacyNothingTitle => 'Nothing leaves';
+  String get privacyNothingTitle => 'Nothing else leaves';
 
   @override
   String get privacyNothingBody =>
-      'kibuo has no access to the internet: it cannot send anything, to us or to anyone. No account, no ads, no analytics.';
+      'Without your consent, kibuo sends nothing, to us or to anyone. No account, no ads, and nothing is sold.';
 
   @override
   String get privacyBackupsTitle => 'Your backups';
@@ -4333,4 +4333,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String privacyContactBody(String email) {
     return 'Write to us at $email.';
   }
+
+  @override
+  String get usageTitle => 'Help improve kibuo?';
+
+  @override
+  String get usageIntro =>
+      'kibuo can send us anonymous statistics, to see what works and what gets in the way.';
+
+  @override
+  String get usageSentTitle => 'What is sent';
+
+  @override
+  String get usageSentText =>
+      'The screens opened, the actions taken and the errors, with a random number.';
+
+  @override
+  String get usageNeverTitle => 'Never';
+
+  @override
+  String get usageNeverText =>
+      'Your amounts, your names, your notes, your location.';
+
+  @override
+  String get usageReadPolicy => 'Read the privacy policy';
+
+  @override
+  String get usageNo => 'No thanks';
+
+  @override
+  String get usageYes => 'Yes, share';
+
+  @override
+  String get usageSwitch => 'Help improve kibuo';
+
+  @override
+  String get usageHelp =>
+      'Anonymous statistics and errors, with a random number. Never your amounts, your names, your notes or your location. ';
+
+  @override
+  String get usagePolicyLink => 'Privacy policy';
+
+  @override
+  String get privacyStatsTitle => 'Statistics, if you agree';
+
+  @override
+  String get privacyStatsBody =>
+      'If you agree to “Help improve kibuo”, kibuo sends PostHog, in Europe, the screens opened, the actions taken (without their content) and the errors, with the versions of kibuo and Android, the phone model, the language, the country and the main currency’s code. They carry a random number, linked neither to you nor to the phone. Never your amounts, your names, your notes, your location or your IP address. You can stop at any time in Settings › Privacy: the number is then forgotten.';
 }

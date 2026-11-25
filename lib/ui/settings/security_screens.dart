@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
@@ -7,8 +8,11 @@ import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
+import 'package:kibuo/ui/more/about_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
+import 'package:kibuo/ui/theme/kibuo_theme.dart';
+import 'package:kibuo/ui/usage/usage_measure.dart';
 
 /// The value of Réglages › Confidentialité.
 String privacySummary(AppLocalizations l, LockController lock) =>
@@ -158,15 +162,20 @@ class LockSettingsScreen extends StatelessWidget {
   }
 }
 
-/// Sécurité › Confidentialité.
+/// Sécurité › Confidentialité: what shows of kibuo, then « Aider à
+/// améliorer kibuo » (ADR 0013, MesureUsage-variantes.html).
 class PrivacyScreen extends StatelessWidget {
-  const PrivacyScreen({super.key, required this.lock});
+  const PrivacyScreen({super.key, required this.lock, this.usageMeasure});
 
   final LockController lock;
 
+  /// The app's [usage] unless a test gives its own.
+  final UsageMeasure? usageMeasure;
+  UsageMeasure get measure => usageMeasure ?? usage;
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: lock,
+    listenable: Listenable.merge([lock, measure]),
     builder: (context, _) => _build(context),
   );
 
@@ -196,6 +205,41 @@ class PrivacyScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           HelpText(l.privacyHelp),
+          const SizedBox(height: 12),
+          SettingsCard(
+            children: [
+              SettingsSwitch(
+                label: l.usageSwitch,
+                value: measure.on,
+                onChanged: (on) => measure.answer(yes: on),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text.rich(
+              TextSpan(
+                text: l.usageHelp,
+                children: [
+                  TextSpan(
+                    text: l.usagePolicyLink,
+                    style: const TextStyle(
+                      color: KibuoColors.accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                        ),
+                      ),
+                  ),
+                ],
+              ),
+              style: KibuoType.help,
+            ),
+          ),
         ],
       ),
     );

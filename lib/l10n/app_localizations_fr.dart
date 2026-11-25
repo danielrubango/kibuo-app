@@ -4336,11 +4336,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Sur ce téléphone seulement, dans une base chiffrée. Sa clé est gardée par Android, dans le coffre sécurisé du téléphone.';
 
   @override
-  String get privacyNothingTitle => 'Rien ne part';
+  String get privacyNothingTitle => 'Rien d’autre ne part';
 
   @override
   String get privacyNothingBody =>
-      'kibuo n’a pas accès à Internet : il ne peut rien envoyer, ni à nous ni à personne. Pas de compte, pas de publicité, pas de mesure d’audience.';
+      'Sans votre accord, kibuo n’envoie rien, ni à nous ni à personne. Pas de compte, pas de publicité, et rien n’est vendu.';
 
   @override
   String get privacyBackupsTitle => 'Vos sauvegardes';
@@ -4377,4 +4377,51 @@ class AppLocalizationsFr extends AppLocalizations {
   String privacyContactBody(String email) {
     return 'Écrivez-nous à $email.';
   }
+
+  @override
+  String get usageTitle => 'Aider à améliorer kibuo ?';
+
+  @override
+  String get usageIntro =>
+      'kibuo peut nous envoyer des statistiques anonymes, pour voir ce qui marche et ce qui bloque.';
+
+  @override
+  String get usageSentTitle => 'Ce qui part';
+
+  @override
+  String get usageSentText =>
+      'Les écrans ouverts, les actions faites et les erreurs, avec un numéro tiré au sort.';
+
+  @override
+  String get usageNeverTitle => 'Jamais';
+
+  @override
+  String get usageNeverText =>
+      'Vos montants, vos noms, vos notes, votre position.';
+
+  @override
+  String get usageReadPolicy => 'Lire la politique de confidentialité';
+
+  @override
+  String get usageNo => 'Non merci';
+
+  @override
+  String get usageYes => 'Oui, partager';
+
+  @override
+  String get usageSwitch => 'Aider à améliorer kibuo';
+
+  @override
+  String get usageHelp =>
+      'Statistiques anonymes et erreurs, avec un numéro tiré au sort. Jamais vos montants, vos noms, vos notes ni votre position. ';
+
+  @override
+  String get usagePolicyLink => 'Politique de confidentialité';
+
+  @override
+  String get privacyStatsTitle => 'Statistiques, si vous l’acceptez';
+
+  @override
+  String get privacyStatsBody =>
+      'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le modèle du téléphone, la langue, le pays et le code de la devise principale. Ces envois portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro est alors oublié.';
 }

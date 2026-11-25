@@ -25,6 +25,7 @@ dependencies:
   path: ^1.9.1
   path_provider: ^2.1.6
   pdfx: ^2.11.0
+  posthog_flutter: ^5.34.1
   sqlite3: ^3.9.1
   timezone: ^0.11.2
   url_launcher: ^6.3.3

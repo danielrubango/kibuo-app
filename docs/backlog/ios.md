@@ -31,6 +31,7 @@ Le code Flutter reste compilable pour iOS, mais iOS n'est ni testé ni publié a
 | Écran de démarrage | Écran d'Android 12+ (`windowSplashScreenAnimatedIcon`) et fond de lancement d'Android 8 à 11 | Écran de lancement iOS (LaunchScreen) avec le même logo, centré à la même taille que l'écran Kibuo | À faire |
 | Sauvegarde manuelle | Choix du dossier par le sélecteur d'Android (`ACTION_OPEN_DOCUMENT_TREE`, droit d'écriture durable) et écriture du fichier par `DocumentsContract`, canal `kibuo/folder` (`BackupFolders.kt`) | Sélecteur de dossier iOS (`UIDocumentPickerViewController` en mode dossier) avec un signet à portée de sécurité pour y réécrire | À faire |
 | À propos › Nous écrire | `url_launcher` ouvre un lien `mailto:` ; déclaré dans les `<queries>` du manifeste (Android 11+) | `url_launcher` marche tel quel ; ajouter `mailto` à `LSApplicationQueriesSchemes` seulement si l'on teste avant d'ouvrir | À faire |
+| Mesure d'usage (ADR 0013) | `posthog_flutter` démarré depuis Dart : `com.posthog.posthog.AUTO_INIT` à `false` dans le manifeste, autorisation `INTERNET` | Même module ; `com.posthog.posthog.AUTO_INIT` à `false` dans Info.plist ; vérifier l'envoi des erreurs natives et la déclaration de confidentialité d'Apple (PrivacyInfo) | À faire |
 
 ## Différences déjà connues
 

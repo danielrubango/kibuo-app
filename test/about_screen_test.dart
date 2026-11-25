@@ -116,7 +116,8 @@ void main() {
     for (final title in [
       'Ce que kibuo garde',
       'Où',
-      'Rien ne part',
+      'Rien d’autre ne part',
+      'Statistiques, si vous l’acceptez',
       'Vos sauvegardes',
       'La copie par Android',
       'Empreinte et photos',

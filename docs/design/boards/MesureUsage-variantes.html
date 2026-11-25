@@ -72,11 +72,31 @@
   .help a { color: var(--accent); font-weight: 600; text-decoration: none; }
   .sec { margin: 8px 4px 0; font-size: 13px; font-weight: 600; color: var(--ink2); }
   .tag { position: absolute; top: 12px; right: 14px; background: #FCEFD2; color: #6B4A00; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; z-index: 3; }
+  .ksheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bg); border-radius: 26px 26px 0 0; padding: 10px 16px 24px; display: flex; flex-direction: column; }
+  .khandle { align-self: center; width: 40px; height: 4px; border-radius: 2px; background: var(--line); margin-bottom: 8px; }
+  .khead { height: 44px; display: flex; align-items: center; justify-content: space-between; padding-left: 4px; }
+  .khead h4 { margin: 0; font: 700 20px 'Plus Jakarta Sans', sans-serif; }
+  .khead svg { width: 22px; height: 22px; color: var(--ink2); margin-right: 11px; }
+  .kintro { margin: 12px 4px 12px; font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .kcard { background: var(--surface); border-radius: 18px; padding: 2px 14px 2px 12px; display: flex; flex-direction: column; }
+  .krow { min-height: 56px; padding: 10px 0; display: flex; gap: 12px; align-items: center; font-size: 14px; line-height: 20px; }
+  .krow + .krow { border-top: 1px solid var(--bg); }
+  .krow b { display: block; font-size: 15px; font-weight: 500; }
+  .krow span { color: var(--ink2); }
+  .ktile { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .ktile svg { width: 18px; height: 18px; }
+  .ktile.yes { background: var(--accentTint); color: var(--accent); }
+  .ktile.no { background: var(--dangerTint); color: var(--danger); }
+  .klink { height: 44px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: var(--ink2); }
+  .kbtns { display: flex; gap: 8px; }
+  .kbtns > div { flex: 1; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; }
+  .kwhite { background: var(--surface); }
+  .kmint { background: var(--mint); }
 </style>
 </head>
 <body>
 <h1>Mesure d'usage · où demander l'accord</h1>
-<p class="lead">ADR 0013 (25 novembre 2026) : rien ne part avant un « oui », demandé une fois au premier lancement, et une fois à la prochaine ouverture pour qui a déjà kibuo ; un interrupteur dans Réglages › Confidentialité. Trois façons de poser la question. Recommandation : <b>B</b>.</p>
+<p class="lead">ADR 0013 (25 novembre 2026) : rien ne part avant un « oui », demandé une fois au premier lancement, et une fois à la prochaine ouverture pour qui a déjà kibuo ; un interrupteur dans Réglages › Confidentialité. Trois façons de poser la question. <b>B</b> retenue le 25 novembre 2026, avec les espacements du kit.</p>
 
 <svg width="0" height="0" style="position:absolute">
   <symbol id="yes" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -106,23 +126,23 @@
 </div>
 
 <div class="variant">
-  <h2>B · Une feuille, juste après « Commencer » (recommandée)</h2>
-  <p class="why">L'étape 4 ne change pas. Après « Commencer », l'accueil s'ouvre avec une feuille qui pose la question, dit ce qui part et ce qui ne part jamais, et attend une vraie réponse : « Oui, partager » ou « Non merci », de même taille. La même feuille sert à qui a déjà kibuo, une seule fois à la prochaine ouverture. La refermer d'un geste vaut « Non », et elle ne revient pas.</p>
+  <h2>B · Une feuille, juste après « Commencer » (retenue le 25 novembre 2026, mesures du kit)</h2>
+  <p class="why">L'étape 4 ne change pas. Après « Commencer », l'accueil s'ouvre avec la feuille ; la même sert, une seule fois, à qui a déjà kibuo. Mesures reprises du kit : poignée (10, trait 40 × 4, 8), rangée de 44 du titre et du ✕ ; 12 sous le titre ; la phrase à 4 de la marge ; 12 ; la carte blanche (lignes de 56, tuile de 36 à 12 du bord) ; le lien sous la carte en action secondaire grise, centré, sa zone de 44 collée à la carte (texte à 12 de la carte et 12 avant les boutons) ; les deux boutons de ConfirmA, blanc à gauche et menthe à droite, 48 de haut, 8 entre eux ; 24 sous les boutons. Le ✕, un toucher à côté ou un glissement valent « Non merci », et la feuille ne revient pas.</p>
   <div class="row">
     <div class="frame"><span>B1 · Sur l'accueil, au premier lancement ou à la prochaine ouverture</span>
       <div class="phone">
         <div class="home"><div class="t">Aujourd'hui</div><div class="card"></div><div class="card w"></div><div class="card w"></div></div>
         <div class="scrim"></div>
-        <div class="sheet">
-          <div class="handle"></div>
-          <h4>Aider à améliorer kibuo ?</h4>
-          <p>kibuo peut nous envoyer des statistiques anonymes, pour voir ce qui marche et ce qui bloque.</p>
-          <div class="list">
-            <div class="li"><span class="ic yes"><svg><use href="#yes"/></svg></span><div><b>Ce qui part</b><span>Les écrans ouverts, les actions faites et les erreurs, avec un numéro tiré au sort.</span></div></div>
-            <div class="li"><span class="ic no"><svg><use href="#no"/></svg></span><div><b>Jamais</b><span>Vos montants, vos noms, vos notes, votre position.</span></div></div>
+        <div class="ksheet">
+          <div class="khandle"></div>
+          <div class="khead"><h4>Aider à améliorer kibuo ?</h4><svg><use href="#no"/></svg></div>
+          <p class="kintro">kibuo peut nous envoyer des statistiques anonymes, pour voir ce qui marche et ce qui bloque.</p>
+          <div class="kcard">
+            <div class="krow"><span class="ktile yes"><svg><use href="#yes"/></svg></span><div><b>Ce qui part</b><span>Les écrans ouverts, les actions faites et les erreurs, avec un numéro tiré au sort.</span></div></div>
+            <div class="krow"><span class="ktile no"><svg><use href="#no"/></svg></span><div><b>Jamais</b><span>Vos montants, vos noms, vos notes, votre position.</span></div></div>
           </div>
-          <div class="linkc">Lire la politique de confidentialité</div>
-          <div class="btns"><div class="plain">Non merci</div><div class="go" style="height:52px;font-size:16px">Oui, partager</div></div>
+          <div class="klink">Lire la politique de confidentialité</div>
+          <div class="kbtns"><div class="kwhite">Non merci</div><div class="kmint">Oui, partager</div></div>
         </div>
       </div>
     </div>
