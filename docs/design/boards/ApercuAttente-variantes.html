@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aperçu en attente · variantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap">
+<style>
+  :root {
+    --bg: #EEF1F7; --surface: #FFFFFF; --ink: #0E1320; --ink2: #525D73; --muted: #8A93A6;
+    --line: #DDE2EC; --fill: #E4E8F0; --mint: #5EEAB5; --accent: #0A7355; --accentTint: #E9F8F1;
+    --project: #33528A; --projectTint: #E1E8F6; --peach: #F2B48A; --peachTint: #FDEBDD;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #DCE1EA; font-family: Inter, sans-serif; color: var(--ink); padding: 32px 24px 64px; }
+  h1 { font: 700 26px 'Plus Jakarta Sans', sans-serif; margin: 0 0 6px; }
+  .lead { color: var(--ink2); font-size: 15px; margin: 0 0 32px; max-width: 960px; line-height: 22px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .frame { display: flex; flex-direction: column; gap: 8px; width: 390px; }
+  .frame > b { font: 700 18px 'Plus Jakarta Sans', sans-serif; }
+  .frame > span { font-size: 13px; color: var(--ink2); line-height: 18px; min-height: 72px; }
+  .phone { width: 390px; height: 844px; background: var(--bg); border-radius: 28px; overflow: hidden; position: relative; }
+  .page { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .tabhead { min-height: 44px; display: flex; align-items: center; padding-left: 4px; font: 700 24px 'Plus Jakarta Sans', sans-serif; }
+  .card { background: var(--surface); border-radius: 18px; padding: 16px; }
+  .soon { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 24px 16px; }
+  .tile { width: 48px; height: 48px; border-radius: 14px; background: var(--accentTint); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+  .tile svg { width: 24px; height: 24px; }
+  .soon h2 { margin: 4px 0 0; font: 700 18px 'Plus Jakarta Sans', sans-serif; }
+  .soon p { margin: 0; font-size: 14px; line-height: 20px; color: var(--ink2); max-width: 290px; }
+  .pill { display: inline-flex; padding: 4px 10px; border-radius: 12px; background: var(--fill); color: var(--ink2); font-size: 12px; font-weight: 600; }
+  .lines { background: var(--surface); border-radius: 18px; padding: 2px 14px 2px 12px; }
+  .ln { min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .ln + .ln { border-top: 1px solid var(--bg); }
+  .ln .ic { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .ln .ic svg { width: 18px; height: 18px; }
+  .ln b { display: block; font-size: 15px; font-weight: 500; }
+  .ln small { font-size: 13px; line-height: 18px; color: var(--ink2); }
+  .ln .caret { margin-left: auto; color: #B6BDCB; }
+  .sec { font-size: 13px; font-weight: 600; color: var(--ink2); margin: 6px 4px -6px; }
+  .seg { display: flex; background: var(--fill); border-radius: 14px; padding: 4px; opacity: .55; }
+  .seg div { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 600; color: var(--ink2); border-radius: 11px; }
+  .seg div.on { background: var(--surface); color: var(--ink); }
+  .ghost { position: relative; height: 300px; }
+  .bars { position: absolute; left: 16px; right: 16px; bottom: 40px; height: 170px; display: flex; align-items: flex-end; gap: 6px; opacity: .35; }
+  .bars i { flex: 1; background: var(--line); border-radius: 4px 4px 0 0; display: block; }
+  .ghost .over { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 0 24px; }
+  .link { text-align: center; color: var(--accent); font-size: 15px; font-weight: 600; padding: 12px 0; }
+  .fade { position: absolute; left: 0; right: 0; bottom: 0; height: 132px; background: linear-gradient(rgba(238,241,247,0), var(--bg) 62%); }
+  nav { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 68px; background: #fff; border-radius: 24px; border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(14,19,32,.16); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; font: 600 11px Inter, sans-serif; color: var(--ink2); text-align: center; }
+  nav .on { color: var(--accent); }
+  nav .plus { margin: -30px auto 0; width: 62px; height: 62px; border-radius: 20px; background: var(--mint); box-shadow: 0 0 0 5px var(--bg); }
+</style>
+</head>
+<body>
+<h1>Aperçu · l'écran d'attente de la version 0.1</h1>
+<p class="lead">Les graphiques (planches Apercu*) arrivent en 0.2. En attendant, l'onglet reste, avec un écran qui annonce ce qui vient. Aujourd'hui : une carte grise « Les graphiques et les points suivis viendront ici. ». Trois façons de faire. Recommandation : <b>B</b>.</p>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="pie" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z M14 2.5V10h7.5A8 8 0 0 0 14 2.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
+  <symbol id="bank" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5M5 10v8M10 10v8M14 10v8M19 10v8M3 20h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="caret" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="row">
+
+  <div class="frame"><b>A · Une carte « Bientôt »</b><span>Le plus simple : la carte d'aujourd'hui, avec une icône verte, un titre et une phrase qui disent ce qui vient, et « Prochaine version ». Rien d'autre à toucher.</span>
+    <div class="phone"><div class="page">
+      <div class="tabhead">Aperçu</div>
+      <div class="card soon">
+        <span class="tile"><svg><use href="#chart"/></svg></span>
+        <h2>Vos graphiques arrivent</h2>
+        <p>Bientôt ici : l'évolution de vos dépenses et de vos revenus, où part votre argent, et ce que vous possédez.</p>
+        <span class="pill">Prochaine version</span>
+      </div>
+    </div>
+      <div class="fade"></div>
+      <nav><div>Accueil</div><div>Opérations</div><div><div class="plus"></div></div><div class="on">Aperçu</div><div>Plus</div></nav>
+    </div>
+  </div>
+
+  <div class="frame"><b>B · Ce qui vient, et où regarder en attendant (recommandée)</b><span>La carte « Bientôt », puis les trois vues à venir, chacune en une ligne (ses mots sont ceux des onglets de la planche ApercuP2). Dessous, « En attendant » mène aux chiffres qui existent déjà : le mois dans Opérations, les budgets.</span>
+    <div class="phone"><div class="page">
+      <div class="tabhead">Aperçu</div>
+      <div class="card soon">
+        <span class="tile"><svg><use href="#chart"/></svg></span>
+        <h2>Vos graphiques arrivent</h2>
+        <p>Dans la prochaine version de kibuo, trois vues de votre argent :</p>
+      </div>
+      <div class="lines">
+        <div class="ln"><span class="ic" style="background:var(--peachTint);color:#8A4A1C"><svg><use href="#trend"/></svg></span><div><b>Évolution</b><small>Vos sorties et vos entrées, jour après jour</small></div></div>
+        <div class="ln"><span class="ic" style="background:var(--accentTint);color:var(--accent)"><svg><use href="#pie"/></svg></span><div><b>Catégories</b><small>Où part votre argent, d'où il vient</small></div></div>
+        <div class="ln"><span class="ic" style="background:var(--projectTint);color:var(--project)"><svg><use href="#bank"/></svg></span><div><b>Patrimoine</b><small>Vos comptes, plus ce qu'on vous doit, moins vos dettes</small></div></div>
+      </div>
+      <div class="sec">En attendant</div>
+      <div class="lines">
+        <div class="ln"><span class="ic" style="background:var(--bg);color:var(--ink2)"><svg><use href="#list"/></svg></span><div><b>Le mois en chiffres</b><small>Entrées, sorties et ce qui reste, dans Opérations</small></div><span class="caret"><svg width="18" height="18"><use href="#caret"/></svg></span></div>
+        <div class="ln"><span class="ic" style="background:#FCEFD2;color:#8A5A00"><svg><use href="#pie"/></svg></span><div><b>Budgets</b><small>Ce qui reste dans chaque catégorie</small></div><span class="caret"><svg width="18" height="18"><use href="#caret"/></svg></span></div>
+      </div>
+    </div>
+      <div class="fade"></div>
+      <nav><div>Accueil</div><div>Opérations</div><div><div class="plus"></div></div><div class="on">Aperçu</div><div>Plus</div></nav>
+    </div>
+  </div>
+
+  <div class="frame"><b>C · La silhouette de l'Aperçu</b><span>L'écran ressemble déjà à l'Aperçu : les onglets grisés, un graphique fantôme en gris clair, « Bientôt » par-dessus, puis un lien pour nous dire ce que l'utilisateur aimerait y voir (e-mail à contact@kibuo.app). Plus vivant, mais on montre un graphique qui n'existe pas.</span>
+    <div class="phone"><div class="page">
+      <div class="tabhead">Aperçu</div>
+      <div class="seg"><div class="on">Évolution</div><div>Catégories</div><div>Patrimoine</div></div>
+      <div class="card ghost">
+        <div class="bars"><i style="height:30%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:75%"></i><i style="height:50%"></i><i style="height:65%"></i><i style="height:35%"></i><i style="height:80%"></i><i style="height:45%"></i><i style="height:60%"></i><i style="height:38%"></i><i style="height:70%"></i></div>
+        <div class="over">
+          <span class="pill">Bientôt</span>
+          <h2 style="margin:0;font:700 18px 'Plus Jakarta Sans',sans-serif">Vos graphiques arrivent</h2>
+          <p style="margin:0;font-size:14px;line-height:20px;color:var(--ink2)">L'évolution, vos catégories et votre patrimoine, dans la prochaine version.</p>
+        </div>
+      </div>
+      <div class="link">Dites-nous ce que vous aimeriez y voir</div>
+    </div>
+      <div class="fade"></div>
+      <nav><div>Accueil</div><div>Opérations</div><div><div class="plus"></div></div><div class="on">Aperçu</div><div>Plus</div></nav>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
