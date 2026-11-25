@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `fix/whole-row-switch`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `docs/google-play`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -33,7 +33,7 @@ Validés sur le canvas, absents de l'app : l'**Aperçu** et ses graphiques (vers
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
-Prochaine case : **version 0.1, ce que Google Play exige** : d'abord vérifier les conditions actuelles pour un nouveau compte personnel (test fermé obligatoire, nombre de testeurs, durée). Toutes les cases « Ce qui manque dans l'app » sont faites.
+Prochaine case : **version 0.1, clé de signature de publication et paquet AAB** (le propriétaire crée la clé lui-même). Les exigences de Google Play sont dans [backlog/google-play.md](backlog/google-play.md) : 12 testeurs pendant 14 jours, jusqu'à 7 jours d'examen, 25 $. Point ouvert : une app de budget exige-t-elle un compte d'organisation (« produits et services financiers ») ? À voir dans la Play Console avant de payer.
 
 ## Décisions récentes
 
