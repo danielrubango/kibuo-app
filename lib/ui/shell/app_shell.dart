@@ -1,6 +1,5 @@
 import 'dart:ui' show lerpDouble;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kibuo/data/account_repository.dart';
@@ -21,9 +20,7 @@ import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/search_history.dart';
 import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
-import 'package:kibuo/domain/money/long_amounts.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
-import 'package:kibuo/ui/accounts/account_types_screen.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/backup/auto_backup.dart';
 import 'package:kibuo/ui/backup/auto_backup_task.dart';
@@ -36,30 +33,26 @@ import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/home/home_screen.dart';
-import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/choice_sheet.dart';
-import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/more/about_screen.dart';
+import 'package:kibuo/ui/more/plus_page.dart';
+import 'package:kibuo/ui/more/plus_summary.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
 import 'package:kibuo/ui/projects/project_money.dart';
 import 'package:kibuo/ui/projects/project_screen.dart';
 import 'package:kibuo/ui/projects/projects_screen.dart';
-import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/recurrences/recurrences_screen.dart';
 import 'package:kibuo/ui/reminders/notifier.dart';
 import 'package:kibuo/ui/reminders/reminder_planner.dart';
-import 'package:kibuo/ui/reminders/reminders_screen.dart';
 import 'package:kibuo/ui/screens/placeholders.dart';
-import 'package:kibuo/ui/settings/currency_screens.dart';
-import 'package:kibuo/ui/settings/long_amounts_sheet.dart';
-import 'package:kibuo/ui/settings/month_start_sheet.dart';
-import 'package:kibuo/ui/settings/security_screens.dart';
+import 'package:kibuo/ui/settings/settings_screen.dart';
 import 'package:kibuo/ui/shell/add_choice.dart';
 import 'package:kibuo/ui/shell/add_sheet.dart';
 import 'package:kibuo/ui/shell/plus_fan.dart';
@@ -103,6 +96,10 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   /// Tells Accueil to reload when it comes back into view.
   final _homeShown = ValueNotifier<int>(0);
 
+  /// Tells Plus to read its figures again when it comes into view.
+  final _plusShown = ValueNotifier<int>(0);
+  late final _plusRefresh = Listenable.merge([_saved, _plusShown]);
+
   /// Tells Opérations to show this month (from Accueil's month).
   final _thisMonth = ValueNotifier<int>(0);
 
@@ -131,6 +128,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
 
     _saved.dispose();
     _homeShown.dispose();
+    _plusShown.dispose();
     _thisMonth.dispose();
     DeviceBackupFiles.instance.opened.removeListener(_openedFile);
     _waitingLock?.removeListener(_whenUnlocked);
@@ -362,6 +360,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
 
   void _show(_Tab tab) {
     if (tab == _Tab.home && _tab != _Tab.home) _homeShown.value++;
+    if (tab == _Tab.more && _tab != _Tab.more) _plusShown.value++;
     setState(() => _tab = tab);
   }
 
@@ -494,13 +493,22 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                       icon: PlaceholderIcons.overview,
                       message: AppLocalizations.of(context).overviewPlaceholder,
                     ),
-                    TabPlaceholder(
-                      key: const ValueKey('screen-more'),
-                      title: AppLocalizations.of(context).tabMore,
-                      icon: PlaceholderIcons.more,
-                      message: AppLocalizations.of(context).morePlaceholder,
-                      extra: _securityRow(context),
-                    ),
+                    if (_entryData(context) case final data?)
+                      PlusPage(
+                        key: const ValueKey('screen-more'),
+                        load: () =>
+                            loadPlusSummary(KibuoData.maybeOf(context)!, data),
+                        onOpen: _openPlus,
+                        backups: data.backups,
+                        refresh: _plusRefresh,
+                      )
+                    else
+                      TabPlaceholder(
+                        key: const ValueKey('screen-more'),
+                        title: AppLocalizations.of(context).tabMore,
+                        icon: PlaceholderIcons.more,
+                        message: AppLocalizations.of(context).morePlaceholder,
+                      ),
                   ],
                 ),
               ),
@@ -538,142 +546,50 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     );
   }
 
-  /// Temporary entries to Comptes, Réglages › Devises and › Sécurité until
-  /// the full Plus page.
-  Widget? _securityRow(BuildContext context) {
-    final lock = KibuoLock.maybeControllerOf(context);
+  /// A line of Plus touched (canvas Plus).
+  Future<void> _openPlus(PlusEntry entry) async {
     final db = KibuoData.maybeOf(context);
-    if (lock == null && db == null && !kDebugMode) return null;
-    return SettingsCard(
-      children: [
-        // Debug builds only: the design system, to review on a phone.
-        if (kDebugMode)
-          SettingsRow(
-            label: 'Système de design',
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const DesignSystemScreen(),
-              ),
-            ),
+    final data = _entryData(context);
+    if (db == null || data == null) return;
+    Future<void> push(Widget screen) =>
+        Navigator.of(context)
+            .push(MaterialPageRoute<void>(builder: (_) => screen));
+    switch (entry) {
+      case PlusEntry.accounts:
+        await _openAccounts(db);
+      case PlusEntry.budgets:
+        await push(
+          BudgetsScreen(
+            loader: BudgetLoader(data, BudgetRepository(db)),
+            prefs: PreferenceStore(db),
           ),
-        if (db != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).accountsTitle,
-            onTap: () => _openAccounts(db),
+        );
+      case PlusEntry.projects:
+        await _openProjects();
+      case PlusEntry.debts:
+        await _openDebts(db, DebtDirection.owe);
+      case PlusEntry.recurrences:
+        // What it made may have reached the list.
+        await push(RecurrencesScreen(data: data));
+        _saved.value++;
+      case PlusEntry.categories:
+        await push(CategoriesScreen(categories: CategoryRepository(db)));
+      case PlusEntry.settings:
+        await push(
+          SettingsScreen(
+            db: db,
+            lock: KibuoLock.maybeControllerOf(context),
+            notifier: widget.notifier,
+            onRemindersChanged: _reschedule,
+            backups: data.backups,
+            restore: _restoreTools(),
           ),
-        if (db != null && _entryData(context) != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).budgetsTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => BudgetsScreen(
-                  loader: BudgetLoader(
-                    _entryData(context)!,
-                    BudgetRepository(db),
-                  ),
-                  prefs: PreferenceStore(db),
-                ),
-              ),
-            ),
-          ),
-        if (db != null && _entryData(context) != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).debtsTitle,
-            onTap: () => _openDebts(db, DebtDirection.owe),
-          ),
-        if (db != null && _entryData(context) != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).projectsTitle,
-            onTap: _openProjects,
-          ),
-        if (_entryData(context) case final data?)
-          SettingsRow(
-            label: AppLocalizations.of(context).recurrencesTitle,
-            // What it made may have reached the list.
-            onTap: () => Navigator.of(context)
-                .push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => RecurrencesScreen(data: data),
-                  ),
-                )
-                .then((_) => _saved.value++),
-          ),
-        if (db != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).categoriesTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    CategoriesScreen(categories: CategoryRepository(db)),
-              ),
-            ),
-          ),
-        if (db != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).typesTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    AccountTypesScreen(accounts: AccountRepository(db)),
-              ),
-            ),
-          ),
-        if (db != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).currenciesTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    CurrenciesScreen(repository: CurrencyRepository(db)),
-              ),
-            ),
-          ),
-        if (db != null)
-          ValueListenableBuilder<int>(
-            valueListenable: monthStartChoice,
-            builder: (context, day, _) => SettingsRow(
-              label: AppLocalizations.of(context).monthStart,
-              value: AppLocalizations.of(context).monthStartValue(day),
-              onTap: () => showMonthStartSheet(context, MonthStartStore(db)),
-            ),
-          ),
-        if (db != null)
-          ValueListenableBuilder<LongAmounts>(
-            valueListenable: longAmountsChoice,
-            builder: (context, choice, _) => SettingsRow(
-              label: AppLocalizations.of(context).longAmounts,
-              value: longAmountsName(AppLocalizations.of(context), choice),
-              onTap: () => showLongAmountsSheet(context, LongAmountsStore(db)),
-            ),
-          ),
-        if (db != null)
-          RecurrencesSettingsRow(recurrences: RecurringRepository(db)),
-        if (db != null && widget.notifier != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).remindersTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => RemindersScreen(
-                  store: ReminderStore(db),
-                  notifier: widget.notifier!,
-                  onChanged: _reschedule,
-                ),
-              ),
-            ),
-          ),
-        if (lock != null)
-          SettingsRow(
-            label: AppLocalizations.of(context).securityTitle,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => SecurityScreen(lock: lock),
-              ),
-            ),
-          ),
-        if (_entryData(context)?.backups case final backups?)
-          BackupSettingsRow(service: backups, restore: _restoreTools()),
-      ],
-    );
+        );
+      case PlusEntry.backup:
+        await _openBackup();
+      case PlusEntry.about:
+        await push(const AboutScreen());
+    }
   }
 
   Future<void> _openSheet() async {

@@ -3968,6 +3968,77 @@ class AppLocalizationsEn extends AppLocalizations {
   String get protectBackupPasswordRemove => 'To remove the backup password';
 
   @override
+  String get plusSpaces => 'My spaces';
+
+  @override
+  String get plusSettings => 'Settings';
+
+  @override
+  String plusFooter(String version) {
+    return 'kibuo $version · Your data stays on this phone';
+  }
+
+  @override
+  String get plusBackupToday => 'Last backup today';
+
+  @override
+  String get plusBackupYesterday => 'Last backup yesterday';
+
+  @override
+  String plusBackupDays(int days) {
+    return 'Last backup $days days ago';
+  }
+
+  @override
+  String get plusBackupNone => 'No backup yet';
+
+  @override
+  String plusMonthStart(int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      day,
+      locale: localeName,
+      other: 'starts on day $day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plusLock => 'lock';
+
+  @override
+  String get settingsGeneral => 'General';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsData => 'Data';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsBackup => 'Backup and restore';
+
+  @override
+  String get settingsLockOn => 'On';
+
+  @override
+  String get settingsLockOff => 'Off';
+
+  @override
+  String get languageHelp => 'Numbers and dates follow the language.';
+
+  @override
+  String get languageFrenchIn => 'French';
+
+  @override
+  String get languageEnglishIn => 'English';
+
+  @override
   String get todoBackup => 'Backup';
 
   @override
@@ -4158,4 +4229,108 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startRestoreAction => 'Restore';
+
+  @override
+  String get plusAbout => 'About kibuo';
+
+  @override
+  String get aboutTitle => 'About';
+
+  @override
+  String aboutVersion(String version, String date) {
+    return 'Version $version · $date';
+  }
+
+  @override
+  String get aboutTagline =>
+      'Your accounts, debts and projects in one place. Your data stays on this phone.';
+
+  @override
+  String get aboutPrivacy => 'Privacy policy';
+
+  @override
+  String get aboutPrivacyDetail => 'What kibuo keeps, and where';
+
+  @override
+  String get aboutLicences => 'Licences';
+
+  @override
+  String get aboutLicencesDetail => 'The open-source software used';
+
+  @override
+  String get aboutWrite => 'Write to us';
+
+  @override
+  String get aboutMadeWithCare => 'Made with care';
+
+  @override
+  String aboutNoMailApp(String email) {
+    return 'No e-mail app on this phone. Write to us at $email.';
+  }
+
+  @override
+  String privacyUpdated(String date) {
+    return 'Updated on $date';
+  }
+
+  @override
+  String get privacyIntro =>
+      'kibuo is an account book that stays on your phone. Here is what it keeps, where, and what it does not do.';
+
+  @override
+  String get privacyKeepsTitle => 'What kibuo keeps';
+
+  @override
+  String get privacyKeepsBody =>
+      'What you write in it: accounts, transactions and their attachments, categories, budgets, recurrences, debts and money owed, projects, currencies and rates, reminders, and your settings. kibuo does not ask for your name, your number or your location, and reads neither your contacts nor your text messages.';
+
+  @override
+  String get privacyWhereTitle => 'Where';
+
+  @override
+  String get privacyWhereBody =>
+      'On this phone only, in an encrypted database. Its key is kept by Android, in the phone’s secure vault.';
+
+  @override
+  String get privacyNothingTitle => 'Nothing leaves';
+
+  @override
+  String get privacyNothingBody =>
+      'kibuo has no access to the internet: it cannot send anything, to us or to anyone. No account, no ads, no analytics.';
+
+  @override
+  String get privacyBackupsTitle => 'Your backups';
+
+  @override
+  String get privacyBackupsBody =>
+      'A backup is a file you store wherever you like. With a password, it is encrypted; without one, anyone who has the file can read it. Stored in an online service or shared, it follows that service’s rules.';
+
+  @override
+  String get privacyAndroidTitle => 'Android’s copy';
+
+  @override
+  String get privacyAndroidBody =>
+      'Once the recovery code is created, Android may copy kibuo’s data to your Google backup or to a new phone. It stays encrypted there and opens only with the recovery code. You can prevent it in Settings › Recovery code.';
+
+  @override
+  String get privacyDeviceTitle => 'Fingerprint and photos';
+
+  @override
+  String get privacyDeviceBody =>
+      'Your fingerprint or face is checked by Android: kibuo never sees it. The camera and the gallery are used only when you add an attachment.';
+
+  @override
+  String get privacyEraseTitle => 'Erasing your data';
+
+  @override
+  String get privacyEraseBody =>
+      'Uninstalling kibuo, or clearing its data in Android’s settings, erases everything it keeps on this phone. Your backups stay where you stored them.';
+
+  @override
+  String get privacyContactTitle => 'A question?';
+
+  @override
+  String privacyContactBody(String email) {
+    return 'Write to us at $email.';
+  }
 }

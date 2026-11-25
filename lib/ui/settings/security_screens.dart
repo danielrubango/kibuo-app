@@ -10,70 +10,20 @@ import 'package:kibuo/ui/lock/unlock_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 
-/// Réglages › Sécurité: Verrouillage and Confidentialité. The recovery code
-/// row joins at its own step.
-class SecurityScreen extends StatelessWidget {
-  const SecurityScreen({super.key, required this.lock});
+/// The value of Réglages › Confidentialité.
+String privacySummary(AppLocalizations l, LockController lock) =>
+    lock.settings.hideInRecents
+    ? l.securityRecentsHidden
+    : l.securityRecentsShown;
 
-  final LockController lock;
-
-  @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: lock,
-    builder: (context, _) => _build(context),
-  );
-
-  Widget _build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final lockSummary = !lock.hasPin
-        ? l.securityNoCode
-        : lock.fingerprintOn
-        ? l.securityCodeFingerprint
-        : l.securityCode;
-    return Scaffold(
-      appBar: AppBar(title: Text(l.securityTitle)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SettingsCard(
-            children: [
-              SettingsRow(
-                label: l.securityLock,
-                value: lockSummary,
-                onTap: () => _open(context, LockSettingsScreen(lock: lock)),
-              ),
-              SettingsRow(
-                label: l.securityPrivacy,
-                value: lock.settings.hideInRecents
-                    ? l.securityRecentsHidden
-                    : l.securityRecentsShown,
-                onTap: () => _open(context, PrivacyScreen(lock: lock)),
-              ),
-              if (lock.recovery != null)
-                SettingsRow(
-                  label: l.recoveryTitle,
-                  value: lock.recoveryCreatedAt == null
-                      ? l.securityNoCode
-                      : !lock.settings.recoveryVerified
-                      ? l.securityRecoveryUnverified
-                      : l.securityRecoveryOn(
-                          formatRecoveryDate(context, lock.recoveryCreatedAt!),
-                        ),
-                  onTap: () =>
-                      _open(context, RecoverySettingsScreen(lock: lock)),
-                ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          HelpText(l.securityFooter),
-        ],
-      ),
-    );
-  }
+/// The value of Réglages › Code de récupération.
+String recoverySummary(BuildContext context, LockController lock) {
+  final l = AppLocalizations.of(context);
+  final created = lock.recoveryCreatedAt;
+  if (created == null) return l.securityNoCode;
+  if (!lock.settings.recoveryVerified) return l.securityRecoveryUnverified;
+  return l.securityRecoveryOn(formatRecoveryDate(context, created));
 }
-
-void _open(BuildContext context, Widget screen) =>
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
 
 /// Sécurité › Verrouillage.
 class LockSettingsScreen extends StatelessWidget {

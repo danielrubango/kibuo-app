@@ -32,4 +32,5 @@ Contrôlé le 9 novembre 2026 :
 
 - [ ] Chercher la marque auprès de l'OMPI, de l'EUIPO et de l'INPI
 - [ ] Réserver `kibuo.com` et `kibuo.app` (achat par le propriétaire)
+- [ ] Ouvrir la boîte `contact@kibuo.app` : À propos › Nous écrire y envoie depuis le 25 novembre 2026, et rien n'arrive tant que le domaine n'est pas pris
 - [ ] Fixer l'identifiant Android à partir du domaine réservé ; il ne pourra plus changer après publication. Provisoire depuis la création de l'application : `app.kibuo`, tiré de `kibuo.app`

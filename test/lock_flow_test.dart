@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/key_vault.dart';
@@ -9,6 +11,7 @@ import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
 import 'package:kibuo/ui/lock/pin_pad.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
+import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/shell/app_shell.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -133,6 +136,18 @@ void main() {
     return lock;
   }
 
+  /// Réglages › Verrouillage (its way from Plus: test/plus_page_test.dart).
+  Future<void> openLockSettings(WidgetTester tester) async {
+    final context = tester.element(find.byType(AppShell));
+    final lock = KibuoLock.controllerOf(context);
+    unawaited(
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => LockSettingsScreen(lock: lock)),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
   Future<void> type(WidgetTester tester, String digits) async {
     for (final d in digits.split('')) {
       await tester.tap(find.text(d).last);
@@ -148,18 +163,9 @@ void main() {
     expect(find.text('Entrez votre code'), findsNothing);
   });
 
-  testWidgets('a code is created from Plus › Sécurité › Verrouillage', (
-    tester,
-  ) async {
+  testWidgets('a code is created from Réglages › Verrouillage', (tester) async {
     await start(tester);
-    await tester.tap(find.text('Plus'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Sécurité'));
-    await tester.pumpAndSettle();
-    // Neither a code nor a recovery code yet.
-    expect(find.text('Aucun code'), findsNWidgets(2));
-    await tester.tap(find.text('Verrouillage'));
-    await tester.pumpAndSettle();
+    await openLockSettings(tester);
     await tester.tap(find.text('Créer un code'));
     await tester.pumpAndSettle();
 
@@ -195,12 +201,7 @@ void main() {
   testWidgets('codes that differ are asked again', (tester) async {
     await start(tester);
     final lock = KibuoLock.controllerOf(tester.element(find.byType(AppShell)));
-    await tester.tap(find.text('Plus'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Sécurité'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Verrouillage'));
-    await tester.pumpAndSettle();
+    await openLockSettings(tester);
     await tester.tap(find.text('Créer un code'));
     await tester.pumpAndSettle();
 
@@ -244,12 +245,7 @@ void main() {
   testWidgets('the delay is picked in a sheet', (tester) async {
     final lock = await start(tester, pin: '2468');
     await type(tester, '2468');
-    await tester.tap(find.text('Plus'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Sécurité'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Verrouillage'));
-    await tester.pumpAndSettle();
+    await openLockSettings(tester);
     expect(find.text('1 minute'), findsOneWidget);
 
     await tester.tap(find.text('Verrouiller après'));

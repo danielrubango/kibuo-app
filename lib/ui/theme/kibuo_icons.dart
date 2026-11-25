@@ -91,6 +91,10 @@ abstract final class KibuoIcons {
   static const arrowLineUp = IconData(0xe066, fontFamily: _regular);
   static const eye = IconData(0xe220, fontFamily: _regular);
   static const downloadSimple = IconData(0xe20c, fontFamily: _regular);
+  static const gear = IconData(0xe270, fontFamily: _regular);
+  static const shield = IconData(0xe40a, fontFamily: _regular);
+  static const fileText = IconData(0xe23a, fontFamily: _regular);
+  static const envelopeSimple = IconData(0xe218, fontFamily: _regular);
   static const folderSimple = IconData(0xe25a, fontFamily: _regular);
   static const eyeSlash = IconData(0xe224, fontFamily: _regular);
   static const pencilSimple = IconData(0xe3b4, fontFamily: _regular);
