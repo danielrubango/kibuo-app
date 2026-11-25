@@ -61,7 +61,6 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - La boîte `contact@kibuo.app` n'existe pas tant que le domaine n'est pas réservé (BRAND).
 - Le message en bas de l'écran garde la coche menthe même pour un échec (sauvegarde manuelle et automatique) : une icône d'alerte serait plus juste, écart au kit à proposer.
 - Les sauvegardes faites avant le 24 novembre (soir) ne portent pas la langue.
-- Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; décidé le 24 novembre que toute la ligne réagira, à construire).
 - Si kibuo est fermé pendant que le code de récupération est affiché, le code n'a jamais été confirmé.
 - Les groupes de comptes repliés ne sont pas retenus ; un compte archivé ne peut pas être rétabli.
 - 36 des 258 planches du canvas ne sont rattachées à aucune page : variantes écartées, classées dans [DIRECTION.md](design/DIRECTION.md#variantes-écartées-et-pourquoi), souvent sans raison écrite.
