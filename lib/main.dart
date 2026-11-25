@@ -33,7 +33,7 @@ void main() {
   // « Aider à améliorer kibuo » (ADR 0013): nothing leaves before a yes.
   usage.attach(
     vault: vault,
-    sink: postHogKey.isEmpty ? const NoUsageSink() : const PostHogSink(),
+    sink: postHogKey.isEmpty ? const NoUsageSink() : PostHogSink(),
   );
   final showError = FlutterError.onError;
   FlutterError.onError = (details) {
