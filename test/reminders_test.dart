@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
@@ -8,13 +7,9 @@ import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/reminder_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
-import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/l10n/app_localizations_fr.dart';
-import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/reminders/notifier.dart';
 import 'package:kibuo/ui/reminders/reminder_planner.dart';
-import 'package:kibuo/ui/reminders/reminders_screen.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 class FakeNotifier implements Notifier {
   bool allow = false;
@@ -61,72 +56,6 @@ void main() {
     );
   });
   tearDown(() => db.close());
-
-  Future<void> settle(WidgetTester tester) async {
-    for (var i = 0; i < 4; i++) {
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 20)),
-      );
-      await tester.pumpAndSettle();
-    }
-  }
-
-  Future<void> show(WidgetTester tester) async {
-    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
-    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: KibuoTheme.light(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: appLanguages,
-        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-        home: RemindersScreen(
-          store: store,
-          notifier: notifier,
-          onChanged: () =>
-              planner.refresh(AppLocalizationsFr(), DateTime.now()),
-        ),
-      ),
-    );
-    await settle(tester);
-  }
-
-  testWidgets('off by default; refused, it stays off and says so', (
-    tester,
-  ) async {
-    await show(tester);
-    expect(find.text('Noter mes opérations'), findsOneWidget);
-    expect(find.text('Heure'), findsNothing);
-    await tester.tap(find.text('Noter mes opérations'));
-    await settle(tester);
-    expect(notifier.asked, 1);
-    expect(find.text('Notifications bloquées'), findsOneWidget);
-    expect(await store.entryOn(), isFalse);
-    await tester.tap(find.text('Ouvrir les réglages du téléphone'));
-    expect(notifier.settingsOpened, 1);
-  });
-
-  testWidgets('allowed: on, every day at 20:00, then another time', (
-    tester,
-  ) async {
-    notifier.answer = true;
-    await show(tester);
-    await tester.tap(find.text('Noter mes opérations'));
-    await settle(tester);
-    expect(await store.entryOn(), isTrue);
-    expect(find.text('Chaque jour à 20:00'), findsOneWidget);
-    expect(notifier.scheduled, hasLength(30));
-    expect(notifier.scheduled.first.payload, ReminderPlanner.entryPayload);
-    await tester.tap(find.text('Heure'));
-    await settle(tester);
-    expect(find.text('Heure du rappel'), findsOneWidget);
-    await tester.drag(find.text('20:00').last, const Offset(0, -44));
-    await settle(tester);
-    await tester.tap(find.text('Enregistrer'));
-    await settle(tester);
-    expect(await store.entryMinute(), 20 * 60 + 15);
-    expect(notifier.scheduled.first.at.minute, 15);
-  });
 
   test('noted by hand today: no reminder today', () async {
     notifier.allow = true;

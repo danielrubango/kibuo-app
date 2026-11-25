@@ -18,7 +18,7 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 
 | 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app), mesure d'usage anonyme avec accord (feuille « Aider à améliorer kibuo ? », interrupteur dans Confidentialité, envoi par kibuo lui-même à PostHog Europe, ADR 0013), « Dollar américain » | 25 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 766 tests verts à la dernière fusion.
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 766 tests verts à la dernière fusion ; 559 après le tri des tests (branche `chore/tests-cleanup`).
 
 ## Dessiné mais pas encore construit
 

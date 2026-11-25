@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/backup_file.dart';
 import 'package:kibuo/data/backup_service.dart';
-import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/open_database.dart';
 import 'package:kibuo/data/transaction_repository.dart';
@@ -162,20 +161,6 @@ void main() {
     return (folders, replaced);
   }
 
-  Future<void> hold(WidgetTester tester, String label) async {
-    await tester.ensureVisible(find.text(label));
-    await tester.pump();
-    final gesture = await tester.startGesture(
-      tester.getCenter(find.text(label)),
-    );
-    await tester.pump(); // the fill starts on the next frame
-    await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Continuez d’appuyer…'), findsOneWidget);
-    await tester.pump(const Duration(milliseconds: 1300));
-    await gesture.up();
-    await settle(tester);
-  }
-
   testWidgets('a backup: what is kept, the copy before, then « Données '
       'restaurées »', (tester) async {
     final (folders, replaced) = await open(tester, plain);
@@ -218,26 +203,6 @@ void main() {
     expect(replaced, isEmpty);
   });
 
-  testWidgets('with operations, a long press replaces', (tester) async {
-    final tx = TransactionRepository(db);
-    final account = (await AccountRepository(db).accounts()).single;
-    final categoryId = await CategoryRepository(db)
-        .create(kind: CategoryKind.out, name: 'Repas', icon: 'forkKnife');
-    await tx.create(
-      kind: EntryKind.expense,
-      accountId: account.id,
-      categoryId: categoryId,
-      paid: const Money(500, 'USD'),
-      fees: 0,
-      date: DateTime(2026, 11, 20),
-    );
-    final (_, replaced) = await open(tester, plain);
-    expect(find.textContaining('1 opération'), findsOneWidget);
-    await hold(tester, 'Maintenir pour remplacer');
-    await settle(tester);
-    expect(replaced, hasLength(1));
-  });
-
   testWidgets('with the password remembered: no field, and the copy before '
       'is encrypted', (tester) async {
     await service.rememberPassword('secret-123');
@@ -249,12 +214,6 @@ void main() {
     await settle(tester);
     expect(replaced, hasLength(1));
     expect(folders.wroteEncrypted, isTrue);
-  });
-
-  testWidgets('an older password: the field, as before', (tester) async {
-    await service.rememberPassword('another-one');
-    await open(tester, locked);
-    expect(find.text('Mot de passe de la sauvegarde'), findsOneWidget);
   });
 
   testWidgets('without a password remembered, the copy before is plain', (

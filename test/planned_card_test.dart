@@ -109,13 +109,4 @@ void main() {
     expect(find.text('Dépense prévue'), findsNothing);
     await tester.pump(const Duration(seconds: 3));
   });
-
-  testWidgets('several times: the recurrence’s card, as before', (
-    tester,
-  ) async {
-    final id = await plan();
-    await open(tester, id);
-    expect(find.text('Arrêter la récurrence'), findsOneWidget);
-    expect(find.text('Dépense prévue'), findsNothing);
-  });
 }

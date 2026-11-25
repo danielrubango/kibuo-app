@@ -16,7 +16,7 @@ Le skill du dépôt `/next-step` (`.claude/skills/next-step/SKILL.md`) décrit l
 1. **Orienter** : prendre la première case vide de [ROADMAP.md](ROADMAP.md), lire la section de [PRODUCT.md](PRODUCT.md), les ADR concernées et [GLOSSARY.md](../GLOSSARY.md).
 2. **Questionner avant de coder** : poser les décisions ouvertes en questions numérotées (Q1, Q2…), chacune avec une recommandation (format « ❓ Q1 … ➡️ recommandation »). Attendre ses réponses. Écrire les décisions dans PRODUCT (ou DIRECTION, ou une ADR) **avant** de coder.
 3. **Brancher** : une branche par livraison, depuis `main` à jour : `feat/…`, `fix/…`, `docs/…`, `design/…`, `chore/…`, `refactor/…`.
-4. **Prouver d'abord** : pour la logique critique (soldes, conversions, récurrences, sauvegarde et restauration, migrations), écrire le test, le voir échouer pour la bonne raison, puis coder.
+4. **Prouver d'abord** : pour la logique critique (soldes, conversions, récurrences, sauvegarde et restauration, migrations), écrire le test, le voir échouer pour la bonne raison, puis coder. On ne teste que ce qui compte (décidé le 25 novembre 2026, tri des tests le même jour : de 766 à 559) : les règles métier, les données qui pourraient perdre ou fausser de l'argent ou des enregistrements, les promesses de confidentialité, et un seul parcours par fonction, vu par son résultat. Jamais un texte exact, une marge, une couleur, une icône, une animation, un composant du kit, ni un réglage simplement enregistré puis relu : l'apparence se vérifie sur l'émulateur et sur le téléphone.
 5. **Construire**, puis `tool/check.sh`.
 6. **Parcourir sur l'émulateur soi-même** avant de montrer (voir plus bas), comparer avec la planche validée.
 7. **Montrer** : captures et liste de ce qu'il peut essayer.

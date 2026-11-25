@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
@@ -9,16 +8,11 @@ import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/recurring_repository.dart';
 import 'package:kibuo/data/reminder_store.dart';
-import 'package:kibuo/data/todo_store.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/recurrences/schedule.dart';
-import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/l10n/app_localizations_fr.dart';
-import 'package:kibuo/ui/app_language.dart';
-import 'package:kibuo/ui/home/home_screen.dart';
 import 'package:kibuo/ui/reminders/reminder_planner.dart';
-import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 
 import 'reminders_test.dart' show FakeNotifier;
@@ -117,36 +111,5 @@ void main() {
     await store.setDueOn(false);
     await planner.refresh(AppLocalizationsFr(), now);
     expect(notifier.scheduled, isEmpty);
-  });
-
-  testWidgets('« À traiter »: short within three days', (tester) async {
-    await rent(minor: 15000, inDays: 2);
-    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
-    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: KibuoTheme.light(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: appLanguages,
-        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-        home: Scaffold(
-          body: HomeScreen(data: data, todos: TodoStore(db)),
-        ),
-      ),
-    );
-    for (var i = 0; i < 4; i++) {
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 20)),
-      );
-      await tester.pumpAndSettle();
-    }
-    expect(find.textContaining('Loyer · le '), findsOneWidget);
-    expect(
-      find.byWidgetPredicate(
-        (w) =>
-            w is Text && plain(w.data ?? '') == 'Il manque 50,00 \$ sur M-Pesa',
-      ),
-      findsOneWidget,
-    );
   });
 }

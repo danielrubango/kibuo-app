@@ -128,30 +128,4 @@ void main() {
     expect(texts, contains('Total 500,00 \$'));
     expect(texts, contains('dont projets 200,00 \$'));
   });
-
-  testWidgets('a late card says only how far behind', (tester) async {
-    await projects.create(
-      name: 'Loyer',
-      icon: 'house',
-      accountId: mpesa,
-      goal: 30000,
-      startedOn: DateTime(2026, 11, 1),
-      due: DateTime(2026, 12, 1),
-    );
-    await show(
-      tester,
-      ProjectsScreen(data: data, projects: projects, now: () => now),
-    );
-    expect(
-      find.byWidgetPredicate(
-        (w) =>
-            w is RichText &&
-            w.text.toPlainText().replaceAll(RegExp('[\\u00A0\\u202F]'), ' ') ==
-                'En retard de 230,00 \$',
-      ),
-      findsOneWidget,
-    );
-    expect(find.textContaining('par semaine'), findsNothing);
-    expect(find.text('Mettre de côté ›'), findsOneWidget);
-  });
 }

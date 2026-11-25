@@ -3,13 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/key_vault.dart';
-import 'package:kibuo/domain/lock/lock_rules.dart';
 import 'package:kibuo/domain/lock/recovery_code.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
-import 'package:kibuo/ui/lock/pin_pad.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/shell/app_shell.dart';
@@ -229,35 +227,6 @@ void main() {
     await type(tester, '2468');
     expect(find.text('Entrez votre code'), findsNothing);
     expect(find.text('Aujourd’hui'), findsOneWidget);
-  });
-
-  testWidgets('the boxes and the keypad are centred on the screen', (
-    tester,
-  ) async {
-    await start(tester, pin: '2468');
-    final middle =
-        tester.view.physicalSize.width / tester.view.devicePixelRatio / 2;
-
-    expect(tester.getCenter(find.byType(PinKeypad)).dx, closeTo(middle, 0.5));
-    expect(tester.getCenter(find.byType(PinBoxes)).dx, closeTo(middle, 0.5));
-  });
-
-  testWidgets('the delay is picked in a sheet', (tester) async {
-    final lock = await start(tester, pin: '2468');
-    await type(tester, '2468');
-    await openLockSettings(tester);
-    expect(find.text('1 minute'), findsOneWidget);
-
-    await tester.tap(find.text('Verrouiller après'));
-    await tester.pumpAndSettle();
-    for (final d in ['Aussitôt', '30 secondes', '5 minutes', '15 minutes']) {
-      expect(find.text(d), findsOneWidget);
-    }
-    await tester.tap(find.text('15 minutes'));
-    await tester.pumpAndSettle();
-
-    expect(lock.settings.delay, AutoLockDelay.fifteenMinutes);
-    expect(find.text('15 minutes'), findsOneWidget);
   });
 
   testWidgets('a wrong group sends the user back to their note', (

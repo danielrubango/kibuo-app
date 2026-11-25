@@ -77,24 +77,6 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('a new app: the accounts’ total, and a month at zero', (
-    tester,
-  ) async {
-    await start(tester);
-    expect(find.text('Aujourd’hui'), findsOneWidget);
-    expect(find.text('Disponible'), findsOneWidget);
-    expect(textPlain('1 000,00 \$'), findsOneWidget);
-    expect(find.text('à dépenser librement'), findsOneWidget);
-    expect(find.text('dont projets'), findsNothing, reason: 'no projects yet');
-    expect(find.text('Créer un projet'), findsNothing);
-    expect(textPlain('0,00 \$ restants'), findsOneWidget);
-    expect(textPlain('0 % dépensés'), findsOneWidget);
-    // Nothing yet for the later modules.
-    expect(find.text('Je dois'), findsNothing);
-    expect(find.text('À traiter'), findsNothing);
-    expect(find.text('À venir'), findsNothing);
-  });
-
   testWidgets('the month: what is left, the share spent, out of in', (
     tester,
   ) async {
@@ -141,17 +123,5 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Ajouter un taux'), findsOneWidget);
-  });
-
-  testWidgets('touching the available opens Comptes, the month the list', (
-    tester,
-  ) async {
-    await start(tester);
-    await tester.tap(find.text('Disponible'));
-    await tester.pumpAndSettle();
-    expect(accountsOpened, 1);
-    await tester.tap(find.textContaining('ce mois-ci', findRichText: true));
-    await tester.pumpAndSettle();
-    expect(monthOpened, 1);
   });
 }

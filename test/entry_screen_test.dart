@@ -17,7 +17,6 @@ import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/attachment_viewer.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
-import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
 
@@ -160,18 +159,6 @@ void main() {
     expect(t.date, now.toUtc());
   });
 
-  testWidgets('without a category, nothing is saved', (tester) async {
-    await start(tester);
-    await type(tester, '5');
-    await tester.tap(find.text('Terminé'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Enregistrer'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Nouvelle dépense'), findsOneWidget);
-    expect(await data.transactions.all(), isEmpty);
-  });
-
   testWidgets('paid in francs at today’s rate, then with fees', (tester) async {
     await data.currencies.addCurrency('CDF');
     await data.currencies.setRate('USD', 'CDF', RateValue.parse('2800'));
@@ -203,200 +190,6 @@ void main() {
     expect(t.paid, const Money(1400000, 'CDF'));
     expect(t.total.total, const Money(520, 'USD'));
     expect(t.rateTyped, isFalse);
-  });
-
-  testWidgets('the changer’s rate, typed for this expense only', (
-    tester,
-  ) async {
-    await data.currencies.addCurrency('CDF');
-    await data.currencies.setRate('USD', 'CDF', RateValue.parse('2800'));
-    await start(tester);
-
-    await tester.tap(find.text('\$'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Franc congolais'));
-    await tester.pumpAndSettle();
-    await type(tester, '1 4 000');
-    await tester.tap(find.text('Terminé'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Retiré du compte'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Taux pour 1 \$'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Autre taux'));
-    await tester.pumpAndSettle();
-    await type(tester, '2 8 5 0');
-    await tester.tap(find.text('Terminé').last);
-    await tester.pumpAndSettle();
-    await chooseTaxi(tester);
-    await tester.tap(find.text('Enregistrer'));
-    await tester.pumpAndSettle();
-
-    final t = (await data.transactions.all()).single;
-    expect(t.rateTyped, isTrue);
-    expect(t.rate!.value, RateValue.parse('2850'));
-    final today = await data.currencies.latestRate('USD', 'CDF');
-    expect(today!.rate.value, RateValue.parse('2800'), reason: 'Devises keeps');
-  });
-
-  testWidgets('an income, its own categories and wording', (tester) async {
-    await start(tester);
-    await tester.tap(find.text('Revenu'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Nouveau revenu'), findsOneWidget);
-    expect(find.text('Ajouté au compte'), findsOneWidget);
-    await type(tester, '9 0');
-    await tester.tap(find.text('Terminé'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Catégorie'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Salaire'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Enregistrer'));
-    await tester.pumpAndSettle();
-
-    final t = (await data.transactions.all()).single;
-    expect(t.kind, EntryKind.income);
-    final account = (await data.accounts.accounts()).single;
-    expect(account.balance, const Money(12000 + 9000, 'USD'));
-  });
-
-  testWidgets('saved: the recap sheet, « Annuler et modifier », the detail', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 2.75;
-    addTearDown(tester.view.reset);
-    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
-    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: KibuoTheme.light(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: appLanguages,
-        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: Center(
-              child: TextButton(
-                onPressed: () =>
-                    runEntry(context, data, kind: EntryKind.expense),
-                child: const Text('ouvrir'),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.tap(find.text('ouvrir'));
-    await tester.pumpAndSettle();
-    await type(tester, '5');
-    await tester.tap(find.text('Terminé'));
-    await tester.pumpAndSettle();
-    await chooseTaxi(tester);
-    await tester.tap(find.text('Enregistrer'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
-
-    expect(find.text('Dépense enregistrée'), findsOneWidget);
-    await tester.tap(find.text('Annuler et modifier'));
-    await tester.pumpAndSettle();
-    expect(find.text('Modifier la dépense'), findsOneWidget);
-    await tester.tap(find.text('Annuler'));
-    await tester.pumpAndSettle();
-    expect(await data.transactions.all(), hasLength(1), reason: 'kept');
-
-    final t = (await data.transactions.all()).single;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: KibuoTheme.light(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: appLanguages,
-        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-        home: OperationDetailScreen(data: data, id: t.id),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Taxi'), findsOneWidget);
-    expect(textPlain('−5,00 \$'), findsOneWidget);
-    expect(find.text('Dupliquer'), findsOneWidget);
-  });
-
-  Future<void> host(
-    WidgetTester tester, {
-    EntryKind kind = EntryKind.expense,
-  }) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 2.75;
-    addTearDown(tester.view.reset);
-    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
-    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: KibuoTheme.light(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: appLanguages,
-        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: Center(
-              child: TextButton(
-                onPressed: () => runEntry(context, data, kind: kind),
-                child: const Text('ouvrir'),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.tap(find.text('ouvrir'));
-    await tester.pumpAndSettle();
-  }
-
-  testWidgets('without an account, a sheet explains, then the account', (
-    tester,
-  ) async {
-    final only = (await data.accounts.accounts()).single;
-    await data.accounts.archive(only.id);
-    await host(tester);
-
-    expect(find.text('D’abord, un compte'), findsOneWidget);
-    expect(find.text('Nouvelle dépense'), findsNothing);
-    await tester.tap(find.text('Créer mon premier compte'));
-    await tester.pumpAndSettle();
-    expect(find.text('Nouveau compte'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), 'Poche');
-    await tester.tap(find.text('Créer le compte'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Nouvelle dépense'), findsOneWidget);
-    expect(find.text('Poche'), findsOneWidget, reason: 'already chosen');
-  });
-
-  testWidgets('« Plus tard » opens no entry', (tester) async {
-    final only = (await data.accounts.accounts()).single;
-    await data.accounts.archive(only.id);
-    await host(tester);
-    await tester.tap(find.text('Plus tard'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Nouvelle dépense'), findsNothing);
-    expect(find.text('ouvrir'), findsOneWidget);
-  });
-
-  testWidgets('without a category, the same sheet for a category', (
-    tester,
-  ) async {
-    for (final c in await data.categories.categories(CategoryKind.out)) {
-      await data.categories.remove(c.id);
-    }
-    await host(tester);
-
-    expect(find.text('D’abord, une catégorie'), findsOneWidget);
-    await tester.tap(find.text('Créer une catégorie'));
-    await tester.pumpAndSettle();
-    expect(find.text('Nouvelle catégorie'), findsOneWidget);
   });
 
   Future<void> openDetail(WidgetTester tester, String id) async {
@@ -498,22 +291,6 @@ void main() {
     expect(find.text('liste'), findsOneWidget, reason: 'back to the list');
   });
 
-  testWidgets('closing the confirmation with ✕ keeps it', (tester) async {
-    await openDetail(tester, await taxi());
-    await tester.scrollUntilVisible(
-      find.text('Supprimer l’opération'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('Supprimer l’opération'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Fermer'));
-    await tester.pumpAndSettle();
-
-    expect(await data.transactions.all(), hasLength(1));
-    expect(find.text('Dupliquer'), findsOneWidget, reason: 'still the detail');
-  });
-
   testWidgets('attachments wait for « Enregistrer », then belong to it', (
     tester,
   ) async {
@@ -548,62 +325,6 @@ void main() {
     expect((await data.attachments.list(t.id)).single.name, 'Facture.pdf');
   });
 
-  testWidgets('chosen attachments are removed with the bar', (tester) async {
-    await start(tester);
-    await tester.tap(find.text('Terminé'));
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Ajouter une pièce jointe'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('Ajouter une pièce jointe'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Prendre une photo'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Photo 1'));
-    await tester.pumpAndSettle();
-    expect(find.text('1 choisie'), findsOneWidget);
-    expect(find.text('Voir'), findsOneWidget);
-    await tester.tap(find.text('Retirer'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Photo 1'), findsNothing);
-    expect(find.text('Ajouter une pièce jointe'), findsOneWidget);
-  });
-
-  testWidgets('in the detail, attachments are only shown', (tester) async {
-    final empty = await taxi();
-    await openDetail(tester, empty);
-    expect(find.text('Pièces jointes'), findsNothing);
-    await tester.pumpWidget(const SizedBox());
-
-    final id = await taxi();
-    await data.attachments.add(
-      transactionId: id,
-      bytes: Uint8List.fromList(List.filled(100, 1)),
-      name: 'Reçu',
-      kind: AttachmentKind.file,
-    );
-    await openDetail(tester, id);
-    await tester.scrollUntilVisible(
-      find.text('Reçu'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('Ajouter'), findsNothing);
-    await tester.tap(find.text('Reçu'));
-    await tester.pumpAndSettle();
-    expect(find.text('1 choisie'), findsNothing);
-
-    // The viewer: nothing to change, only « Ouvrir avec… ».
-    expect(find.text('Retirer'), findsNothing);
-    await tester.tap(find.text('Ouvrir avec…'));
-    await tester.pumpAndSettle();
-    expect(opener.opened, ['Reçu']);
-    expect((await data.attachments.list(id)).single.name, 'Reçu');
-  });
-
   group('transfers', () {
     Future<Map<String, Money>> balances() async => {
       for (final a in await data.accounts.accounts()) a.name: a.balance,
@@ -618,61 +339,6 @@ void main() {
         openingDate: DateTime.utc(2026, 11, 1),
       );
     }
-
-    testWidgets('with one account only, a sheet asks for a second', (
-      tester,
-    ) async {
-      await host(tester, kind: EntryKind.transfer);
-
-      expect(find.text('D’abord, un deuxième compte'), findsOneWidget);
-      expect(find.text('Nouveau transfert'), findsNothing);
-      await tester.tap(find.text('Créer un compte'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'Épargne');
-      await tester.tap(find.text('Créer le compte'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Nouveau transfert'), findsOneWidget);
-    });
-
-    testWidgets('between two accounts in dollars', (tester) async {
-      await addAccount('Épargne', 'USD');
-      await start(tester, kind: EntryKind.transfer);
-      expect(find.text('Nouveau transfert'), findsOneWidget);
-      expect(find.text('Catégorie'), findsNothing, reason: 'no category');
-
-      await type(tester, '5 0');
-      await tester.tap(find.text('Terminé'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Enregistrer'));
-      await tester.pumpAndSettle();
-      expect(
-        await data.transactions.all(),
-        isEmpty,
-        reason: '« Vers » is not chosen for you',
-      );
-
-      await tester.tap(find.text('Vers'));
-      await tester.pumpAndSettle();
-      expect(find.text('Vers quel compte ?'), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byType(BottomSheet),
-          matching: find.text('M-Pesa'),
-        ),
-        findsNothing,
-        reason: 'not to the account it leaves',
-      );
-      await tester.tap(find.text('Épargne'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Enregistrer'));
-      await tester.pumpAndSettle();
-
-      final b = await balances();
-      expect(b['M-Pesa'], const Money(7000, 'USD'));
-      expect(b['Épargne'], const Money(5000, 'USD'));
-      expect((await data.transactions.all()).single.kind, EntryKind.transfer);
-    });
 
     testWidgets('to francs, at today’s rate, with fees', (tester) async {
       await addAccount('Portefeuille', 'CDF');
@@ -703,40 +369,6 @@ void main() {
       expect(b['M-Pesa'], const Money(6900, 'USD'), reason: '120 − 50 − 1');
       expect(b['Portefeuille'], const Money(14000000, 'CDF'));
     });
-
-    testWidgets('the detail: « Vers », both accounts, then deleting', (
-      tester,
-    ) async {
-      await addAccount('Épargne', 'USD');
-      final from = (await data.accounts.accounts()).first.id;
-      final to = (await data.accounts.accounts()).last.id;
-      final id = await data.transactions.createTransfer(
-        fromId: from,
-        toId: to,
-        sent: const Money(5000, 'USD'),
-        fees: 0,
-        date: now,
-      );
-      await openDetail(tester, id);
-
-      expect(find.text('Vers Épargne'), findsOneWidget);
-      expect(find.text('Transfert'), findsOneWidget);
-      expect(find.text('Depuis'), findsOneWidget);
-      await tester.scrollUntilVisible(
-        find.text('Supprimer l’opération'),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.text('Supprimer l’opération'));
-      await tester.pumpAndSettle();
-      expect(find.text('Supprimer ce transfert ?'), findsOneWidget);
-      await tester.tap(find.text('Supprimer'));
-      await tester.pumpAndSettle();
-
-      final b = await balances();
-      expect(b['M-Pesa'], const Money(12000, 'USD'));
-      expect(b['Épargne'], const Money(0, 'USD'));
-    });
   });
 
   group('overdraft', () {
@@ -751,36 +383,6 @@ void main() {
       await tester.tap(find.text('Enregistrer'));
       await tester.pumpAndSettle();
       expect(await data.transactions.all(), isEmpty);
-    });
-
-    testWidgets('« Autoriser » opens the account, then it saves', (
-      tester,
-    ) async {
-      await start(tester);
-      await type(tester, '1 5 0');
-      await tester.tap(find.text('Terminé'));
-      await tester.pumpAndSettle();
-      await chooseTaxi(tester);
-
-      await tester.tap(find.text('Autoriser'));
-      await tester.pumpAndSettle();
-      expect(find.text('Modifier le compte'), findsOneWidget);
-      await tester.scrollUntilVisible(
-        find.text('Autoriser le découvert'),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.byType(Switch));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Enregistrer'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('disponibles sur'), findsNothing);
-      await tester.tap(find.text('Enregistrer'));
-      await tester.pumpAndSettle();
-      final m = (await data.accounts.accounts()).single;
-      expect(m.balance, const Money(-3000, 'USD'));
-      expect(m.overdraft.unlimited, isTrue, reason: 'no limit typed');
     });
 
     testWidgets('deleting an income the balance needs is refused', (

@@ -14,14 +14,11 @@ import 'package:kibuo/domain/recurrences/schedule.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
-import 'package:kibuo/ui/month_start.dart';
-import 'package:kibuo/ui/recurrences/list_display.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/draft_screen.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_row.dart';
 import 'package:kibuo/ui/transactions/operations_list.dart';
-import 'package:kibuo/ui/transactions/search_screen.dart';
 
 String plain(String s) => s.replaceAll(RegExp('[  ]'), ' ');
 
@@ -144,23 +141,6 @@ void main() {
     expect(find.text('Validé : Internet, compté dans le mois'), findsNothing);
   });
 
-  testWidgets('« Ignorer »: stays at its date, struck, marked « Ignoré »', (
-    tester,
-  ) async {
-    final id = await draft();
-    await list(tester);
-    await tester.tap(find.text('Ignorer'));
-    await settle(tester);
-    expect(await status(id), 'ignored');
-    expect(
-      find.text('Ignoré : Internet. Validez-le depuis son détail.'),
-      findsOneWidget,
-    );
-    expect(find.byType(DraftCard), findsNothing);
-    expect(find.text('Ignoré'), findsOneWidget);
-    await toastGone(tester);
-  });
-
   testWidgets('below the floor: « Valider » opens the card and says why', (
     tester,
   ) async {
@@ -182,113 +162,5 @@ void main() {
       find.widgetWithText(KibuoButton, 'Valider l’opération'),
     );
     expect(validate.onPressed, isNull);
-  });
-
-  testWidgets('the draft’s card: « Ignorer cette fois »', (tester) async {
-    final id = await draft();
-    await show(tester, DraftScreen(data: data, id: id));
-    expect(find.text('Brouillon · récurrence mensuelle'), findsOneWidget);
-    expect(find.text('Le ${today.day} de chaque mois'), findsOneWidget);
-    await tester.tap(find.text('Ignorer cette fois'));
-    await settle(tester);
-    expect(await status(id), 'ignored');
-    await toastGone(tester);
-  });
-
-  testWidgets('« Changer le montant »: saving validates the draft', (
-    tester,
-  ) async {
-    final id = await draft();
-    await show(tester, DraftScreen(data: data, id: id));
-    await tester.tap(find.text('Changer le montant'));
-    await settle(tester);
-    await tester.tap(find.text('Enregistrer les modifications'));
-    await settle(tester);
-    expect(await status(id), 'done');
-    await toastGone(tester);
-  });
-
-  testWidgets('an ignored one’s card: no « Ignorer cette fois »', (
-    tester,
-  ) async {
-    final id = await draft();
-    await data.transactions.ignore(id);
-    await show(tester, DraftScreen(data: data, id: id));
-    expect(find.text('Ignoré · récurrence mensuelle'), findsOneWidget);
-    expect(find.text('Valider l’opération'), findsOneWidget);
-    expect(find.text('Ignorer cette fois'), findsNothing);
-    await tester.tap(find.text('Valider l’opération'));
-    await settle(tester);
-    expect(await status(id), 'done');
-    await toastGone(tester);
-  });
-
-  testWidgets('planned dates: dashed, « Prévu », in no total, hideable', (
-    tester,
-  ) async {
-    final tomorrow = DateTime(today.year, today.month, today.day + 1);
-    final inPeriod = periodOf(now).contains(tomorrow);
-    await rules.create(
-      kind: EntryKind.expense,
-      accountId: mpesa,
-      categoryId: 'default-internet',
-      amount: const Money(1500, 'USD'),
-      unit: RepeatUnit.day,
-      start: tomorrow,
-    );
-    await list(tester);
-    expect(find.text('Prévu'), inPeriod ? findsWidgets : findsNothing);
-    expect(find.text('0 % dépensés'), findsOneWidget);
-    await rules.setShowPlanned(false);
-    OperationsScreen.forget();
-    await list(tester);
-    expect(find.text('Prévu'), findsNothing);
-  });
-
-  testWidgets('« Groupés en haut »: drafts under « À valider · 1 »', (
-    tester,
-  ) async {
-    await draft();
-    await rules.setDraftsOnTop(true);
-    await list(tester);
-    expect(find.text('À valider · 1'), findsOneWidget);
-    expect(find.byType(DraftCard), findsOneWidget);
-  });
-
-  testWidgets('the display sheet: three choices, kept', (tester) async {
-    await list(tester);
-    await tester.tap(find.byTooltip('Affichage de la liste'));
-    await settle(tester);
-    expect(find.text('Quand une récurrence arrive à sa date'), findsOneWidget);
-    await tester.tap(find.text('Toujours demander'));
-    await tester.tap(find.text('Groupés en haut'));
-    await tester.tap(find.text('Masquées'));
-    await settle(tester);
-    await tester.tap(find.text('Terminé'));
-    await settle(tester);
-    expect(await rules.alwaysAsk(), isTrue);
-    expect(await rules.draftsOnTop(), isTrue);
-    expect(await rules.showPlanned(), isFalse);
-  });
-
-  testWidgets('Plus › « Récurrences et brouillons »: the whole sentences', (
-    tester,
-  ) async {
-    await show(tester, RecurrencesSettingsScreen(recurrences: rules));
-    expect(
-      find.text('Chaque opération arrive en brouillon et attend votre accord.'),
-      findsOneWidget,
-    );
-    await tester.tap(find.text('Toujours demander'));
-    await settle(tester);
-    expect(await rules.alwaysAsk(), isTrue);
-  });
-
-  testWidgets('the search finds drafts, with their card', (tester) async {
-    await draft();
-    await show(tester, SearchScreen(data: data, month: periodOf(now).month));
-    await tester.enterText(find.byType(TextField), 'internet');
-    await settle(tester);
-    expect(find.byType(DraftCard), findsOneWidget);
   });
 }

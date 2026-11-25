@@ -153,30 +153,4 @@ void main() {
     expect(find.text('ouvrir'), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
   });
-
-  testWidgets('« Annuler et modifier » undoes it and reopens the sheet', (
-    tester,
-  ) async {
-    await show(tester);
-    await tester.tap(find.text('Rembourser'));
-    await settle(tester);
-    await tester.tap(find.text('Rembourser').last);
-    for (var i = 0; i < 6; i++) {
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 20)),
-      );
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    await tester.tap(find.text('Annuler et modifier'));
-    for (var i = 0; i < 6; i++) {
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 20)),
-      );
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(find.text('Rembourser Patrick'), findsOneWidget);
-    expect((await debts.debts()).single.settled, isFalse);
-    await tester.tap(find.text('Plus tard'));
-    await settle(tester);
-  });
 }

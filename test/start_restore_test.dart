@@ -12,7 +12,6 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/backup/backup_files.dart';
 import 'package:kibuo/ui/backup/start_restore_sheet.dart';
-import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 import 'support/memory_vault.dart';
@@ -140,21 +139,5 @@ void main() {
     await tester.tap(find.text('Restaurer'));
     await settle(tester);
     expect(replaced, hasLength(1));
-  });
-
-  testWidgets('the unreadable screen offers « J’ai une sauvegarde »', (
-    tester,
-  ) async {
-    var asked = 0;
-    await tester.pumpWidget(
-      MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: appLanguages,
-        locale: const Locale('fr'),
-        home: UnreadableScreen(onStartOver: () {}, onBackup: () => asked++),
-      ),
-    );
-    await tester.tap(find.text('J’ai une sauvegarde'));
-    expect(asked, 1);
   });
 }

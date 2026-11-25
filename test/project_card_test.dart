@@ -114,31 +114,6 @@ void main() {
     await settle(tester);
   }
 
-  testWidgets('the list opens the card: ahead, the plan, the payments', (
-    tester,
-  ) async {
-    await trip();
-    await show(
-      tester,
-      ProjectsScreen(data: data, projects: projects, now: () => now),
-    );
-    expect(find.text('Mettre de côté ›'), findsOneWidget);
-    await tester.tap(find.text('Voyage'));
-    await settle(tester);
-    expect(find.byType(ProjectScreen), findsOneWidget);
-    expect(find.text('En avance'), findsOneWidget);
-    expect(find.text('Le plan'), findsNothing); // a rich text
-    expect(find.textContaining('Le plan'), findsOneWidget);
-    expect(find.text('Cette sem.'), findsOneWidget);
-    expect(find.text('Me le rappeler'), findsOneWidget);
-    expect(find.text('Chaque lundi'), findsOneWidget);
-    await tester.tap(find.byType(Switch));
-    await settle(tester);
-    expect((await projects.projects()).single.remind, isFalse);
-    expect(find.textContaining('Versements'), findsOneWidget);
-    expect(shown('+150,00 \$'), findsOneWidget);
-  });
-
   testWidgets('put aside: the part of the week, then a new line', (
     tester,
   ) async {

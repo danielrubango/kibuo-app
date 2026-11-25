@@ -128,24 +128,4 @@ void main() {
     expect(said('Repas dépassé de 4,00 \$'), findsOneWidget);
     await gone(tester);
   });
-
-  testWidgets('at opening, what was crossed before is not said', (
-    tester,
-  ) async {
-    await start(tester);
-    await tester.runAsync(() => spend(9000));
-    await check(tester, settle: true);
-    await check(tester);
-    expect(find.textContaining('Repas'), findsNothing);
-  });
-
-  testWidgets('the switch off: nothing', (tester) async {
-    await start(tester);
-    await tester.runAsync(() async {
-      await store.setBudgetAt80(false);
-      await spend(8500);
-    });
-    await check(tester);
-    expect(find.textContaining('Repas'), findsNothing);
-  });
 }
