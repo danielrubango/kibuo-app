@@ -601,10 +601,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get operationsPlaceholder => 'Les opérations du mois viendront ici.';
 
   @override
-  String get overviewPlaceholder =>
-      'Les graphiques et les points suivis viendront ici.';
-
-  @override
   String get morePlaceholder => 'Mes espaces et les réglages viendront ici.';
 
   @override
@@ -4424,4 +4420,44 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get privacyStatsBody =>
       'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le fabricant et le modèle du téléphone, la langue, le pays et le code de la devise principale. Selon l’outil de mesure, ces envois peuvent aussi porter le nom de l’opérateur mobile, le fuseau horaire et une description technique du téléphone. Ils portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.';
+
+  @override
+  String get overviewSoonTitle => 'Vos graphiques arrivent';
+
+  @override
+  String get overviewSoonText =>
+      'Dans la prochaine version de kibuo, trois vues de votre argent :';
+
+  @override
+  String get overviewEvolution => 'Évolution';
+
+  @override
+  String get overviewEvolutionText =>
+      'Vos sorties et vos entrées, jour après jour';
+
+  @override
+  String get overviewCategories => 'Catégories';
+
+  @override
+  String get overviewCategoriesText => 'Où part votre argent, d’où il vient';
+
+  @override
+  String get overviewWorth => 'Patrimoine';
+
+  @override
+  String get overviewWorthText =>
+      'Vos comptes, plus ce qu’on vous doit, moins vos dettes';
+
+  @override
+  String get overviewMeanwhile => 'En attendant';
+
+  @override
+  String get overviewMonth => 'Le mois en chiffres';
+
+  @override
+  String get overviewMonthText =>
+      'Entrées, sorties et ce qui reste, dans Opérations';
+
+  @override
+  String get overviewBudgetsText => 'Ce qui reste dans chaque catégorie';
 }

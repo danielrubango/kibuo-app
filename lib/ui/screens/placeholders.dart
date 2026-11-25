@@ -125,6 +125,5 @@ class EntryPlaceholder extends StatelessWidget {
 abstract final class PlaceholderIcons {
   static const home = KibuoIcons.house;
   static const operations = KibuoIcons.list;
-  static const overview = KibuoIcons.chartBar;
   static const more = KibuoIcons.squaresFour;
 }
