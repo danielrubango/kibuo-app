@@ -107,7 +107,7 @@ Ce qui manque dans l'app :
 
 Ce que Google Play exige :
 
-- [ ] Vérifier les conditions actuelles de Google Play pour un nouveau compte personnel (test fermé obligatoire, nombre de testeurs, durée)
+- [x] Vérifier les conditions actuelles de Google Play pour un nouveau compte personnel (test fermé obligatoire, nombre de testeurs, durée ; fait le 25 novembre 2026 : [backlog/google-play.md](backlog/google-play.md))
 - [ ] Vérifier la marque « kibuo » et réserver le domaine ([BRAND.md](BRAND.md))
 - [ ] Clé de signature de publication (aujourd'hui l'app est signée avec la clé de développement) et paquet AAB
 - [ ] Site public minimal : la politique de confidentialité ([backlog/site-public.md](backlog/site-public.md))
