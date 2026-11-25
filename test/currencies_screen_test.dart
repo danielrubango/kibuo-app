@@ -77,8 +77,8 @@ void main() {
     expect(currencyNameAfterOf('fr', 'Euro'), 'de l’euro');
     expect(currencyNameAfterOf('fr', 'Livre sterling'), 'de la livre sterling');
     expect(
-      currencyNameAfterOf('fr', 'Dollar des États-Unis'),
-      'du dollar des États-Unis',
+      currencyNameAfterOf('fr', 'Dollar américain'),
+      'du dollar américain',
     );
   });
 

@@ -1114,7 +1114,7 @@ const currencyCatalog = <CurrencyInfo>[
     digits: 2,
     usesDecimals: true,
     symbol: '\$',
-    nameFr: 'Dollar des États-Unis',
+    nameFr: 'Dollar américain',
     nameEn: 'US Dollar',
   ),
   CurrencyInfo(
