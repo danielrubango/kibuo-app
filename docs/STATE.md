@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `fix/missing-field`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `fix/whole-row-switch`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -33,7 +33,7 @@ Validés sur le canvas, absents de l'app : l'**Aperçu** et ses graphiques (vers
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
-Prochaine case : **version 0.1, interrupteurs** : toute la ligne réagit, partout (décidé le 24 novembre).
+Prochaine case : **version 0.1, ce que Google Play exige** : d'abord vérifier les conditions actuelles pour un nouveau compte personnel (test fermé obligatoire, nombre de testeurs, durée). Toutes les cases « Ce qui manque dans l'app » sont faites.
 
 ## Décisions récentes
 
@@ -61,7 +61,6 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - La boîte `contact@kibuo.app` n'existe pas tant que le domaine n'est pas réservé (BRAND).
 - Le message en bas de l'écran garde la coche menthe même pour un échec (sauvegarde manuelle et automatique) : une icône d'alerte serait plus juste, écart au kit à proposer.
 - Les sauvegardes faites avant le 24 novembre (soir) ne portent pas la langue.
-- Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; décidé le 24 novembre que toute la ligne réagira, à construire).
 - Si kibuo est fermé pendant que le code de récupération est affiché, le code n'a jamais été confirmé.
 - Les groupes de comptes repliés ne sont pas retenus ; un compte archivé ne peut pas être rétabli.
 - 36 des 258 planches du canvas ne sont rattachées à aucune page : variantes écartées, classées dans [DIRECTION.md](design/DIRECTION.md#variantes-écartées-et-pourquoi), souvent sans raison écrite.
