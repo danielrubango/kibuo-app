@@ -46,7 +46,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Les règles des agents vivent dans `AGENTS.md`, que `CLAUDE.md` importe.
 - Le plan de publication (0.1 sur Google Play, 0.2 à 0.5, puis 1.0 stable) : [ROADMAP.md](ROADMAP.md), 25 novembre.
 - Plus, Réglages (Comptes et Catégories restés dans Plus), À propos et sa politique de confidentialité : PRODUCT, 25 novembre.
-- La mesure d'usage, seulement avec l'accord de l'utilisateur (PostHog envisagé), est notée sans version : [backlog/mesure-usage.md](backlog/mesure-usage.md).
+- La mesure d'usage anonyme et les erreurs, avec accord, dans la 0.1 : [ADR 0013](adr/0013-mesure-d-usage-anonyme.md), 25 novembre.
 
 ## Questions ouvertes (attendent le propriétaire)
 

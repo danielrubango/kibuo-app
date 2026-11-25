@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesure d'usage · variantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap">
+<style>
+  :root {
+    --bg: #EEF1F7; --surface: #FFFFFF; --ink: #0E1320; --ink2: #525D73; --muted: #8A93A6;
+    --line: #C9CFDB; --track: #DDE2EC; --mint: #5EEAB5; --accent: #0A7355; --accentTint: #D9F7EC;
+    --danger: #B3321A; --dangerTint: #FBE4DE;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #DCE1EA; font-family: Inter, sans-serif; color: var(--ink); padding: 32px 24px 64px; }
+  h1 { font: 700 26px 'Plus Jakarta Sans', sans-serif; margin: 0 0 6px; }
+  .lead { color: var(--ink2); font-size: 15px; margin: 0 0 32px; max-width: 960px; line-height: 22px; }
+  .variant { margin-bottom: 48px; }
+  .variant h2 { font: 700 20px 'Plus Jakarta Sans', sans-serif; margin: 0 0 4px; }
+  .variant p.why { margin: 0 0 16px; color: var(--ink2); font-size: 14px; line-height: 20px; max-width: 960px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .frame { display: flex; flex-direction: column; gap: 8px; width: 390px; }
+  .frame > span { font-size: 13px; font-weight: 600; color: var(--ink2); line-height: 18px; }
+  .phone { width: 390px; height: 844px; background: var(--bg); border-radius: 28px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .pad { padding: 32px 24px 24px; display: flex; flex-direction: column; height: 100%; }
+  .step { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .pad h3 { margin: 12px 0 8px; font: 700 28px/34px 'Plus Jakarta Sans', sans-serif; }
+  .intro { margin: 0 0 20px; font-size: 15px; line-height: 22px; color: var(--ink2); }
+  .opts { display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto; }
+  .opt { background: var(--surface); border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+  .opt .t { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .opt .t b { font-size: 16px; font-weight: 600; }
+  .opt .t small { font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .opt .t a { font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .sw { width: 52px; height: 32px; flex: 0 0 52px; border-radius: 16px; background: var(--muted); display: flex; align-items: center; padding: 0 3px; }
+  .sw.on { background: var(--accent); justify-content: flex-end; }
+  .sw i { width: 26px; height: 26px; border-radius: 13px; background: #fff; display: block; }
+  .later { margin: 6px 4px 0; font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .go { height: 56px; border-radius: 18px; background: var(--mint); font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .plain { height: 52px; border-radius: 18px; background: var(--surface); font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .home { padding: 16px; display: flex; flex-direction: column; gap: 12px; opacity: .9; }
+  .home .t { font: 700 24px 'Plus Jakarta Sans', sans-serif; margin-top: 16px; }
+  .home .card { height: 140px; border-radius: 22px; background: var(--mint); }
+  .home .card.w { height: 120px; background: var(--surface); }
+  .scrim { position: absolute; inset: 0; background: rgba(14,19,32,0.42); }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bg); border-radius: 26px 26px 0 0; padding: 10px 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .handle { align-self: center; width: 40px; height: 4px; border-radius: 2px; background: var(--line); }
+  .sheet h4 { margin: 4px 4px 0; font: 700 20px 'Plus Jakarta Sans', sans-serif; }
+  .sheet p { margin: 0 4px; font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .list { background: var(--surface); border-radius: 18px; padding: 6px 14px; display: flex; flex-direction: column; }
+  .li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; font-size: 14px; line-height: 20px; }
+  .li + .li { border-top: 1px solid var(--bg); }
+  .li .ic { width: 28px; height: 28px; flex: 0 0 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .li .ic.yes { background: var(--accentTint); color: var(--accent); }
+  .li .ic.no { background: var(--dangerTint); color: var(--danger); }
+  .li .ic svg { width: 16px; height: 16px; }
+  .li b { font-weight: 600; display: block; }
+  .li span { color: var(--ink2); }
+  .linkc { text-align: center; font-size: 14px; font-weight: 600; color: var(--accent); }
+  .btns { display: flex; gap: 10px; }
+  .btns > div { flex: 1; }
+  .appbar { display: flex; align-items: center; gap: 4px; height: 60px; padding: 0 16px; }
+  .appbar svg { width: 24px; height: 24px; }
+  .appbar h3 { margin: 0 0 0 6px; font: 700 22px 'Plus Jakarta Sans', sans-serif; }
+  .body { padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .scard { background: var(--surface); border-radius: 18px; padding: 0 8px 0 16px; display: flex; flex-direction: column; }
+  .srow { min-height: 56px; display: flex; align-items: center; gap: 12px; }
+  .srow + .srow { border-top: 1px solid var(--bg); }
+  .srow b { flex: 1; font-size: 15px; font-weight: 500; }
+  .help { margin: 0 4px 12px; font-size: 13px; line-height: 18px; color: var(--ink2); }
+  .help a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .sec { margin: 8px 4px 0; font-size: 13px; font-weight: 600; color: var(--ink2); }
+  .tag { position: absolute; top: 12px; right: 14px; background: #FCEFD2; color: #6B4A00; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; z-index: 3; }
+</style>
+</head>
+<body>
+<h1>Mesure d'usage · où demander l'accord</h1>
+<p class="lead">ADR 0013 (25 novembre 2026) : rien ne part avant un « oui », demandé une fois au premier lancement, et une fois à la prochaine ouverture pour qui a déjà kibuo ; un interrupteur dans Réglages › Confidentialité. Trois façons de poser la question. Recommandation : <b>B</b>.</p>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="yes" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="no" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="variant">
+  <h2>A · Une troisième carte à l'étape 4</h2>
+  <p class="why">La question est sur la même page que le verrou et les sauvegardes, avec un interrupteur éteint. Rien de plus à toucher. Mais la page s'appelle « Protégez vos données » : partager des statistiques n'y a pas sa place, et un interrupteur éteint passe facilement inaperçu. Pour qui a déjà kibuo, il faut quand même une feuille (celle de B).</p>
+  <div class="row">
+    <div class="frame"><span>Étape 4, trois cartes</span>
+      <div class="phone"><div class="pad">
+        <span class="step">Étape 4 sur 4</span>
+        <h3>Protégez vos données</h3>
+        <p class="intro">Vos données restent sur ce téléphone. Sans sauvegarde, elles sont perdues si vous le perdez.</p>
+        <div class="opts">
+          <div class="opt"><div class="t"><b>Verrouiller l'application</b><small>PIN ou empreinte. Un code de récupération vous sera remis.</small></div><span class="sw"><i></i></span></div>
+          <div class="opt"><div class="t"><b>Sauvegardes automatiques</b><small>Chaque semaine, dans le dossier de votre choix.</small></div><span class="sw"><i></i></span></div>
+          <div class="opt"><div class="t"><b>Aider à améliorer kibuo</b><small>Statistiques anonymes et erreurs. Jamais vos montants ni vos noms.</small><a href="#">En savoir plus</a></div><span class="sw"><i></i></span></div>
+          <p class="later">Vous pourrez changer ces choix à tout moment dans les réglages.</p>
+        </div>
+        <div class="go">Commencer</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <h2>B · Une feuille, juste après « Commencer » (recommandée)</h2>
+  <p class="why">L'étape 4 ne change pas. Après « Commencer », l'accueil s'ouvre avec une feuille qui pose la question, dit ce qui part et ce qui ne part jamais, et attend une vraie réponse : « Oui, partager » ou « Non merci », de même taille. La même feuille sert à qui a déjà kibuo, une seule fois à la prochaine ouverture. La refermer d'un geste vaut « Non », et elle ne revient pas.</p>
+  <div class="row">
+    <div class="frame"><span>B1 · Sur l'accueil, au premier lancement ou à la prochaine ouverture</span>
+      <div class="phone">
+        <div class="home"><div class="t">Aujourd'hui</div><div class="card"></div><div class="card w"></div><div class="card w"></div></div>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <h4>Aider à améliorer kibuo ?</h4>
+          <p>kibuo peut nous envoyer des statistiques anonymes, pour voir ce qui marche et ce qui bloque.</p>
+          <div class="list">
+            <div class="li"><span class="ic yes"><svg><use href="#yes"/></svg></span><div><b>Ce qui part</b><span>Les écrans ouverts, les actions faites et les erreurs, avec un numéro tiré au sort.</span></div></div>
+            <div class="li"><span class="ic no"><svg><use href="#no"/></svg></span><div><b>Jamais</b><span>Vos montants, vos noms, vos notes, votre position.</span></div></div>
+          </div>
+          <div class="linkc">Lire la politique de confidentialité</div>
+          <div class="btns"><div class="plain">Non merci</div><div class="go" style="height:52px;font-size:16px">Oui, partager</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <h2>C · Une cinquième étape au premier lancement</h2>
+  <p class="why">Une page entière, « Étape 5 sur 5 », avec la même explication que B et les deux boutons. Très claire, mais elle allonge le premier lancement d'une page pour tout le monde, et qui a déjà kibuo verra une autre forme (la feuille de B).</p>
+  <div class="row">
+    <div class="frame"><span>Étape 5 sur 5</span>
+      <div class="phone"><div class="pad">
+        <span class="step">Étape 5 sur 5</span>
+        <h3>Aider à améliorer kibuo ?</h3>
+        <p class="intro">kibuo peut nous envoyer des statistiques anonymes, pour voir ce qui marche et ce qui bloque.</p>
+        <div class="opts">
+          <div class="list">
+            <div class="li"><span class="ic yes"><svg><use href="#yes"/></svg></span><div><b>Ce qui part</b><span>Les écrans ouverts, les actions faites et les erreurs, avec un numéro tiré au sort.</span></div></div>
+            <div class="li"><span class="ic no"><svg><use href="#no"/></svg></span><div><b>Jamais</b><span>Vos montants, vos noms, vos notes, votre position.</span></div></div>
+          </div>
+          <div class="linkc" style="margin-top:6px">Lire la politique de confidentialité</div>
+          <p class="later">Vous pourrez changer d'avis dans les réglages.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px"><div class="go">Oui, partager</div><div class="plain">Non merci</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="variant">
+  <h2>Pour toutes : Réglages › Confidentialité</h2>
+  <p class="why">Une deuxième carte sous les deux réglages d'aujourd'hui, avec son aide et le lien vers la politique. Éteindre efface le numéro tiré au sort ; rallumer en tire un nouveau.</p>
+  <div class="row">
+    <div class="frame"><span>Après un « Oui »</span>
+      <div class="phone">
+        <div class="appbar"><svg><use href="#back"/></svg><h3>Confidentialité</h3></div>
+        <div class="body">
+          <div class="scard">
+            <div class="srow"><b>Masquer kibuo dans les applications récentes</b><span class="sw on"><i></i></span></div>
+            <div class="srow"><b>Autoriser les captures d'écran</b><span class="sw on"><i></i></span></div>
+          </div>
+          <p class="help">Masqué, l'aperçu des applications récentes montre le logo de kibuo au lieu de vos soldes.</p>
+          <div class="scard">
+            <div class="srow"><b>Aider à améliorer kibuo</b><span class="sw on"><i></i></span></div>
+          </div>
+          <p class="help">Statistiques anonymes et erreurs, avec un numéro tiré au sort. Jamais vos montants, vos noms, vos notes ni votre position. <a href="#">Politique de confidentialité</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
