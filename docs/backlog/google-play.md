@@ -220,6 +220,32 @@ Sources :
 - **Gratuité du questionnaire IARC** : la page ne parle pas de coût.
 - **Révision des versions de test fermé** : la page sur les tests ne dit pas si elles sont examinées avant d'être disponibles.
 
+## Préparé pour kibuo (25 novembre 2026)
+
+- **Signature** : `android/app/build.gradle.kts` signe les versions de publication avec la clé d'importation dès que `android/key.properties` existe (ignoré par git ; modèle dans `android/key.properties.example`). Sans ce fichier, elles restent signées avec la clé de développement.
+- **Paquet AAB** : `flutter build appbundle --release` le construit (71,7 Mo le 25 novembre, encore signé avec la clé de développement).
+- **Pages de 16 Ko** : toutes les bibliothèques natives du paquet (`libflutter`, `libapp`, `libsqlite3mc`, `libdartjni`, pour arm64, arm32 et x86_64) sont alignées sur 16 Ko ou 64 Ko. Vérifié avec `llvm-readelf -lW` du NDK : conforme pour l'échéance du 1er février 2027.
+
+### Créer la clé d'importation (le propriétaire, une seule fois)
+
+1. Dans un terminal, créer la clé hors du dépôt. `keytool` demande un mot de passe (deux fois), puis un nom (« Daniel Rubango » ou « kibuo »), le reste peut rester vide :
+
+```bash
+mkdir -p ~/kibuo-keys && keytool -genkeypair -v -keystore ~/kibuo-keys/kibuo-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+2. Copier le modèle et y mettre le mot de passe choisi (deux fois, `storePassword` et `keyPassword`) :
+
+```bash
+cp ~/Documents/Herd/kibuo/android/key.properties.example ~/Documents/Herd/kibuo/android/key.properties
+```
+
+3. Garder une copie du fichier `kibuo-upload.jks` et du mot de passe ailleurs que sur l'ordinateur (gestionnaire de mots de passe, disque externe). Perdue, la clé se remplace par une demande à Google, mais pas tout de suite.
+
+### Le téléphone du propriétaire
+
+kibuo y est installé avec la clé de développement. La version de Google Play sera signée par la clé de Google : elle **ne peut pas mettre à jour** celle du téléphone. Pour passer à la version de Google Play, il faudra : faire une sauvegarde `.kibuo`, désinstaller (le propriétaire lui-même), installer depuis Google Play, puis restaurer la sauvegarde. Jusque-là, on continue d'installer en mise à jour comme aujourd'hui.
+
 ## Ce que cela veut dire pour kibuo
 
 - Compter au moins **14 jours de test fermé** avec **12 testeurs** inscrits sans interruption, puis jusqu'à **7 jours** d'examen de la demande, avant la publication en production.
