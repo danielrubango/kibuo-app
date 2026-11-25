@@ -78,6 +78,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   final _name = TextEditingController();
   final _nameFocus = FocusNode();
   final _goalKey = GlobalKey();
+  final _nameKey = GlobalKey();
+  final _accountKey = GlobalKey();
   late String _icon = widget.editing?.icon ?? projectIcons.first;
   String _typed = '';
   bool _keypad = false;
@@ -216,9 +218,26 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   bool get _ready =>
       _name.text.trim().isNotEmpty && _account != null && _goal.minor > 0;
 
+  /// Something typed: « Créer le projet » can be touched, and says what is
+  /// missing (DIRECTION, 25 November 2026).
+  bool get _touched =>
+      _name.text.trim().isNotEmpty ||
+      _typed.isNotEmpty ||
+      widget.editing != null;
+
   Future<void> _save() async {
     setState(() => _tried = true);
-    if (!_ready || _saving) return;
+    if (!_ready) {
+      showMissing(
+        _name.text.trim().isEmpty
+            ? _nameKey
+            : _goal.minor <= 0
+            ? _goalKey
+            : _accountKey,
+      );
+      return;
+    }
+    if (_saving) return;
     setState(() => _saving = true);
     if (widget.editing case final p?) {
       await widget.projects.edit(
@@ -343,12 +362,28 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                 children: [
-                  Container(
+                  AnimatedContainer(
+                    key: _nameKey,
+                    duration: missingFade(context),
+                    curve: Curves.easeOutCubic,
                     padding: const EdgeInsets.fromLTRB(10, 10, 14, 10),
                     decoration: BoxDecoration(
                       color: KibuoColors.surface,
                       borderRadius: BorderRadius.circular(
                         KibuoTheme.radiusCard,
+                      ),
+                    ),
+                    // Drawn over the card, so nothing in it moves.
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        KibuoTheme.radiusCard,
+                      ),
+                      border: Border.all(
+                        // Fades in, from transparent.
+                        color: _tried && _name.text.trim().isEmpty
+                            ? KibuoColors.danger
+                            : KibuoColors.danger.withValues(alpha: 0),
+                        width: 2,
                       ),
                     ),
                     child: Row(
@@ -439,10 +474,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       ],
                     ),
                   ),
-                  if (_tried && _name.text.trim().isEmpty) ...[
-                    const SizedBox(height: 4),
-                    HelpText(l.projectNameMissing),
-                  ],
                   if (currency != null) ...[
                     const SizedBox(height: 14),
                     ValueField(
@@ -452,24 +483,26 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       unit: currency.code,
                       focused: _keypad,
                       onTap: _openKeypad,
-                      error: _tried && _goal.minor <= 0
-                          ? l.projectGoalMissing
-                          : null,
+                      missing: _tried && _goal.minor <= 0,
                     ),
                   ],
                   const SizedBox(height: 14),
                   SettingsCard(
                     children: [
-                      row(
-                        icon: KibuoIcons.wallet,
-                        label: l.entryAccount,
-                        value: account?.name ?? l.entryNoAccount,
-                        side: _free == null
-                            ? null
-                            : l.projectFree(
-                                formatMoney(_free!, currency!, _lang),
-                              ),
-                        onTap: _pickAccount,
+                      MissingUnderline(
+                        key: _accountKey,
+                        missing: _tried && account == null,
+                        child: row(
+                          icon: KibuoIcons.wallet,
+                          label: l.entryAccount,
+                          value: account?.name ?? l.entryNoAccount,
+                          side: _free == null
+                              ? null
+                              : l.projectFree(
+                                  formatMoney(_free!, currency!, _lang),
+                                ),
+                          onTap: _pickAccount,
+                        ),
                       ),
                       row(
                         icon: KibuoIcons.calendarBlank,
@@ -618,7 +651,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                   label: widget.editing == null
                       ? l.projectCreate
                       : l.projectSave,
-                  onPressed: _saving ? null : _save,
+                  onPressed: _saving || !_touched ? null : _save,
                 ),
               ),
           ],

@@ -21,6 +21,7 @@ import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/keypad.dart';
 import 'package:kibuo/ui/kit/segmented_tabs.dart';
 import 'package:kibuo/ui/kit/toast.dart';
@@ -144,6 +145,11 @@ class _EntryScreenState extends State<EntryScreen> {
   CurrencyInfo? _paidCurrency;
   CategoryInfo? _category;
 
+  /// What was chosen under each tab, kept when switching away by mistake
+  /// and shown again on coming back (owner, 25 November 2026).
+  final _keptCategory = <EntryKind, CategoryInfo>{};
+  AccountInfo? _keptTo;
+
   // A transfer's receiving account (none chosen at first: PRODUCT).
   AccountInfo? _to;
   CurrencyInfo? _toCurrency;
@@ -157,6 +163,12 @@ class _EntryScreenState extends State<EntryScreen> {
   final _note = TextEditingController();
   bool _keypad = true;
   final _amountKey = GlobalKey();
+  final _accountKey = GlobalKey();
+  final _categoryKey = GlobalKey();
+  final _toKey = GlobalKey();
+
+  /// « Enregistrer » touched with something missing: it shows in red.
+  bool _tried = false;
   bool _open = false;
 
   // Attachments: added under a draft id until « Enregistrer » (PRODUCT);
@@ -482,6 +494,39 @@ class _EntryScreenState extends State<EntryScreen> {
           ? _to != null && _transferTotal != null
           : _category != null && _total != null);
 
+  /// Something typed or chosen: « Enregistrer » can be touched, and says
+  /// what is missing (DIRECTION, 25 November 2026).
+  bool get _touched =>
+      _typed.isNotEmpty || _category != null || _to != null || widget.editing;
+
+  bool get _amountMissing => (_paid?.minor ?? 0) <= 0;
+  bool get _accountMissing => _account == null;
+  bool get _categoryMissing => !_transfer && _category == null;
+  bool get _toMissing => _transfer && _to == null;
+
+  void _trySave() {
+    if (_canSave) {
+      _save();
+      return;
+    }
+    setState(() => _tried = true);
+    final first = _amountMissing
+        ? _amountKey
+        : _accountMissing
+        ? _accountKey
+        : _categoryMissing
+        ? _categoryKey
+        : _toMissing
+        ? _toKey
+        : null;
+    if (first != null) {
+      showMissing(first);
+    } else {
+      // Refused for another reason, already said on screen.
+      Haptics.refuse();
+    }
+  }
+
   String _money(Money m) => formatMoney(
     m,
     m.currency == _accountCurrency?.code
@@ -494,6 +539,12 @@ class _EntryScreenState extends State<EntryScreen> {
 
   Future<void> _switchKind(EntryKind kind) async {
     if (kind == _kind) return;
+    // Keep what this tab had: coming back shows it again.
+    if (_transfer) {
+      _keptTo = _to;
+    } else if (_category case final c?) {
+      _keptCategory[_kind] = c;
+    }
     if (kind == EntryKind.transfer) {
       // Two accounts first (PRODUCT), then back to this entry.
       if (!await transferAccountsReady(context, widget.data)) return;
@@ -505,19 +556,30 @@ class _EntryScreenState extends State<EntryScreen> {
         _category = null;
         _rateTyped = false;
         _rateText = '';
+        // Another tab: nothing in red until « Enregistrer » again.
+        _tried = false;
       });
       // Sent in the sending account's currency.
       await _setAccount(_account ?? accounts.first);
+      final kept = _keptTo;
+      if (kept != null && kept.id != _account?.id && mounted) {
+        final still = _accounts.where((a) => a.id == kept.id).firstOrNull;
+        if (still != null) await _setTo(still);
+      }
       return;
     }
     final categories = await widget.data.categories.categories(kind.category);
     if (!mounted) return;
+    final kept = _keptCategory[kind];
     setState(() {
       _kind = kind;
       _categories = categories;
-      _category = null;
+      _category = kept == null
+          ? null
+          : categories.where((c) => c.id == kept.id).firstOrNull ?? kept;
       _to = null;
       _toCurrency = null;
+      _tried = false;
     });
     await _loadToday();
   }
@@ -907,21 +969,29 @@ class _EntryScreenState extends State<EntryScreen> {
     final labels = AccountTypeLabels(l, _types);
     final moved = _transferTotal;
     return [
-      EntryField(
-        icon: account == null ? KibuoIcons.wallet : labels.icon(account.type),
-        label: l.transferFrom,
-        value: account?.name,
-        placeholder: l.entryChoose,
-        trailing: account?.currency,
-        onTap: _chooseAccount,
+      MissingUnderline(
+        key: _accountKey,
+        missing: _tried && _accountMissing,
+        child: EntryField(
+          icon: account == null ? KibuoIcons.wallet : labels.icon(account.type),
+          label: l.transferFrom,
+          value: account?.name,
+          placeholder: l.entryChoose,
+          trailing: account?.currency,
+          onTap: _chooseAccount,
+        ),
       ),
-      EntryField(
-        icon: _to == null ? KibuoIcons.wallet : labels.icon(_to!.type),
-        label: l.transferTo,
-        value: _to?.name,
-        placeholder: l.entryChoose,
-        trailing: _to?.currency,
-        onTap: _chooseTo,
+      MissingUnderline(
+        key: _toKey,
+        missing: _tried && _toMissing,
+        child: EntryField(
+          icon: _to == null ? KibuoIcons.wallet : labels.icon(_to!.type),
+          label: l.transferTo,
+          value: _to?.name,
+          placeholder: l.entryChoose,
+          trailing: _to?.currency,
+          onTap: _chooseTo,
+        ),
       ),
       EntryField(
         icon: KibuoIcons.calendarBlank,
@@ -998,6 +1068,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   const SizedBox(height: 12),
                   _AmountCard(
                     key: _amountKey,
+                    missing: _tried && _amountMissing,
                     kind: _kind,
                     value: shownTyped(context, _typed),
                     unit: _paidCurrency?.symbol ?? '',
@@ -1094,31 +1165,39 @@ class _EntryScreenState extends State<EntryScreen> {
                     children: _transfer
                         ? [..._transferFields(l, account), ?repeatField]
                         : [
-                            EntryField(
-                              icon: account == null
-                                  ? KibuoIcons.wallet
-                                  : AccountTypeLabels(
-                                      l,
-                                      _types,
-                                    ).icon(account.type),
-                              label: l.entryAccount,
-                              value: account?.name,
-                              placeholder: l.entryChoose,
-                              trailing: account?.currency,
-                              onTap: _chooseAccount,
+                            MissingUnderline(
+                              key: _accountKey,
+                              missing: _tried && _accountMissing,
+                              child: EntryField(
+                                icon: account == null
+                                    ? KibuoIcons.wallet
+                                    : AccountTypeLabels(
+                                        l,
+                                        _types,
+                                      ).icon(account.type),
+                                label: l.entryAccount,
+                                value: account?.name,
+                                placeholder: l.entryChoose,
+                                trailing: account?.currency,
+                                onTap: _chooseAccount,
+                              ),
                             ),
-                            EntryField(
-                              leading: _category == null
-                                  ? null
-                                  : CategoryTile(
-                                      category: _category!,
-                                      size: 32,
-                                    ),
-                              icon: KibuoIcons.tag,
-                              label: l.entryCategory,
-                              value: categoryText,
-                              placeholder: l.entryChoose,
-                              onTap: _chooseCategory,
+                            MissingUnderline(
+                              key: _categoryKey,
+                              missing: _tried && _categoryMissing,
+                              child: EntryField(
+                                leading: _category == null
+                                    ? null
+                                    : CategoryTile(
+                                        category: _category!,
+                                        size: 32,
+                                      ),
+                                icon: KibuoIcons.tag,
+                                label: l.entryCategory,
+                                value: categoryText,
+                                placeholder: l.entryChoose,
+                                onTap: _chooseCategory,
+                              ),
                             ),
                             EntryField(
                               icon: KibuoIcons.calendarBlank,
@@ -1213,7 +1292,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   label: widget.editing || widget.rule != null
                       ? l.entrySaveChanges
                       : l.entrySave,
-                  onPressed: _canSave ? _save : null,
+                  onPressed: _touched ? _trySave : null,
                 ),
               ),
           ],
@@ -1244,7 +1323,11 @@ class _AmountCard extends StatelessWidget {
     required this.open,
     required this.onToggle,
     required this.lines,
+    this.missing = false,
   });
+
+  /// No amount when saving: outlined in red.
+  final bool missing;
 
   final EntryKind kind;
   final String value;
@@ -1272,11 +1355,15 @@ class _AmountCard extends StatelessWidget {
       EntryKind.income => '+',
       EntryKind.transfer => '',
     };
-    return Container(
+    return AnimatedContainer(
+      duration: missingFade(context),
+      curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
         color: tint,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-        border: Border.all(color: edge, width: 1.5),
+        border: missing
+            ? Border.all(color: KibuoColors.danger, width: 2)
+            : Border.all(color: edge, width: 1.5),
       ),
       child: Column(
         children: [

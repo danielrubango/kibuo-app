@@ -13,6 +13,7 @@ import 'package:kibuo/ui/kit/confirm_sheet.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/hatched_bar.dart';
 import 'package:kibuo/ui/kit/scrolling_line.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
@@ -862,6 +863,10 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
   late Money _amount = _line.amount;
   late DateTime? _due = _line.due;
   bool _saving = false;
+  final _nameKey = GlobalKey();
+
+  /// « Enregistrer » touched with the name erased: it shows in red.
+  bool _tried = false;
 
   bool get _owe => _line.direction == DebtDirection.owe;
 
@@ -903,7 +908,17 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
       _name.text.trim().isNotEmpty && _amount.minor >= _repaid.minor;
 
   Future<void> _save() async {
-    if (!_ready || _saving) return;
+    if (_name.text.trim().isEmpty) {
+      setState(() => _tried = true);
+      showMissing(_nameKey);
+      return;
+    }
+    if (!_ready) {
+      // Below what was repaid: already said under the amount.
+      Haptics.refuse();
+      return;
+    }
+    if (_saving) return;
     setState(() => _saving = true);
     await widget.debts.edit(
       _line.id,
@@ -953,13 +968,12 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                 children: [
                   KibuoTextField(
+                    key: _nameKey,
                     label: _owe ? l.debtPersonOwe : l.debtPersonOwed,
                     controller: _name,
                     textCapitalization: TextCapitalization.words,
                     onChanged: (_) => setState(() {}),
-                    error: _name.text.trim().isEmpty
-                        ? l.debtPersonMissing
-                        : null,
+                    missing: _tried && _name.text.trim().isEmpty,
                   ),
                   const SizedBox(height: 16),
                   ValueField(
@@ -1016,7 +1030,7 @@ class _EditDebtScreenState extends State<EditDebtScreen> {
               ),
               child: KibuoButton(
                 label: l.entrySave,
-                onPressed: _ready && !_saving ? _save : null,
+                onPressed: _saving ? null : _save,
               ),
             ),
           ],

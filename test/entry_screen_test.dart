@@ -14,6 +14,7 @@ import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/attachment_viewer.dart';
 import 'package:kibuo/ui/transactions/attachments_card.dart';
@@ -135,28 +136,72 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('an expense in the account’s currency', (tester) async {
-    await start(tester);
-    expect(find.text('Nouvelle dépense'), findsOneWidget);
+  testWidgets(
+    'an expense in the account’s currency, its category asked first',
+    (tester) async {
+      await start(tester);
+      expect(find.text('Nouvelle dépense'), findsOneWidget);
 
+      await type(tester, '5');
+      expect(textPlain('−5'), findsOneWidget);
+      await tester.tap(find.text('Terminé'));
+      await tester.pumpAndSettle();
+      // No category yet: « Enregistrer » says so, by the category in red,
+      // and saves nothing (DIRECTION, 25 November 2026).
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+      expect(await data.transactions.all(), isEmpty);
+      final missing = tester
+          .widgetList<MissingUnderline>(find.byType(MissingUnderline))
+          .where((m) => m.missing);
+      expect(missing, hasLength(1));
+      expect(
+        find.descendant(
+          of: find.byWidget(missing.single),
+          matching: find.text('Catégorie'),
+        ),
+        findsOneWidget,
+      );
+      await chooseTaxi(tester);
+      expect(find.text('Transport › Taxi'), findsOneWidget);
+      await tester.tap(find.text('Enregistrer'));
+      await tester.pumpAndSettle();
+
+      final t = (await data.transactions.all()).single;
+      expect(saved, t.id);
+      expect(t.paid, const Money(500, 'USD'));
+      expect(t.categoryId, 'default-taxi');
+      expect(t.date, now.toUtc());
+    },
+  );
+
+  testWidgets('back from another tab, the category is still there', (
+    tester,
+  ) async {
+    await start(tester);
     await type(tester, '5');
-    expect(textPlain('−5'), findsOneWidget);
     await tester.tap(find.text('Terminé'));
     await tester.pumpAndSettle();
-    expect(
-      tester.widget<Text>(find.text('Enregistrer')).style?.color,
-      isNot(Colors.black),
-    );
-    await chooseTaxi(tester);
-    expect(find.text('Transport › Taxi'), findsOneWidget);
     await tester.tap(find.text('Enregistrer'));
     await tester.pumpAndSettle();
+    await chooseTaxi(tester);
 
-    final t = (await data.transactions.all()).single;
-    expect(saved, t.id);
-    expect(t.paid, const Money(500, 'USD'));
-    expect(t.categoryId, 'default-taxi');
-    expect(t.date, now.toUtc());
+    // Revenu by mistake, then back to Dépense (owner, 25 November 2026).
+    await tester.tap(find.text('Revenu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Transport › Taxi'), findsNothing);
+    bool anyRed() => tester
+        .widgetList<MissingUnderline>(find.byType(MissingUnderline))
+        .any((m) => m.missing);
+    expect(anyRed(), isFalse, reason: 'another tab: no red yet');
+    await tester.tap(find.text('Dépense'));
+    await tester.pumpAndSettle();
+    expect(find.text('Transport › Taxi'), findsOneWidget);
+    expect(anyRed(), isFalse);
+
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+    expect((await data.transactions.all()).single.categoryId, 'default-taxi');
   });
 
   testWidgets('paid in francs at today’s rate, then with fees', (tester) async {

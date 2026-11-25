@@ -52,6 +52,8 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
   final _name = TextEditingController();
   final _nameFocus = FocusNode();
   final _amountKey = GlobalKey();
+  final _nameKey = GlobalKey();
+  final _rateKey = GlobalKey();
   String _typed = '';
   bool _keypad = false;
   bool _tried = false;
@@ -247,9 +249,23 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
       _amount.minor > 0 &&
       (!_link || (_account != null && (!_converts || _rate != null)));
 
+  /// Something typed: « Enregistrer » can be touched, and says what is
+  /// missing (DIRECTION, 25 November 2026).
+  bool get _touched => _named || _typed.isNotEmpty;
+
   Future<void> _save() async {
     setState(() => _tried = true);
-    if (!_named || !_ready || _saving) return;
+    if (!_named || !_ready) {
+      showMissing(
+        !_named
+            ? _nameKey
+            : _amount.minor <= 0
+            ? _amountKey
+            : _rateKey,
+      );
+      return;
+    }
+    if (_saving) return;
     setState(() => _saving = true);
     final now = widget.now();
     final id = await widget.debts.create(
@@ -311,6 +327,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                   ),
                   const SizedBox(height: 16),
                   KibuoTextField(
+                    key: _nameKey,
                     label: _owe ? l.debtPersonOwe : l.debtPersonOwed,
                     hint: l.debtPersonHint,
                     controller: _name,
@@ -320,7 +337,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                     onFocus: () {
                       if (_keypad) setState(() => _keypad = false);
                     },
-                    error: _tried && !_named ? l.debtPersonMissing : null,
+                    missing: _tried && !_named,
                   ),
                   if (suggestions.isNotEmpty) ...[
                     const SizedBox(height: 8),
@@ -350,9 +367,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                       onUnitTap: _pickCurrency,
                       focused: _keypad,
                       onTap: _openKeypad,
-                      error: _tried && _amount.minor <= 0
-                          ? l.debtAmountMissing
-                          : null,
+                      missing: _tried && _amount.minor <= 0,
                     ),
                   ],
                   const SizedBox(height: 16),
@@ -391,10 +406,16 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                           onTap: _pickAccount,
                         ),
                       if (_converts)
-                        SettingsRow(
-                          label: l.entryRateTitle,
-                          value: _rate == null ? '' : formatRate(_rate!, _lang),
-                          onTap: _pickRate,
+                        MissingUnderline(
+                          key: _rateKey,
+                          missing: _tried && _rate == null,
+                          child: SettingsRow(
+                            label: l.entryRateTitle,
+                            value: _rate == null
+                                ? ''
+                                : formatRate(_rate!, _lang),
+                            onTap: _pickRate,
+                          ),
                         ),
                     ],
                   ),
@@ -437,7 +458,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                 ),
                 child: KibuoButton(
                   label: l.entrySave,
-                  onPressed: _saving ? null : _save,
+                  onPressed: _saving || !_touched ? null : _save,
                 ),
               ),
           ],

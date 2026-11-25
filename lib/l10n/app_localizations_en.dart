@@ -1169,9 +1169,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsAddRate => 'Add a rate';
 
   @override
-  String get accountNameMissing => 'Give the account a name.';
-
-  @override
   String get currencyKeptMain => 'Your main currency';
 
   @override
@@ -2876,9 +2873,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtPersonHint => 'A name';
 
   @override
-  String get debtPersonMissing => 'Type a name';
-
-  @override
   String get debtLeft => 'Still owed';
 
   @override
@@ -2909,9 +2903,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtCurrency => 'Currency of the debt';
-
-  @override
-  String get debtAmountMissing => 'Type an amount';
 
   @override
   String get debtNewOwe => 'New debt';
@@ -3388,13 +3379,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectNameHint => 'Trip, motorbike, rent in advance…';
 
   @override
-  String get projectNameMissing => 'Give it a name.';
-
-  @override
   String get projectGoal => 'Goal';
-
-  @override
-  String get projectGoalMissing => 'Type a goal';
 
   @override
   String projectFree(String amount) {

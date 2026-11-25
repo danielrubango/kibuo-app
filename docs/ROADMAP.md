@@ -101,7 +101,7 @@ Ce qui manque dans l'app :
 - [x] La page Réglages, avec le choix de la langue après le premier lancement (planches `Reglages`, `ReglageLangue`)
 - [x] À propos : version, politique de confidentialité, contact (planche `APropos`)
 - [x] Aperçu : l'écran d'attente reste, avec un texte qui annonce les graphiques
-- [ ] « Enregistrer » grisé : bouton actif et premier champ manquant en rouge (décidé le 24 novembre, planches à montrer)
+- [x] « Enregistrer » grisé : bouton actif et premier champ manquant en rouge (décidé le 24 novembre, planches à montrer)
 - [ ] Interrupteurs : toute la ligne réagit, partout
 - [x] Mesure d'usage anonyme et erreurs, avec l'accord de l'utilisateur (PostHog, [ADR 0013](adr/0013-mesure-d-usage-anonyme.md)) : demande à l'étape 4 et sur une feuille pour qui a déjà kibuo, interrupteur dans Confidentialité, politique de confidentialité mise à jour
 

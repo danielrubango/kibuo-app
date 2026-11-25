@@ -37,6 +37,25 @@ class CategoryFormScreen extends StatefulWidget {
 class _CategoryFormScreenState extends State<CategoryFormScreen> {
   final _name = TextEditingController();
   late String _icon = widget.category?.icon ?? categoryIcons.keys.first;
+  late final String _firstIcon = _icon;
+  final _nameKey = GlobalKey();
+
+  /// Saving touched without a name: it shows in red.
+  bool _tried = false;
+
+  /// Something typed or chosen (DIRECTION, 25 November 2026).
+  bool get _touched =>
+      _name.text.trim().isNotEmpty || _icon != _firstIcon || _editing;
+
+  void _trySave() {
+    if (_name.text.trim().isNotEmpty) {
+      _save();
+      return;
+    }
+    setState(() => _tried = true);
+    showMissing(_nameKey);
+  }
+
   String? _shownAtStart;
 
   bool get _editing => widget.category != null;
@@ -140,10 +159,12 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                     const SizedBox(height: 16),
                   ],
                   KibuoTextField(
+                    key: _nameKey,
                     label: l.categoryNameLabel,
                     hint: l.categoryNameHint,
                     controller: _name,
                     autofocus: !_editing,
+                    missing: _tried && _name.text.trim().isEmpty,
                   ),
                   const SizedBox(height: 16),
                   FieldLabel(l.categoryIcon),
@@ -182,7 +203,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                 label: _editing
                     ? l.categorySave
                     : (_isSub ? l.categoryCreateSub : l.categoryCreate),
-                onPressed: _name.text.trim().isEmpty ? null : _save,
+                onPressed: _touched ? _trySave : null,
               ),
             ),
           ],

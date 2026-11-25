@@ -2090,12 +2090,6 @@ abstract class AppLocalizations {
   /// **'Ajouter un taux'**
   String get accountsAddRate;
 
-  /// Error under an empty account name.
-  ///
-  /// In fr, this message translates to:
-  /// **'Donnez un nom au compte.'**
-  String get accountNameMissing;
-
   /// Currencies: currencyKeptMain
   ///
   /// In fr, this message translates to:
@@ -4606,12 +4600,6 @@ abstract class AppLocalizations {
   /// Debts and receivables.
   ///
   /// In fr, this message translates to:
-  /// **'Indiquez un nom'**
-  String get debtPersonMissing;
-
-  /// Debts and receivables.
-  ///
-  /// In fr, this message translates to:
   /// **'Reste dû'**
   String get debtLeft;
 
@@ -4668,12 +4656,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Devise de la dette'**
   String get debtCurrency;
-
-  /// Debts and receivables.
-  ///
-  /// In fr, this message translates to:
-  /// **'Indiquez un montant'**
-  String get debtAmountMissing;
 
   /// Debts and receivables.
   ///
@@ -5374,20 +5356,8 @@ abstract class AppLocalizations {
   /// Projects.
   ///
   /// In fr, this message translates to:
-  /// **'Donnez-lui un nom.'**
-  String get projectNameMissing;
-
-  /// Projects.
-  ///
-  /// In fr, this message translates to:
   /// **'Objectif'**
   String get projectGoal;
-
-  /// Projects.
-  ///
-  /// In fr, this message translates to:
-  /// **'Indiquez un objectif'**
-  String get projectGoalMissing;
 
   /// Projects.
   ///

@@ -1186,9 +1186,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountsAddRate => 'Ajouter un taux';
 
   @override
-  String get accountNameMissing => 'Donnez un nom au compte.';
-
-  @override
   String get currencyKeptMain => 'Votre devise principale';
 
   @override
@@ -2913,9 +2910,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get debtPersonHint => 'Un nom';
 
   @override
-  String get debtPersonMissing => 'Indiquez un nom';
-
-  @override
   String get debtLeft => 'Reste dû';
 
   @override
@@ -2947,9 +2941,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get debtCurrency => 'Devise de la dette';
-
-  @override
-  String get debtAmountMissing => 'Indiquez un montant';
 
   @override
   String get debtNewOwe => 'Nouvelle dette';
@@ -3427,13 +3418,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get projectNameHint => 'Voyage, moto, loyer d’avance…';
 
   @override
-  String get projectNameMissing => 'Donnez-lui un nom.';
-
-  @override
   String get projectGoal => 'Objectif';
-
-  @override
-  String get projectGoalMissing => 'Indiquez un objectif';
 
   @override
   String projectFree(String amount) {
