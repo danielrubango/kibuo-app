@@ -259,13 +259,14 @@ class PlusRow extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    required this.onTap,
+    this.onTap,
     this.tint = KibuoColors.background,
     this.ink = KibuoColors.inkSecondary,
     this.value,
     this.detail,
     this.detailColor,
     this.dot = false,
+    this.detailLines = 1,
   });
 
   final IconData icon;
@@ -279,18 +280,26 @@ class PlusRow extends StatelessWidget {
   /// Under the name: « Dernière sauvegarde hier ».
   final String? detail;
   final Color? detailColor;
+
+  /// One line in Plus; two where a sentence must be read whole.
+  final int detailLines;
   final bool dot;
-  final VoidCallback onTap;
+
+  /// Without it, the line only says something: no caret, no touch.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final detail = this.detail;
     final value = this.value;
+    final onTap = this.onTap;
     return InkWell(
-      onTap: () {
-        Haptics.tap();
-        onTap();
-      },
+      onTap: onTap == null
+          ? null
+          : () {
+              Haptics.tap();
+              onTap();
+            },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 56),
         child: Padding(
@@ -335,7 +344,7 @@ class PlusRow extends StatelessWidget {
                     if (detail != null)
                       Text(
                         detail,
-                        maxLines: 1,
+                        maxLines: detailLines,
                         overflow: TextOverflow.ellipsis,
                         style: KibuoType.caption.copyWith(color: detailColor),
                       ),
@@ -346,12 +355,14 @@ class PlusRow extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(value, style: KibuoType.caption.copyWith(fontSize: 13)),
               ],
-              const SizedBox(width: 6),
-              const Icon(
-                KibuoIcons.caretRight,
-                size: 18,
-                color: KibuoColors.lineStrong,
-              ),
+              if (onTap != null) ...[
+                const SizedBox(width: 6),
+                const Icon(
+                  KibuoIcons.caretRight,
+                  size: 18,
+                  color: KibuoColors.lineStrong,
+                ),
+              ],
             ],
           ),
         ),

@@ -100,6 +100,7 @@ abstract final class KibuoIcons {
   static const pencilSimple = IconData(0xe3b4, fontFamily: _regular);
   static const info = IconData(0xe2ce, fontFamily: _regular);
   static const chartPieSlice = IconData(0xe15a, fontFamily: _regular);
+  static const trendUp = IconData(0xe4ae, fontFamily: _regular);
   static const clock = IconData(0xe19a, fontFamily: _regular);
   static const checkBold = IconData(0xe182, fontFamily: _bold);
   static const caretUp = IconData(0xe13c, fontFamily: _regular);

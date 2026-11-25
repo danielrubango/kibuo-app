@@ -592,10 +592,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get operationsPlaceholder => 'This month’s transactions will be here.';
 
   @override
-  String get overviewPlaceholder =>
-      'Charts and the items you follow will be here.';
-
-  @override
   String get morePlaceholder => 'Your spaces and settings will be here.';
 
   @override
@@ -4380,4 +4376,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get privacyStatsBody =>
       'If you agree to “Help improve kibuo”, kibuo sends PostHog, in Europe, the screens opened, the actions taken (without their content) and the errors, with the versions of kibuo and Android, the phone’s maker and model, the language, the country and the main currency’s code. Depending on the measuring tool, they may also carry the mobile operator’s name, the time zone and a technical description of the phone. They carry a random number, linked neither to you nor to the phone. Never your amounts, your names, your notes, your location or your IP address. You can stop at any time in Settings › Privacy: the number and whatever was waiting to be sent are then forgotten.';
+
+  @override
+  String get overviewSoonTitle => 'Your charts are coming';
+
+  @override
+  String get overviewSoonText =>
+      'In the next version of kibuo, three views of your money:';
+
+  @override
+  String get overviewEvolution => 'Trends';
+
+  @override
+  String get overviewEvolutionText =>
+      'What goes out and comes in, day after day';
+
+  @override
+  String get overviewCategories => 'Categories';
+
+  @override
+  String get overviewCategoriesText =>
+      'Where your money goes, where it comes from';
+
+  @override
+  String get overviewWorth => 'Net worth';
+
+  @override
+  String get overviewWorthText =>
+      'Your accounts, plus what you are owed, less your debts';
+
+  @override
+  String get overviewMeanwhile => 'Meanwhile';
+
+  @override
+  String get overviewMonth => 'The month in figures';
+
+  @override
+  String get overviewMonthText =>
+      'Money in, money out and what is left, in Transactions';
+
+  @override
+  String get overviewBudgetsText => 'What is left in each category';
 }

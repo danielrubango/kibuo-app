@@ -46,6 +46,7 @@ import 'package:kibuo/ui/more/plus_page.dart';
 import 'package:kibuo/ui/more/plus_summary.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
+import 'package:kibuo/ui/overview/overview_waiting.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
 import 'package:kibuo/ui/projects/project_money.dart';
 import 'package:kibuo/ui/projects/project_screen.dart';
@@ -575,11 +576,10 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                         message: AppLocalizations.of(context)
                             .operationsPlaceholder,
                       ),
-                    TabPlaceholder(
+                    OverviewWaiting(
                       key: const ValueKey('screen-overview'),
-                      title: AppLocalizations.of(context).tabOverview,
-                      icon: PlaceholderIcons.overview,
-                      message: AppLocalizations.of(context).overviewPlaceholder,
+                      onMonth: () => _show(_Tab.operations),
+                      onBudgets: () => _openPlus(PlusEntry.budgets),
                     ),
                     if (_entryData(context) case final data?)
                       PlusPage(

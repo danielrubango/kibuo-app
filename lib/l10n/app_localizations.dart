@@ -1046,12 +1046,6 @@ abstract class AppLocalizations {
   /// **'Les opérations du mois viendront ici.'**
   String get operationsPlaceholder;
 
-  /// Temporary text on the overview screen until it is built.
-  ///
-  /// In fr, this message translates to:
-  /// **'Les graphiques et les points suivis viendront ici.'**
-  String get overviewPlaceholder;
-
   /// Temporary text on the More screen until it is built.
   ///
   /// In fr, this message translates to:
@@ -6876,6 +6870,78 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le fabricant et le modèle du téléphone, la langue, le pays et le code de la devise principale. Selon l’outil de mesure, ces envois peuvent aussi porter le nom de l’opérateur mobile, le fuseau horaire et une description technique du téléphone. Ils portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.'**
   String get privacyStatsBody;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos graphiques arrivent'**
+  String get overviewSoonTitle;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans la prochaine version de kibuo, trois vues de votre argent :'**
+  String get overviewSoonText;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Évolution'**
+  String get overviewEvolution;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos sorties et vos entrées, jour après jour'**
+  String get overviewEvolutionText;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégories'**
+  String get overviewCategories;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Où part votre argent, d’où il vient'**
+  String get overviewCategoriesText;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Patrimoine'**
+  String get overviewWorth;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos comptes, plus ce qu’on vous doit, moins vos dettes'**
+  String get overviewWorthText;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'En attendant'**
+  String get overviewMeanwhile;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mois en chiffres'**
+  String get overviewMonth;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées, sorties et ce qui reste, dans Opérations'**
+  String get overviewMonthText;
+
+  /// Aperçu waiting screen (version 0.1).
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce qui reste dans chaque catégorie'**
+  String get overviewBudgetsText;
 }
 
 class _AppLocalizationsDelegate
