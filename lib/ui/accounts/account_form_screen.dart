@@ -92,6 +92,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   String _current = '';
   bool _currentNegative = false;
   final _currentKey = GlobalKey();
+  final _nameKey = GlobalKey();
   final _limitKey = GlobalKey();
   bool _named = true;
 
@@ -313,6 +314,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   Future<void> _save() async {
     if (_name.text.trim().isEmpty) {
       setState(() => _named = false);
+      showMissing(_nameKey);
       return;
     }
     final account = widget.account;
@@ -560,15 +562,17 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                   ),
                   const SizedBox(height: 16),
                   KibuoTextField(
+                    key: _nameKey,
                     label: l.accountName,
                     hint: l.accountNameHint,
                     controller: _name,
+                    onChanged: (_) {
+                      if (!_named) setState(() {});
+                    },
                     onFocus: () {
                       if (_keypad) setState(() => _keypad = false);
                     },
-                    error: _named || _name.text.trim().isNotEmpty
-                        ? null
-                        : l.accountNameMissing,
+                    missing: !_named && _name.text.trim().isEmpty,
                   ),
                   if (_offersCurrent && currency != null) ...[
                     const SizedBox(height: 16),
@@ -708,7 +712,11 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       currency == null ||
                           _currentRefused ||
                           _openingRefused ||
-                          (widget._firstLaunch && _name.text.trim().isEmpty)
+                          // Nothing typed yet (DIRECTION, 25 November).
+                          (widget._firstLaunch &&
+                              _name.text.trim().isEmpty &&
+                              _typed.isEmpty &&
+                              _current.isEmpty)
                       ? null
                       : _save,
                 ),

@@ -54,6 +54,10 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
   late bool _keypad = widget.line == null;
   Money? _average;
   final _amountKey = GlobalKey();
+  final _categoryKey = GlobalKey();
+
+  /// Saving touched with something missing: it shows in red.
+  bool _tried = false;
 
   bool get _editing => widget.line != null;
   CurrencyInfo get _main => widget.book.main;
@@ -165,6 +169,18 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
     final category = _category;
     final average = _average;
     final ready = category != null && _amount.minor > 0;
+    // Something typed or chosen: the button says what is missing
+    // (DIRECTION, 25 November 2026).
+    final touched = _typed.isNotEmpty || category != null || _editing;
+    void trySave() {
+      if (ready) {
+        _save();
+        return;
+      }
+      setState(() => _tried = true);
+      showMissing(_amount.minor <= 0 ? _amountKey : _categoryKey);
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -183,6 +199,7 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
                     value: shownTyped(context, _typed),
                     unit: _main.symbol,
                     focused: _keypad,
+                    missing: _tried && _amount.minor <= 0,
                     onTap: () {
                       setState(() => _keypad = true);
                       revealAboveKeypad(_amountKey);
@@ -219,15 +236,19 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
                   const SizedBox(height: 16),
                   SettingsCard(
                     children: [
-                      _PickRow(
-                        icon: category == null
-                            ? KibuoIcons.tag
-                            : categoryIcon(category),
-                        label: l.budgetCategory,
-                        value: category == null
-                            ? l.budgetChoose
-                            : categoryName(l, category),
-                        onTap: _editing ? null : _pickCategory,
+                      MissingUnderline(
+                        key: _categoryKey,
+                        missing: _tried && category == null,
+                        child: _PickRow(
+                          icon: category == null
+                              ? KibuoIcons.tag
+                              : categoryIcon(category),
+                          label: l.budgetCategory,
+                          value: category == null
+                              ? l.budgetChoose
+                              : categoryName(l, category),
+                          onTap: _editing ? null : _pickCategory,
+                        ),
                       ),
                       _PickRow(
                         icon: KibuoIcons.calendarBlank,
@@ -272,7 +293,7 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: KibuoButton(
                   label: _editing ? l.budgetSave : l.budgetCreate,
-                  onPressed: ready ? _save : null,
+                  onPressed: touched ? trySave : null,
                 ),
               ),
           ],

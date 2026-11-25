@@ -27,6 +27,26 @@ class AccountTypeScreen extends StatefulWidget {
 class _AccountTypeScreenState extends State<AccountTypeScreen> {
   late final _name = TextEditingController(text: widget.type?.name);
   late String _icon = widget.type?.icon ?? customTypeIcons.keys.first;
+  late final String _firstIcon = _icon;
+  final _nameKey = GlobalKey();
+
+  /// Saving touched without a name: it shows in red.
+  bool _tried = false;
+
+  /// Something typed or chosen (DIRECTION, 25 November 2026).
+  bool get _touched =>
+      _name.text.trim().isNotEmpty ||
+      _icon != _firstIcon ||
+      widget.type != null;
+
+  void _trySave() {
+    if (_name.text.trim().isNotEmpty) {
+      _save();
+      return;
+    }
+    setState(() => _tried = true);
+    showMissing(_nameKey);
+  }
 
   /// How many accounts use the type being changed.
   int? _use;
@@ -92,10 +112,12 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           KibuoTextField(
+            key: _nameKey,
             label: l.typeName,
             hint: l.typeNameHint,
             controller: _name,
             autofocus: true,
+            missing: _tried && _name.text.trim().isEmpty,
           ),
           const SizedBox(height: 16),
           FieldLabel(l.typeIcon),
@@ -120,7 +142,7 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
       bottomNavigationBar: BottomAction(
         child: KibuoButton(
           label: l.typeSave,
-          onPressed: _name.text.trim().isEmpty ? null : _save,
+          onPressed: _touched ? _trySave : null,
         ),
       ),
     );

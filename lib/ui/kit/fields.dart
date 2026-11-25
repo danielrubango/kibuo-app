@@ -74,9 +74,14 @@ class KibuoTextField extends StatefulWidget {
     this.focusNode,
     this.lines = 1,
     this.secret = false,
+    this.missing = false,
   });
 
   final bool secret;
+
+  /// Required and left empty: outlined in red, nothing written (DIRECTION,
+  /// « Bouton qui ne peut pas encore enregistrer »).
+  final bool missing;
 
   /// More than one: a message, that grows to this many lines.
   final int lines;
@@ -159,11 +164,13 @@ class _KibuoTextFieldState extends State<KibuoTextField> {
                 vertical: 15,
               ),
               border: border(KibuoColors.surface, 0),
-              enabledBorder: widget.error == null
+              enabledBorder: widget.error == null && !widget.missing
                   ? border(KibuoColors.surface, 0)
                   : border(KibuoColors.danger, 2),
               focusedBorder: border(
-                widget.error == null ? KibuoColors.accent : KibuoColors.danger,
+                widget.error == null && !widget.missing
+                    ? KibuoColors.accent
+                    : KibuoColors.danger,
                 2,
               ),
             ),
@@ -260,7 +267,11 @@ class ValueField extends StatelessWidget {
     this.error,
     this.note,
     this.fill = KibuoColors.surface,
+    this.missing = false,
   });
+
+  /// Required and left empty: outlined in red, nothing written.
+  final bool missing;
 
   final String value;
   final String? label;
@@ -280,7 +291,7 @@ class ValueField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = error != null
+    final borderColor = error != null || missing
         ? KibuoColors.danger
         : focused
         ? KibuoColors.accent
@@ -368,7 +379,11 @@ class OperationAmountField extends StatelessWidget {
     this.income = false,
     this.onUnitTap,
     this.focused = true,
+    this.missing = false,
   });
+
+  /// No amount yet when saving: outlined in red.
+  final bool missing;
 
   final String value;
   final String unit;
@@ -388,7 +403,9 @@ class OperationAmountField extends StatelessWidget {
       decoration: BoxDecoration(
         color: tint,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-        border: Border.all(color: line, width: 1.5),
+        border: missing
+            ? Border.all(color: KibuoColors.danger, width: 2)
+            : Border.all(color: line, width: 1.5),
       ),
       child: Column(
         children: [
@@ -600,4 +617,45 @@ class DateField extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A required line of a card (Compte, Catégorie…) left empty when saving:
+/// underlined in red, nothing written (DIRECTION, « Bouton qui ne peut pas
+/// encore enregistrer », 25 November 2026).
+class MissingUnderline extends StatelessWidget {
+  const MissingUnderline({
+    super.key,
+    required this.missing,
+    required this.child,
+  });
+
+  final bool missing;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => missing
+      ? DecoratedBox(
+          position: DecorationPosition.foreground,
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: KibuoColors.danger, width: 2),
+            ),
+          ),
+          child: child,
+        )
+      : child;
+}
+
+/// Saving with a field missing: the refusal is felt, and the page scrolls
+/// to the first missing field, whose [key] is given.
+void showMissing(GlobalKey key) {
+  Haptics.refuse();
+  final context = key.currentContext;
+  if (context == null) return;
+  Scrollable.ensureVisible(
+    context,
+    duration: const Duration(milliseconds: 250),
+    alignment: 0.3,
+    alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+  );
 }
