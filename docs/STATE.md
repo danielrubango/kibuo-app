@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/overview-waiting`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `fix/missing-field`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -16,9 +16,9 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 | 5 · Dettes, créances, projets | Dettes et créances en trois livraisons (liste, fiche et remboursements, autour : cartes de l'accueil, À traiter, rappels, réclamer), cartes de l'accueil aux marges unifiées, projets en trois livraisons (créer et lister ; fiche, mettre de côté, reprendre, objectif atteint, modifier, supprimer ; À traiter, rappels au rythme du plan, réservé dans Comptes) | 23 et 24 nov. |
 | 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier), sauvegardes automatiques, première livraison sur trois (interrupteur de l'écran Sauvegarde, sauvegarde à l'ouverture et en arrière-plan chaque semaine, 4 gardées, échecs signalés une fois par semaine) ; mot de passe retenu (variante A : ligne « Mot de passe » de l'écran Sauvegarde, sa feuille, la feuille manuelle « Chiffrée avec votre mot de passe », restauration qui l'essaie d'abord, copie d'avant restauration chiffrée) ; feuilles à 8 au-dessus du clavier ; « Sauvegardes automatiques » à l'étape 4 du premier lancement (variante 3 A) | 24 et 25 nov. |
 
-| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app), mesure d'usage anonyme avec accord (feuille « Aider à améliorer kibuo ? », interrupteur dans Confidentialité, envoi par kibuo lui-même à PostHog Europe, ADR 0013), « Dollar américain », écran d'attente de l'Aperçu (variante B : ce qui vient, et « En attendant ») | 25 nov. |
+| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app), mesure d'usage anonyme avec accord (feuille « Aider à améliorer kibuo ? », interrupteur dans Confidentialité, envoi par kibuo lui-même à PostHog Europe, ADR 0013), « Dollar américain », écran d'attente de l'Aperçu (variante B : ce qui vient, et « En attendant »), « Enregistrer » qui dit ce qui manque (champ souligné ou entouré de rouge, en douceur ; chaque onglet de la saisie retient son choix) | 25 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 560 tests verts à la dernière fusion, après le tri des tests du 25 novembre (766 avant ; règle dans AGENTS.md et WORKING.md).
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 561 tests verts à la dernière fusion, après le tri des tests du 25 novembre (766 avant ; règle dans AGENTS.md et WORKING.md).
 
 ## Dessiné mais pas encore construit
 
@@ -33,7 +33,7 @@ Validés sur le canvas, absents de l'app : l'**Aperçu** et ses graphiques (vers
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
-Prochaine case : **version 0.1, « Enregistrer » grisé** : bouton actif et premier champ manquant en rouge (décidé le 24 novembre, planches à montrer).
+Prochaine case : **version 0.1, interrupteurs** : toute la ligne réagit, partout (décidé le 24 novembre).
 
 ## Décisions récentes
 
@@ -64,7 +64,6 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; décidé le 24 novembre que toute la ligne réagira, à construire).
 - Si kibuo est fermé pendant que le code de récupération est affiché, le code n'a jamais été confirmé.
 - Les groupes de comptes repliés ne sont pas retenus ; un compte archivé ne peut pas être rétabli.
-- Un « Enregistrer » grisé ne dit pas ce qui manque (décidé le 24 novembre : bouton actif et premier champ manquant en rouge, planches à montrer, puis à construire).
 - 36 des 258 planches du canvas ne sont rattachées à aucune page : variantes écartées, classées dans [DIRECTION.md](design/DIRECTION.md#variantes-écartées-et-pourquoi), souvent sans raison écrite.
 - La planche P1 du chiffrement de sauvegarde (`sauvegarde-variantes.html`) n'est ni dans le canvas exporté ni dans le dépôt.
 - iOS : chaque API propre à Android est notée dans [backlog/ios.md](backlog/ios.md) ; rien n'est porté.
