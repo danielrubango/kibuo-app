@@ -223,7 +223,7 @@ Sources :
 ## Préparé pour kibuo (25 novembre 2026)
 
 - **Signature** : `android/app/build.gradle.kts` signe les versions de publication avec la clé d'importation dès que `android/key.properties` existe (ignoré par git ; modèle dans `android/key.properties.example`). Sans ce fichier, elles restent signées avec la clé de développement.
-- **Paquet AAB** : `flutter build appbundle --release` le construit (71,7 Mo le 25 novembre, encore signé avec la clé de développement).
+- **Paquet AAB** : `flutter build appbundle --release` le construit (71,7 Mo). Depuis le 25 novembre 2026, il est signé avec la clé d'importation du propriétaire, créée ce jour-là dans `~/kibuo-keys/kibuo-upload.jks` (alias `upload`, valable jusqu'en 2054 ; empreinte SHA-256 `97:F2:86:FE:C6:BC:A9:6B:E5:A2:6B:74:FD:9C:F6:B7:63:28:A9:B0:47:07:F1:78:68:81:68:41:F4:08:6B:DF`, à retrouver dans la Play Console). Les versions d'essai (`flutter build apk --profile`) restent signées avec la clé de développement, pour continuer à mettre à jour le téléphone du propriétaire.
 - **Pages de 16 Ko** : toutes les bibliothèques natives du paquet (`libflutter`, `libapp`, `libsqlite3mc`, `libdartjni`, pour arm64, arm32 et x86_64) sont alignées sur 16 Ko ou 64 Ko. Vérifié avec `llvm-readelf -lW` du NDK : conforme pour l'échéance du 1er février 2027.
 
 ### Créer la clé d'importation (le propriétaire, une seule fois)
