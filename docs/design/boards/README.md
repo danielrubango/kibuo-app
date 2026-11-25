@@ -92,8 +92,8 @@ Les captures PNG de la page « Revue de fidélité » (écran construit à côt�
 | [FicheDette](FicheDette.dc.html) | Fiche d'une dette | retenue | obligations/debt_screen.dart |
 | [FicheDettePetit](FicheDettePetit.dc.html) | Fiche d'une dette, petit écran (340 px) | retenue | obligations/debt_screen.dart |
 | [Operations](Operations.dc.html) | Opérations | retenue | transactions/operations_list.dart |
-| [Plus](Plus.dc.html) | Plus : mes espaces, Réglages et Sauvegarde sur une ligne chacun, aide | retenue | pas encore construit (page provisoire : shell/app_shell.dart) |
-| [PlusAncienne](PlusAncienne.dc.html) | Sauvegarde ancienne : point ambre sur l’icône, texte en ambre | retenue | backup/backup_screen.dart (la ligne ambre ; le reste de la page Plus pas encore construit) |
+| [Plus](Plus.dc.html) | Plus : mes espaces, Réglages et Sauvegarde sur une ligne chacun, aide | retenue | more/plus_page.dart |
+| [PlusAncienne](PlusAncienne.dc.html) | Sauvegarde ancienne : point ambre sur l’icône, texte en ambre | retenue | more/plus_page.dart |
 | [PlusBtnB1](PlusBtnB1.dc.html) | Toucher + : la feuille « Ajouter », Dépense en grand, « Refaire » | retenue | kit/sheet.dart, shell/add_sheet.dart, theme/kibuo_theme.dart |
 | [PlusBtnC1](PlusBtnC1.dc.html) | Maintenir + : l’éventail, glisser vers un choix | retenue | shell/plus_fan.dart |
 | [PlusBtnC2](PlusBtnC2.dc.html) | Astuce de l’appui long, après quelques ouvertures du menu | retenue | shell/app_shell.dart |
@@ -130,7 +130,7 @@ Les captures PNG de la page « Revue de fidélité » (écran construit à côt�
 
 | Fichier | Écran | État | Code (`lib/ui/`) |
 |---|---|---|---|
-| [APropos](APropos.dc.html) | À propos : logo, version, confidentialité, licences | retenue | pas encore construit |
+| [APropos](APropos.dc.html) | À propos : logo, version, confidentialité, licences | retenue | more/about_screen.dart |
 | [AideSupport](AideSupport.dc.html) | Aide et support : questions fréquentes, WhatsApp et e-mail | retenue | pas encore construit |
 | [CacheRecentes](CacheRecentes.dc.html) | Kibuo masqué dans les applications récentes | retenue | settings/security_screens.dart |
 | [CatModif](CatModif.dc.html) | Modifier la catégorie (validé) | validée (date à vérifier) | categories/category_form_screen.dart |
@@ -169,8 +169,8 @@ Les captures PNG de la page « Revue de fidélité » (écran construit à côt�
 | [RecupReglage](RecupReglage.dc.html) | Sécurité › Code de récupération | retenue | lock/recovery_screens.dart |
 | [RecupSaisie](RecupSaisie.dc.html) | Saisir le code de récupération | retenue | lock/recovery_screens.dart |
 | [ReglageDebutMois](ReglageDebutMois.dc.html) | Début du mois : une feuille sur Réglages, une roue qui défile, « Enregistrer » | retenue | settings/month_start_sheet.dart |
-| [ReglageLangue](ReglageLangue.dc.html) | Langue : une feuille sur Réglages, liste qui défile, la langue choisie cochée | retenue | pas encore construit (la langue se choisit au premier lancement) |
-| [Reglages](Reglages.dc.html) | Réglages | retenue | pas encore construit (les réglages sont des lignes provisoires de Plus, shell/app_shell.dart) |
+| [ReglageLangue](ReglageLangue.dc.html) | Langue : une feuille sur Réglages, liste qui défile, la langue choisie cochée | retenue | settings/language_sheet.dart |
+| [Reglages](Reglages.dc.html) | Réglages | retenue | settings/settings_screen.dart |
 | [ReglagesBrouillons](ReglagesBrouillons.dc.html) | Réglages › Récurrences et brouillons | retenue | recurrences/list_display.dart |
 | [RegulFeuille](RegulFeuille.dc.html) | Enregistrer : la différence devient une opération | retenue | accounts/account_form_screen.dart |
 | [RegulFormA](RegulFormA.dc.html) | « Solde actuel », un champ sous le nom | retenue | accounts/account_form_screen.dart |

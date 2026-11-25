@@ -97,9 +97,9 @@ Rien n'est codé avant la fin de cette phase.
 
 Ce qui manque dans l'app :
 
-- [ ] La vraie page Plus (planche `Plus`), à la place de la liste provisoire
-- [ ] La page Réglages, avec le choix de la langue après le premier lancement (planches `Reglages`, `ReglageLangue`)
-- [ ] À propos : version, politique de confidentialité, contact (planche `APropos`)
+- [x] La vraie page Plus (planche `Plus`), à la place de la liste provisoire
+- [x] La page Réglages, avec le choix de la langue après le premier lancement (planches `Reglages`, `ReglageLangue`)
+- [x] À propos : version, politique de confidentialité, contact (planche `APropos`)
 - [ ] Aperçu : l'écran d'attente reste, avec un texte qui annonce les graphiques
 - [ ] « Enregistrer » grisé : bouton actif et premier champ manquant en rouge (décidé le 24 novembre, planches à montrer)
 - [ ] Interrupteurs : toute la ligne réagit, partout

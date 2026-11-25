@@ -182,7 +182,7 @@ Une ligne par écran livré : la planche retenue (dans [boards/](boards/), avec 
 | Sauvegarde manuelle | `Sauvegarde`, `SauvW2`, `SauvW2Premiere`, `PlusAncienne` ; chiffrement : planche P1 (non exportée) ; mot de passe retenu : `MotDePasseRetenu-variantes.html`, variante A (25 nov.) | 24 nov. | 24 nov. | Règles d'écran (sauvegarde) ; « Ligne de réglage » |
 | Restauration | `RestauC1`, `RestauC1Err`, `RestauC2`, `RestauC3`, `RestauNeuf` | 24 nov. | 24 nov. | Règles d'écran (restaurer) ; PRODUCT, Restauration |
 
-Dessinés et validés, pas encore construits : la page Plus (`Plus`) et Réglages (`Reglages`, `ReglageLangue`), l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, À propos, Noter kibuo. Dans l'app, l'onglet Plus est une liste provisoire de lignes, et l'Aperçu un écran d'attente.
+Livrés le 25 novembre 2026 : Plus (`Plus`, `PlusAncienne`), Réglages (`Reglages`, `ReglageLangue`) et À propos (`APropos`), avec les écarts voulus écrits dans PRODUCT. Dessinés et validés, pas encore construits : l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, Noter kibuo. Dans l'app, l'Aperçu est un écran d'attente.
 
 ## Variantes écartées et pourquoi
 

@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/launch-auto-backup`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/about`, qui porte aussi `feat/plus-page` et `fix/lock-above-screens`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -16,11 +16,13 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 | 5 · Dettes, créances, projets | Dettes et créances en trois livraisons (liste, fiche et remboursements, autour : cartes de l'accueil, À traiter, rappels, réclamer), cartes de l'accueil aux marges unifiées, projets en trois livraisons (créer et lister ; fiche, mettre de côté, reprendre, objectif atteint, modifier, supprimer ; À traiter, rappels au rythme du plan, réservé dans Comptes) | 23 et 24 nov. |
 | 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier), sauvegardes automatiques, première livraison sur trois (interrupteur de l'écran Sauvegarde, sauvegarde à l'ouverture et en arrière-plan chaque semaine, 4 gardées, échecs signalés une fois par semaine) ; mot de passe retenu (variante A : ligne « Mot de passe » de l'écran Sauvegarde, sa feuille, la feuille manuelle « Chiffrée avec votre mot de passe », restauration qui l'essaie d'abord, copie d'avant restauration chiffrée) ; feuilles à 8 au-dessus du clavier ; « Sauvegardes automatiques » à l'étape 4 du premier lancement (variante 3 A) | 24 et 25 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 713 tests verts à la dernière fusion.
+| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app) | 25 nov. |
+
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 734 tests verts à la dernière fusion.
 
 ## Dessiné mais pas encore construit
 
-Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une liste provisoire de lignes : comptes, budgets, dettes, projets, récurrences, catégories, types, devises, début du mois, montants longs, rappels, sécurité, sauvegarde), la page **Réglages** et le choix de la langue après le premier lancement, l'**Aperçu** (écran d'attente, phase 7 « Tableaux de bord »), l'**export CSV**, Aide et support, À propos, Noter kibuo. Liste des planches : [design/DIRECTION.md](design/DIRECTION.md#écrans-livrés-et-leur-planche).
+Validés sur le canvas, absents de l'app : l'**Aperçu** (écran d'attente, version 0.2), l'**export CSV** (0.3), Aide et support (0.5), Noter kibuo (après la publication), et sur À propos, Conditions d'utilisation et Site web (avec le site public). Liste des planches : [design/DIRECTION.md](design/DIRECTION.md#écrans-livrés-et-leur-planche).
 
 ## En cours ou non fusionné
 
@@ -31,7 +33,7 @@ Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
-Prochaine case : **version 0.1, la vraie page Plus** (planche `Plus`).
+Prochaine case : **version 0.1, l'Aperçu** (l'écran d'attente reste, avec un texte qui annonce les graphiques).
 
 ## Décisions récentes
 
@@ -43,6 +45,8 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Les planches du canvas sont désormais aussi dans le dépôt ([design/boards/](design/boards/)), le 24 novembre (le choix du matin même était de les garder dans le canvas seulement).
 - Les règles des agents vivent dans `AGENTS.md`, que `CLAUDE.md` importe.
 - Le plan de publication (0.1 sur Google Play, 0.2 à 0.5, puis 1.0 stable) : [ROADMAP.md](ROADMAP.md), 25 novembre.
+- Plus, Réglages (Comptes et Catégories restés dans Plus), À propos et sa politique de confidentialité : PRODUCT, 25 novembre.
+- La mesure d'usage, seulement avec l'accord de l'utilisateur (PostHog envisagé), est notée sans version : [backlog/mesure-usage.md](backlog/mesure-usage.md).
 
 ## Questions ouvertes (attendent le propriétaire)
 
@@ -53,6 +57,8 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - **Pas vu sur un vrai téléphone** : ouvrir kibuo en touchant un `.kibuo` dans Fichiers ou WhatsApp (simulé sur l'émulateur par une intention `VIEW`, à vérifier sur le Poco X3).
 - **Vu seulement par les tests** : le code des actions importantes pour changer ou retirer le mot de passe des sauvegardes ; une restauration qui ouvre une sauvegarde chiffrée avec le mot de passe retenu sans le demander, et la copie d'avant chiffrée ; la langue rendue par une restauration ; la feuille de départ avec une sauvegarde chiffrée ; « J'ai une sauvegarde » sur l'écran des données illisibles ; une sauvegarde automatique due faite kibuo fermé (la sauvegarde à l'ouverture a, elle, été vue le 25 novembre sur le profil d'essai), et sa notification d'échec (l'émulateur refuse d'avancer l'horloge par adb ; le moteur de fond a été lancé et s'arrête proprement quand rien n'est dû).
 - **À surveiller sur le Poco X3** : que la tâche de fond de Xiaomi produise bien un `kibuo-auto-…` au bout d'une semaine sans ouvrir kibuo (installé le 24 novembre).
+- **À confirmer par le propriétaire** : le texte de la politique de confidentialité (rédigé le 25 novembre, à relire), et l'aide de la langue réduite à « Les nombres et les dates suivent la langue. ».
+- La boîte `contact@kibuo.app` n'existe pas tant que le domaine n'est pas réservé (BRAND).
 - Le message en bas de l'écran garde la coche menthe même pour un échec (sauvegarde manuelle et automatique) : une icône d'alerte serait plus juste, écart au kit à proposer.
 - Les sauvegardes faites avant le 24 novembre (soir) ne portent pas la langue.
 - Un interrupteur ne réagit que sur lui-même, pas sur toute sa ligne (partout ; décidé le 24 novembre que toute la ligne réagira, à construire).
