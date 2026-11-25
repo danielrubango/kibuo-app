@@ -7,4 +7,4 @@ const appVersion = '0.1.0';
 const appVersionDate = '2026-11-25';
 
 /// Where « Nous écrire » writes; no line while it is empty.
-const contactEmail = '';
+const contactEmail = 'contact@kibuo.app';

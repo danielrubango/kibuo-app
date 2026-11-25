@@ -48,8 +48,14 @@ void main() {
     // Not before the public site.
     expect(find.text('Conditions d’utilisation'), findsNothing);
     expect(find.text('Site web'), findsNothing);
-    // No address yet: no line to write to.
+    // No address: no line to write to.
     expect(find.text('Nous écrire'), findsNothing);
+  });
+
+  testWidgets('kibuo writes to contact@kibuo.app', (tester) async {
+    await show(tester, const AboutScreen());
+    expect(find.text('Nous écrire'), findsOneWidget);
+    expect(find.text('contact@kibuo.app'), findsOneWidget);
   });
 
   testWidgets('in English, the date follows the language', (tester) async {

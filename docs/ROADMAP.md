@@ -150,4 +150,6 @@ Dans cet ordre de départ (décidé le 25 novembre 2026), à revoir selon les re
 3. **iOS** ([backlog/ios.md](backlog/ios.md)).
 4. Ensuite : nouvelles langues ([backlog/langues.md](backlog/langues.md)), accès web local ([backlog/web-local.md](backlog/web-local.md)), coffre des cartes virtuelles ([backlog/cartes-virtuelles.md](backlog/cartes-virtuelles.md)), aller plus loin pays par pays ([backlog/aller-plus-loin.md](backlog/aller-plus-loin.md)), fonctionner en arrière-plan (rattrapage des récurrences et notifications sans ouvrir kibuo), couleurs des comptes.
 
+À placer avec le propriétaire : la mesure d'usage, seulement avec l'accord de l'utilisateur, notée le 25 novembre 2026 ([backlog/mesure-usage.md](backlog/mesure-usage.md)).
+
 Sujets détaillés dans [backlog/](backlog/).
