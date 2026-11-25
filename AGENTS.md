@@ -22,6 +22,7 @@ Code, identifiers and commits in English. Product docs, ADRs, glossary and backl
 - `tool/check.sh` runs formatting, analysis and tests; the pre-commit hook runs it.
 - Every Android-only API or plugin gets a line in `docs/backlog/ios.md` in the same change.
 - Validated design is the reference: any departure from a validated board, or any board whose logic looks wrong, is proposed to the owner and waits for an explicit yes. Measure the board before coding a screen.
+- Every release gets a version number, a name and release notes in French and English, proposed to the owner unasked before building the package, and waiting for his yes: [docs/releases/](docs/releases/README.md) (the owner's rule of 26 November 2026).
 - Never clear the app's data on the emulator without asking, except wiping a blocked emulator (see Commands). On the owner's phone, install as an update only; never uninstall.
 
 ## Git

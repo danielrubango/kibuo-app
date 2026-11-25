@@ -1,0 +1,13 @@
+# Versions publiées
+
+Chaque version publiée a ici sa fiche : son numéro, son nom et sa note de publication en français et en anglais. L'agent les propose au propriétaire à chaque nouvelle version, avant de construire le paquet, et attend son « oui » (règle du 26 novembre 2026).
+
+## Les règles
+
+- **Numéro** : `version` de `pubspec.yaml`, sous la forme `0.1.0+1`. La première partie (`0.1.0`) est celle que voient les utilisateurs, dans Google Play et dans À propos ; le nombre après `+` (code de version) monte de 1 à chaque paquet envoyé à Google Play, même pour un test, et ne redescend jamais.
+- **Nom** dans la Play Console : `v` suivi du numéro, par exemple `v0.1.0` (choix du propriétaire, 26 novembre 2026). Google Play ne le montre qu'à nous.
+- **Note de publication** (« Nouveautés » dans Google Play) : 500 caractères au plus par langue, proposée prête à coller, dans le bloc de la Play Console (`<fr-FR>` … `</fr-FR>`, puis `<en-US>` … `</en-US>`). Dite à l'utilisateur, en « vous », ce qu'il peut faire de nouveau, sans détail technique. Elle finit par l'adresse de contact.
+
+## Fiches
+
+- [v0.1.0](0.1.0.md) : nom et note validés le 26 novembre 2026.

@@ -27,10 +27,12 @@ Contrôlé le 9 novembre 2026 :
 | `kibuo.app` | Aucun enregistrement |
 | Noms proches | Kibu, Kiboo et Kibuu, hors finance ; une marque « kibubu » déposée aux États-Unis |
 | Revérifié le 17 novembre 2026 | `kibuo.com` et `kibuo.app` toujours libres ; aucune appli ni entreprise « kibuo » |
+| 26 novembre 2026 | `kibuo.app` acheté par le propriétaire |
 
 ## À faire avant publication
 
 - [ ] Chercher la marque auprès de l'OMPI, de l'EUIPO et de l'INPI
-- [ ] Réserver `kibuo.com` et `kibuo.app` (achat par le propriétaire)
+- [x] Réserver `kibuo.app` (acheté par le propriétaire le 26 novembre 2026)
+- [ ] Réserver aussi `kibuo.com` ? (à décider par le propriétaire)
 - [ ] Ouvrir la boîte `contact@kibuo.app` : À propos › Nous écrire y envoie depuis le 25 novembre 2026, et rien n'arrive tant que le domaine n'est pas pris
-- [ ] Fixer l'identifiant Android à partir du domaine réservé ; il ne pourra plus changer après publication. Provisoire depuis la création de l'application : `app.kibuo`, tiré de `kibuo.app`
+- [ ] Fixer l'identifiant Android à partir du domaine réservé ; il ne pourra plus changer après publication. `app.kibuo`, tiré de `kibuo.app`, est désormais adossé à un domaine qui nous appartient (26 novembre 2026)

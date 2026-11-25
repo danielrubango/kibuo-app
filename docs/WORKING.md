@@ -34,6 +34,7 @@ Les grosses étapes se livrent en plusieurs **livraisons** validées l'une aprè
 - **Commiter seul, vérifier, puis fusionner** : `git commit` dans sa propre commande, lire `git log -1` (le hook pre-commit peut refuser), puis seulement `git checkout main && git merge`. Ne jamais enchaîner commit et fusion dans une seule commande.
 - **Commiter dès qu'une étape tient debout**, sur sa branche, même avant validation : la validation décide de la fusion, pas du commit (leçon de la sauvegarde manuelle, [retro 2026-11-24](retros/2026-11-24-sauvegarde-manuelle.md)).
 - **Dates des tests à minuit** : une opération de test datée « aujourd'hui » se met à 00:00, jamais à 9 h (après minuit, une opération de 9 h est dans le futur et les filtres de date l'écartent).
+- **Chaque version publiée a son nom et sa note de publication, proposés par l'agent** (26 novembre 2026) : avant de construire le paquet d'une nouvelle version, lui proposer le numéro, le nom et la note en français et en anglais, sans qu'il ait à le demander, et attendre son « oui ». Règles et fiches : [releases/](releases/README.md).
 - **Rétro** quand il la demande (`/retro`) : un fichier `docs/retros/AAAA-MM-JJ-sujet.md` (ce qui a marché, ses retours, composants, leçons).
 
 ## Le canvas de design
