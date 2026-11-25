@@ -10,4 +10,4 @@ Chaque version publiée a ici sa fiche : son numéro, son nom et sa note de publ
 
 ## Fiches
 
-- [v0.1.0](0.1.0.md) : proposée le 26 novembre 2026, à valider.
+- [v0.1.0](0.1.0.md) : nom et note validés le 26 novembre 2026.
