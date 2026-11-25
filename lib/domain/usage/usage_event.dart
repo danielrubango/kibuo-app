@@ -48,6 +48,9 @@ class UsageEvent {
         'outcome': done ? 'done' : 'failed',
       });
 
+  /// kibuo opened, or back from the background.
+  static const opened = UsageEvent._('app_opened');
+
   /// A backup restored.
   static const restored = UsageEvent._('backup_restored');
 
@@ -69,6 +72,7 @@ class UsageEvent {
     UsageEvent.operationSaved(UsageOperation.expense, edited: true),
     UsageEvent.backup(automatic: true, done: true),
     UsageEvent.backup(automatic: false, done: false),
+    opened,
     restored,
     lockOn,
     UsageEvent.language('fr'),

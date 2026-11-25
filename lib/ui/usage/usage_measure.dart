@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:kibuo/data/key_vault.dart';
 import 'package:kibuo/domain/usage/usage_event.dart';
 
-/// Where the messages go. PostHog in the app, nothing in the tests.
+/// Where the messages go: PostHog through kibuo's own sender in the app
+/// (`PostHogSender`), nothing in the tests.
 abstract interface class UsageSink {
   /// Prepared once at start, sending only if [on].
   Future<void> start({required bool on});
@@ -19,6 +20,9 @@ abstract interface class UsageSink {
   Future<void> send(String name, Map<String, Object> properties);
 
   Future<void> sendError(RedactedError error, StackTrace? stack);
+
+  /// Sends what waits, now (kibuo going to the background).
+  Future<void> flush();
 }
 
 /// Sends nothing: the tests, or a build without a PostHog key.
@@ -42,6 +46,9 @@ class NoUsageSink implements UsageSink {
 
   @override
   Future<void> sendError(RedactedError error, StackTrace? stack) async {}
+
+  @override
+  Future<void> flush() async {}
 }
 
 /// « Aider à améliorer kibuo » (ADR 0013): the user's answer, kept on this
@@ -84,6 +91,7 @@ class UsageMeasure extends ChangeNotifier {
     };
     _loaded = true;
     await _safely(() => _sink.start(on: on));
+    track(UsageEvent.opened);
     notifyListeners();
   }
 
@@ -110,6 +118,9 @@ class UsageMeasure extends ChangeNotifier {
     if (!on || !usageEventAllowed(event.name, event.properties)) return;
     _safely(() => _sink.send(event.name, event.properties));
   }
+
+  /// Sends what waits (kibuo going to the background).
+  Future<void> flush() => on ? _safely(_sink.flush) : Future.value();
 
   /// A crash, as its type and its stack only.
   void error(Object error, StackTrace? stack) {

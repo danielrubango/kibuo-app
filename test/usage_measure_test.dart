@@ -232,6 +232,9 @@ class _Sink implements UsageSink {
   @override
   Future<void> sendError(RedactedError error, StackTrace? stack) async =>
       errors.add(error);
+
+  @override
+  Future<void> flush() async {}
 }
 
 class _NoBiometrics implements Biometrics {

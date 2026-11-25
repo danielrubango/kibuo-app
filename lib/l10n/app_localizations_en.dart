@@ -4379,5 +4379,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyStatsBody =>
-      'If you agree to “Help improve kibuo”, kibuo sends PostHog, in Europe, the screens opened, the actions taken (without their content) and the errors, with the versions of kibuo and Android, the phone model, the language, the country and the main currency’s code. They carry a random number, linked neither to you nor to the phone. Never your amounts, your names, your notes, your location or your IP address. You can stop at any time in Settings › Privacy: the number is then forgotten.';
+      'If you agree to “Help improve kibuo”, kibuo sends PostHog, in Europe, the screens opened, the actions taken (without their content) and the errors, with the versions of kibuo and Android, the phone’s maker and model, the language, the country and the main currency’s code. Depending on the measuring tool, they may also carry the mobile operator’s name, the time zone and a technical description of the phone. They carry a random number, linked neither to you nor to the phone. Never your amounts, your names, your notes, your location or your IP address. You can stop at any time in Settings › Privacy: the number and whatever was waiting to be sent are then forgotten.';
 }

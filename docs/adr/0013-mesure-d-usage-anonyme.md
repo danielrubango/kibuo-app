@@ -4,10 +4,11 @@ Décidé le 25 novembre 2026, pour la version 0.1. kibuo envoie des statistiques
 
 - **Accord d'abord.** Rien ne part avant un « oui » explicite. La question est posée une fois : au premier lancement (étape 4), ou par une feuille à la prochaine ouverture pour qui a déjà kibuo. Réglages › Confidentialité garde un interrupteur pour changer d'avis.
 - **Ce qui part.** Les écrans ouverts et les actions, sans leur contenu (« opération enregistrée, dépense », « budget créé », « sauvegarde faite ou échouée », « verrou activé »), la version de kibuo, la version d'Android, le modèle du téléphone, la langue, le pays du téléphone et le code de la devise principale. Jamais un montant, un libellé, un nom de compte ou de personne, une note, une pièce jointe, ni l'adresse IP.
-- **Un numéro tiré au sort.** Les messages portent un identifiant tiré au hasard sur le téléphone (celui de l'outil de PostHog, jamais remplacé par un identifiant de la personne), gardé sur le téléphone, sans lien avec le téléphone, le compte Google ou la personne. PostHog ne crée pas de fiche par personne (`personProfiles: never`). Retirer l'accord efface le numéro ; un nouvel accord en tire un autre, sans lien avec le précédent.
+- **Un numéro tiré au sort.** Les messages portent un identifiant tiré au hasard par kibuo (UUID v4), gardé dans le coffre du téléphone, sans lien avec le téléphone, le compte Google ou la personne. PostHog ne crée pas de fiche par personne (`$process_person_profile: false`). Retirer l'accord efface le numéro ; un nouvel accord en tire un autre, sans lien avec le précédent.
 - **Hébergement.** PostHog Cloud en Europe (`https://eu.i.posthog.com`), avec l'adresse IP jetée par le réglage du projet. Le compte et le projet sont au propriétaire ; la clé du projet est publique et rangée dans l'app.
 - **Erreurs.** Les plantages partent par le même outil et le même accord : le type de l'erreur et l'endroit du code, sans le message, qui pourrait contenir un montant ou un nom.
-- **Hors ligne.** Les messages attendent sur le téléphone et partent quand le réseau revient, dans une file limitée ; kibuo reste entièrement utilisable sans réseau.
+- **Hors ligne.** Les messages attendent sur le téléphone, dans un fichier, et partent par lots (toutes les 30 secondes, à 20 en attente, et quand kibuo passe en arrière-plan) ; au plus 500 attendent, les plus anciens partent d'abord ; kibuo reste entièrement utilisable sans réseau.
+- **Notre propre envoi** (décidé le 25 novembre 2026, après essai). Le module de PostHog pour Flutter ajoutait de lui-même, depuis sa partie Android, le nom de l'opérateur, le fuseau horaire, la signature technique du téléphone (« user agent ») et son nom de code, sans moyen de les retirer depuis kibuo ; il interrogeait aussi son serveur au démarrage. kibuo n'embarque donc pas ce module : il envoie lui-même ses messages à l'adresse `/batch/` de PostHog, avec exactement les champs listés (`lib/domain/usage/usage_message.dart`, `lib/ui/usage/posthog_sender.dart`). La politique de confidentialité mentionne quand même l'opérateur, le fuseau horaire et la description technique comme possibles, pour pouvoir changer d'outil sans la réécrire.
 
 ## Considered Options
 
@@ -16,6 +17,7 @@ Décidé le 25 novembre 2026, pour la version 0.1. kibuo envoie des statistiques
 - Identifier la personne (compte Google, e-mail, identifiant du téléphone) : écarté, chaque utilisateur serait traçable.
 - Sentry pour les erreurs : un second outil, un second texte dans la politique. Gardé pour plus tard si PostHog ne suffit pas ([backlog/erreurs-sentry.md](../backlog/erreurs-sentry.md)).
 - Héberger PostHog soi-même : plus de maîtrise, mais un serveur à tenir avant même la publication.
+- Le module officiel de PostHog pour Flutter (essayé le 25 novembre 2026) : moins de code à tenir, mais il envoie des champs hors de la liste et contacte son serveur au démarrage.
 
 ## Consequences
 

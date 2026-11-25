@@ -6874,7 +6874,7 @@ abstract class AppLocalizations {
   /// Usage measure (ADR 0013).
   ///
   /// In fr, this message translates to:
-  /// **'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le modèle du téléphone, la langue, le pays et le code de la devise principale. Ces envois portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro est alors oublié.'**
+  /// **'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le fabricant et le modèle du téléphone, la langue, le pays et le code de la devise principale. Selon l’outil de mesure, ces envois peuvent aussi porter le nom de l’opérateur mobile, le fuseau horaire et une description technique du téléphone. Ils portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.'**
   String get privacyStatsBody;
 }
 

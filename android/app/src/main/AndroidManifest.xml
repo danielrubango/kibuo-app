@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-    <!-- Only for « Aider à améliorer kibuo », sent after the user's yes (ADR 0013). -->
+    <!-- Only for « Aider à améliorer kibuo »: kibuo's own messages to PostHog, after the user's yes (ADR 0013). -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Reminders (PRODUCT: Rappels): scheduled again after a restart. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -21,8 +21,6 @@
         android:fullBackupOnly="true"
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules">
-        <!-- PostHog starts from Dart, with kibuo's settings (ADR 0013). -->
-        <meta-data android:name="com.posthog.posthog.AUTO_INIT" android:value="false" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
             <intent-filter>

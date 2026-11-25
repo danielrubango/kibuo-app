@@ -19,7 +19,7 @@ import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/start/first_launch.dart';
 import 'package:kibuo/ui/start/start_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
-import 'package:kibuo/ui/usage/posthog_sink.dart';
+import 'package:kibuo/ui/usage/posthog_sender.dart';
 import 'package:kibuo/ui/usage/usage_measure.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -33,7 +33,7 @@ void main() {
   // « Aider à améliorer kibuo » (ADR 0013): nothing leaves before a yes.
   usage.attach(
     vault: vault,
-    sink: postHogKey.isEmpty ? const NoUsageSink() : PostHogSink(),
+    sink: PostHogSender(vault: vault, folder: getApplicationSupportDirectory()),
   );
   final showError = FlutterError.onError;
   FlutterError.onError = (details) {

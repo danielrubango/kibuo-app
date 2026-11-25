@@ -78,6 +78,17 @@ class MainActivity : FlutterFragmentActivity() {
                     startActivity(Intent.createChooser(send, null))
                     return@setMethodCallHandler result.success(true)
                 }
+                // « Aider à améliorer kibuo » (ADR 0013): the phone's maker
+                // and model, and Android's version, nothing more.
+                if (call.method == "phone") {
+                    return@setMethodCallHandler result.success(
+                        mapOf(
+                            "maker" to Build.MANUFACTURER,
+                            "model" to Build.MODEL,
+                            "android" to Build.VERSION.RELEASE,
+                        ),
+                    )
+                }
                 // « Ouvrir les réglages du téléphone » when notifications are
                 // blocked (PRODUCT: Rappels).
                 if (call.method == "notificationSettings") {

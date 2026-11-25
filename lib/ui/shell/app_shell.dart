@@ -435,10 +435,12 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      usage.track(UsageEvent.opened);
       _catchUp();
       _autoBackup();
       _askUsage();
     }
+    if (state == AppLifecycleState.paused) usage.flush();
   }
 
   void _show(_Tab tab) {
