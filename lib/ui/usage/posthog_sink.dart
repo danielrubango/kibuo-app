@@ -4,7 +4,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 
 /// The PostHog project kibuo sends to (ADR 0013): its key is public, made to
 /// sit in the app. Empty: nothing is sent, PostHog is not even started.
-const postHogKey = '';
+const postHogKey = 'phc_xvJgDQP6CjzENvVk2a6gaqr3rUwGxP4nyTEFT4oaHCyx';
 
 /// PostHog Cloud in Europe.
 const postHogHost = 'https://eu.i.posthog.com';
