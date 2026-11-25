@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/about`, qui porte aussi `feat/plus-page` et `fix/lock-above-screens`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `feat/usage-measure`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -16,9 +16,9 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 | 5 · Dettes, créances, projets | Dettes et créances en trois livraisons (liste, fiche et remboursements, autour : cartes de l'accueil, À traiter, rappels, réclamer), cartes de l'accueil aux marges unifiées, projets en trois livraisons (créer et lister ; fiche, mettre de côté, reprendre, objectif atteint, modifier, supprimer ; À traiter, rappels au rythme du plan, réservé dans Comptes) | 23 et 24 nov. |
 | 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier), sauvegardes automatiques, première livraison sur trois (interrupteur de l'écran Sauvegarde, sauvegarde à l'ouverture et en arrière-plan chaque semaine, 4 gardées, échecs signalés une fois par semaine) ; mot de passe retenu (variante A : ligne « Mot de passe » de l'écran Sauvegarde, sa feuille, la feuille manuelle « Chiffrée avec votre mot de passe », restauration qui l'essaie d'abord, copie d'avant restauration chiffrée) ; feuilles à 8 au-dessus du clavier ; « Sauvegardes automatiques » à l'étape 4 du premier lancement (variante 3 A) | 24 et 25 nov. |
 
-| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app) | 25 nov. |
+| 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app), mesure d'usage anonyme avec accord (feuille « Aider à améliorer kibuo ? », interrupteur dans Confidentialité, envoi par kibuo lui-même à PostHog Europe, ADR 0013), « Dollar américain » | 25 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 734 tests verts à la dernière fusion.
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 766 tests verts à la dernière fusion.
 
 ## Dessiné mais pas encore construit
 
