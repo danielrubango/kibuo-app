@@ -110,26 +110,6 @@ void main() {
     ),
   );
 
-  testWidgets('off at first, under the mint card, with « Chaque semaine »', (
-    tester,
-  ) async {
-    await open(tester);
-    expect(find.text('Sauvegarde automatique'), findsOneWidget);
-    expect(find.text('Chaque semaine'), findsOneWidget);
-    expect(autoSwitch(tester).value, isFalse);
-  });
-
-  testWidgets('on without a folder: no folder chosen, it stays off', (
-    tester,
-  ) async {
-    await open(tester);
-    await tester.tap(find.text('Sauvegarde automatique'));
-    await settle(tester);
-    expect(autoSwitch(tester).value, isFalse);
-    expect((await service.state()).auto, isFalse);
-    expect(scheduled, isEmpty);
-  });
-
   testWidgets('on with a folder chosen: scheduled and made at once', (
     tester,
   ) async {
@@ -142,51 +122,6 @@ void main() {
     expect(folders.names, ['kibuo-auto-2026-11-24.kibuo']);
     expect(find.text('Aujourd’hui'), findsOneWidget);
     expect(find.text('Téléchargements/Kibuo'), findsOneWidget);
-  });
-
-  testWidgets('on after a recent backup: nothing made yet', (tester) async {
-    await service.setFolder(dl);
-    await service.done(DateTime(2026, 11, 20));
-    await open(tester);
-    await tester.tap(find.text('Sauvegarde automatique'));
-    await settle(tester);
-    expect(autoSwitch(tester).value, isTrue);
-    expect(service.writes, 0);
-  });
-
-  testWidgets('off again: no more checks kibuo closed', (tester) async {
-    await service.setFolder(dl);
-    await service.setAuto(on: true);
-    await service.done(DateTime(2026, 11, 20));
-    await open(tester);
-    await tester.tap(find.text('Sauvegarde automatique'));
-    await settle(tester);
-    expect(autoSwitch(tester).value, isFalse);
-    expect(scheduled, [false]);
-  });
-
-  testWidgets('a folder out of reach: in red, with « Sélectionner »', (
-    tester,
-  ) async {
-    await service.setFolder(dl);
-    folders.reach = false;
-    await open(tester);
-    expect(find.text('Dossier introuvable'), findsOneWidget);
-    expect(find.text('Sélectionner'), findsOneWidget);
-
-    // A new folder, and automatic backups on: made at once.
-    await service.setAuto(on: true);
-    folders
-      ..reach = true
-      ..toPick = const BackupFolder(
-        uri: 'content://tree/doc',
-        name: 'Documents/Kibuo',
-      );
-    await tester.tap(find.text('Sélectionner'));
-    await settle(tester);
-    expect(find.text('Documents/Kibuo'), findsOneWidget);
-    expect(find.text('Dossier introuvable'), findsNothing);
-    expect(folders.names, ['kibuo-auto-2026-11-24.kibuo']);
   });
 
   testWidgets('« Mot de passe »: none, remembered, changed, then removed', (

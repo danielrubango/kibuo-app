@@ -17,6 +17,7 @@ Code, identifiers and commits in English. Product docs, ADRs, glossary and backl
 - Domain logic lives in pure Dart with no Flutter import, so it is portable to iOS and web.
 - Money is stored as integers in the currency's minor unit.
 - Critical logic ships with automated tests written first: balances, conversions, recurrences, backup and restore, database migrations.
+- Test only what matters (the owner's rule of 25 November 2026): business rules, data that could lose or distort money or records (balances, conversions, recurrences, backup, restore, encryption, PIN, recovery, migrations), the privacy promises, and one journey per feature through its result (« I save an expense, the balance drops »). Never test a text's exact wording, a spacing, a colour, an icon, an animation, a kit component or a setting merely saved and read back: the owner checks appearance on the emulator and on the phone. `tool/capture_screens_test.dart` is a screenshot tool, not a test.
 - Changing a table: bump `KibuoDatabase.currentSchema` in `lib/data/database.dart`, run `dart run drift_dev make-migrations`, and write the migration test against the saved schemas first.
 - `tool/check.sh` runs formatting, analysis and tests; the pre-commit hook runs it.
 - Every Android-only API or plugin gets a line in `docs/backlog/ios.md` in the same change.

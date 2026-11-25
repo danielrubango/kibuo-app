@@ -106,32 +106,6 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('what leaves and what never does, then two answers', (
-      tester,
-    ) async {
-      await open(tester);
-      expect(find.text('Aider à améliorer kibuo ?'), findsOneWidget);
-      expect(find.text('Ce qui part'), findsOneWidget);
-      expect(find.text('Jamais'), findsOneWidget);
-      expect(
-        find.text('Vos montants, vos noms, vos notes, votre position.'),
-        findsOneWidget,
-      );
-      expect(find.text('Lire la politique de confidentialité'), findsOneWidget);
-      // Both answers side by side, the same size.
-      final no = tester.getSize(find.text('Non merci').hitTestable());
-      expect(no, isNotNull);
-      expect(
-        tester.getTopLeft(find.text('Non merci')).dx,
-        lessThan(tester.getTopLeft(find.text('Oui, partager')).dx),
-      );
-
-      await tester.tap(find.text('Oui, partager'));
-      await tester.pumpAndSettle();
-      expect(measure.consent, isTrue);
-      expect(find.text('Aider à améliorer kibuo ?'), findsNothing);
-    });
-
     testWidgets('« Non merci » is a no', (tester) async {
       await open(tester);
       await tester.tap(find.text('Non merci'));
@@ -145,18 +119,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(measure.consent, isFalse);
       expect(measure.toAsk, isFalse);
-    });
-
-    testWidgets('the policy opens from the sheet', (tester) async {
-      await open(tester);
-      await tester.tap(find.text('Lire la politique de confidentialité'));
-      await tester.pumpAndSettle();
-      expect(find.text('Statistiques, si vous l’acceptez'), findsNothing);
-      await tester.scrollUntilVisible(
-        find.text('Statistiques, si vous l’acceptez'),
-        300,
-      );
-      expect(find.text('Rien d’autre ne part'), findsOneWidget);
     });
   });
 

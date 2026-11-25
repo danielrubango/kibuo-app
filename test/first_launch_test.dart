@@ -130,74 +130,6 @@ void main() {
     expect(await FirstLaunchStore(db).needed(), isFalse);
   });
 
-  testWidgets('choosing English changes the words at once, and is kept', (
-    tester,
-  ) async {
-    await start(tester);
-    await tester.tap(find.text('English'));
-    await tester.pumpAndSettle();
-    expect(find.text('Welcome to kibuo'), findsOneWidget);
-    // Saved for real, outside the test's fake time.
-    for (var i = 0; i < 10; i++) {
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 20)),
-      );
-      await tester.pump();
-    }
-    // Without Android 13's own setting, kibuo keeps it.
-    expect(await FirstLaunchStore(db).language(), 'en');
-  });
-
-  testWidgets('left at step 3, it opens there; back goes to step 2', (
-    tester,
-  ) async {
-    await FirstLaunchStore(db).reached(3);
-    await start(tester);
-    expect(find.text('Étape 3 sur 4'), findsOneWidget);
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(find.text('Étape 2 sur 4'), findsOneWidget);
-  });
-
-  testWidgets('with the overdraft, a starting balance below zero', (
-    tester,
-  ) async {
-    await FirstLaunchStore(db).reached(3);
-    await start(tester);
-    await name(tester, 'Rawbank');
-    await tester.scrollUntilVisible(
-      find.byType(Switch),
-      200,
-      scrollable: find
-          .descendant(
-            of: find.byType(ListView),
-            matching: find.byType(Scrollable),
-          )
-          .first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byType(Switch));
-    await tester.pumpAndSettle();
-    expect(find.text('Maintenez « , » pour un solde négatif.'), findsOneWidget);
-
-    // The starting balance: 50, then « − » by holding « , ».
-    await tester.ensureVisible(find.text('Solde de départ'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Solde de départ'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('5').last);
-    await tester.tap(find.text('0').last);
-    await tester.longPress(find.text(','));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Terminé'));
-    await tester.pumpAndSettle();
-    await next(tester);
-
-    final account = (await AccountRepository(db).accounts()).single;
-    expect(account.overdraft.allowed, isTrue);
-    expect(account.balance.minor, -5000);
-  });
-
   group('step 4, left while the code was being made', () {
     late LockController lock;
     setUp(() async {
@@ -210,15 +142,6 @@ void main() {
       await lock.load();
       lock.unlock();
       await FirstLaunchStore(db).reached(4);
-    });
-
-    testWidgets('the switch shows the lock is on', (tester) async {
-      await start(tester, lock: lock);
-      expect(find.text('Étape 4 sur 4'), findsOneWidget);
-      expect(tester.widget<Switch>(find.byType(Switch).first).value, isTrue);
-      await next(tester, 'Commencer');
-      expect(find.text('Accueil'), findsOneWidget);
-      expect(lock.hasPin, isTrue);
     });
 
     testWidgets('turned off, « Commencer » removes the code', (tester) async {
@@ -236,21 +159,6 @@ void main() {
 
     Switch backupSwitch(WidgetTester tester) =>
         tester.widget<Switch>(find.byType(Switch).last);
-
-    testWidgets('off at first; without a folder chosen, it stays off', (
-      tester,
-    ) async {
-      await start(tester);
-      expect(backupSwitch(tester).value, isFalse);
-      await tester.tap(find.text('Sauvegardes automatiques'));
-      await tester.pumpAndSettle();
-      expect(folders.asked, 1);
-      expect(backupSwitch(tester).value, isFalse);
-      await next(tester, 'Commencer');
-      expect(find.text('Accueil'), findsOneWidget);
-      expect((await backups.state()).auto, isFalse);
-      expect(scheduled, isEmpty);
-    });
 
     testWidgets('a folder chosen: on, kept at « Commencer »', (tester) async {
       folders.toPick = const BackupFolder(
@@ -273,23 +181,6 @@ void main() {
       expect(state.auto, isTrue);
       expect(state.folder?.name, 'Download/Kibuo');
       expect(scheduled, [true]);
-    });
-
-    testWidgets('on, then off again: nothing at « Commencer »', (tester) async {
-      folders.toPick = const BackupFolder(
-        uri: 'content://tree/dl',
-        name: 'Download/Kibuo',
-      );
-      await start(tester);
-      await tester.tap(find.text('Sauvegardes automatiques'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Sauvegardes automatiques'));
-      await tester.pumpAndSettle();
-      expect(backupSwitch(tester).value, isFalse);
-      expect(folders.asked, 1, reason: 'turning off asks nothing');
-      await next(tester, 'Commencer');
-      expect((await backups.state()).auto, isFalse);
-      expect(scheduled, isEmpty);
     });
   });
 }

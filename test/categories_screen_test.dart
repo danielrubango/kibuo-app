@@ -47,32 +47,6 @@ void main() {
     matching: find.byType(TextField),
   );
 
-  testWidgets('the provided categories, in the app’s language', (tester) async {
-    await start(tester);
-    expect(find.text('Repas'), findsOneWidget);
-    expect(find.text('2 sous-catégories'), findsWidgets);
-
-    await tester.tap(find.text('Revenus'));
-    await tester.pumpAndSettle();
-    expect(find.text('Salaire'), findsOneWidget);
-  });
-
-  testWidgets('in English, the provided names are English', (tester) async {
-    await start(tester, locale: const Locale('en'));
-    expect(find.text('Food'), findsOneWidget);
-  });
-
-  testWidgets('opening a category shows its subcategories', (tester) async {
-    await start(tester);
-    expect(find.text('Taxi'), findsNothing);
-
-    await tester.tap(find.bySemanticsLabel('Transport · 5 sous-catégories'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Taxi'), findsOneWidget);
-    expect(find.text('Ajouter une sous-catégorie'), findsOneWidget);
-  });
-
   testWidgets('adding a category, then a subcategory under it', (tester) async {
     await start(tester);
 
@@ -103,44 +77,5 @@ void main() {
 
     final church = (await repo.categories(CategoryKind.out)).last;
     expect(church.subs.single.name, 'Offrande');
-  });
-
-  testWidgets('touching a category edits it; it can be removed', (
-    tester,
-  ) async {
-    await start(tester);
-
-    await tester.tap(find.text('Repas'));
-    await tester.pumpAndSettle();
-    expect(find.text('Modifier la catégorie'), findsOneWidget);
-    expect(find.text('Sa sous-catégorie est retirée avec elle.'), findsNothing);
-    expect(
-      find.textContaining('Ses 2 sous-catégories sont retirées avec elle.'),
-      findsOneWidget,
-    );
-    await tester.enterText(field(), 'Nourriture');
-    await tester.tap(find.text('Enregistrer'));
-    await tester.pumpAndSettle();
-    expect(find.text('Nourriture'), findsOneWidget);
-
-    await tester.tap(find.text('Nourriture'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Retirer la catégorie'));
-    await tester.pumpAndSettle();
-    expect(find.text('Supprimer Nourriture ?'), findsOneWidget);
-    await tester.tap(find.text('Supprimer la catégorie'));
-    await tester.pumpAndSettle();
-    expect(find.text('Nourriture'), findsNothing);
-  });
-
-  testWidgets('the icons fill the width, six per row', (tester) async {
-    await start(tester);
-    await tester.tap(find.text('Ajouter une catégorie'));
-    await tester.pumpAndSettle();
-
-    final screen = tester.getRect(find.byType(CategoryFormScreen));
-    final first = tester.getRect(find.bySemanticsLabel('forkKnife'));
-    expect(first.left - screen.left, closeTo(16, 1));
-    expect(first.width * 6 + 8 * 5, closeTo(screen.width - 32, 1));
   });
 }
