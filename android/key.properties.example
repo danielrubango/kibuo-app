@@ -1,0 +1,6 @@
+# Copy to android/key.properties (ignored by git) once the upload key exists.
+# The key itself stays outside the repository; keep a copy of both safe.
+storeFile=/Users/mac/kibuo-keys/kibuo-upload.jks
+storePassword=
+keyAlias=upload
+keyPassword=
