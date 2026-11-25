@@ -175,6 +175,35 @@ void main() {
     },
   );
 
+  testWidgets('back from another tab, the category is still there', (
+    tester,
+  ) async {
+    await start(tester);
+    await type(tester, '5');
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+    await chooseTaxi(tester);
+
+    // Revenu by mistake, then back to Dépense (owner, 25 November 2026).
+    await tester.tap(find.text('Revenu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Transport › Taxi'), findsNothing);
+    bool anyRed() => tester
+        .widgetList<MissingUnderline>(find.byType(MissingUnderline))
+        .any((m) => m.missing);
+    expect(anyRed(), isFalse, reason: 'another tab: no red yet');
+    await tester.tap(find.text('Dépense'));
+    await tester.pumpAndSettle();
+    expect(find.text('Transport › Taxi'), findsOneWidget);
+    expect(anyRed(), isFalse);
+
+    await tester.tap(find.text('Enregistrer'));
+    await tester.pumpAndSettle();
+    expect((await data.transactions.all()).single.categoryId, 'default-taxi');
+  });
+
   testWidgets('paid in francs at today’s rate, then with fees', (tester) async {
     await data.currencies.addCurrency('CDF');
     await data.currencies.setRate('USD', 'CDF', RateValue.parse('2800'));

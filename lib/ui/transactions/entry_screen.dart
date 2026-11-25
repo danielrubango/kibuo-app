@@ -145,6 +145,11 @@ class _EntryScreenState extends State<EntryScreen> {
   CurrencyInfo? _paidCurrency;
   CategoryInfo? _category;
 
+  /// What was chosen under each tab, kept when switching away by mistake
+  /// and shown again on coming back (owner, 25 November 2026).
+  final _keptCategory = <EntryKind, CategoryInfo>{};
+  AccountInfo? _keptTo;
+
   // A transfer's receiving account (none chosen at first: PRODUCT).
   AccountInfo? _to;
   CurrencyInfo? _toCurrency;
@@ -534,6 +539,12 @@ class _EntryScreenState extends State<EntryScreen> {
 
   Future<void> _switchKind(EntryKind kind) async {
     if (kind == _kind) return;
+    // Keep what this tab had: coming back shows it again.
+    if (_transfer) {
+      _keptTo = _to;
+    } else if (_category case final c?) {
+      _keptCategory[_kind] = c;
+    }
     if (kind == EntryKind.transfer) {
       // Two accounts first (PRODUCT), then back to this entry.
       if (!await transferAccountsReady(context, widget.data)) return;
@@ -545,19 +556,30 @@ class _EntryScreenState extends State<EntryScreen> {
         _category = null;
         _rateTyped = false;
         _rateText = '';
+        // Another tab: nothing in red until « Enregistrer » again.
+        _tried = false;
       });
       // Sent in the sending account's currency.
       await _setAccount(_account ?? accounts.first);
+      final kept = _keptTo;
+      if (kept != null && kept.id != _account?.id && mounted) {
+        final still = _accounts.where((a) => a.id == kept.id).firstOrNull;
+        if (still != null) await _setTo(still);
+      }
       return;
     }
     final categories = await widget.data.categories.categories(kind.category);
     if (!mounted) return;
+    final kept = _keptCategory[kind];
     setState(() {
       _kind = kind;
       _categories = categories;
-      _category = null;
+      _category = kept == null
+          ? null
+          : categories.where((c) => c.id == kept.id).firstOrNull ?? kept;
       _to = null;
       _toCurrency = null;
+      _tried = false;
     });
     await _loadToday();
   }
