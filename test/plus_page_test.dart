@@ -118,8 +118,10 @@ void main() {
       expect(find.text('Français · USD · début le 1er'), findsOneWidget);
       expect(find.text('Sauvegarde et export'), findsOneWidget);
       expect(find.text('Aucune sauvegarde'), findsOneWidget);
-      // The card of Aide, À propos and Noter waits for its lines.
+      // Only À propos in the last card: Aide and Noter come later.
+      expect(find.text('À propos de kibuo'), findsOneWidget);
       expect(find.text('Aide et support'), findsNothing);
+      expect(find.text('Noter kibuo'), findsNothing);
       expect(
         find.text('kibuo 0.1.0 · Vos données restent sur ce téléphone'),
         findsOneWidget,
@@ -129,7 +131,10 @@ void main() {
       await settle(tester);
       await tester.tap(find.text('Réglages'));
       await settle(tester);
-      expect(opened, [PlusEntry.budgets, PlusEntry.settings]);
+      await tester.ensureVisible(find.text('À propos de kibuo'));
+      await tester.tap(find.text('À propos de kibuo'));
+      await settle(tester);
+      expect(opened, [PlusEntry.budgets, PlusEntry.settings, PlusEntry.about]);
     });
 
     testWidgets('an old backup: amber, with its dot', (tester) async {

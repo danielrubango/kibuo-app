@@ -4273,4 +4273,108 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get startRestoreAction => 'Restaurer';
+
+  @override
+  String get plusAbout => 'À propos de kibuo';
+
+  @override
+  String get aboutTitle => 'À propos';
+
+  @override
+  String aboutVersion(String version, String date) {
+    return 'Version $version · $date';
+  }
+
+  @override
+  String get aboutTagline =>
+      'Vos comptes, vos dettes et vos projets, au même endroit. Vos données restent sur ce téléphone.';
+
+  @override
+  String get aboutPrivacy => 'Politique de confidentialité';
+
+  @override
+  String get aboutPrivacyDetail => 'Ce que kibuo garde, et où';
+
+  @override
+  String get aboutLicences => 'Licences';
+
+  @override
+  String get aboutLicencesDetail => 'Les logiciels libres utilisés';
+
+  @override
+  String get aboutWrite => 'Nous écrire';
+
+  @override
+  String get aboutMadeWithCare => 'Fait avec soin';
+
+  @override
+  String aboutNoMailApp(String email) {
+    return 'Aucune appli d’e-mail sur ce téléphone. Écrivez-nous à $email.';
+  }
+
+  @override
+  String privacyUpdated(String date) {
+    return 'Mise à jour le $date';
+  }
+
+  @override
+  String get privacyIntro =>
+      'kibuo est un carnet de comptes qui reste sur votre téléphone. Voici ce qu’il garde, où, et ce qu’il ne fait pas.';
+
+  @override
+  String get privacyKeepsTitle => 'Ce que kibuo garde';
+
+  @override
+  String get privacyKeepsBody =>
+      'Ce que vous y notez : comptes, opérations et leurs pièces jointes, catégories, budgets, récurrences, dettes et créances, projets, devises et taux, rappels, et vos réglages. kibuo ne demande ni votre nom, ni votre numéro, ni votre position, et ne lit ni vos contacts ni vos SMS.';
+
+  @override
+  String get privacyWhereTitle => 'Où';
+
+  @override
+  String get privacyWhereBody =>
+      'Sur ce téléphone seulement, dans une base chiffrée. Sa clé est gardée par Android, dans le coffre sécurisé du téléphone.';
+
+  @override
+  String get privacyNothingTitle => 'Rien ne part';
+
+  @override
+  String get privacyNothingBody =>
+      'kibuo n’a pas accès à Internet : il ne peut rien envoyer, ni à nous ni à personne. Pas de compte, pas de publicité, pas de mesure d’audience.';
+
+  @override
+  String get privacyBackupsTitle => 'Vos sauvegardes';
+
+  @override
+  String get privacyBackupsBody =>
+      'Une sauvegarde est un fichier que vous rangez où vous voulez. Avec un mot de passe, elle est chiffrée ; sans mot de passe, quiconque a le fichier peut la lire. Rangée dans un service en ligne ou partagée, elle suit les règles de ce service.';
+
+  @override
+  String get privacyAndroidTitle => 'La copie par Android';
+
+  @override
+  String get privacyAndroidBody =>
+      'Une fois le code de récupération créé, Android peut copier les données de kibuo dans votre sauvegarde Google ou vers un nouveau téléphone. Elles y restent chiffrées et ne s’ouvrent qu’avec le code de récupération. Vous pouvez l’empêcher dans Réglages › Code de récupération.';
+
+  @override
+  String get privacyDeviceTitle => 'Empreinte et photos';
+
+  @override
+  String get privacyDeviceBody =>
+      'L’empreinte ou le visage sont vérifiés par Android : kibuo ne les voit jamais. L’appareil photo et la galerie ne servent que lorsque vous ajoutez une pièce jointe.';
+
+  @override
+  String get privacyEraseTitle => 'Effacer vos données';
+
+  @override
+  String get privacyEraseBody =>
+      'Désinstaller kibuo, ou effacer ses données dans les réglages d’Android, efface tout ce qu’il garde sur ce téléphone. Vos sauvegardes restent là où vous les avez rangées.';
+
+  @override
+  String get privacyContactTitle => 'Une question ?';
+
+  @override
+  String privacyContactBody(String email) {
+    return 'Écrivez-nous à $email.';
+  }
 }

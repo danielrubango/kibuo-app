@@ -10,6 +10,7 @@ import 'package:kibuo/ui/device_country.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/lock_gate.dart';
+import 'package:kibuo/ui/more/licences.dart';
 import 'package:kibuo/ui/reminders/notifier.dart';
 import 'package:kibuo/ui/shell/app_shell.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
@@ -23,6 +24,7 @@ final navigator = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  registerBundledLicences();
   const vault = SecureKeyVault();
   final folder = getApplicationSupportDirectory();
   final lock = LockController(

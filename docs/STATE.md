@@ -25,7 +25,7 @@ Validés sur le canvas, absents de l'app : la page **Plus** (l'onglet montre une
 ## En cours ou non fusionné
 
 - Aucune branche de code en attente : toutes sont fusionnées dans `main`.
-- Sur l'émulateur : un utilisateur Android d'essai `kibuo-essai` (id 10), arrêté. Ses données de test ont été effacées le 25 novembre (accord du propriétaire) pour rejouer le premier lancement : il a maintenant un compte « Essai » et la sauvegarde automatique dans Download/Kibuo. Gardé jusqu'à la fin de la phase 6 (voir [WORKING.md](WORKING.md)).
+- Sur l'émulateur : plus d'utilisateur d'essai (`kibuo-essai` supprimé le 25 novembre, accord du propriétaire, pour libérer l'émulateur) ; s'il bloque encore après un redémarrage, il peut être réinitialisé.
 
 ## Prochaines étapes
 
@@ -67,12 +67,13 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ### Émulateur et Android
 
-- **Émulateur saturé** (ANR, écran de démarrage figé, une capture qui prend une minute) : le redémarrer. `adb -s emulator-5554 emu kill`, puis `~/Library/Android/sdk/emulator/emulator -avd Pixel_10_Kibuo -no-snapshot-save &`, attendre `getprop sys.boot_completed` = 1. Deux utilisateurs Android actifs à la fois suffisent à le saturer : arrêter l'utilisateur d'essai après usage (`am stop-user 10`).
+- **Émulateur saturé** (ANR, écran de démarrage figé, une capture qui prend une minute) : le redémarrer. `adb -s emulator-5554 emu kill`, puis `~/Library/Android/sdk/emulator/emulator -avd Pixel_10_Kibuo -no-snapshot-save &`, attendre `getprop sys.boot_completed` = 1. Deux utilisateurs Android actifs à la fois suffisent à le saturer : supprimer un utilisateur d'essai après usage (`pm remove-user <id>`). S'il bloque encore après un redémarrage : `emulator -avd Pixel_10_Kibuo -wipe-data` (accord du propriétaire du 25 novembre 2026, ses données sont perdues).
 - **Après `install -r`, l'app rouvre l'écran où elle était** : prendre une capture avant de toucher, les coordonnées d'un écran ne valent pas pour un autre.
 - **Utilisateur d'essai derrière l'écran de verrouillage** (capture noire, focus sur `NotificationShade`) : `adb shell input keyevent 224`, `wm dismiss-keyguard`, `input keyevent 82`, puis un glissement vers le haut.
-- **Déposer un fichier chez l'utilisateur d'essai** : `adb push` vers `/storage/emulated/10/` est refusé. Pousser dans `/data/local/tmp/`, `chmod 644`, puis l'ouvrir dans kibuo : `adb shell am start --user 10 -a android.intent.action.VIEW -d file:///data/local/tmp/x.kibuo -t application/octet-stream -n app.kibuo/.MainActivity`.
+- **Déposer un fichier chez l'utilisateur d'essai** : `adb push` vers `/storage/emulated/<id>/` est refusé. Pousser dans `/data/local/tmp/`, `chmod 644`, puis l'ouvrir dans kibuo : `adb shell am start --user <id> -a android.intent.action.VIEW -d file:///data/local/tmp/x.kibuo -t application/octet-stream -n app.kibuo/.MainActivity`.
 - **Langue sur Android 13+** : la langue choisie est gardée par Android (`setAndroidAppLanguage`), pas dans la base ; d'où sa présence dans le résumé du fichier de sauvegarde.
 - **Lancer la sauvegarde de fond à la main** : `adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler app.kibuo <id>` (l'id se lit dans `dumpsys jobscheduler`, ligne `#AutoBackupWorker#`). Avant l'échéance, WorkManager la repousse (« executed before schedule ») ; éteindre puis rallumer l'interrupteur la relance aussitôt. `cmd time_detector suggest_manual_time` est refusé au shell : on ne peut pas avancer l'horloge par adb.
+- **kibuo n'a pas accès à Internet** dans la version publiée (vérifié le 25 novembre 2026 dans le manifeste fusionné de `release` ; seules les versions `debug` et `profile` l'ont, pour les outils de Flutter). La politique de confidentialité le dit (« Rien ne part ») : après tout nouveau module, relancer `./gradlew :app:processReleaseManifest` dans `android/` et vérifier qu'aucun `android.permission.INTERNET` n'apparaît dans `build/app/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml`.
 - **Coordonnées adb** : les captures sont réduites à 540 de large (×2 environ pour taper) ; avec deux appareils branchés, toujours `-s`.
 
 ### Base chiffrée (SQLite3 Multiple Ciphers)

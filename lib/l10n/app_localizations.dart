@@ -6618,6 +6618,180 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Restaurer'**
   String get startRestoreAction;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos de kibuo'**
+  String get plusAbout;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get aboutTitle;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version {version} · {date}'**
+  String aboutVersion(String version, String date);
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos comptes, vos dettes et vos projets, au même endroit. Vos données restent sur ce téléphone.'**
+  String get aboutTagline;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get aboutPrivacy;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que kibuo garde, et où'**
+  String get aboutPrivacyDetail;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Licences'**
+  String get aboutLicences;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les logiciels libres utilisés'**
+  String get aboutLicencesDetail;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous écrire'**
+  String get aboutWrite;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait avec soin'**
+  String get aboutMadeWithCare;
+
+  /// À propos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune appli d’e-mail sur ce téléphone. Écrivez-nous à {email}.'**
+  String aboutNoMailApp(String email);
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise à jour le {date}'**
+  String privacyUpdated(String date);
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'kibuo est un carnet de comptes qui reste sur votre téléphone. Voici ce qu’il garde, où, et ce qu’il ne fait pas.'**
+  String get privacyIntro;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que kibuo garde'**
+  String get privacyKeepsTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que vous y notez : comptes, opérations et leurs pièces jointes, catégories, budgets, récurrences, dettes et créances, projets, devises et taux, rappels, et vos réglages. kibuo ne demande ni votre nom, ni votre numéro, ni votre position, et ne lit ni vos contacts ni vos SMS.'**
+  String get privacyKeepsBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Où'**
+  String get privacyWhereTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur ce téléphone seulement, dans une base chiffrée. Sa clé est gardée par Android, dans le coffre sécurisé du téléphone.'**
+  String get privacyWhereBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien ne part'**
+  String get privacyNothingTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'kibuo n’a pas accès à Internet : il ne peut rien envoyer, ni à nous ni à personne. Pas de compte, pas de publicité, pas de mesure d’audience.'**
+  String get privacyNothingBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos sauvegardes'**
+  String get privacyBackupsTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Une sauvegarde est un fichier que vous rangez où vous voulez. Avec un mot de passe, elle est chiffrée ; sans mot de passe, quiconque a le fichier peut la lire. Rangée dans un service en ligne ou partagée, elle suit les règles de ce service.'**
+  String get privacyBackupsBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'La copie par Android'**
+  String get privacyAndroidTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Une fois le code de récupération créé, Android peut copier les données de kibuo dans votre sauvegarde Google ou vers un nouveau téléphone. Elles y restent chiffrées et ne s’ouvrent qu’avec le code de récupération. Vous pouvez l’empêcher dans Réglages › Code de récupération.'**
+  String get privacyAndroidBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Empreinte et photos'**
+  String get privacyDeviceTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'L’empreinte ou le visage sont vérifiés par Android : kibuo ne les voit jamais. L’appareil photo et la galerie ne servent que lorsque vous ajoutez une pièce jointe.'**
+  String get privacyDeviceBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer vos données'**
+  String get privacyEraseTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Désinstaller kibuo, ou effacer ses données dans les réglages d’Android, efface tout ce qu’il garde sur ce téléphone. Vos sauvegardes restent là où vous les avez rangées.'**
+  String get privacyEraseBody;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Une question ?'**
+  String get privacyContactTitle;
+
+  /// Privacy policy (À propos).
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrivez-nous à {email}.'**
+  String privacyContactBody(String email);
 }
 
 class _AppLocalizationsDelegate

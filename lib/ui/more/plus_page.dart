@@ -24,11 +24,12 @@ enum PlusEntry {
   categories,
   settings,
   backup,
+  about,
 }
 
 /// The Plus tab (canvas Plus, PlusAncienne): « Mes espaces », then
-/// Réglages and « Sauvegarde et export », then the version. The card of
-/// Aide, À propos and Noter waits for its lines (PRODUCT, 25 November).
+/// Réglages and « Sauvegarde et export », then « À propos de kibuo » (Aide
+/// and Noter come later: PRODUCT, 25 November 2026), then the version.
 class PlusPage extends StatefulWidget {
   const PlusPage({
     super.key,
@@ -119,7 +120,7 @@ class _PlusPageState extends State<PlusPage> {
           padding: const EdgeInsets.only(left: 4, bottom: 6),
           child: Text(l.plusSpaces, style: KibuoType.sectionTitle),
         ),
-        _PlusCard(
+        PlusCard(
           children: [
             PlusRow(
               icon: KibuoIcons.wallet,
@@ -168,7 +169,7 @@ class _PlusPageState extends State<PlusPage> {
           ],
         ),
         const SizedBox(height: 14),
-        _PlusCard(
+        PlusCard(
           children: [
             PlusRow(
               icon: KibuoIcons.gear,
@@ -200,6 +201,16 @@ class _PlusPageState extends State<PlusPage> {
           ],
         ),
         const SizedBox(height: 14),
+        PlusCard(
+          children: [
+            PlusRow(
+              icon: KibuoIcons.info,
+              label: l.plusAbout,
+              onTap: () => _open(PlusEntry.about),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
         Text(
           l.plusFooter(appVersion),
           textAlign: TextAlign.center,
@@ -210,9 +221,10 @@ class _PlusPageState extends State<PlusPage> {
   }
 }
 
-/// A white card of Plus: lines separated by a thin line (canvas Plus).
-class _PlusCard extends StatelessWidget {
-  const _PlusCard({required this.children});
+/// A white card of Plus and À propos: lines separated by a thin line
+/// (canvas Plus, APropos).
+class PlusCard extends StatelessWidget {
+  const PlusCard({super.key, required this.children});
 
   final List<Widget> children;
 

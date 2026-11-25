@@ -21,7 +21,7 @@ Code, identifiers and commits in English. Product docs, ADRs, glossary and backl
 - `tool/check.sh` runs formatting, analysis and tests; the pre-commit hook runs it.
 - Every Android-only API or plugin gets a line in `docs/backlog/ios.md` in the same change.
 - Validated design is the reference: any departure from a validated board, or any board whose logic looks wrong, is proposed to the owner and waits for an explicit yes. Measure the board before coding a screen.
-- Never clear the app's data on the emulator without asking. On the owner's phone, install as an update only; never uninstall.
+- Never clear the app's data on the emulator without asking, except wiping a blocked emulator (see Commands). On the owner's phone, install as an update only; never uninstall.
 
 ## Git
 
@@ -88,31 +88,19 @@ adb -s emulator-5554 install -r build/app/outputs/flutter-apk/app-profile.apk
 adb -s abe5999d install -r build/app/outputs/flutter-apk/app-profile.apk
 ```
 
-Test Android user `kibuo-essai` (id 10) on the emulator, to try a first launch without touching the main profile's data. Stop it after use: two running users saturate the emulator.
+No test Android user any more: `kibuo-essai` was removed on 25 November 2026 to free the emulator. To try a first launch without touching the main profile, create one for the occasion, then remove it (two running users saturate the emulator):
 
 ```bash
-adb -s emulator-5554 shell am start-user 10
+adb -s emulator-5554 shell pm create-user kibuo-essai
 ```
 
 ```bash
-adb -s emulator-5554 install -r --user 10 build/app/outputs/flutter-apk/app-profile.apk
+adb -s emulator-5554 shell pm remove-user <id>
 ```
 
-```bash
-adb -s emulator-5554 shell am switch-user 10
-```
+If the emulator keeps blocking after a restart, the owner allows wiping it (`emulator -avd Pixel_10_Kibuo -wipe-data`), even though its data is lost (25 November 2026).
 
-Back to the main profile, then stop the test user:
-
-```bash
-adb -s emulator-5554 shell am switch-user 0
-```
-
-```bash
-adb -s emulator-5554 shell am stop-user 10
-```
-
-Restarting a saturated emulator, unlocking the test user, pushing a file to it: [docs/STATE.md](docs/STATE.md#émulateur-et-android).
+Restarting a saturated emulator, unlocking a test user, pushing a file to it: [docs/STATE.md](docs/STATE.md#émulateur-et-android).
 
 ## Skills
 

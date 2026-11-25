@@ -39,6 +39,7 @@ import 'package:kibuo/ui/kit/toast.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/more/about_screen.dart';
 import 'package:kibuo/ui/more/plus_page.dart';
 import 'package:kibuo/ui/more/plus_summary.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
@@ -586,6 +587,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         );
       case PlusEntry.backup:
         await _openBackup();
+      case PlusEntry.about:
+        await push(const AboutScreen());
     }
   }
 
