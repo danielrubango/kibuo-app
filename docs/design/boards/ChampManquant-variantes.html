@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Champ manquant · variantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap">
+<style>
+  :root {
+    --bg: #EEF1F7; --surface: #FFFFFF; --ink: #0E1320; --ink2: #525D73; --muted: #8A93A6;
+    --line: #DDE2EC; --fill: #E4E8F0; --mint: #5EEAB5; --accent: #0A7355; --accentTint: #E9F8F1;
+    --danger: #B3321A; --dangerTint: #FBE3DE; --peach: #FDEBDD; --peachInk: #8A4A1C;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #DCE1EA; font-family: Inter, sans-serif; color: var(--ink); padding: 32px 24px 64px; }
+  h1 { font: 700 26px 'Plus Jakarta Sans', sans-serif; margin: 0 0 6px; }
+  h2 { font: 700 20px 'Plus Jakarta Sans', sans-serif; margin: 40px 0 4px; }
+  .lead, .why { color: var(--ink2); font-size: 15px; margin: 0 0 20px; max-width: 980px; line-height: 22px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .frame { display: flex; flex-direction: column; gap: 8px; width: 390px; }
+  .frame > b { font-size: 14px; }
+  .frame > span { font-size: 13px; color: var(--ink2); line-height: 18px; min-height: 54px; }
+  .phone { width: 390px; height: 844px; background: var(--bg); border-radius: 28px; overflow: hidden; position: relative; padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+  .top { height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: 12px; }
+  .top .cancel { color: var(--ink2); font-size: 16px; font-weight: 500; }
+  .top .t { font-size: 17px; font-weight: 600; }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--surface); border-radius: 18px; padding: 6px; }
+  .seg div { text-align: center; padding: 12px 0; font-size: 15px; font-weight: 600; border-radius: 14px; }
+  .seg .on { background: var(--ink); color: #fff; }
+  .amount { background: var(--peach); border: 1.5px solid #F2C9A8; border-radius: 22px; padding: 18px 18px 12px; }
+  .amount .v { font: 700 38px 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: space-between; align-items: center; }
+  .amount .v.zero { color: var(--muted); }
+  .amount .cur { font: 700 16px Inter, sans-serif; background: #F8D9C2; color: var(--peachInk); padding: 8px 12px; border-radius: 12px; }
+  .amount .sub { border-top: 1px solid #F2C9A8; margin-top: 12px; padding-top: 12px; display: flex; justify-content: space-between; font-size: 15px; color: var(--ink2); }
+  .card { background: var(--surface); border-radius: 18px; padding: 2px 14px 2px 12px; }
+  .f { min-height: 60px; display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .f + .f { border-top: 1px solid var(--bg); }
+  .f .ic { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--ink2); font-size: 15px; }
+  .f .tx { flex: 1; display: flex; flex-direction: column; }
+  .f .tx small { font-size: 13px; color: var(--ink2); }
+  .f .tx b { font-size: 16px; font-weight: 600; }
+  .f .tx b.grey { color: var(--muted); font-weight: 500; }
+  .f .side { color: var(--ink2); font-size: 14px; }
+  .f .car { color: #B6BDCB; margin-left: 6px; }
+  .f.bad .ic { background: var(--dangerTint); color: var(--danger); }
+  .f.bad .tx small, .f.bad .tx b { color: var(--danger); }
+  .f.bad { box-shadow: inset 0 -2px 0 var(--danger); }
+  .refuse { display: flex; align-items: center; gap: 8px; padding-left: 16px; color: var(--danger); font-size: 14px; margin-top: -4px; }
+  .refuse svg { width: 18px; height: 18px; }
+  .btn { position: absolute; left: 16px; right: 16px; bottom: 24px; height: 54px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; }
+  .btn.grey { background: var(--fill); color: var(--muted); }
+  .btn.mint { background: var(--mint); }
+  .name { background: var(--surface); border-radius: 18px; padding: 12px; display: flex; gap: 12px; align-items: center; }
+  .name .ic { width: 52px; height: 52px; border-radius: 14px; background: #E1E8F6; }
+  .name small { font-size: 13px; color: var(--ink2); }
+  .name b { display: block; font-size: 18px; font-weight: 600; color: var(--muted); }
+  .name.bad { box-shadow: inset 0 0 0 2px var(--danger); }
+  .name.bad small { color: var(--danger); }
+  .goal { background: var(--surface); border-radius: 22px; padding: 14px 18px; border: 2px solid transparent; }
+  .goal small { font-size: 13px; color: var(--ink2); }
+  .goal .v { font: 700 40px 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: space-between; }
+  .goal .v span { font-size: 22px; color: var(--ink2); align-self: center; }
+  .goal.on { border-color: var(--accent); }
+  .tag { position: absolute; top: 18px; right: 18px; background: #FCEFD2; color: #6B4A00; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; }
+</style>
+</head>
+<body>
+<h1>Champ manquant · « Enregistrer » qui dit ce qui manque</h1>
+<p class="lead">Décidé le 24 novembre 2026 (DIRECTION, « Bouton qui ne peut pas encore enregistrer ») : le bouton principal reste actif dès que quelque chose est saisi ; le toucher quand il manque une information met le premier champ manquant en rouge, avec la vibration de refus, comme un montant refusé. Il n'est grisé que tant que rien n'est saisi. Planches sur deux écrans, nouvelle dépense et nouveau projet. Une seule question : où dire ce qui manque (A ou B). Recommandation : <b>B</b>.</p>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<h2>Nouvelle dépense</h2>
+<p class="why">1 : rien de saisi, bouton grisé comme aujourd'hui. 2 : un montant tapé, mais pas de catégorie : le bouton est maintenant actif (aujourd'hui, il reste grisé sans rien dire). 3 A et 3 B : après le toucher.</p>
+<div class="row">
+  <div class="frame"><b>1 · Rien de saisi</b><span>Grisé, rien à dire.</span>
+    <div class="phone">
+      <div class="top"><span class="cancel">Annuler</span><span class="t">Nouvelle dépense</span><span></span></div>
+      <div class="seg"><div class="on">Dépense</div><div>Revenu</div><div>Transfert</div></div>
+      <div class="amount"><div class="v zero">0 <span class="cur">FC ▾</span></div><div class="sub"><span>Retiré du compte</span><span>0 FC</span></div></div>
+      <div class="card">
+        <div class="f"><span class="ic">▣</span><div class="tx"><small>Compte</small><b>M-Pesa</b></div><span class="side">CDF</span><span class="car">›</span></div>
+        <div class="f"><span class="ic">◇</span><div class="tx"><small>Catégorie</small><b class="grey">Choisir</b></div><span class="car">›</span></div>
+        <div class="f"><span class="ic">▦</span><div class="tx"><small>Date</small><b>Aujourd'hui</b></div><span class="side">15:09</span><span class="car">›</span></div>
+      </div>
+      <div class="btn grey">Enregistrer</div>
+    </div>
+  </div>
+  <div class="frame"><b>2 · Un montant, pas de catégorie</b><span>Le bouton est actif : on peut le toucher pour savoir ce qui manque.</span>
+    <div class="phone">
+      <div class="top"><span class="cancel">Annuler</span><span class="t">Nouvelle dépense</span><span></span></div>
+      <div class="seg"><div class="on">Dépense</div><div>Revenu</div><div>Transfert</div></div>
+      <div class="amount"><div class="v">−12 000 <span class="cur">FC ▾</span></div><div class="sub"><span>Retiré du compte</span><span>12 000 FC</span></div></div>
+      <div class="card">
+        <div class="f"><span class="ic">▣</span><div class="tx"><small>Compte</small><b>M-Pesa</b></div><span class="side">CDF</span><span class="car">›</span></div>
+        <div class="f"><span class="ic">◇</span><div class="tx"><small>Catégorie</small><b class="grey">Choisir</b></div><span class="car">›</span></div>
+        <div class="f"><span class="ic">▦</span><div class="tx"><small>Date</small><b>Aujourd'hui</b></div><span class="side">15:09</span><span class="car">›</span></div>
+      </div>
+      <div class="btn mint">Enregistrer</div>
+    </div>
+  </div>
+  <div class="frame"><b>3 A · La ligne en rouge, la phrase sous la carte</b><span>Comme un montant refusé : la ligne rouge sous la carte (icône d'alerte, texte rouge). La phrase peut être loin du champ quand il est en haut d'une longue carte.</span>
+    <div class="phone">
+      <div class="top"><span class="cancel">Annuler</span><span class="t">Nouvelle dépense</span><span></span></div>
+      <div class="seg"><div class="on">Dépense</div><div>Revenu</div><div>Transfert</div></div>
+      <div class="amount"><div class="v">−12 000 <span class="cur">FC ▾</span></div><div class="sub"><span>Retiré du compte</span><span>12 000 FC</span></div></div>
+      <div class="card">
+        <div class="f"><span class="ic">▣</span><div class="tx"><small>Compte</small><b>M-Pesa</b></div><span class="side">CDF</span><span class="car">›</span></div>
+        <div class="f bad"><span class="ic">◇</span><div class="tx"><small>Catégorie</small><b>Choisir</b></div><span class="car">›</span></div>
+        <div class="f"><span class="ic">▦</span><div class="tx"><small>Date</small><b>Aujourd'hui</b></div><span class="side">15:09</span><span class="car">›</span></div>
+      </div>
+      <div class="refuse"><svg><use href="#warn"/></svg>Choisissez une catégorie.</div>
+      <div class="btn mint">Enregistrer</div>
+    </div>
+  </div>
+  <div class="frame"><b>3 B · Tout dans la ligne (recommandée)</b><span>La ligne passe en rouge : sa tuile, son nom, son trait dessous ; « Choisir » devient « Choisissez une catégorie ». On lit ce qui manque là où l'on regarde, sans rien ajouter sous la carte.</span>
+    <div class="phone">
+      <div class="top"><span class="cancel">Annuler</span><span class="t">Nouvelle dépense</span><span></span></div>
+      <div class="seg"><div class="on">Dépense</div><div>Revenu</div><div>Transfert</div></div>
+      <div class="amount"><div class="v">−12 000 <span class="cur">FC ▾</span></div><div class="sub"><span>Retiré du compte</span><span>12 000 FC</span></div></div>
+      <div class="card">
+        <div class="f"><span class="ic">▣</span><div class="tx"><small>Compte</small><b>M-Pesa</b></div><span class="side">CDF</span><span class="car">›</span></div>
+        <div class="f bad"><span class="ic">◇</span><div class="tx"><small>Catégorie</small><b>Choisissez une catégorie</b></div><span class="car">›</span></div>
+        <div class="f"><span class="ic">▦</span><div class="tx"><small>Date</small><b>Aujourd'hui</b></div><span class="side">15:09</span><span class="car">›</span></div>
+      </div>
+      <div class="btn mint">Enregistrer</div>
+    </div>
+  </div>
+</div>
+
+<h2>Nouveau projet</h2>
+<p class="why">Ici le bouton est déjà actif ; aujourd'hui, un nom manquant s'écrit en gris sous le champ (« Donnez-lui un nom. ») et un objectif manquant en rouge. Les deux suivraient la même règle.</p>
+<div class="row">
+  <div class="frame"><b>A · Le champ entouré de rouge, la phrase dessous</b><span>Le champ du nom prend un contour rouge ; la phrase rouge avec l'icône d'alerte vient sous lui.</span>
+    <div class="phone">
+      <div class="top"><span class="cancel">Annuler</span><span class="t">Nouveau projet</span><span></span></div>
+      <div class="name bad"><span class="ic"></span><div><small>Nom</small><b>Voyage, moto, école…</b></div></div>
+      <div class="refuse"><svg><use href="#warn"/></svg>Donnez-lui un nom.</div>
+      <div class="goal"><small>Objectif</small><div class="v">300 <span>$</span></div></div>
+      <div class="card">
+        <div class="f"><span class="ic">▣</span><div class="tx"><small>Compte</small><b>M-Pesa dollars</b></div><span class="side">20,00 $ libres</span><span class="car">›</span></div>
+        <div class="f"><span class="ic">▦</span><div class="tx"><small>Date</small><b>Aucune</b></div><span class="side">facultative</span><span class="car">›</span></div>
+      </div>
+      <div class="btn mint">Créer le projet</div>
+    </div>
+  </div>
+  <div class="frame"><b>B · Tout dans le champ (recommandée)</b><span>Le contour rouge, et le nom du champ dit ce qui manque : « Nom » devient « Donnez-lui un nom ». Même logique que la dépense en 3 B.</span>
+    <div class="phone">
+      <div class="top"><span class="cancel">Annuler</span><span class="t">Nouveau projet</span><span></span></div>
+      <div class="name bad"><span class="ic"></span><div><small>Donnez-lui un nom</small><b>Voyage, moto, école…</b></div></div>
+      <div class="goal"><small>Objectif</small><div class="v">300 <span>$</span></div></div>
+      <div class="card">
+        <div class="f"><span class="ic">▣</span><div class="tx"><small>Compte</small><b>M-Pesa dollars</b></div><span class="side">20,00 $ libres</span><span class="car">›</span></div>
+        <div class="f"><span class="ic">▦</span><div class="tx"><small>Date</small><b>Aucune</b></div><span class="side">facultative</span><span class="car">›</span></div>
+      </div>
+      <div class="btn mint">Créer le projet</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
