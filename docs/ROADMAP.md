@@ -113,8 +113,8 @@ Ce que Google Play exige :
 - [x] Site public minimal : la politique de confidentialité, en ligne le 26 novembre 2026 à kibuo.app/fr/confidentialite/ et /en/privacy/ ([backlog/site-public.md](backlog/site-public.md))
 - [ ] Fiche Google Play : textes, captures, formulaire sur la sécurité des données, classification du contenu ([backlog/fiche-google-play.md](backlog/fiche-google-play.md))
 - [ ] Avant la production (vers fin décembre 2026) : des captures qui accompagnent l'utilisateur (flèches, parties d'écran mises en avant, chiffres), trois propositions de huit captures
-- [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE)
-- [ ] Test fermé sur Google Play (12 testeurs pendant 14 jours, en famille d'abord ; [backlog/test-ferme.md](backlog/test-ferme.md)), puis corrections
+- [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE) — mis de côté par le propriétaire le 26 novembre 2026 : on avance sans eux, le test fermé fera remonter ce qui coince
+- [ ] Test fermé sur Google Play (12 testeurs pendant 14 jours, en accès privé, par adresse e-mail ; [backlog/test-ferme.md](backlog/test-ferme.md)), puis corrections
 - [ ] Publication
 
 ## Version 0.2 : Aperçu
