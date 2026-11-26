@@ -10,28 +10,36 @@ En famille d'abord (décidé par le propriétaire le 26 novembre 2026). Google P
 
 ## Comment les testeurs entrent
 
-Le lien d'inscription (`https://play.google.com/apps/testing/app.kibuo/join`) ne marche que pour les comptes Google qui sont dans la liste des testeurs du test fermé. Deux façons de les y mettre :
+Le lien d'inscription (`https://play.google.com/apps/testing/app.kibuo/join`) ne marche que pour les comptes Google qui sont dans la liste des testeurs du test fermé.
 
-- **Un groupe Google** (proposé) : le propriétaire crée un groupe ouvert, par exemple `kibuo-testeurs@googlegroups.com`, que chacun peut rejoindre seul, et l'ajoute comme testeurs dans la Play Console (Tests › Test fermé › Testeurs). Chaque personne rejoint le groupe, accepte l'invitation par le lien, puis installe kibuo. Pas d'adresse à recueillir à la main.
-- **Une liste d'adresses** : on demande à chacun l'adresse de son compte Google Play, on la colle dans la liste des testeurs, puis on envoie le lien.
+**Retenu le 26 novembre 2026 : une liste d'adresses.** Chacun envoie au propriétaire l'adresse e-mail de son compte Google Play ; le propriétaire l'ajoute dans la Play Console (Tests › Test fermé › Testeurs), puis lui envoie le lien d'inscription. Un groupe Google ouvert, que chacun rejoindrait seul, reste possible si la liste grandit.
 
-## Message d'invitation (proposé le 26 novembre 2026, à valider)
+## Message d'invitation (validé le 26 novembre 2026)
+
+Ton d'un accès privé, avant la sortie : ni « en famille », ni durée annoncée (Google demande pourtant 12 testeurs inscrits pendant 14 jours de suite : le propriétaire relance si besoin).
 
 ```
-kibuo arrive sur Android, et vous pouvez l’essayer avant tout le monde.
+Vous faites partie des premiers à découvrir kibuo.
 
 kibuo, c’est votre compagnon pour l’argent du quotidien : vos dépenses, vos budgets, ce que vous devez, ce qu’on vous doit et vos projets d’épargne. En francs et en dollars, sans compte à créer, même sans connexion. Vos données restent sur votre téléphone.
 
-Avant la sortie publique, je l’ouvre à la famille et aux proches. Vos retours vont façonner l’appli.
+L’appli est en test privé, avant sa sortie publique, et j’ouvre quelques accès.
 
-Pour participer (Android, 2 minutes) :
-1. Rejoignez le groupe des testeurs : [lien du groupe]
-2. Acceptez l’invitation : https://play.google.com/apps/testing/app.kibuo/join
-3. Installez kibuo depuis le Play Store, et gardez-la au moins 14 jours.
+Pour y accéder (Android uniquement) :
+1. Envoyez-moi en réponse l’adresse e-mail de votre compte Google Play.
+2. Je vous envoie votre invitation, avec le lien pour rejoindre le test.
+3. Installez kibuo depuis le Play Store, et dites-moi ce que vous en pensez.
 
-Une question, une idée, un souci ? Répondez-moi ici, ou écrivez à contact@kibuo.app.
+La version iPhone est en préparation.
 
-Merci de faire partie des premiers !
+Une question, une idée ? Répondez-moi ici, ou écrivez à contact@kibuo.app.
 ```
 
-Image : trois variantes sur le canvas, page WhatsApp (1080 × 1350).
+Image : variante B du canvas, page WhatsApp (1080 × 1350) : fond menthe, « Accès privé · avant la sortie », « Découvrez kibuo avant tout le monde. », les trois étapes, « Sur Android uniquement. La version iPhone est en préparation. ». Fichier : `build/play/whatsapp-invitation.png` (non suivi par git).
+
+## Le lien à envoyer après l'ajout
+
+```
+C’est fait, vous êtes sur la liste. Acceptez l’invitation ici : https://play.google.com/apps/testing/app.kibuo/join
+Puis installez kibuo depuis le Play Store. Merci !
+```
