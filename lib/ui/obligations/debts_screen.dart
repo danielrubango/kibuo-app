@@ -14,6 +14,7 @@ import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
+import 'package:kibuo/ui/kit/guide.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
@@ -71,7 +72,7 @@ class _DebtsScreenState extends State<DebtsScreen> {
 
   /// The guide's step, 1 or 2; 0 when not shown.
   int _coach = 0;
-  final _firstRow = GlobalKey();
+  final _firstCard = GlobalKey();
 
   /// What converts each other currency to the main one.
   String? _main;
@@ -517,11 +518,17 @@ class _DebtsScreenState extends State<DebtsScreen> {
             // Above the page's own Material: its words need one too.
             child: Material(
               type: MaterialType.transparency,
-              child: _Coach(
-                target: _firstRow,
-                step: _coach,
-                onSkip: () => setState(() => _coach = 0),
-                onNext: _coachNext,
+              child: GuideSpotlight(
+                target: _firstCard,
+                card: GuideCard(
+                  step: l.debtsCoachStep(_coach),
+                  title: _coach == 1 ? l.debtsCoach1Title : l.debtsCoach2Title,
+                  text: _coach == 1 ? l.debtsCoach1Text : l.debtsCoach2Text,
+                  skipLabel: l.debtsCoachSkip,
+                  onSkip: () => setState(() => _coach = 0),
+                  actionLabel: _coach == 1 ? l.debtsCoachNext : l.debtsCoachTry,
+                  onAction: _coachNext,
+                ),
               ),
             ),
           ),
@@ -651,20 +658,19 @@ class _DebtsScreenState extends State<DebtsScreen> {
             _Dimmed(
               on: _open != null && (!above || d.id != _open),
               blur: !above,
-              child: !above && i == 0 && identical(lines, _firstLines)
-                  ? KeyedSubtree(
-                      key: _firstRow,
-                      child: _row(l, d, now, live: false),
-                    )
-                  : _row(l, d, now, live: above),
+              child: _row(l, d, now, live: above),
             ),
           ],
         ],
       ),
     );
-    return holds && !above
-        ? CompositedTransformTarget(link: _openLink, child: card)
+    // The guide's window frames the first group's whole card.
+    final framed = !above && identical(lines, _firstLines)
+        ? KeyedSubtree(key: _firstCard, child: card)
         : card;
+    return holds && !above
+        ? CompositedTransformTarget(link: _openLink, child: framed)
+        : framed;
   }
 
   /// What an open line adds: the full date, how much is paid back, and
@@ -1191,186 +1197,6 @@ class _PaidToggle extends StatelessWidget {
       ),
     ),
   );
-}
-
-/// The list's guide (canvas DettesListeDois): the page darkened but for
-/// the first line, then a white card under it, « 1 sur 2 », its title and
-/// words, « Passer » and « Suivant », then « Essayer ».
-class _Coach extends StatefulWidget {
-  const _Coach({
-    required this.target,
-    required this.step,
-    required this.onSkip,
-    required this.onNext,
-  });
-
-  final GlobalKey target;
-  final int step;
-  final VoidCallback onSkip;
-  final VoidCallback onNext;
-
-  @override
-  State<_Coach> createState() => _CoachState();
-}
-
-class _CoachState extends State<_Coach> {
-  Rect? _hole;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
-  }
-
-  void _measure() {
-    final box = widget.target.currentContext?.findRenderObject() as RenderBox?;
-    final me = context.findRenderObject() as RenderBox?;
-    if (!mounted || box == null || me == null || !box.hasSize) return;
-    final topLeft = me.globalToLocal(box.localToGlobal(Offset.zero));
-    // The window fits the card: its sides, and 12 above and below the
-    // line's words, the card's own space (owner, 23 November). The line's
-    // block sits 8 inside the card and 6 around its words.
-    final line = topLeft & box.size;
-    setState(
-      () => _hole = Rect.fromLTRB(
-        line.left - 8,
-        line.top - 6,
-        line.right + 8,
-        line.bottom + 6,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final hole = _hole;
-    if (hole == null) return const SizedBox.expand();
-    final first = widget.step == 1;
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: CustomPaint(painter: _HolePainter(hole)),
-          ),
-        ),
-        Positioned(
-          left: 16,
-          right: 16,
-          top: hole.bottom + 15,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                left: 24,
-                top: -7,
-                child: Transform.rotate(
-                  angle: 0.785398,
-                  child: Container(
-                    width: 14,
-                    height: 14,
-                    color: KibuoColors.surface,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: KibuoColors.surface,
-                  borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      l.debtsCoachStep(widget.step),
-                      style: KibuoType.caption.weight(600),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      first ? l.debtsCoach1Title : l.debtsCoach2Title,
-                      style: KibuoType.cardTitle,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      first ? l.debtsCoach1Text : l.debtsCoach2Text,
-                      style: KibuoType.body.copyWith(
-                        color: KibuoColors.inkSecondary,
-                        height: 20 / 14,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: widget.onSkip,
-                          style: TextButton.styleFrom(
-                            foregroundColor: KibuoColors.inkSecondary,
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 44),
-                            textStyle: KibuoType.buttonSmall.copyWith(
-                              fontSize: 14,
-                            ),
-                          ),
-                          child: Text(l.debtsCoachSkip),
-                        ),
-                        const Spacer(),
-                        FilledButton(
-                          onPressed: widget.onNext,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: KibuoColors.mint,
-                            foregroundColor: KibuoColors.ink,
-                            minimumSize: const Size(0, 44),
-                            padding: const EdgeInsets.symmetric(horizontal: 18),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                KibuoTheme.radiusTile,
-                              ),
-                            ),
-                            textStyle: KibuoType.buttonSmall,
-                          ),
-                          child: Text(
-                            first ? l.debtsCoachNext : l.debtsCoachTry,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// The guide's veil, open around [hole].
-class _HolePainter extends CustomPainter {
-  _HolePainter(this.hole);
-
-  final Rect hole;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..fillType = PathFillType.evenOdd
-      ..addRect(Offset.zero & size)
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          hole,
-          const Radius.circular(KibuoTheme.radiusCard),
-        ),
-      );
-    canvas.drawPath(path, Paint()..color = KibuoColors.tipScrim);
-  }
-
-  @override
-  bool shouldRepaint(_HolePainter old) => old.hole != hole;
 }
 
 /// A button of the open line's box: ink for the action, white for

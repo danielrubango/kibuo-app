@@ -87,6 +87,10 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Une base d'un autre téléphone, ou dont la clé a disparu, s'ouvre en erreur « not a database » : c'est l'état `Unreadable`, le fichier est mis de côté, jamais effacé.
 - **Migrations** : monter `KibuoDatabase.currentSchema`, `dart run build_runner build`, `dart run drift_dev make-migrations`, écrire le test contre les schémas sauvés (`test/drift/kibuo/`) et le voir échouer, puis ajouter l'étape `fromXToY`. Une base v11 venue d'une branche abandonnée (`codex/debts-receivables`) est réparée au démarrage (`_repairDebts`).
 
+### Git
+
+- **Commiter depuis un worktree** (`git worktree add`) : git passe au hook son propre `GIT_DIR`, que Flutter lit pour trouver sa version (« 0.0.0-unknown ») avant de refuser les paquets. Le hook `pre-commit` vide ces variables depuis le 26 novembre 2026.
+
 ### Tests
 
 - **Les vraies entrées-sorties bloquent les tests de widgets** : fichiers en mémoire (`MemoryFiles`), faux canaux ; quand il faut du vrai disque ou un isolate (sauvegarde, restauration), boucler `tester.runAsync(() => Future.delayed(…))` puis `tester.pump(…)` plusieurs fois (voir `settle` dans `test/restore_sheet_test.dart`).

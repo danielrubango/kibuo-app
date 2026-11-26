@@ -142,6 +142,7 @@ Un composant naît à la deuxième apparition d'un élément. Les marges restent
 | `showChoiceSheet` | `choice_sheet.dart` | Feuille de choix cochés (Délai, Rappel, Diviser le plan par) |
 | `confirmRemoval`, `RemovalSummary` | `sheet.dart` | Confirmer une suppression : ce qui est concerné, la conséquence, le bouton rouge |
 | `showConfirmSheet`, `ConfirmAction`, `SavedLine` | `confirm_sheet.dart` | Confirmation qui se ferme seule (« Remboursement enregistré », « Mis de côté »), avec « Annuler » |
+| `GuideSpotlight`, `GuideCard`, `guideGap` | `guide.dart` | Guide de première visite : la page voilée sauf une fenêtre autour de l'élément montré, 8 de marge de chaque côté ; la carte blanche « 1 sur 2 », titre, mots, « Passer » et l'action menthe |
 | `AutoClose` | `auto_close.dart` | La barre menthe qui se vide sous une confirmation |
 | `showKibuoToast` | `toast.dart` | Message court au-dessus de la barre d'onglets (« Reporté à demain », avec « Annuler ») ; jamais sur une fiche qui a un bouton en bas |
 
