@@ -1,6 +1,6 @@
 # Versions publiées
 
-Chaque version publiée a ici sa fiche : son numéro, son nom et sa note de publication en français et en anglais. L'agent les propose au propriétaire à chaque nouvelle version, avant de construire le paquet, et attend son « oui » (règle du 26 novembre 2026).
+Chaque version publiée a ici sa fiche : son numéro, son nom et sa note de publication en français et en anglais. L'agent les propose au propriétaire à chaque nouvelle version, avant de construire le paquet, et attend son « oui » (règle du 26 novembre 2026). Cela vaut aussi pour chaque nouveau paquet du test fermé : nom de version et note validés d'abord, paquet AAB construit ensuite (rappel du propriétaire, 26 novembre 2026).
 
 ## Les règles
 
