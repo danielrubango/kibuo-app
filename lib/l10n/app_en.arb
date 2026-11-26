@@ -722,7 +722,7 @@
   "debtsLateCount": "{count} overdue",
   "debtsLateGroup": "Overdue",
   "debtsNoDue": "No due date",
-  "debtsAbout": "About {amount}",
+  "debtsAbout": "~{amount}",
   "debtWordLate": "{days, plural, =1{1 day overdue} other{{days} days overdue}}",
   "debtWordToday": "Today",
   "debtWordTomorrow": "Tomorrow",
