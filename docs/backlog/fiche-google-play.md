@@ -18,6 +18,15 @@ Textes et images de la fiche de kibuo dans la Play Console. On avance point par 
 - **Données des captures** : un jeu de démonstration fait pour l'occasion (montants en francs congolais et en dollars, noms inventés), dans un utilisateur Android d'essai créé puis supprimé ; le profil de l'émulateur n'est pas touché.
 - **Langues** : textes en français et en anglais dès la 0.1 ; captures en français d'abord, en anglais avant la publication.
 - **Captures et image de présentation** : on commence simplement pour le test fermé ; trois styles de captures (A fond nuit, B fond clair, C écran seul) et des variantes de l'image de présentation sont à montrer sur le canvas, un point après l'autre.
+- **Style des captures** : A, fond nuit, une phrase en haut, l'écran dans un cadre de téléphone (choisi parmi A, B, C). La barre d'état du téléphone est retirée et redessinée en tirets gris, pour ne montrer ni Android ni iPhone ; sinon, on remettrait la vraie barre de chaque système.
+- **Série du test fermé** (proposée le 26 novembre 2026, à valider) : six captures, accueil, saisie d'une dépense, opérations du mois, budgets, dettes, projets, avec ces phrases :
+  1. Ce que vous pouvez dépenser, d'un coup d'œil. / Votre disponible, le mois en cours et ce qui attend.
+  2. Une dépense notée en quelques touches. / Le bouton + est toujours là, même sans connexion.
+  3. Tout votre mois, jour après jour. / Entrées, sorties et ce qui reste.
+  4. Des budgets qui vous préviennent à temps. / Une alerte quand une catégorie approche de sa limite.
+  5. Ce que vous devez, ce qu'on vous doit. / Les échéances, les retards et les remboursements.
+  6. Mettez de côté pour vos projets. / Voyage, moto, rentrée : voyez où vous en êtes.
+- **Comment refaire les captures** : `flutter test tool/demo_backup_test.dart` écrit la sauvegarde de démonstration ; on la restaure sur un utilisateur Android d'essai neuf (STATE, Émulateur et Android) ; on prend les six écrans ; `python3 tool/play_screens.py <captures> <sortie>` compose les images en 1080 × 1920.
 - **Plus tard, avant la production** (vers fin décembre 2026) : des captures qui accompagnent l'utilisateur, reliées entre elles par des flèches, avec des parties d'écran mises en avant, des textes et des chiffres ; trois propositions de huit captures selon ce qu'on veut mettre en avant. Elles suivront les nouveautés qui arrivent (ROADMAP).
 
 Contraintes de Google Play pour les captures : 2 à 8 par appareil, et le grand côté ne peut pas dépasser deux fois le petit. Les captures brutes de l'émulateur (1080 × 2424) sont refusées : il faut composer des images, par exemple en 1080 × 1920.
