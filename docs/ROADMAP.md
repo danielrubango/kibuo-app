@@ -13,6 +13,12 @@ kibuo sort tôt sur Google Play, puis s'enrichit version par version :
 - **1.0** : la version stable et complète, après quelques semaines de test des versions 0.x par de vrais utilisateurs. C'est elle que les documents appellent « la V1 » ([PRODUCT.md](PRODUCT.md), « Cadre de la V1 »).
 - **Après la 1.0** : les grands chantiers (cloud, IA, iOS…), dans cet ordre de départ, à revoir selon les retours.
 
+**Les numéros de version** (décidé le 26 novembre 2026) :
+
+- Pendant le test fermé, les paquets sont des `v0.1.0-alpha-N` ; dès qu'on y ajoute une nouveauté (par exemple l'Aperçu), ils deviennent des `v0.1.0-beta-N`. Ce qui est prêt au passage en production sort en `v0.1.0`.
+- Après la production : `v0.2.0`, `v0.3.0`… avec les nouveautés suivantes.
+- Quand kibuo est stable : `v1.0.0`, avec le site en Laravel et le Compte kibuo dans le cloud.
+
 Les phases 0 à 6 ci-dessous sont l'historique de la construction.
 
 ## Phase 0 : Fondations du projet
@@ -119,6 +125,9 @@ Ce que Google Play exige :
 
 ## Version 0.2 : Aperçu
 
+Commencée pendant le test fermé (26 novembre 2026) : livrée aux testeurs en `v0.1.0-beta-N`, elle sort avec la `v0.1.0` si elle est prête au passage en production.
+
+
 - [ ] Tableaux de bord : évolution, catégories, patrimoine, points suivis (planches `Apercu…`)
 
 ## Version 0.3 : Vos données, ailleurs
@@ -146,6 +155,7 @@ Ce que Google Play exige :
 
 - [ ] Quelques semaines de test des versions 0.x par de vrais utilisateurs
 - [ ] Corrections issues de ces tests
+- [ ] Le site en Laravel (aujourd'hui pages fixes sur Cloudflare) et le Compte kibuo dans le cloud (décidé le 26 novembre 2026 : ils font partie de la 1.0 ; voir « Après la 1.0 », point 1, pour leur contenu)
 - [ ] Publication de la 1.0
 
 ## Après la 1.0
