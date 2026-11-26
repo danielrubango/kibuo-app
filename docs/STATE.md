@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **25 novembre 2026**, branche `main` (dernière fusion : `chore/release-signing`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **27 novembre 2026**, branche `main` (dernière fusion : `feat/apercu-evolution`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -17,12 +17,13 @@ Toutes les phases sont livrées sur `main` et validées par le propriétaire, ph
 | 6 · Données (en partie) | Sauvegarde manuelle (fichier `.kibuo`, ADR 0012), lignes de réglages corrigées, nettoyage du kit (`context.money`, `calendarDays`, `IconTile`), restauration en deux livraisons (depuis l'écran Sauvegarde ; « J'ai une sauvegarde » au premier lancement et sur les données illisibles ; ouverture d'un fichier `.kibuo` touché ailleurs ; la langue voyage dans le fichier), sauvegardes automatiques, première livraison sur trois (interrupteur de l'écran Sauvegarde, sauvegarde à l'ouverture et en arrière-plan chaque semaine, 4 gardées, échecs signalés une fois par semaine) ; mot de passe retenu (variante A : ligne « Mot de passe » de l'écran Sauvegarde, sa feuille, la feuille manuelle « Chiffrée avec votre mot de passe », restauration qui l'essaie d'abord, copie d'avant restauration chiffrée) ; feuilles à 8 au-dessus du clavier ; « Sauvegardes automatiques » à l'étape 4 du premier lancement (variante 3 A) | 24 et 25 nov. |
 
 | 0.1 · Première publication (en cours) | Page Plus (Mes espaces avec leurs chiffres, Réglages, Sauvegarde et export, À propos de kibuo), page Réglages en quatre sections (Comptes et Catégories restés dans Plus), choix de la langue, le verrou qui couvre tous les écrans et feuilles (et code des actions importantes demandé partout), À propos (version et date, politique de confidentialité dans l'app, licences, « Nous écrire » vers contact@kibuo.app), mesure d'usage anonyme avec accord (feuille « Aider à améliorer kibuo ? », interrupteur dans Confidentialité, envoi par kibuo lui-même à PostHog Europe, ADR 0013), « Dollar américain », écran d'attente de l'Aperçu (variante B : ce qui vient, et « En attendant »), « Enregistrer » qui dit ce qui manque (champ souligné ou entouré de rouge, en douceur ; chaque onglet de la saisie retient son choix) | 25 nov. |
+| 0.2 · Aperçu (en cours) | Livraison 1 : l'onglet Évolution (tuiles Sorties et Entrées avec leur écart en %, « — » quand il n'y a rien à comparer ; graphique en barres avec la période comparée en courbe ou en bâtonnets), la feuille « Période » (aujourd'hui, hier, 24 h, 7 jours, 1 mois, 1 an, personnalisée avec « Du » et « Au » ; Regrouper par ; Comparer à ; Réinitialiser), Catégories et Patrimoine en « Bientôt », le bilan du mois de l'accueil qui ouvre l'Aperçu ; l'écran d'attente est retiré | 27 nov. |
 
-Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 561 tests verts à la dernière fusion, après le tri des tests du 25 novembre (766 avant ; règle dans AGENTS.md et WORKING.md).
+Schéma de la base : **version 14** (`KibuoDatabase.currentSchema`). 589 tests verts à la dernière fusion (le tri des tests du 25 novembre les avait ramenés de 766 à 561 ; règle dans AGENTS.md et WORKING.md). Les captures de l'Aperçu avec une année d'opérations fictives : `flutter test --update-goldens tool/capture_screens_test.dart --plain-name 'Aperçu'`.
 
 ## Dessiné mais pas encore construit
 
-Validés sur le canvas, absents de l'app : l'**Aperçu** et ses graphiques (version 0.2 ; un écran d'attente les annonce), l'**export CSV** (0.3), Aide et support (0.5), Noter kibuo (après la publication), et sur À propos, Conditions d'utilisation et Site web (avec le site public). Liste des planches : [design/DIRECTION.md](design/DIRECTION.md#écrans-livrés-et-leur-planche).
+Validés sur le canvas, absents de l'app : dans l'**Aperçu** (version 0.2), les points suivis et la feuille « Suivre », la tuile agrandie, les onglets Catégories et Patrimoine, l'**export CSV** (0.3), Aide et support (0.5), Noter kibuo (après la publication), et sur À propos, Conditions d'utilisation et Site web (avec le site public). Liste des planches : [design/DIRECTION.md](design/DIRECTION.md#écrans-livrés-et-leur-planche).
 
 ## En cours ou non fusionné
 
@@ -30,6 +31,8 @@ Validés sur le canvas, absents de l'app : l'**Aperçu** et ses graphiques (vers
 - Sur l'émulateur : plus d'utilisateur d'essai (`kibuo-essai` supprimé le 25 novembre, accord du propriétaire, pour libérer l'émulateur) ; s'il bloque encore après un redémarrage, il peut être réinitialisé.
 
 ## Prochaines étapes
+
+Version 0.2 en cours : la livraison 1 de l'Aperçu est fusionnée le 27 novembre. Prochaine : **livraison 2, les points suivis** ; ses questions Q1 à Q7 sont posées au propriétaire (périmètre avec ou sans la tuile agrandie, tuiles allumées au départ, quel budget et quel projet, toucher une tuile, journée moyenne, ordre, écart avec « Aucune »). Puis les livraisons 3 (Catégories) et 4 (Patrimoine). Le paquet de test qui portera l'Aperçu est proposé : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note française et anglaise ; il attend le « oui » du propriétaire avant d'être construit, puis le contrôle sur `Kibuo_Release`.
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
@@ -51,7 +54,9 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ## Questions ouvertes (attendent le propriétaire)
 
-- Aucune pour l'instant (l'échec d'une sauvegarde automatique est tranché le 24 novembre : PRODUCT, Protection des données).
+- Livraison 2 de l'Aperçu : questions Q1 à Q7 (posées le 27 novembre).
+- Nom et note du paquet `v0.1.0-beta-1` (proposés le 27 novembre).
+- Les précisions de mise en œuvre de la livraison 1 de l'Aperçu, notées « à confirmer » dans PRODUCT (semaines de 7 jours, année selon le début du mois, choix gardé, période personnalisée par défaut…).
 
 ## Défauts connus et dettes
 
@@ -73,7 +78,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 - **Version de publication qui s'arrête au lancement** (alpha-1 et alpha-2, 26-27 novembre 2026 : « kibuo s'arrête systématiquement ») : R8 compacte le code des versions de publication et avait retiré le constructeur de `WorkDatabase_Impl` que WorkManager crée par réflexion (`NoSuchMethodException … WorkDatabase_Impl.<init>` dans `adb logcat`). Règles dans `android/app/proguard-rules.pro`, icône des notifications gardée par `res/raw/keep.xml`. Les versions `--profile` ne sont pas compactées : toujours ouvrir la version `--release` sur l'émulateur `Kibuo_Release` avant un paquet ([releases/](releases/README.md)).
 
-- **Émulateur saturé** (ANR, écran de démarrage figé, une capture qui prend une minute) : le redémarrer. `adb -s emulator-5554 emu kill`, puis `~/Library/Android/sdk/emulator/emulator -avd Pixel_10_Kibuo -no-snapshot-save &`, attendre `getprop sys.boot_completed` = 1. Deux utilisateurs Android actifs à la fois suffisent à le saturer : supprimer un utilisateur d'essai après usage (`pm remove-user <id>`). S'il bloque encore après un redémarrage : `emulator -avd Pixel_10_Kibuo -wipe-data` (accord du propriétaire du 25 novembre 2026, ses données sont perdues).
+- **Émulateur saturé** (ANR, écran de démarrage figé, une capture qui prend une minute ; au lancement, Android tue kibuo avec « failed to complete startup », et un toucher envoyé à ce moment tombe sur l'écran d'accueil d'Android ou l'app Google : attendre que `dumpsys window` montre `mCurrentFocus` sur `app.kibuo` avant de toucher) : le redémarrer. `adb -s emulator-5554 emu kill`, puis `~/Library/Android/sdk/emulator/emulator -avd Pixel_10_Kibuo -no-snapshot-save &`, attendre `getprop sys.boot_completed` = 1. Deux utilisateurs Android actifs à la fois suffisent à le saturer : supprimer un utilisateur d'essai après usage (`pm remove-user <id>`). S'il bloque encore après un redémarrage : `emulator -avd Pixel_10_Kibuo -wipe-data` (accord du propriétaire du 25 novembre 2026, ses données sont perdues).
 - **Après `install -r`, l'app rouvre l'écran où elle était** : prendre une capture avant de toucher, les coordonnées d'un écran ne valent pas pour un autre.
 - **Utilisateur d'essai derrière l'écran de verrouillage** (capture noire, focus sur `NotificationShade`) : `adb shell input keyevent 224`, `wm dismiss-keyguard`, `input keyevent 82`, puis un glissement vers le haut.
 - **Déposer un fichier chez l'utilisateur d'essai** : `adb push` vers `/storage/emulated/<id>/` est refusé. Pousser dans `/data/local/tmp/`, `chmod 644`, puis l'ouvrir dans kibuo : `adb shell am start --user <id> -a android.intent.action.VIEW -d file:///data/local/tmp/x.kibuo -t application/octet-stream -n app.kibuo/.MainActivity`.

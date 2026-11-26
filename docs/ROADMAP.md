@@ -129,6 +129,10 @@ Commencée pendant le test fermé (26 novembre 2026) : livrée aux testeurs en `
 
 
 - [ ] Tableaux de bord : évolution, catégories, patrimoine, points suivis (planches `Apercu…`)
+  - [x] Livraison 1 : l'onglet Évolution et la feuille « Période » (27 novembre 2026)
+  - [ ] Livraison 2 : les points suivis
+  - [ ] Livraison 3 : Catégories
+  - [ ] Livraison 4 : Patrimoine
 
 ## Version 0.3 : Vos données, ailleurs
 
