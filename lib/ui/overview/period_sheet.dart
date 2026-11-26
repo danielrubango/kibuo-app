@@ -24,12 +24,17 @@ Future<void> showPeriodSheet(
   required OverviewView view,
   required int startDay,
   required ValueChanged<OverviewView> onChanged,
+  DateTime Function() clock = DateTime.now,
 }) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  builder: (_) =>
-      PeriodSheet(view: view, startDay: startDay, onChanged: onChanged),
+  builder: (_) => PeriodSheet(
+    view: view,
+    startDay: startDay,
+    onChanged: onChanged,
+    clock: clock,
+  ),
 );
 
 class PeriodSheet extends StatefulWidget {
@@ -38,11 +43,13 @@ class PeriodSheet extends StatefulWidget {
     required this.view,
     required this.startDay,
     required this.onChanged,
+    this.clock = DateTime.now,
   });
 
   final OverviewView view;
   final int startDay;
   final ValueChanged<OverviewView> onChanged;
+  final DateTime Function() clock;
 
   @override
   State<PeriodSheet> createState() => _PeriodSheetState();
@@ -70,7 +77,7 @@ class _PeriodSheetState extends State<PeriodSheet> {
   }
 
   DateTime get _today {
-    final now = DateTime.now();
+    final now = widget.clock();
     return DateTime(now.year, now.month, now.day);
   }
 
@@ -115,7 +122,7 @@ class _PeriodSheetState extends State<PeriodSheet> {
     final (:choice, :offset) = _view;
     final span = periodSpan(
       choice.kind,
-      now: DateTime.now(),
+      now: widget.clock(),
       offset: offset,
       startDay: widget.startDay,
       custom: choice.custom,
@@ -143,136 +150,151 @@ class _PeriodSheetState extends State<PeriodSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SingleChildScrollView(
-        padding: sheetPadding(context),
+        padding: sheetPadding(context).copyWith(left: 0, right: 0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SheetHandle(),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l.overviewPeriodTitle,
-                    style: KibuoType.sheetTitle,
-                  ),
-                ),
-                _ResetButton(
-                  label: l.overviewReset,
-                  onPressed: atDefault ? null : () => _set(choice.reset(), 0),
-                ),
-                const SizedBox(width: 2),
-                Transform.translate(
-                  offset: const Offset(10, 0),
-                  child: SizedBox.square(
-                    dimension: KibuoTheme.heightTouch,
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () => Navigator.of(context).pop(),
-                      tooltip: MaterialLocalizations.of(context)
-                          .closeButtonTooltip,
-                      icon: const Icon(
-                        KibuoIcons.x,
-                        size: 22,
-                        color: KibuoColors.inkSecondary,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SheetHandle(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l.overviewPeriodTitle,
+                          style: KibuoType.sheetTitle,
+                        ),
                       ),
-                    ),
+                      _ResetButton(
+                        label: l.overviewReset,
+                        onPressed: atDefault
+                            ? null
+                            : () => _set(choice.reset(), 0),
+                      ),
+                      const SizedBox(width: 2),
+                      Transform.translate(
+                        offset: const Offset(10, 0),
+                        child: SizedBox.square(
+                          dimension: KibuoTheme.heightTouch,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () => Navigator.of(context).pop(),
+                            tooltip: MaterialLocalizations.of(context)
+                                .closeButtonTooltip,
+                            icon: const Icon(
+                              KibuoIcons.x,
+                              size: 22,
+                              color: KibuoColors.inkSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 12),
             // The chips run to the sheet's edges.
             SizedBox(
               height: 40,
-              child: LayoutBuilder(
-                builder: (context, box) => OverflowBox(
-                  maxWidth: box.maxWidth + 32,
-                  minWidth: box.maxWidth + 32,
-                  child: FadingRow(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      for (final kind in PeriodKind.values)
-                        _PeriodChip(
-                          key: kind == choice.kind ? _chosenChip : null,
-                          label: kindName(l, kind),
-                          chosen: kind == choice.kind,
-                          onTap: () => _pickKind(kind),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if (choice.kind == PeriodKind.custom && custom != null) ...[
-              const SizedBox(height: 12),
-              SettingsCard(
+              child: FadingRow(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  SettingsRow(
-                    label: l.overviewFrom,
-                    value: DateFormat.yMMMd(lang).format(custom.start),
-                    onTap: () => _pickFirst(custom),
+                  for (final kind in PeriodKind.values)
+                    _PeriodChip(
+                      key: kind == choice.kind ? _chosenChip : null,
+                      label: kindName(l, kind),
+                      chosen: kind == choice.kind,
+                      onTap: () => _pickKind(kind),
+                    ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (choice.kind == PeriodKind.custom && custom != null) ...[
+                    const SizedBox(height: 12),
+                    SettingsCard(
+                      children: [
+                        SettingsRow(
+                          label: l.overviewFrom,
+                          value: DateFormat.yMMMd(lang).format(custom.start),
+                          onTap: () => _pickFirst(custom),
+                        ),
+                        SettingsRow(
+                          label: l.overviewTo,
+                          value: DateFormat.yMMMd(lang).format(custom.lastDay),
+                          onTap: () => _pickLast(custom),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  group(
+                    l.overviewGroupBy,
+                    TabStrip<Grouping>(
+                      height: 40,
+                      items: [
+                        for (final g in Grouping.values)
+                          (g, groupingName(l, g)),
+                      ],
+                      value: choice.groupingFor(span),
+                      disabled: {
+                        for (final g in Grouping.values)
+                          if (!offered.contains(g)) g,
+                      },
+                      onPick: (g) => _set(choice.withGrouping(g), offset),
+                    ),
                   ),
-                  SettingsRow(
-                    label: l.overviewTo,
-                    value: DateFormat.yMMMd(lang).format(custom.lastDay),
-                    onTap: () => _pickLast(custom),
+                  const SizedBox(height: 12),
+                  group(
+                    l.overviewCompareTo,
+                    TabStrip<Comparison>(
+                      height: 40,
+                      items: [
+                        for (final c in Comparison.values)
+                          (c, comparisonName(l, c)),
+                      ],
+                      value: comparison,
+                      disabled: {
+                        for (final c in Comparison.values)
+                          if (!comparisonOpen(c, offset: offset)) c,
+                      },
+                      onPick: (c) => _set(choice.withComparison(c), offset),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  group(
+                    l.overviewComparedAs,
+                    TabStrip<ComparedAs>(
+                      height: 40,
+                      items: [
+                        for (final c in ComparedAs.values)
+                          (c, comparedAsName(l, c)),
+                      ],
+                      value: choice.comparedAs,
+                      disabled: comparison == Comparison.none
+                          ? ComparedAs.values.toSet()
+                          : const {},
+                      onPick: (c) => _set(choice.withComparedAs(c), offset),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  KibuoButton(
+                    label: l.overviewSee,
+                    kind: ButtonKind.dark,
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
-            ],
-            const SizedBox(height: 12),
-            group(
-              l.overviewGroupBy,
-              TabStrip<Grouping>(
-                height: 40,
-                items: [
-                  for (final g in Grouping.values) (g, groupingName(l, g)),
-                ],
-                value: choice.groupingFor(span),
-                disabled: {
-                  for (final g in Grouping.values)
-                    if (!offered.contains(g)) g,
-                },
-                onPick: (g) => _set(choice.withGrouping(g), offset),
-              ),
-            ),
-            const SizedBox(height: 12),
-            group(
-              l.overviewCompareTo,
-              TabStrip<Comparison>(
-                height: 40,
-                items: [
-                  for (final c in Comparison.values) (c, comparisonName(l, c)),
-                ],
-                value: comparison,
-                disabled: {
-                  for (final c in Comparison.values)
-                    if (!comparisonOpen(c, offset: offset)) c,
-                },
-                onPick: (c) => _set(choice.withComparison(c), offset),
-              ),
-            ),
-            const SizedBox(height: 12),
-            group(
-              l.overviewComparedAs,
-              TabStrip<ComparedAs>(
-                height: 40,
-                items: [
-                  for (final c in ComparedAs.values) (c, comparedAsName(l, c)),
-                ],
-                value: choice.comparedAs,
-                disabled: comparison == Comparison.none
-                    ? ComparedAs.values.toSet()
-                    : const {},
-                onPick: (c) => _set(choice.withComparedAs(c), offset),
-              ),
-            ),
-            const SizedBox(height: 12),
-            KibuoButton(
-              label: l.overviewSee,
-              kind: ButtonKind.dark,
-              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         ),

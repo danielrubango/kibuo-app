@@ -36,9 +36,13 @@ class OverviewScreen extends StatefulWidget {
     required this.data,
     this.refresh,
     this.store,
+    this.clock = DateTime.now,
   });
 
   final EntryData data;
+
+  /// The time now; a fixed one in the screen captures.
+  final DateTime Function() clock;
 
   /// Fires after a save: the figures are read again.
   final Listenable? refresh;
@@ -146,13 +150,14 @@ class _OverviewScreenState extends State<OverviewScreen> {
     view: (choice: _choice, offset: _offset),
     startDay: monthStartChoice.value,
     onChanged: _show,
+    clock: widget.clock,
   );
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
-    final now = DateTime.now();
+    final now = widget.clock();
     final startDay = monthStartChoice.value;
     TimeSpan spanAt(int offset) => periodSpan(
       _choice.kind,

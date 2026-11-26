@@ -102,8 +102,12 @@ String? barMark(
       if (kind == PeriodKind.last7Days) {
         return DateFormat.E(lang).format(start).replaceAll('.', '');
       }
-      final step = n <= 31 ? 5 : (n <= 62 ? 10 : 15);
-      return i % step == 0 ? '${start.day}' : null;
+      if (n <= 31) return i % 5 == 0 ? '${start.day}' : null;
+      // Longer than a month: the 1st of each month, with its name
+      // (« 1 oct. »), and the first day when no 1st comes soon after it.
+      if (start.day == 1) return DateFormat.MMMd(lang).format(start);
+      final firstSoon = bars.take(8).any((b) => b.start.day == 1);
+      return i == 0 && !firstSoon ? DateFormat.MMMd(lang).format(start) : null;
     case Grouping.week:
       final step = n <= 11 ? 1 : 4;
       return i % step == 0 ? l.overviewWeekMark(i + 1) : null;
