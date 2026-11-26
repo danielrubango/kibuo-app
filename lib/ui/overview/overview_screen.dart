@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/overview_store.dart';
 import 'package:kibuo/domain/money/currency.dart';
@@ -16,6 +14,7 @@ import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/overview/evolution_chart.dart';
+import 'package:kibuo/ui/overview/followed_tile.dart';
 import 'package:kibuo/ui/overview/overview_labels.dart';
 import 'package:kibuo/ui/overview/period_sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -578,7 +577,7 @@ class _FlowTile extends StatelessWidget {
                             children: [
                               CustomPaint(
                                 size: const Size.square(14),
-                                painter: _TrendArrow(
+                                painter: TrendArrow(
                                   up: change.up,
                                   color: changeInk,
                                 ),
@@ -631,44 +630,6 @@ class _Radio extends StatelessWidget {
           )
         : null,
   );
-}
-
-/// The arrow leaning up or down before a change (canvas ApercuP2).
-class _TrendArrow extends CustomPainter {
-  _TrendArrow({required this.up, required this.color});
-
-  final bool up;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final s = size.width / 24;
-    final path = up
-        ? (Path()
-            ..moveTo(7 * s, 17 * s)
-            ..lineTo(17 * s, 7 * s)
-            ..moveTo(9 * s, 7 * s)
-            ..lineTo(17 * s, 7 * s)
-            ..lineTo(17 * s, 15 * s))
-        : (Path()
-            ..moveTo(7 * s, 7 * s)
-            ..lineTo(17 * s, 17 * s)
-            ..moveTo(17 * s, 9 * s)
-            ..lineTo(17 * s, 17 * s)
-            ..lineTo(9 * s, 17 * s));
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = math.max(1, 2.6 * s)
-        ..strokeCap = StrokeCap.round
-        ..strokeJoin = StrokeJoin.round,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_TrendArrow old) => old.up != up || old.color != color;
 }
 
 /// A tab that comes in a later delivery: a white card, its icon, « Bientôt »

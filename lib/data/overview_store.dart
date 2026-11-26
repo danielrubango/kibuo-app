@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:kibuo/data/database.dart';
 import 'package:kibuo/data/preference_store.dart';
+import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_choice.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
 
@@ -58,4 +59,34 @@ class OverviewStore {
       }),
     );
   }
+
+  static const _followedKey = 'overview_followed';
+
+  /// The tiles of « Points suivis » and the budget and project picked.
+  Future<FollowedChoice> readFollowed() async {
+    final text = await _prefs.read(_followedKey);
+    if (text == null) return const FollowedChoice();
+    try {
+      final json = jsonDecode(text) as Map<String, Object?>;
+      final names = Followed.values.asNameMap();
+      return FollowedChoice(
+        on: {for (final n in json['on'] as List<Object?>) ?names[n]},
+        budget: json['budget'] as String?,
+        project: json['project'] as String?,
+      );
+    } on FormatException {
+      return const FollowedChoice();
+    } on TypeError {
+      return const FollowedChoice();
+    }
+  }
+
+  Future<void> writeFollowed(FollowedChoice choice) => _prefs.write(
+    _followedKey,
+    jsonEncode({
+      'on': [for (final f in choice.shown) f.name],
+      'budget': choice.budget,
+      'project': choice.project,
+    }),
+  );
 }
