@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Confidentialité · C, date discrète sous le paragraphe</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@700&amp;display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#0A7355}a:hover{color:#0A5A43}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #FFFFFF; color: #0E1320; font-family: Inter, sans-serif; -webkit-font-smoothing: antialiased">
+  <div style="background: #0E1320; color: #FFFFFF">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 16px 24px 56px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+        <a href="#" aria-label="kibuo, accueil" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #FFFFFF">
+          <svg viewBox="0 0 96 96" width="32" height="32" aria-hidden="true"><rect width="96" height="96" rx="22" fill="#1C2333"></rect><circle cx="48" cy="48" r="25" fill="#5EEAB5"></circle><path d="M42 35A10 10 0 1 1 54 35Z" fill="#FFC247" stroke="#0E1320" stroke-width="2.5"></path><path d="M45 28.5h6" stroke="#0E1320" stroke-width="1.8" stroke-linecap="round" opacity="0.45"></path><rect x="37" y="35" width="22" height="5" rx="2.5" fill="#0E1320"></rect></svg>
+          <span style="font: 700 22px 'Space Grotesk', sans-serif; letter-spacing: -0.02em">kibuo</span>
+        </a>
+        <nav aria-label="Langue" style="display: flex; gap: 4px; font-size: 14px; font-weight: 600">
+          <a href="#" aria-current="page" style="padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.12); color: #FFFFFF; text-decoration: none">Français</a>
+          <a href="#" style="padding: 10px 12px; border-radius: 10px; color: #B9C1D1; text-decoration: none">English</a>
+        </nav>
+      </div>
+      <h1 style="margin: 56px 0 0; font: 700 44px/1.12 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; max-width: 18ch">Politique de confidentialité</h1>
+      <p style="margin: 16px 0 0; font-size: 19px; line-height: 30px; color: #D3D9E4; max-width: 56ch">kibuo est un carnet de comptes qui reste sur votre appareil. Voici ce qu’il garde, où, et ce qu’il ne fait pas.</p>
+      <p style="margin: 20px 0 0; font-size: 14px; color: #B9C1D1">Mise à jour le 26 novembre 2026</p>
+    </div>
+  </div>
+
+  <div style="max-width: 1080px; margin: 0 auto; padding: 48px 24px 72px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+    <nav aria-label="Sur cette page" style="flex: 1 1 220px; max-width: 260px; font-size: 15px">
+      <p style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #525D73">Sur cette page</p>
+      <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px">
+        <li><a href="#garde" style="display: block; padding: 8px 12px; border-radius: 10px; background: #E9F8F1; color: #0A5A43; text-decoration: none; font-weight: 500">Ce que kibuo garde</a></li>
+        <li><a href="#ou" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Où</a></li>
+        <li><a href="#rien" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Rien d’autre ne part</a></li>
+        <li><a href="#stats" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Statistiques</a></li>
+        <li><a href="#sauvegardes" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Vos sauvegardes</a></li>
+        <li><a href="#copie" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">La copie par le système</a></li>
+        <li><a href="#empreinte" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Empreinte et photos</a></li>
+        <li><a href="#effacer" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Effacer vos données</a></li>
+        <li><a href="#qui" style="display: block; padding: 8px 12px; border-radius: 10px; color: #525D73; text-decoration: none; font-weight: 500">Qui publie kibuo</a></li>
+      </ul>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; max-width: 680px; display: flex; flex-direction: column; gap: 0; font-size: 16px; line-height: 28px; color: #2B3445">
+      <section id="garde" style="padding: 0 0 28px">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Ce que kibuo garde</h2>
+        <p style="margin: 0">Ce que vous y notez : comptes, opérations et leurs pièces jointes, catégories, budgets, récurrences, dettes et créances, projets, devises et taux, rappels, et vos réglages. kibuo ne demande ni votre nom, ni votre numéro, ni votre position, et ne lit ni vos contacts ni vos SMS.</p>
+      </section>
+      <section id="ou" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Où</h2>
+        <p style="margin: 0">Sur votre appareil seulement, dans une base chiffrée. Sa clé est gardée par le système de l’appareil, dans son coffre sécurisé.</p>
+      </section>
+      <section id="rien" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Rien d’autre ne part</h2>
+        <p style="margin: 0">Sans votre accord, kibuo n’envoie rien, ni à nous ni à personne. Pas de compte, pas de publicité, et rien n’est vendu.</p>
+      </section>
+      <section id="stats" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Statistiques, si vous l’acceptez</h2>
+        <p style="margin: 0">Si vous acceptez « Aider à améliorer kibuo », kibuo envoie des données d’analyse qui nous permettent d’améliorer l’application : les écrans ouverts, les actions faites (sans leur contenu), les erreurs, et une description de l’appareil (modèle, système et sa version, langue, pays, devise principale). Elles portent un numéro tiré au sort, sans lien avec vous ni avec l’appareil. Jamais vos montants, vos noms, vos notes ni votre position, et votre adresse IP n’est pas gardée.</p>
+        <p style="margin: 12px 0 0">Ces données sont stockées en Europe, le temps de leur analyse, un an environ. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.</p>
+      </section>
+      <section id="sauvegardes" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Vos sauvegardes</h2>
+        <p style="margin: 0">Une sauvegarde est un fichier que vous rangez où vous voulez. Avec un mot de passe, elle est chiffrée ; sans mot de passe, quiconque a le fichier peut la lire. Rangée dans un service en ligne ou partagée, elle suit les règles de ce service.</p>
+      </section>
+      <section id="copie" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">La copie par le système</h2>
+        <p style="margin: 0">Une fois le code de récupération créé, le système de votre appareil peut copier les données de kibuo dans sa sauvegarde en ligne ou vers un nouvel appareil. Elles y restent chiffrées et ne s’ouvrent qu’avec le code de récupération. Vous pouvez l’empêcher dans Réglages › Code de récupération.</p>
+        <ul style="margin: 12px 0 0; padding-left: 20px; list-style: disc">
+          <li>Sur Android : la sauvegarde Google du téléphone, et le transfert vers un nouveau téléphone.</li>
+        </ul>
+      </section>
+      <section id="empreinte" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Empreinte et photos</h2>
+        <p style="margin: 0">L’empreinte ou le visage sont vérifiés par le système de l’appareil : kibuo ne les voit jamais. L’appareil photo et la galerie ne servent que lorsque vous ajoutez une pièce jointe.</p>
+      </section>
+      <section id="effacer" style="padding: 28px 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Effacer vos données</h2>
+        <p style="margin: 0">Désinstaller kibuo, ou effacer ses données dans les réglages du système, efface tout ce qu’il garde sur l’appareil. Vos sauvegardes restent là où vous les avez rangées.</p>
+        <ul style="margin: 12px 0 0; padding-left: 20px; list-style: disc">
+          <li>Sur Android : appui long sur l’icône de kibuo › Désinstaller, ou Paramètres › Applications › kibuo › Stockage › Effacer les données.</li>
+        </ul>
+      </section>
+      <section id="qui" style="padding: 28px 0 0; border-top: 1px solid #DDE2EC">
+        <h2 style="margin: 0 0 8px; font: 700 21px 'Plus Jakarta Sans', sans-serif; color: #0E1320">Qui publie kibuo</h2>
+        <p style="margin: 0">kibuo est publié par Daniel Rubango. Pour une question sur vos données ou sur cette politique, écrivez à <a href="mailto:contact@kibuo.app" style="font-weight: 600">contact@kibuo.app</a>.</p>
+      </section>
+    </main>
+  </div>
+
+  <footer style="background: #EEF1F7">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 24px 24px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 14px; color: #525D73">
+      <p style="margin: 0">kibuo · Votre compagnon, des dépenses quotidiennes à vos projets.</p>
+      <p style="margin: 0"><a href="mailto:contact@kibuo.app">contact@kibuo.app</a></p>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

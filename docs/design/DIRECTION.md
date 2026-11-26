@@ -184,6 +184,8 @@ Une ligne par écran livré : la planche retenue (dans [boards/](boards/), avec 
 | Sauvegarde manuelle | `Sauvegarde`, `SauvW2`, `SauvW2Premiere`, `PlusAncienne` ; chiffrement : planche P1 (non exportée) ; mot de passe retenu : `MotDePasseRetenu-variantes.html`, variante A (25 nov.) | 24 nov. | 24 nov. | Règles d'écran (sauvegarde) ; « Ligne de réglage » |
 | Restauration | `RestauC1`, `RestauC1Err`, `RestauC2`, `RestauC3`, `RestauNeuf` | 24 nov. | 24 nov. | Règles d'écran (restaurer) ; PRODUCT, Restauration |
 
+Page de confidentialité du site (kibuo.app/confidentialite et /en/privacy) : planche `SiteConfidentialite` (variante C1), validée le 26 novembre 2026.
+
 Livrés le 25 novembre 2026 : Plus (`Plus`, `PlusAncienne`), Réglages (`Reglages`, `ReglageLangue`) et À propos (`APropos`), avec les écarts voulus écrits dans PRODUCT. L'écran d'attente de l'Aperçu (variante B de `ApercuAttente-variantes.html`, 25 novembre 2026) : une carte blanche centrée (tuile verte de 48, titre, phrase), puis les lignes de Plus (tuile de 36, nom, ligne grise), sans flèche quand elles ne mènent nulle part, et le titre de section « En attendant » comme « Mes espaces ». Dessinés et validés, pas encore construits : l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, Noter kibuo. Dans l'app, l'Aperçu est un écran d'attente.
 
 ## Variantes écartées et pourquoi
@@ -192,6 +194,7 @@ La raison est donnée quand elle est écrite dans ce document ou dans PRODUCT ; 
 
 | Écartées | Retenue | Pourquoi |
 |---|---|---|
+| Page de confidentialité du site : A (document sobre, fond blanc), B (cartes comme dans l'app), C (bandeau nuit, date en pastille au-dessus du titre), C2 (pastille menthe sous le paragraphe), C3 (date sous le sommaire) | C1 (bandeau nuit et sommaire, date en petit gris clair sous le paragraphe) | Choisie par le propriétaire le 26 novembre 2026 sur le canvas « kibuo · Page de confidentialité » ; pour A et B, raison non écrite. C3 : sur téléphone, le sommaire passe au-dessus du texte et la date tomberait au milieu de la page ; C2 : la menthe est gardée pour les actions. |
 | `Lancement4Sauvegarde` 3 B (la carte nomme le dossier choisi) | 3 A (la carte garde « Chaque semaine, dans le dossier de votre choix. ») | Choisie par le propriétaire le 25 novembre 2026 ; raison non écrite. |
 | `MotDePasseRetenu` B (interrupteur « Protéger par mot de passe » des planches Sauvegarde et RestauC1), C (« Retenir ce mot de passe » dans la feuille de sauvegarde) | A (ligne « Mot de passe · Aucun › » dans la carte, qui ouvre une feuille) | Choisie par le propriétaire le 25 novembre 2026 ; raison non écrite. L'interrupteur « Protéger par mot de passe » des planches Sauvegarde et RestauC1 n'est donc pas repris. |
 | `ConfirmB` (message plus grand, posé en bas) | `ConfirmA` (feuille qui se ferme seule) | Un message flottant peut cacher le bouton du bas d'une fiche ; la feuille porte aussi les actions (« Annuler et modifier », « Voir la dette ») (23 nov.). |

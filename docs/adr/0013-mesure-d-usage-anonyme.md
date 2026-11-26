@@ -10,6 +10,14 @@ Décidé le 25 novembre 2026, pour la version 0.1. kibuo envoie des statistiques
 - **Hors ligne.** Les messages attendent sur le téléphone, dans un fichier, et partent par lots (toutes les 30 secondes, à 20 en attente, et quand kibuo passe en arrière-plan) ; au plus 500 attendent, les plus anciens partent d'abord ; kibuo reste entièrement utilisable sans réseau.
 - **Notre propre envoi** (décidé le 25 novembre 2026, après essai). Le module de PostHog pour Flutter ajoutait de lui-même, depuis sa partie Android, le nom de l'opérateur, le fuseau horaire, la signature technique du téléphone (« user agent ») et son nom de code, sans moyen de les retirer depuis kibuo ; il interrogeait aussi son serveur au démarrage. kibuo n'embarque donc pas ce module : il envoie lui-même ses messages à l'adresse `/batch/` de PostHog, avec exactement les champs listés (`lib/domain/usage/usage_message.dart`, `lib/ui/usage/posthog_sender.dart`). La politique de confidentialité mentionne quand même l'opérateur, le fuseau horaire et la description technique comme possibles, pour pouvoir changer d'outil sans la réécrire.
 
+## Vérifié chez PostHog le 26 novembre 2026
+
+Pages officielles de PostHog, lues ce jour-là :
+
+- **Durée de conservation** ([events-retention](https://posthog.com/docs/data/events-retention)) : un an sur l'offre gratuite, non réglable ; réglable seulement sur les offres payantes (2 ans par défaut). L'effacement se fait par mois entiers, et les copies de secours de PostHog gardent les événements environ deux semaines de plus ([data-storage](https://posthog.com/docs/privacy/data-storage)) : en pratique, jusqu'à environ 14 mois sur l'offre gratuite.
+- **Adresse IP** ([data-collection](https://posthog.com/docs/privacy/data-collection)) : le réglage du projet « Discard client IP data » (Settings › Project) retire l'adresse avant de garder l'événement ; PostHog la reçoit quand même à chaque envoi. Il est éteint d'office pour les organisations européennes créées récemment : à vérifier dans notre projet. Rien ne dit si PostHog garde l'adresse dans les journaux de ses serveurs.
+- **Contrat de sous-traitance** ([dpa](https://posthog.com/dpa)) : PostHog est sous-traitant, nous sommes responsables du traitement. Le contrat n'est pas automatique : il se génère dans PostHog (app.posthog.com/legal) et se signe, y compris sur l'offre gratuite.
+
 ## Considered Options
 
 - Mesurer d'office avec possibilité de refuser : plus de données, mais contraire à la promesse de la politique de confidentialité et plus fragile vis-à-vis de Google Play et des utilisateurs européens.

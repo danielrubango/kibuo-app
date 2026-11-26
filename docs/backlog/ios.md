@@ -52,3 +52,4 @@ Le code Flutter reste compilable pour iOS, mais iOS n'est ni testé ni publié a
 4. Tester sauvegarde, restauration et transfert depuis Android.
 5. Tester sur un iPhone réel, puis publier via TestFlight et l'App Store.
 | Restauration | Choix du fichier par le sélecteur d'Android (`ACTION_OPEN_DOCUMENT`) et ouverture de kibuo par un fichier `.kibuo` (filtre `VIEW`), canal `kibuo/backup-file` (`BackupFiles.kt`) | `UIDocumentPickerViewController` pour le fichier, et type de document `.kibuo` déclaré (`CFBundleDocumentTypes`, `UTImportedTypeDeclarations`) avec ouverture par `application(_:open:)` | À faire |
+- Politique de confidentialité (site et app) : ajouter la ligne « Sur iOS : … » à « La copie par le système » (sauvegarde iCloud, nouvel iPhone) et à « Effacer vos données » ([backlog/site-public.md](site-public.md), 26 novembre 2026).
