@@ -3,10 +3,19 @@ import 'package:flutter/material.dart';
 /// A row that scrolls sideways when it is too long, its edges fading over
 /// 32 where more is hidden (canvas ListeOperations, the filter chips).
 class FadingRow extends StatefulWidget {
-  const FadingRow({super.key, required this.children, this.spacing = 8});
+  const FadingRow({
+    super.key,
+    required this.children,
+    this.spacing = 8,
+    this.padding = EdgeInsets.zero,
+  });
 
   final List<Widget> children;
   final double spacing;
+
+  /// Around the row, inside the part that scrolls (a row running to the
+  /// edges of a sheet).
+  final EdgeInsets padding;
 
   @override
   State<FadingRow> createState() => _FadingRowState();
@@ -68,6 +77,7 @@ class _FadingRowState extends State<FadingRow> {
         child: SingleChildScrollView(
           controller: _scroll,
           scrollDirection: Axis.horizontal,
+          padding: widget.padding,
           child: Row(
             children: [
               for (final (i, child) in widget.children.indexed) ...[

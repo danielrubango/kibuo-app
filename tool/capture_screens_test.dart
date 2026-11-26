@@ -29,11 +29,13 @@ import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
+import 'package:kibuo/ui/overview/overview_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
 import 'package:kibuo/ui/start/data_gate.dart';
 import 'package:kibuo/ui/start/first_launch.dart';
 import 'package:kibuo/ui/start/start_screen.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
@@ -466,6 +468,131 @@ void main() {
         matchesGoldenFile('screens_out/demarrage_$ms.png'),
       );
     }
+  });
+
+  testWidgets('Aperçu', (tester) async {
+    final db = KibuoDatabase(NativeDatabase.memory(), deviceId: 'ap');
+    addTearDown(db.close);
+    final data = EntryData(
+      accounts: AccountRepository(db),
+      categories: CategoryRepository(db),
+      currencies: CurrencyRepository(db),
+      transactions: TransactionRepository(db),
+      attachments: AttachmentRepository.withFiles(db, MemoryFiles()),
+    );
+    await data.currencies.ensurePrimaryCurrency('US');
+    final mpesa = await data.accounts.create(
+      name: 'M-Pesa',
+      type: AccountType.mobile,
+      opening: const Money(500000, 'USD'),
+      openingDate: DateTime.utc(2025, 12),
+    );
+    // The canvas ApercuP2 is drawn on 12 November 2026 at 15 h.
+    final now = DateTime(2026, 11, 12, 15, 20);
+    var seed = 7;
+    int next(int max) =>
+        (seed = (seed * 1103515245 + 12345) & 0x7fffffff) % max;
+    await db.transaction(() async {
+      for (
+        var d = DateTime(2025, 12);
+        d.isBefore(now);
+        d = DateTime(d.year, d.month, d.day + 1)
+      ) {
+        for (var k = 0; k < 1 + next(3); k++) {
+          final at = DateTime(d.year, d.month, d.day, 7 + next(15), next(60));
+          if (at.isAfter(now)) continue;
+          await data.transactions.create(
+            kind: EntryKind.expense,
+            accountId: mpesa,
+            categoryId: 'default-taxi',
+            paid: Money(300 + next(2500), 'USD'),
+            fees: 0,
+            date: at,
+          );
+        }
+        if (d.day == 1 || next(9) == 0) {
+          await data.transactions.create(
+            kind: EntryKind.income,
+            accountId: mpesa,
+            categoryId: 'default-salary',
+            paid: Money(d.day == 1 ? 100000 : 3000 + next(9000), 'USD'),
+            fees: 0,
+            date: DateTime(d.year, d.month, d.day, 9),
+          );
+        }
+      }
+    });
+    Future<void> open() => show(
+      tester,
+      Scaffold(
+        body: SafeArea(
+          child: OverviewScreen(data: data, clock: () => now),
+        ),
+      ),
+    );
+    Future<void> choose(List<String> taps) async {
+      await tester.tap(find.byIcon(KibuoIcons.caretDown));
+      await tester.pumpAndSettle();
+      for (final t in taps) {
+        await tester.ensureVisible(find.text(t).last);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(t).last);
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.text('Voir'));
+      await tester.pumpAndSettle();
+    }
+
+    await open();
+    await snap(tester, 'Apercu_mois');
+    await tester.tap(find.byIcon(KibuoIcons.caretDown));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_feuille');
+    await tester.tap(find.text('Voir'));
+    await tester.pumpAndSettle();
+    await choose(['Bâtonnets']);
+    await snap(tester, 'Apercu_batonnets');
+    await tester.tap(find.text('Entrées'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_entrees');
+    await tester.tap(find.text('Sorties'));
+    await choose(['Courbe', 'Semaine']);
+    await snap(tester, 'Apercu_semaines');
+    await choose(['1 an']);
+    await snap(tester, 'Apercu_an');
+    await choose(['Semaine']);
+    await snap(tester, 'Apercu_an_semaines');
+    await choose(['7 jours']);
+    await snap(tester, 'Apercu_7jours');
+    await choose(['Aujourd’hui']);
+    await snap(tester, 'Apercu_jour');
+    await choose(['24 h']);
+    await snap(tester, 'Apercu_24h');
+    await tester.tap(find.byIcon(KibuoIcons.caretLeft));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_24h_avant');
+    await tester.tap(find.byIcon(KibuoIcons.caretDown));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Personnalisée'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Personnalisée'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_perso_feuille');
+    await tester.tap(find.text('Voir'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_perso');
+    await tester.tap(find.byIcon(KibuoIcons.caretLeft));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(KibuoIcons.caretLeft));
+    await tester.pumpAndSettle();
+    await choose(['1 mois']);
+    await tester.tap(find.byIcon(KibuoIcons.caretLeft));
+    await tester.pumpAndSettle();
+    await choose(['D’après']);
+    await snap(tester, 'Apercu_octobre_apres');
+    await tester.tap(find.text('Catégories'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_categories');
   });
 
   testWidgets('Premier lancement', (tester) async {

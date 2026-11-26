@@ -73,6 +73,22 @@ Règle qui produit une opération à intervalle régulier.
 **Occurrence** (`Occurrence`) :
 Opération ou brouillon produit par une récurrence pour une date donnée.
 
+**Aperçu** (`Overview`) :
+Onglet qui montre l'argent sur une période : ce qui sort et ce qui entre (Évolution), où il part (Catégories), ce que je possède (Patrimoine).
+
+**Période de l'aperçu** (`PeriodKind`, `TimeSpan`) :
+Durée montrée par l'aperçu : aujourd'hui, hier, 24 h, 7 jours, 1 mois, 1 an ou personnalisée. Le mois et l'année suivent la période budgétaire.
+_Avoid_ : période budgétaire, pour ce sens
+
+**Regroupement** (`Grouping`) :
+Ce que tient une barre du graphique : une heure, un jour, une semaine (7 jours depuis le début de la période) ou un mois.
+
+**Période comparée** (`Comparison`) :
+Période mise en regard de celle de l'aperçu : celle d'avant, celle d'après, l'actuelle, ou aucune.
+
+**Écart** (`Change`) :
+Différence en pourcentage avec la période comparée, vert quand c'est bon signe (moins dépensé, plus reçu), ambre sinon.
+
 **Rappel** (`Reminder`) :
 Notification programmée invitant à agir : noter, verser, rembourser, réclamer.
 _Avoid_ : alerte, pour ce sens
