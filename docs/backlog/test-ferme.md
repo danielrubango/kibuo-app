@@ -39,7 +39,7 @@ Image : variante B du canvas, page WhatsApp (1080 × 1350) : fond menthe, « Acc
 
 ## Posts de la semaine
 
-Les variantes A (nuit, « Essayez kibuo avant tout le monde », l'accueil dans un téléphone) et C (nuit, deux écrans côte à côte) de la page WhatsApp du canvas sont gardées pour les posts de la semaine (propriétaire, 26 novembre 2026). Elles portent encore les mentions écartées pour l'invitation (« Test fermé », « en famille », « deux semaines ») : à aligner sur le ton d'accès privé avant de les publier.
+Les variantes A (nuit, « Essayez kibuo avant tout le monde », l'accueil dans un téléphone) et C (nuit, deux écrans côte à côte) de la page WhatsApp du canvas sont gardées pour les posts de la semaine (propriétaire, 26 novembre 2026). Alignées le même jour sur le ton d'accès privé : A porte « Accès privé · avant la sortie » et « Sur Android pour l'instant, la version iPhone est en préparation. » ; C porte « Avant-première · accès privé » et « kibuo arrive sur Android, et la version iPhone est en préparation. Quelques accès sont ouverts avant la sortie. ». Fichiers : `build/play/whatsapp-post-a.png` et `build/play/whatsapp-post-c.png` (non suivis par git).
 
 ## Le lien à envoyer après l'ajout
 
