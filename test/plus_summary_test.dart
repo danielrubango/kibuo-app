@@ -45,7 +45,7 @@ void main() {
   test('the version shown is the one in pubspec.yaml', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
     final version = RegExp(
-      r'^version: (\d+\.\d+\.\d+)',
+      r'^version: ([^+\s]+)',
       multiLine: true,
     ).firstMatch(pubspec)!.group(1);
     expect(appVersion, version);

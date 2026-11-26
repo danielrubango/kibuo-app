@@ -37,6 +37,10 @@ Une question, une idée ? Répondez-moi ici, ou écrivez à contact@kibuo.app.
 
 Image : variante B du canvas, page WhatsApp (1080 × 1350) : fond menthe, « Accès privé · avant la sortie », « Découvrez kibuo avant tout le monde. », les trois étapes, « Sur Android uniquement. La version iPhone est en préparation. ». Fichier : `build/play/whatsapp-invitation.png` (non suivi par git).
 
+## Posts de la semaine
+
+Les variantes A (nuit, « Essayez kibuo avant tout le monde », l'accueil dans un téléphone) et C (nuit, deux écrans côte à côte) de la page WhatsApp du canvas sont gardées pour les posts de la semaine (propriétaire, 26 novembre 2026). Alignées le même jour sur le ton d'accès privé : A porte « Accès privé · avant la sortie » et « Sur Android pour l'instant, la version iPhone est en préparation. » ; C porte « Avant-première · accès privé » et « kibuo arrive sur Android, et la version iPhone est en préparation. Quelques accès sont ouverts avant la sortie. ». Fichiers : `build/play/whatsapp-post-a.png` et `build/play/whatsapp-post-c.png` (non suivis par git).
+
 ## Le lien à envoyer après l'ajout
 
 ```

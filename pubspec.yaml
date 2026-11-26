@@ -1,7 +1,7 @@
 name: kibuo
 description: "Kibuo, a simple offline budgeting companion."
 publish_to: 'none'
-version: 0.1.0+2
+version: 0.1.0-alpha-2+2
 
 environment:
   sdk: ^3.13.7
