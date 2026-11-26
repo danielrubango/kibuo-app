@@ -2,6 +2,10 @@
 
 Nom retenu : **kibuo**, toujours en minuscules, y compris en début de phrase et sous l'icône du téléphone (validé le 17 novembre 2026). Nom inventé, inspiré de *kibubu*, la tirelire en swahili ; le sens est vérifié dans l'usage tanzanien, où il nomme aussi des produits d'épargne (Tigo Pesa Kibubu, comptes « Kibubu » de coopératives). Le 17 novembre 2026, kibuo a été gardé face à trois autres pistes (canvas NomChoix) : bombika (du lingala *kobomba*, garder), akibao (du swahili *akiba*, l'épargne) et tirelia (de « tirelire ») ; c'est le seul des quatre dont `.com` et `.app` sont libres et sans homonyme.
 
+## Slogan
+
+« Votre compagnon, des dépenses quotidiennes à vos projets. » En anglais : « Your companion, from everyday spending to your plans. » Retenu pour le moment par le propriétaire le 26 novembre 2026, sur le canvas de la page de confidentialité : kibuo se présente comme un compagnon qui suit les dépenses, les projets et le patrimoine. Pistes écartées le même jour : « Vos comptes dans votre poche, et nulle part ailleurs. », « Tenez vos comptes. Gardez vos secrets. » et leurs variantes.
+
 ## Logo
 
 [Logo retenu](design/logos/kibuo-logo.svg) : une tirelire menthe sur fond nuit, avec une pièce ambre qui entre dans la fente. Un petit tiret discret, sombre et à demi transparent, marque la pièce. Revu le 13 novembre 2026 face à quatre autres pistes (la fente, un K, un cochon, un pot kibubu) : la tirelire ronde reste. Le 14 novembre 2026, le grand cercle est placé au centre exact du dessin ; la pièce, un peu plus petite, ne dépasse du cercle que d'un tiers.
