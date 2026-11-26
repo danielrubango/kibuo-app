@@ -47,6 +47,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Le plan de publication (0.1 sur Google Play, 0.2 à 0.5, puis 1.0 stable) : [ROADMAP.md](ROADMAP.md), 25 novembre.
 - Plus, Réglages (Comptes et Catégories restés dans Plus), À propos et sa politique de confidentialité : PRODUCT, 25 novembre.
 - La mesure d'usage anonyme et les erreurs, avec accord, dans la 0.1 : [ADR 0013](adr/0013-mesure-d-usage-anonyme.md), 25 novembre.
+- La fenêtre des guides garde la même marge de 8 de chaque côté et entoure toute la carte du groupe montré ; la fenêtre et la carte du guide sont dans le kit (`GuideSpotlight`, `GuideCard`) : DIRECTION, « Guides », 26 novembre.
 
 ## Questions ouvertes (attendent le propriétaire)
 
@@ -86,6 +87,10 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - **Chiffrer une copie en clair** avec la clé du téléphone : l'ouvrir sans clé, `PRAGMA hexrekey = '<clé>'` (voir `replaceWithBackup` dans `lib/data/open_database.dart`).
 - Une base d'un autre téléphone, ou dont la clé a disparu, s'ouvre en erreur « not a database » : c'est l'état `Unreadable`, le fichier est mis de côté, jamais effacé.
 - **Migrations** : monter `KibuoDatabase.currentSchema`, `dart run build_runner build`, `dart run drift_dev make-migrations`, écrire le test contre les schémas sauvés (`test/drift/kibuo/`) et le voir échouer, puis ajouter l'étape `fromXToY`. Une base v11 venue d'une branche abandonnée (`codex/debts-receivables`) est réparée au démarrage (`_repairDebts`).
+
+### Git
+
+- **Commiter depuis un worktree** (`git worktree add`) : git passe au hook son propre `GIT_DIR`, que Flutter lit pour trouver sa version (« 0.0.0-unknown ») avant de refuser les paquets. Le hook `pre-commit` vide ces variables depuis le 26 novembre 2026.
 
 ### Tests
 

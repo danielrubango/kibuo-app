@@ -1,3 +1,7 @@
 #!/bin/sh
 # Blocks a commit when the checks fail. Enabled by: git config core.hooksPath .githooks
-exec "$(git rev-parse --show-toplevel)/tool/check.sh"
+top="$(git rev-parse --show-toplevel)"
+# In a worktree, git hands the hook its own GIT_DIR; Flutter would then read
+# its version from this repository instead of its own and refuse to run.
+unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
+exec "$top/tool/check.sh"
