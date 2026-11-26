@@ -34,7 +34,7 @@ Textes et images de la fiche de kibuo dans la Play Console. On avance point par 
 
 Contraintes de Google Play pour les captures : 2 à 8 par appareil, et le grand côté ne peut pas dépasser deux fois le petit. Les captures brutes de l'émulateur (1080 × 2424) sont refusées : il faut composer des images, par exemple en 1080 × 1920.
 
-## Réponses pour la Play Console (proposées le 26 novembre 2026)
+## Réponses pour la Play Console (validées le 26 novembre 2026)
 
 Tirées de ce que kibuo fait vraiment (manifeste fusionné de la version 0.1.0, `lib/domain/usage/`, ADR 0013) et des règles relevées dans [google-play.md](google-play.md). Les intitulés de la Play Console peuvent varier un peu.
 
@@ -45,10 +45,10 @@ Tirées de ce que kibuo fait vraiment (manifeste fusionné de la version 0.1.0, 
 | Politique de confidentialité | `https://kibuo.app/fr/confidentialite/` |
 | Annonces | Non, l'appli ne contient pas d'annonces |
 | Accès à l'appli | Toutes les fonctionnalités sont disponibles sans accès particulier (pas de compte ; le code de verrouillage est facultatif et créé par l'utilisateur) |
-| Public cible | 18 ans et plus (à confirmer, Q2) |
+| Public cible | 18 ans et plus |
 | Applis d'actualités | Non |
 | Applis gouvernementales | Non |
-| Fonctionnalités financières | À choisir dans la liste de la Play Console (Q3) |
+| Fonctionnalités financières | Lire les choix dans la Play Console ; sans case pour le budget personnel, « Mon appli ne propose aucune fonctionnalité financière » (kibuo ne déplace pas d'argent) |
 | Applis de santé | Aucune fonction de santé |
 | Identifiant publicitaire | Non : le manifeste fusionné ne contient pas l'autorisation `AD_ID` (vérifié le 26 novembre 2026) |
 | Service au premier plan | Aucun type déclaré : `SystemForegroundService` de WorkManager est dans le manifeste sans type, et kibuo ne le lance pas |
@@ -58,13 +58,13 @@ Tirées de ce que kibuo fait vraiment (manifeste fusionné de la version 0.1.0, 
 - **Collecte ou partage de données** : oui (les statistiques, seulement après « Oui, partager »).
 - **Chiffrement en transit** : oui (HTTPS vers le serveur d'analyse en Europe).
 - **Comptes** : l'appli ne permet pas de créer de compte.
-- **Demande de suppression** : non (Q4). Les données ne sont reliées à personne ; arrêter les statistiques oublie le numéro tiré au sort et ce qui attendait ; le reste est effacé au bout d'un an environ.
+- **Demande de suppression** : non. Les données ne sont reliées à personne ; arrêter les statistiques oublie le numéro tiré au sort et ce qui attendait ; le reste est effacé au bout d'un an environ.
 - **Partage** : non. Le service d'analyse traite les données pour le compte de kibuo (prestataire) ; à condition que le contrat de sous-traitance de PostHog soit signé (ADR 0013).
 - **Types de données collectés**, tous facultatifs, non partagés, non éphémères, finalité « Analyse » :
   - Activité dans l'appli › Interactions avec l'appli (écrans ouverts, actions faites, sans leur contenu) ;
   - Infos et performances de l'appli › Journaux de plantage (type d'erreur et endroit du code) ;
   - Identifiants de l'appareil ou autres (le numéro tiré au sort à l'installation) ;
-  - Position approximative : selon Q1.
+  - Pas de position : depuis le 26 novembre 2026, le pays envoyé est la région choisie dans les réglages du téléphone, plus celle du réseau ou de la carte SIM (qui ne sert plus qu'à proposer une devise au premier lancement, sur le téléphone).
 - **Non collectés** (tout reste sur le téléphone) : informations personnelles, informations financières, photos et vidéos, fichiers, contacts, messages, position précise, santé, historique web, audio, agenda. Diagnostics de performance : non, kibuo n'en envoie pas.
 
 ### Classification du contenu (questionnaire IARC)
