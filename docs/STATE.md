@@ -71,6 +71,8 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ### Émulateur et Android
 
+- **Version de publication qui s'arrête au lancement** (alpha-1 et alpha-2, 26-27 novembre 2026 : « kibuo s'arrête systématiquement ») : R8 compacte le code des versions de publication et avait retiré le constructeur de `WorkDatabase_Impl` que WorkManager crée par réflexion (`NoSuchMethodException … WorkDatabase_Impl.<init>` dans `adb logcat`). Règles dans `android/app/proguard-rules.pro`, icône des notifications gardée par `res/raw/keep.xml`. Les versions `--profile` ne sont pas compactées : toujours ouvrir la version `--release` sur l'émulateur `Kibuo_Release` avant un paquet ([releases/](releases/README.md)).
+
 - **Émulateur saturé** (ANR, écran de démarrage figé, une capture qui prend une minute) : le redémarrer. `adb -s emulator-5554 emu kill`, puis `~/Library/Android/sdk/emulator/emulator -avd Pixel_10_Kibuo -no-snapshot-save &`, attendre `getprop sys.boot_completed` = 1. Deux utilisateurs Android actifs à la fois suffisent à le saturer : supprimer un utilisateur d'essai après usage (`pm remove-user <id>`). S'il bloque encore après un redémarrage : `emulator -avd Pixel_10_Kibuo -wipe-data` (accord du propriétaire du 25 novembre 2026, ses données sont perdues).
 - **Après `install -r`, l'app rouvre l'écran où elle était** : prendre une capture avant de toucher, les coordonnées d'un écran ne valent pas pour un autre.
 - **Utilisateur d'essai derrière l'écran de verrouillage** (capture noire, focus sur `NotificationShade`) : `adb shell input keyevent 224`, `wm dismiss-keyguard`, `input keyevent 82`, puis un glissement vers le haut.

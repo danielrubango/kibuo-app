@@ -56,6 +56,12 @@ android {
 
     buildTypes {
         release {
+            // R8 rules for what Android libraries reach by reflection
+            // (proguard-rules.pro).
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             signingConfig =
                 if (uploadKey.isEmpty) {
                     signingConfigs.getByName("debug")
