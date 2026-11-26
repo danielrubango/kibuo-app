@@ -114,7 +114,7 @@ Ce que Google Play exige :
 - [ ] Fiche Google Play : textes, captures, formulaire sur la sécurité des données, classification du contenu ([backlog/fiche-google-play.md](backlog/fiche-google-play.md))
 - [ ] Avant la production (vers fin décembre 2026) : des captures qui accompagnent l'utilisateur (flèches, parties d'écran mises en avant, chiffres), trois propositions de huit captures
 - [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE)
-- [ ] Test fermé sur Google Play (environ 12 testeurs, durée à confirmer), puis corrections
+- [ ] Test fermé sur Google Play (12 testeurs pendant 14 jours, en famille d'abord ; [backlog/test-ferme.md](backlog/test-ferme.md)), puis corrections
 - [ ] Publication
 
 ## Version 0.2 : Aperçu
