@@ -2699,7 +2699,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String debtsAbout(String amount) {
-    return 'About $amount';
+    return '~$amount';
   }
 
   @override

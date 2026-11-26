@@ -4372,7 +4372,7 @@ abstract class AppLocalizations {
   /// Debts and receivables.
   ///
   /// In fr, this message translates to:
-  /// **'Environ {amount}'**
+  /// **'~{amount}'**
   String debtsAbout(String amount);
 
   /// Debts and receivables.

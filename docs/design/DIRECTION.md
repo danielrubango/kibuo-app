@@ -150,6 +150,8 @@ Validé le 15 novembre 2026, sur la page « Système de design » de la planche 
 
 Logo et icônes : voir [BRAND.md](../BRAND.md).
 
+- **Montant approximatif dans les onglets des dettes** (26 novembre 2026, demande du propriétaire) : « ~ » devant le montant (« ~202 500 FC ») au lieu de « Environ », qui coupait le montant. La phrase de la fiche d'une dette garde « Environ … au taux du jour. ».
+
 ## Actions d'en-tête
 
 - Une action en haut à droite d'un écran (Modifier, par exemple) est un lien texte vert (#0A7355), sans fond ni bordure, d'au moins 44 px de haut. Les icônes d'action d'en-tête (⋯) suivent la même couleur, sans fond.

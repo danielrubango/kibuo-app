@@ -1431,7 +1431,7 @@
   "@debtsLateGroup": {"description": "Debts and receivables."},
   "debtsNoDue": "Sans échéance",
   "@debtsNoDue": {"description": "Debts and receivables."},
-  "debtsAbout": "Environ {amount}",
+  "debtsAbout": "~{amount}",
   "@debtsAbout": {"description": "Debts and receivables.", "placeholders": {"amount": {"type": "String"}}},
   "debtWordLate": "{days, plural, =1{En retard d’un jour} other{En retard de {days} jours}}",
   "@debtWordLate": {"description": "Debts and receivables.", "placeholders": {"days": {"type": "int"}}},
