@@ -16,3 +16,9 @@ Future<String?> deviceCountry() async {
   }
   return WidgetsBinding.instance.platformDispatcher.locale.countryCode;
 }
+
+/// The region chosen in the phone's settings (« BE » for français
+/// (Belgique)), for the statistics: never the network's or the SIM's country,
+/// which would tell where the phone is (Data safety, 26 November 2026).
+String? usageCountry() =>
+    WidgetsBinding.instance.platformDispatcher.locale.countryCode;
