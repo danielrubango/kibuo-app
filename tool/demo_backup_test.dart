@@ -90,7 +90,7 @@ Future<void> _fill(KibuoDatabase db) async {
   final cash = await accounts.create(
     name: 'Espèces',
     type: AccountType.cash,
-    opening: _fc(185000),
+    opening: _fc(560000),
     openingDate: opened,
   );
   final mpesa = await accounts.create(
