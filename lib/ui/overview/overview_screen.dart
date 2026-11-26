@@ -567,7 +567,7 @@ class _FlowTile extends StatelessWidget {
                     // (owner, 27 November 2026).
                     child: change == null
                         ? Text(
-                            '–',
+                            '—',
                             style: KibuoType.caption.copyWith(
                               fontWeight: FontWeight.w700,
                               fontVariations: const [FontVariation.weight(700)],
