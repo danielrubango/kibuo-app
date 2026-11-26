@@ -110,7 +110,7 @@ Ce que Google Play exige :
 - [x] Vérifier les conditions actuelles de Google Play pour un nouveau compte personnel (test fermé obligatoire, nombre de testeurs, durée ; fait le 25 novembre 2026 : [backlog/google-play.md](backlog/google-play.md))
 - [ ] Vérifier la marque « kibuo » et réserver le domaine ([BRAND.md](BRAND.md))
 - [x] Clé de signature de publication (créée par le propriétaire le 25 novembre 2026, hors du dépôt) et paquet AAB
-- [ ] Site public minimal : la politique de confidentialité ([backlog/site-public.md](backlog/site-public.md))
+- [x] Site public minimal : la politique de confidentialité, en ligne le 26 novembre 2026 à kibuo.app/fr/confidentialite/ et /en/privacy/ ([backlog/site-public.md](backlog/site-public.md))
 - [ ] Fiche Google Play : textes, captures, formulaire sur la sécurité des données, classification du contenu
 - [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE)
 - [ ] Test fermé sur Google Play (environ 12 testeurs, durée à confirmer), puis corrections

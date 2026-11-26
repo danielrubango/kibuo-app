@@ -23,6 +23,8 @@ labels: [site, backend]
 - **Chaque page sous sa langue** : `kibuo.app/fr/…` et `kibuo.app/en/…`, puisque le site sera multilingue. La politique est à `/fr/confidentialite/` et `/en/privacy/` ; l'ancienne adresse `/confidentialite/` mène à la page française pour de bon (fichier `site/_redirects`), et `/`, `/fr/`, `/en/` mènent à la politique de leur langue en attendant la page d'accueil.
 - **Un sommaire qui suit la lecture** (variante A, planches `SiteSommaire-ordinateur` et `SiteSommaire-telephone`) : sur ordinateur, il reste visible pendant qu'on lit ; sur téléphone, c'est une barre en haut qui dit où l'on est et s'ouvre d'un toucher. La section lue est mise en valeur (fond menthe pâle dans le texte, ligne surlignée dans le sommaire) ; toucher une section, son titre ou une ligne du sommaire la met en valeur aussi.
 
+**Visites du site** (26 novembre 2026) : Cloudflare ajoute de lui-même son outil de mesure des visites (Web Analytics, sans cookie) aux pages ; le propriétaire le garde. La politique du site a donc une section de plus, « Ce site » / « This site », placée avant « Qui publie kibuo » : nous comptons les visites pour les analyser et améliorer le site (dit comme une action de notre part, sans nommer l'hébergeur, à la demande du propriétaire), sans cookie et sans suivre le visiteur d'un site à l'autre (page lue, page d'origine, type de navigateur et d'appareil, pays). Cette section n'existe que sur le site : la politique de l'appli ne parle que de l'appli.
+
 Vit dans le dépôt [danielrubango/kibuo-api](https://github.com/danielrubango/kibuo-api), avec le serveur de la [synchronisation](sync-cloud.md) qui viendra plus tard (Laravel, voir l'[ADR 0007](../adr/0007-synchro-laravel-postgresql.md)).
 
 Pages attendues :
