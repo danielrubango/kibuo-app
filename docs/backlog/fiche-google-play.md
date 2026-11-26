@@ -26,6 +26,9 @@ Textes et images de la fiche de kibuo dans la Play Console. On avance point par 
   4. Des budgets qui vous préviennent à temps. / Une alerte quand une catégorie approche de sa limite.
   5. Ce que vous devez, ce qu'on vous doit. / Les échéances, les retards et les remboursements.
   6. Mettez de côté pour vos projets. / Voyage, moto, rentrée : voyez où vous en êtes.
+- **Image de présentation** (1024 × 500) : variante B, choisie le 26 novembre 2026 parmi trois (A nuit centrée, B nuit avec l'accueil, C menthe) : fond nuit, le logo et « kibuo » écrit avec la pièce en point du i, le slogan en grand, quatre badges menthe sur une ligne (Dépenses, Budgets, Dettes, Projets), et l'accueil de kibuo dans un téléphone à droite.
+- **Icône** (512 × 512) : le logo de l'appli sur un carré nuit plein ; Google Play arrondit les coins lui-même.
+- **Comment refaire l'image et l'icône** : `python3 tool/play_graphics.py <1-accueil.png> <sortie>`, avec la capture de l'accueil prise pour la série.
 - **Comment refaire les captures** : `flutter test tool/demo_backup_test.dart` écrit la sauvegarde de démonstration ; on la restaure sur un utilisateur Android d'essai neuf (STATE, Émulateur et Android) ; on prend les six écrans ; `python3 tool/play_screens.py <captures> <sortie>` compose les images en 1080 × 1920.
 - **Plus tard, avant la production** (vers fin décembre 2026) : des captures qui accompagnent l'utilisateur, reliées entre elles par des flèches, avec des parties d'écran mises en avant, des textes et des chiffres ; trois propositions de huit captures selon ce qu'on veut mettre en avant. Elles suivront les nouveautés qui arrivent (ROADMAP).
 
