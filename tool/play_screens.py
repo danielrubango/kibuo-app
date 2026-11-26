@@ -24,11 +24,11 @@ TEXTS = {
                   'Votre disponible, le mois en cours et ce qui attend.'),
     '2-saisie': ('Une dépense notée en quelques touches.',
                  'Le bouton + est toujours là, même sans connexion.'),
-    '3-operations': ('Tout votre mois, jour après jour.',
+    '3-operations': ('Tout votre mois,<br>jour après jour.',
                      'Entrées, sorties et ce qui reste.'),
     '4-budgets': ('Des budgets qui vous préviennent à temps.',
                   'Une alerte quand une catégorie approche de sa limite.'),
-    '5-dettes': ('Ce que vous devez, ce qu’on vous doit.',
+    '5-dettes': ('Ce que vous devez,<br>ce qu’on vous doit.',
                  'Les échéances, les retards et les remboursements.'),
     '6-projets': ('Mettez de côté pour vos projets.',
                   'Voyage, moto, rentrée : voyez où vous en êtes.'),
@@ -61,7 +61,7 @@ for name, (title, sub) in TEXTS.items():
     img = base64.b64encode(open(shot, 'rb').read()).decode()
     html_path = os.path.join(OUT, name + '.html')
     open(html_path, 'w', encoding='utf-8').write(
-        PAGE.format(fonts=FONTS, title=title.replace(', ', ',<br>'), sub=sub, img=img))
+        PAGE.format(fonts=FONTS, title=title, sub=sub, img=img))
     png = os.path.abspath(os.path.join(OUT, name + '.png'))
     subprocess.run([CHROME, '--headless=new', '--disable-gpu',
                     '--hide-scrollbars', '--force-device-scale-factor=1',
