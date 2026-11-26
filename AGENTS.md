@@ -92,6 +92,12 @@ adb -s emulator-5554 install -r build/app/outputs/flutter-apk/app-profile.apk
 adb -s abe5999d install -r build/app/outputs/flutter-apk/app-profile.apk
 ```
 
+Before any AAB, open the release build on the clean emulator `Kibuo_Release` (Android 17): R8 shrinks release builds and once removed a class WorkManager needs, so every phone crashed at launch (26 November 2026). Profile builds hide this. Checklist: [docs/releases/](docs/releases/README.md).
+
+```bash
+~/Library/Android/sdk/emulator/emulator -avd Kibuo_Release -no-snapshot-save &
+```
+
 No test Android user any more: `kibuo-essai` was removed on 25 November 2026 to free the emulator. To try a first launch without touching the main profile, create one for the occasion, then remove it (two running users saturate the emulator):
 
 ```bash
