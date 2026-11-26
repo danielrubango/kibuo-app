@@ -184,6 +184,8 @@ Une ligne par écran livré : la planche retenue (dans [boards/](boards/), avec 
 | Sauvegarde manuelle | `Sauvegarde`, `SauvW2`, `SauvW2Premiere`, `PlusAncienne` ; chiffrement : planche P1 (non exportée) ; mot de passe retenu : `MotDePasseRetenu-variantes.html`, variante A (25 nov.) | 24 nov. | 24 nov. | Règles d'écran (sauvegarde) ; « Ligne de réglage » |
 | Restauration | `RestauC1`, `RestauC1Err`, `RestauC2`, `RestauC3`, `RestauNeuf` | 24 nov. | 24 nov. | Règles d'écran (restaurer) ; PRODUCT, Restauration |
 
+Page de confidentialité du site (kibuo.app/confidentialite et /en/privacy) : planche `SiteConfidentialite` (variante C1), validée le 26 novembre 2026.
+
 Livrés le 25 novembre 2026 : Plus (`Plus`, `PlusAncienne`), Réglages (`Reglages`, `ReglageLangue`) et À propos (`APropos`), avec les écarts voulus écrits dans PRODUCT. L'écran d'attente de l'Aperçu (variante B de `ApercuAttente-variantes.html`, 25 novembre 2026) : une carte blanche centrée (tuile verte de 48, titre, phrase), puis les lignes de Plus (tuile de 36, nom, ligne grise), sans flèche quand elles ne mènent nulle part, et le titre de section « En attendant » comme « Mes espaces ». Dessinés et validés, pas encore construits : l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, Noter kibuo. Dans l'app, l'Aperçu est un écran d'attente.
 
 ## Variantes écartées et pourquoi

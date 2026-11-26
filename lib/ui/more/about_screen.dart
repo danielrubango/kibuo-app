@@ -174,11 +174,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
       (l.privacyNothingTitle, l.privacyNothingBody),
       (l.privacyStatsTitle, l.privacyStatsBody),
       (l.privacyBackupsTitle, l.privacyBackupsBody),
-      (l.privacyAndroidTitle, l.privacyAndroidBody),
+      (l.privacyCopyTitle, l.privacyCopyBody),
       (l.privacyDeviceTitle, l.privacyDeviceBody),
       (l.privacyEraseTitle, l.privacyEraseBody),
       if (email.isNotEmpty)
-        (l.privacyContactTitle, l.privacyContactBody(email)),
+        (l.privacyPublisherTitle, l.privacyPublisherBody(email)),
     ];
     final paragraph = KibuoType.body.copyWith(height: 20 / 14);
     return Scaffold(
@@ -205,4 +205,4 @@ class PrivacyPolicyScreen extends StatelessWidget {
 }
 
 /// The day the privacy policy was last changed.
-const privacyPolicyDate = '2026-11-25';
+const privacyPolicyDate = '2026-11-26';

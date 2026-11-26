@@ -4300,7 +4300,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyIntro =>
-      'kibuo est un carnet de comptes qui reste sur votre téléphone. Voici ce qu’il garde, où, et ce qu’il ne fait pas.';
+      'kibuo est un carnet de comptes qui reste sur votre appareil. Voici ce qu’il garde, où, et ce qu’il ne fait pas.';
 
   @override
   String get privacyKeepsTitle => 'Ce que kibuo garde';
@@ -4314,7 +4314,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyWhereBody =>
-      'Sur ce téléphone seulement, dans une base chiffrée. Sa clé est gardée par Android, dans le coffre sécurisé du téléphone.';
+      'Sur votre appareil seulement, dans une base chiffrée. Sa clé est gardée par le système de l’appareil, dans son coffre sécurisé.';
 
   @override
   String get privacyNothingTitle => 'Rien d’autre ne part';
@@ -4331,32 +4331,32 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une sauvegarde est un fichier que vous rangez où vous voulez. Avec un mot de passe, elle est chiffrée ; sans mot de passe, quiconque a le fichier peut la lire. Rangée dans un service en ligne ou partagée, elle suit les règles de ce service.';
 
   @override
-  String get privacyAndroidTitle => 'La copie par Android';
+  String get privacyCopyTitle => 'La copie par le système';
 
   @override
-  String get privacyAndroidBody =>
-      'Une fois le code de récupération créé, Android peut copier les données de kibuo dans votre sauvegarde Google ou vers un nouveau téléphone. Elles y restent chiffrées et ne s’ouvrent qu’avec le code de récupération. Vous pouvez l’empêcher dans Réglages › Code de récupération.';
+  String get privacyCopyBody =>
+      'Une fois le code de récupération créé, le système de votre appareil peut copier les données de kibuo dans sa sauvegarde en ligne ou vers un nouvel appareil. Elles y restent chiffrées et ne s’ouvrent qu’avec le code de récupération. Vous pouvez l’empêcher dans Réglages › Code de récupération.\n\nSur Android : la sauvegarde Google du téléphone, et le transfert vers un nouveau téléphone.';
 
   @override
   String get privacyDeviceTitle => 'Empreinte et photos';
 
   @override
   String get privacyDeviceBody =>
-      'L’empreinte ou le visage sont vérifiés par Android : kibuo ne les voit jamais. L’appareil photo et la galerie ne servent que lorsque vous ajoutez une pièce jointe.';
+      'L’empreinte ou le visage sont vérifiés par le système de l’appareil : kibuo ne les voit jamais. L’appareil photo et la galerie ne servent que lorsque vous ajoutez une pièce jointe.';
 
   @override
   String get privacyEraseTitle => 'Effacer vos données';
 
   @override
   String get privacyEraseBody =>
-      'Désinstaller kibuo, ou effacer ses données dans les réglages d’Android, efface tout ce qu’il garde sur ce téléphone. Vos sauvegardes restent là où vous les avez rangées.';
+      'Désinstaller kibuo, ou effacer ses données dans les réglages du système, efface tout ce qu’il garde sur l’appareil. Vos sauvegardes restent là où vous les avez rangées.\n\nSur Android : appui long sur l’icône de kibuo › Désinstaller, ou Paramètres › Applications › kibuo › Stockage, puis effacer les données (les noms varient selon les téléphones).';
 
   @override
-  String get privacyContactTitle => 'Une question ?';
+  String get privacyPublisherTitle => 'Qui publie kibuo';
 
   @override
-  String privacyContactBody(String email) {
-    return 'Écrivez-nous à $email.';
+  String privacyPublisherBody(String email) {
+    return 'kibuo est publié par Daniel Rubango. Pour une question sur vos données ou sur cette politique, écrivez à $email.';
   }
 
   @override
@@ -4404,7 +4404,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyStatsBody =>
-      'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie à PostHog, en Europe, les écrans ouverts, les actions faites (sans leur contenu) et les erreurs, avec la version de kibuo et d’Android, le fabricant et le modèle du téléphone, la langue, le pays et le code de la devise principale. Selon l’outil de mesure, ces envois peuvent aussi porter le nom de l’opérateur mobile, le fuseau horaire et une description technique du téléphone. Ils portent un numéro tiré au sort, sans lien avec vous ni avec le téléphone. Jamais vos montants, vos noms, vos notes, votre position ni votre adresse IP. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.';
+      'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie des données d’analyse qui nous permettent d’améliorer l’application : les écrans ouverts, les actions faites (sans leur contenu), les erreurs, et une description de l’appareil (modèle, système et sa version, langue, pays, devise principale). Elles portent un numéro tiré au sort, sans lien avec vous ni avec l’appareil. Jamais vos montants, vos noms, vos notes ni votre position, et votre adresse IP n’est pas gardée.\n\nCes données sont stockées en Europe, le temps de leur analyse, un an environ. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.';
 
   @override
   String get overviewSoonTitle => 'Vos graphiques arrivent';

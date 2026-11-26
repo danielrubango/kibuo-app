@@ -4256,7 +4256,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyIntro =>
-      'kibuo is an account book that stays on your phone. Here is what it keeps, where, and what it does not do.';
+      'kibuo is an account book that stays on your device. Here is what it keeps, where, and what it does not do.';
 
   @override
   String get privacyKeepsTitle => 'What kibuo keeps';
@@ -4270,7 +4270,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyWhereBody =>
-      'On this phone only, in an encrypted database. Its key is kept by Android, in the phone’s secure vault.';
+      'On your device only, in an encrypted database. Its key is kept by the device’s system, in its secure vault.';
 
   @override
   String get privacyNothingTitle => 'Nothing else leaves';
@@ -4287,32 +4287,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'A backup is a file you store wherever you like. With a password, it is encrypted; without one, anyone who has the file can read it. Stored in an online service or shared, it follows that service’s rules.';
 
   @override
-  String get privacyAndroidTitle => 'Android’s copy';
+  String get privacyCopyTitle => 'The system’s copy';
 
   @override
-  String get privacyAndroidBody =>
-      'Once the recovery code is created, Android may copy kibuo’s data to your Google backup or to a new phone. It stays encrypted there and opens only with the recovery code. You can prevent it in Settings › Recovery code.';
+  String get privacyCopyBody =>
+      'Once the recovery code is created, your device’s system may copy kibuo’s data to its online backup or to a new device. It stays encrypted there and opens only with the recovery code. You can prevent it in Settings › Recovery code.\n\nOn Android: the phone’s Google backup, and the transfer to a new phone.';
 
   @override
   String get privacyDeviceTitle => 'Fingerprint and photos';
 
   @override
   String get privacyDeviceBody =>
-      'Your fingerprint or face is checked by Android: kibuo never sees it. The camera and the gallery are used only when you add an attachment.';
+      'Your fingerprint or face is checked by the device’s system: kibuo never sees it. The camera and the gallery are used only when you add an attachment.';
 
   @override
   String get privacyEraseTitle => 'Erasing your data';
 
   @override
   String get privacyEraseBody =>
-      'Uninstalling kibuo, or clearing its data in Android’s settings, erases everything it keeps on this phone. Your backups stay where you stored them.';
+      'Uninstalling kibuo, or clearing its data in the system settings, erases everything it keeps on the device. Your backups stay where you stored them.\n\nOn Android: long-press kibuo’s icon › Uninstall, or Settings › Apps › kibuo › Storage, then clear the data (names vary between phones).';
 
   @override
-  String get privacyContactTitle => 'A question?';
+  String get privacyPublisherTitle => 'Who publishes kibuo';
 
   @override
-  String privacyContactBody(String email) {
-    return 'Write to us at $email.';
+  String privacyPublisherBody(String email) {
+    return 'kibuo is published by Daniel Rubango. For any question about your data or this policy, write to $email.';
   }
 
   @override
@@ -4360,7 +4360,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyStatsBody =>
-      'If you agree to “Help improve kibuo”, kibuo sends PostHog, in Europe, the screens opened, the actions taken (without their content) and the errors, with the versions of kibuo and Android, the phone’s maker and model, the language, the country and the main currency’s code. Depending on the measuring tool, they may also carry the mobile operator’s name, the time zone and a technical description of the phone. They carry a random number, linked neither to you nor to the phone. Never your amounts, your names, your notes, your location or your IP address. You can stop at any time in Settings › Privacy: the number and whatever was waiting to be sent are then forgotten.';
+      'If you agree to “Help improve kibuo”, kibuo sends analytics data that helps us improve the app: the screens opened, the actions taken (without their content), the errors, and a description of the device (model, system and its version, language, country, main currency). It carries a random number, linked neither to you nor to the device. Never your amounts, your names, your notes or your location, and your IP address is not kept.\n\nThis data is stored in Europe for the time needed to analyse it, about one year. You can stop at any time in Settings › Privacy: the number and whatever was waiting to be sent are then forgotten.';
 
   @override
   String get overviewSoonTitle => 'Your charts are coming';
