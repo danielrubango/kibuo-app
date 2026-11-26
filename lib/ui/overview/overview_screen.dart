@@ -563,8 +563,17 @@ class _FlowTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   SizedBox(
                     height: 16,
+                    // Nothing to compare with: a dash, not an empty line
+                    // (owner, 27 November 2026).
                     child: change == null
-                        ? null
+                        ? Text(
+                            '–',
+                            style: KibuoType.caption.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontVariations: const [FontVariation.weight(700)],
+                              color: KibuoColors.inkMuted,
+                            ),
+                          )
                         : Row(
                             children: [
                               CustomPaint(
