@@ -7086,6 +7086,492 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Bientôt'**
   String get overviewSoon;
+
+  /// Aperçu: the followed tiles' title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Points suivis · {period}'**
+  String followedTitle(String period);
+
+  /// Aperçu followed tiles: the current month.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce mois-ci'**
+  String get followedThisMonth;
+
+  /// Aperçu followed tiles: the current year.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette année'**
+  String get followedThisYear;
+
+  /// Aperçu followed tiles: a custom period's length.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} jours'**
+  String followedDays(int count);
+
+  /// Aperçu: opens the choice of followed tiles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivre'**
+  String get followedFollow;
+
+  /// Aperçu: shows the tiles past the first 4.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Voir l’autre} other{Voir les {count} autres}}'**
+  String followedMore(int count);
+
+  /// Aperçu: folds the tiles past the first 4.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir moins'**
+  String get followedLess;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé'**
+  String get followedSpent;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reçu'**
+  String get followedReceived;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épargne'**
+  String get followedSavings;
+
+  /// Followed tile, over a year.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épargne de l’année'**
+  String get followedSavingsYear;
+
+  /// Followed tile, in the « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyenne'**
+  String get followedAverage;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyenne par jour'**
+  String get followedAverageDay;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyenne par semaine'**
+  String get followedAverageWeek;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyenne par mois'**
+  String get followedAverageMonth;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie n° 1'**
+  String get followedTopCategory;
+
+  /// Followed tile, for a day.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie du jour'**
+  String get followedTopCategoryDay;
+
+  /// Followed tile, in the « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jour ou mois le plus cher'**
+  String get followedPriciest;
+
+  /// Followed tile, for a day.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heure la plus chère'**
+  String get followedPriciestHour;
+
+  /// Followed tile, for a week or a month.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jour le plus cher'**
+  String get followedPriciestDay;
+
+  /// Followed tile, for a year.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mois le plus cher'**
+  String get followedPriciestMonth;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'À venir'**
+  String get followedUpcoming;
+
+  /// Followed tile, in the « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un budget'**
+  String get followedBudget;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Budget {name}'**
+  String followedBudgetNamed(String name);
+
+  /// Followed tile: a budget, for today.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste pour aujourd’hui'**
+  String get followedLeftToday;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dettes'**
+  String get followedDebts;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créances'**
+  String get followedReceivables;
+
+  /// Followed tile, in the « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un projet'**
+  String get followedProject;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Projet {name}'**
+  String followedProjectNamed(String name);
+
+  /// Followed tile, over a year.
+  ///
+  /// In fr, this message translates to:
+  /// **'Projets atteints'**
+  String get followedProjectsReached;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes'**
+  String get followedAccounts;
+
+  /// Followed tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patrimoine net'**
+  String get followedNetWorth;
+
+  /// Followed tile detail: Dépensé, for a day.
+  ///
+  /// In fr, this message translates to:
+  /// **'jour moyen : {amount}'**
+  String followedAverageDayDetail(String amount);
+
+  /// Followed tile detail: Dépensé without a change.
+  ///
+  /// In fr, this message translates to:
+  /// **'par jour : {amount}'**
+  String followedPerDay(String amount);
+
+  /// Followed tile detail: Reçu without a change.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{aucune entrée} =1{1 entrée} other{{count} entrées}}'**
+  String followedEntriesCount(int count);
+
+  /// Followed tile detail: Épargne.
+  ///
+  /// In fr, this message translates to:
+  /// **'entrées − sorties'**
+  String get followedSavingsDetail;
+
+  /// Followed tile detail: Moyenne.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur {count} jours'**
+  String followedOverDays(int count);
+
+  /// Followed tile detail: Moyenne over a year.
+  ///
+  /// In fr, this message translates to:
+  /// **'le plus cher : {name}'**
+  String followedPriciestOf(String name);
+
+  /// Followed tile detail: the first category.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} · {share} %'**
+  String followedAmountShare(String amount, int share);
+
+  /// Followed tile: nothing went out.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sortie'**
+  String get followedNoExit;
+
+  /// Followed tile detail: a budget.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} restants'**
+  String followedLeft(String amount);
+
+  /// Followed tile detail: a budget past its amount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} de trop'**
+  String followedOver(String amount);
+
+  /// Followed tile detail: a budget is monthly.
+  ///
+  /// In fr, this message translates to:
+  /// **'{month}, en cours'**
+  String followedMonthRunning(String month);
+
+  /// Followed tile detail: what is left today.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · selon le budget du mois'**
+  String followedMonthBudget(String name);
+
+  /// Followed tile: no budget yet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun budget'**
+  String get followedNoBudget;
+
+  /// Followed tile detail: late debts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 en retard} other{{count} en retard}}'**
+  String followedLate(int count);
+
+  /// Followed tile detail: debts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{aucune dette} =1{1 dette} other{{count} dettes}}'**
+  String followedDebtCount(int count);
+
+  /// Followed tile detail: receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} récupérés'**
+  String followedRecovered(String amount);
+
+  /// Followed tile detail: a project.
+  ///
+  /// In fr, this message translates to:
+  /// **'+{amount} versés'**
+  String followedPutAside(String amount);
+
+  /// Followed tile detail: a project.
+  ///
+  /// In fr, this message translates to:
+  /// **'−{amount} repris'**
+  String followedTakenBack(String amount);
+
+  /// Followed tile: no project yet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun projet'**
+  String get followedNoProject;
+
+  /// Followed tile: projects reached.
+  ///
+  /// In fr, this message translates to:
+  /// **'{reached} sur {total}'**
+  String followedReachedOf(int reached, int total);
+
+  /// Followed tile detail: no project reached.
+  ///
+  /// In fr, this message translates to:
+  /// **'aucun pour l’instant'**
+  String get followedNoneReached;
+
+  /// Followed tile: what comes next.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} dans {days} j'**
+  String followedIn(String label, int days);
+
+  /// Followed tile: what comes next.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} aujourd’hui'**
+  String followedToday(String label);
+
+  /// Followed tile: what comes next.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} demain'**
+  String followedTomorrow(String label);
+
+  /// Followed tile detail: what comes next.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} le {date}'**
+  String followedOnDay(String amount, String date);
+
+  /// Followed tile: nothing planned.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à venir'**
+  String get followedNothingComing;
+
+  /// Followed tile detail: nothing planned.
+  ///
+  /// In fr, this message translates to:
+  /// **'dans les 14 jours'**
+  String get followedNext14Days;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque tuile s’adapte à la période choisie. Les 4 premières s’affichent, les autres sous « Voir les autres ».'**
+  String get followSheetHelp;
+
+  /// « Suivre » sheet section.
+  ///
+  /// In fr, this message translates to:
+  /// **'Argent'**
+  String get followMoney;
+
+  /// « Suivre » sheet section.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repères'**
+  String get followMarks;
+
+  /// « Suivre » sheet section.
+  ///
+  /// In fr, this message translates to:
+  /// **'Engagements'**
+  String get followCommitments;
+
+  /// « Suivre » sheet section.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patrimoine'**
+  String get followWorth;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparé à la période choisie ; pour un jour, à une journée moyenne'**
+  String get followSpentHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les entrées, avec leur écart'**
+  String get followReceivedHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées moins sorties'**
+  String get followSavingsHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par jour, par semaine ou par mois selon la période'**
+  String get followAverageHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Celle qui pèse le plus sur la période'**
+  String get followTopCategoryHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Selon la longueur de la période'**
+  String get followPriciestHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'La prochaine échéance'**
+  String get followUpcomingHelp;
+
+  /// « Suivre » sheet: the budget followed.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · ce qui reste'**
+  String followBudgetHelp(String name);
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total et retards'**
+  String get followDebtsHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total et remboursé'**
+  String get followReceivablesHelp;
+
+  /// « Suivre » sheet: the project followed.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · avancement'**
+  String followProjectHelp(String name);
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le total et sa courbe'**
+  String get followAccountsHelp;
+
+  /// « Suivre » sheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes + créances − dettes'**
+  String get followNetWorthHelp;
+
+  /// « Suivre » sheet: closes it.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get followDone;
+
+  /// « Suivre » sheet: choosing the budget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quel budget suivre ?'**
+  String get followWhichBudget;
+
+  /// « Suivre » sheet: choosing the project.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quel projet suivre ?'**
+  String get followWhichProject;
+
+  /// « Suivre » sheet: its title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Points suivis'**
+  String get followSheetTitle;
 }
 
 class _AppLocalizationsDelegate

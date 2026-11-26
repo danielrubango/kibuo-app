@@ -32,6 +32,7 @@ import 'package:kibuo/ui/backup/backup_screen.dart';
 import 'package:kibuo/ui/backup/restore_sheet.dart';
 import 'package:kibuo/ui/budgets/budget_alerts.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
+import 'package:kibuo/ui/budgets/budget_detail_screen.dart';
 import 'package:kibuo/ui/budgets/budgets_screen.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/device_country.dart';
@@ -47,6 +48,7 @@ import 'package:kibuo/ui/more/plus_page.dart';
 import 'package:kibuo/ui/more/plus_summary.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
+import 'package:kibuo/ui/overview/followed_section.dart';
 import 'package:kibuo/ui/overview/overview_screen.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
 import 'package:kibuo/ui/projects/project_money.dart';
@@ -458,6 +460,44 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     setState(() => _tab = tab);
   }
 
+  /// Where the Aperçu's followed tiles lead (PRODUCT, 27 November 2026).
+  FollowedLinks _overviewLinks(KibuoDatabase db, EntryData data) =>
+      FollowedLinks(
+        operations: (month, category) {
+          OperationsScreen.show.value = null;
+          OperationsScreen.show.value = (month: month, category: category);
+        },
+        budget: (id, month) => Navigator.of(context)
+            .push<bool>(
+              MaterialPageRoute(
+                builder: (_) => BudgetDetailScreen(
+                  loader: BudgetLoader(data, BudgetRepository(db)),
+                  month: month,
+                  budgetId: id,
+                ),
+              ),
+            )
+            .then((_) => _saved.value++),
+        budgets: () => _openPlus(PlusEntry.budgets),
+        project: data.projects == null
+            ? null
+            : (id) => Navigator.of(context)
+                  .push<void>(
+                    MaterialPageRoute(
+                      builder: (_) => ProjectScreen(
+                        data: data,
+                        projects: data.projects!,
+                        id: id,
+                        onChanged: () => _saved.value++,
+                      ),
+                    ),
+                  )
+                  .then((_) => _saved.value++),
+        projects: _openProjects,
+        accounts: () => _openAccounts(db),
+        debts: (tab) => _openDebts(db, tab),
+      );
+
   Future<void> _openAccounts(KibuoDatabase db) => Navigator.of(context)
       .push(
         MaterialPageRoute<void>(
@@ -590,6 +630,14 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                           refresh: _saved,
                           now: _overviewNow,
                           store: OverviewStore(KibuoData.maybeOf(context)!),
+                          budgets: BudgetLoader(
+                            data,
+                            BudgetRepository(KibuoData.maybeOf(context)!),
+                          ),
+                          links: _overviewLinks(
+                            KibuoData.maybeOf(context)!,
+                            data,
+                          ),
                         ),
                       )
                     else

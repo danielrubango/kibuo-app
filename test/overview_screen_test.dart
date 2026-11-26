@@ -102,8 +102,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(textPlain('−502,00 \$'), findsOneWidget, reason: 'taxi and fees');
-    expect(textPlain('+1 200,00 \$'), findsOneWidget);
+    // Sorties, and the Dépensé tile under it.
+    expect(textPlain('−502,00 \$'), findsWidgets, reason: 'taxi and fees');
+    expect(textPlain('+1 200,00 \$'), findsWidgets);
 
     await data.transactions.create(
       kind: EntryKind.expense,
@@ -115,7 +116,38 @@ void main() {
     );
     saved.value++;
     await tester.pumpAndSettle();
-    expect(textPlain('−590,00 \$'), findsOneWidget);
-    expect(textPlain('+1 200,00 \$'), findsOneWidget);
+    expect(textPlain('−590,00 \$'), findsWidgets);
+    expect(textPlain('+1 200,00 \$'), findsWidgets);
+  });
+
+  testWidgets('I follow Épargne: its tile shows money in less money out', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.reset);
+    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: KibuoTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: appLanguages,
+        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+        home: Scaffold(body: OverviewScreen(data: data)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(textPlain('+698,00 \$'), findsNothing);
+    await tester.scrollUntilVisible(find.text('Suivre'), 200);
+    await tester.tap(find.text('Suivre'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Épargne'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+    // 1 200 $ in, 500 $ of taxi and 2 $ of fees out.
+    await tester.scrollUntilVisible(textPlain('+698,00 \$'), 200);
+    expect(textPlain('+698,00 \$'), findsOneWidget);
   });
 }

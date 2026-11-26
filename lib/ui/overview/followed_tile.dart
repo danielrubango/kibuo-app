@@ -181,12 +181,14 @@ class _VisualPainter extends CustomPainter {
     switch (visual) {
       case TileCurve(:final values, :final color):
         if (values.isEmpty) return;
-        final top = math.max(1, values.reduce(math.max));
+        // Below zero too: savings can run negative.
+        final low = math.min(0, values.reduce(math.min));
+        final range = math.max(1, values.reduce(math.max) - low);
         final n = values.length;
         final path = Path();
         for (final (i, v) in values.indexed) {
           final x = (2 + (n == 1 ? 0 : i * 116 / (n - 1))) * sx;
-          final y = (27 - v / top * 24) * sy;
+          final y = (27 - (v - low) / range * 24) * sy;
           i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
         }
         canvas.drawPath(

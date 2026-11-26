@@ -78,9 +78,12 @@ class OperationsScreen extends StatefulWidget {
   /// Where « Recherches récentes » are kept.
   final SearchHistory? history;
 
-  /// « Voir dans Opérations » (a budget's detail): the month to show and
-  /// the one category to filter on. The shell brings the tab forward.
-  static final show = ValueNotifier<({DateTime month, String category})?>(null);
+  /// « Voir dans Opérations » (a budget's detail) and the Aperçu's tiles:
+  /// the month to show and the one category to filter on, if any. The
+  /// shell brings the tab forward.
+  static final show = ValueNotifier<({DateTime month, String? category})?>(
+    null,
+  );
 
   /// Forgets the month, filters and folded days kept while the app runs.
   @visibleForTesting
@@ -143,9 +146,8 @@ class _OperationsScreenState extends State<OperationsScreen> {
     setState(() {
       _types.clear();
       _accounts.clear();
-      _categories
-        ..clear()
-        ..add(asked.category);
+      _categories.clear();
+      if (asked.category case final category?) _categories.add(category);
     });
     _goTo(asked.month);
   }

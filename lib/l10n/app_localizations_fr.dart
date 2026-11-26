@@ -4537,4 +4537,330 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get overviewSoon => 'Bientôt';
+
+  @override
+  String followedTitle(String period) {
+    return 'Points suivis · $period';
+  }
+
+  @override
+  String get followedThisMonth => 'Ce mois-ci';
+
+  @override
+  String get followedThisYear => 'Cette année';
+
+  @override
+  String followedDays(int count) {
+    return '$count jours';
+  }
+
+  @override
+  String get followedFollow => 'Suivre';
+
+  @override
+  String followedMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Voir les $count autres',
+      one: 'Voir l’autre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followedLess => 'Voir moins';
+
+  @override
+  String get followedSpent => 'Dépensé';
+
+  @override
+  String get followedReceived => 'Reçu';
+
+  @override
+  String get followedSavings => 'Épargne';
+
+  @override
+  String get followedSavingsYear => 'Épargne de l’année';
+
+  @override
+  String get followedAverage => 'Moyenne';
+
+  @override
+  String get followedAverageDay => 'Moyenne par jour';
+
+  @override
+  String get followedAverageWeek => 'Moyenne par semaine';
+
+  @override
+  String get followedAverageMonth => 'Moyenne par mois';
+
+  @override
+  String get followedTopCategory => 'Catégorie n° 1';
+
+  @override
+  String get followedTopCategoryDay => 'Catégorie du jour';
+
+  @override
+  String get followedPriciest => 'Jour ou mois le plus cher';
+
+  @override
+  String get followedPriciestHour => 'Heure la plus chère';
+
+  @override
+  String get followedPriciestDay => 'Jour le plus cher';
+
+  @override
+  String get followedPriciestMonth => 'Mois le plus cher';
+
+  @override
+  String get followedUpcoming => 'À venir';
+
+  @override
+  String get followedBudget => 'Un budget';
+
+  @override
+  String followedBudgetNamed(String name) {
+    return 'Budget $name';
+  }
+
+  @override
+  String get followedLeftToday => 'Reste pour aujourd’hui';
+
+  @override
+  String get followedDebts => 'Dettes';
+
+  @override
+  String get followedReceivables => 'Créances';
+
+  @override
+  String get followedProject => 'Un projet';
+
+  @override
+  String followedProjectNamed(String name) {
+    return 'Projet $name';
+  }
+
+  @override
+  String get followedProjectsReached => 'Projets atteints';
+
+  @override
+  String get followedAccounts => 'Comptes';
+
+  @override
+  String get followedNetWorth => 'Patrimoine net';
+
+  @override
+  String followedAverageDayDetail(String amount) {
+    return 'jour moyen : $amount';
+  }
+
+  @override
+  String followedPerDay(String amount) {
+    return 'par jour : $amount';
+  }
+
+  @override
+  String followedEntriesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entrées',
+      one: '1 entrée',
+      zero: 'aucune entrée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followedSavingsDetail => 'entrées − sorties';
+
+  @override
+  String followedOverDays(int count) {
+    return 'sur $count jours';
+  }
+
+  @override
+  String followedPriciestOf(String name) {
+    return 'le plus cher : $name';
+  }
+
+  @override
+  String followedAmountShare(String amount, int share) {
+    return '$amount · $share %';
+  }
+
+  @override
+  String get followedNoExit => 'Aucune sortie';
+
+  @override
+  String followedLeft(String amount) {
+    return '$amount restants';
+  }
+
+  @override
+  String followedOver(String amount) {
+    return '$amount de trop';
+  }
+
+  @override
+  String followedMonthRunning(String month) {
+    return '$month, en cours';
+  }
+
+  @override
+  String followedMonthBudget(String name) {
+    return '$name · selon le budget du mois';
+  }
+
+  @override
+  String get followedNoBudget => 'Aucun budget';
+
+  @override
+  String followedLate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count en retard',
+      one: '1 en retard',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String followedDebtCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dettes',
+      one: '1 dette',
+      zero: 'aucune dette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String followedRecovered(String amount) {
+    return '$amount récupérés';
+  }
+
+  @override
+  String followedPutAside(String amount) {
+    return '+$amount versés';
+  }
+
+  @override
+  String followedTakenBack(String amount) {
+    return '−$amount repris';
+  }
+
+  @override
+  String get followedNoProject => 'Aucun projet';
+
+  @override
+  String followedReachedOf(int reached, int total) {
+    return '$reached sur $total';
+  }
+
+  @override
+  String get followedNoneReached => 'aucun pour l’instant';
+
+  @override
+  String followedIn(String label, int days) {
+    return '$label dans $days j';
+  }
+
+  @override
+  String followedToday(String label) {
+    return '$label aujourd’hui';
+  }
+
+  @override
+  String followedTomorrow(String label) {
+    return '$label demain';
+  }
+
+  @override
+  String followedOnDay(String amount, String date) {
+    return '$amount le $date';
+  }
+
+  @override
+  String get followedNothingComing => 'Rien à venir';
+
+  @override
+  String get followedNext14Days => 'dans les 14 jours';
+
+  @override
+  String get followSheetHelp =>
+      'Chaque tuile s’adapte à la période choisie. Les 4 premières s’affichent, les autres sous « Voir les autres ».';
+
+  @override
+  String get followMoney => 'Argent';
+
+  @override
+  String get followMarks => 'Repères';
+
+  @override
+  String get followCommitments => 'Engagements';
+
+  @override
+  String get followWorth => 'Patrimoine';
+
+  @override
+  String get followSpentHelp =>
+      'Comparé à la période choisie ; pour un jour, à une journée moyenne';
+
+  @override
+  String get followReceivedHelp => 'Les entrées, avec leur écart';
+
+  @override
+  String get followSavingsHelp => 'Entrées moins sorties';
+
+  @override
+  String get followAverageHelp =>
+      'Par jour, par semaine ou par mois selon la période';
+
+  @override
+  String get followTopCategoryHelp => 'Celle qui pèse le plus sur la période';
+
+  @override
+  String get followPriciestHelp => 'Selon la longueur de la période';
+
+  @override
+  String get followUpcomingHelp => 'La prochaine échéance';
+
+  @override
+  String followBudgetHelp(String name) {
+    return '$name · ce qui reste';
+  }
+
+  @override
+  String get followDebtsHelp => 'Total et retards';
+
+  @override
+  String get followReceivablesHelp => 'Total et remboursé';
+
+  @override
+  String followProjectHelp(String name) {
+    return '$name · avancement';
+  }
+
+  @override
+  String get followAccountsHelp => 'Le total et sa courbe';
+
+  @override
+  String get followNetWorthHelp => 'Comptes + créances − dettes';
+
+  @override
+  String get followDone => 'Terminé';
+
+  @override
+  String get followWhichBudget => 'Quel budget suivre ?';
+
+  @override
+  String get followWhichProject => 'Quel projet suivre ?';
+
+  @override
+  String get followSheetTitle => 'Points suivis';
 }
