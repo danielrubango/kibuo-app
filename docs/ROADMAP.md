@@ -139,6 +139,7 @@ Ce que Google Play exige :
 
 ## Plus tard, avant la 1.0
 
+- [ ] Feuille de route en ligne sur le site, partagée avec les testeurs ; plus tard, avec le site en Laravel, voter, demander et commenter les fonctions ([backlog/roadmap-en-ligne.md](backlog/roadmap-en-ligne.md), 26 novembre 2026)
 - [ ] Page d'accueil du site kibuo.app : revoir la présentation de kibuo et le lien vers Google Play (décidé le 26 novembre 2026 : la 0.1 n'a que la page de confidentialité)
 
 ## Version 1.0 : stable
@@ -151,7 +152,7 @@ Ce que Google Play exige :
 
 Dans cet ordre de départ (décidé le 25 novembre 2026), à revoir selon les retours :
 
-1. **Compte kibuo et cloud** : sauvegarde en ligne, synchronisation entre appareils, chiffrement de bout en bout ([backlog/sync-cloud.md](backlog/sync-cloud.md)), offre payante ([backlog/offre-payante.md](backlog/offre-payante.md)), demande de suppression de compte sur le site public.
+1. **Compte kibuo et cloud** : sauvegarde en ligne, synchronisation entre appareils, chiffrement de bout en bout ([backlog/sync-cloud.md](backlog/sync-cloud.md)), offre payante ([backlog/offre-payante.md](backlog/offre-payante.md)), demande de suppression de compte sur le site public. Puis les **tontines** : une personne centralise, invite les autres et tient le compte à jour ; les autres reçoivent les mises à jour ([backlog/tontines.md](backlog/tontines.md), 26 novembre 2026).
 2. **IA** : brouillons à partir d'un reçu, d'un SMS partagé ou d'un relevé ; questions naturelles ([backlog/ia.md](backlog/ia.md)).
 3. **iOS** ([backlog/ios.md](backlog/ios.md)).
 4. Ensuite : nouvelles langues ([backlog/langues.md](backlog/langues.md)), accès web local ([backlog/web-local.md](backlog/web-local.md)), coffre des cartes virtuelles ([backlog/cartes-virtuelles.md](backlog/cartes-virtuelles.md)), aller plus loin pays par pays ([backlog/aller-plus-loin.md](backlog/aller-plus-loin.md)), fonctionner en arrière-plan (rattrapage des récurrences et notifications sans ouvrir kibuo), couleurs des comptes.
