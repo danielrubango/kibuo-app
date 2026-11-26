@@ -104,14 +104,11 @@ Vos données restent chez vous
 • Verrou par code ou par empreinte
 • Sauvegarde dans un fichier, protégée par mot de passe si vous le voulez, et restauration sur un autre téléphone
 • Pas de compte, pas de publicité, rien n’est vendu
-• Des statistiques anonymes, seulement si vous l’acceptez
-
-En français et en anglais.
 
 Une question, une idée ? Écrivez-nous à contact@kibuo.app.
 ```
 
-## Description complète, anglais (proposée le 26 novembre 2026)
+## Description complète, anglais (validée le 26 novembre 2026)
 
 ```
 kibuo keeps your accounts on your phone: your everyday spending, your budgets, what you owe, what you are owed and your savings projects. No account to create, and it works offline.
@@ -137,9 +134,6 @@ Your data stays with you
 • Lock it with a PIN or your fingerprint
 • Back up to a file, password-protected if you like, and restore it on another phone
 • No account, no ads, nothing is sold
-• Anonymous statistics, only if you agree
-
-In French and English.
 
 A question or an idea? Write to us at contact@kibuo.app.
 ```
