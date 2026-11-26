@@ -111,31 +111,31 @@ En français et en anglais.
 Une question, une idée ? Écrivez-nous à contact@kibuo.app.
 ```
 
-## Description complète, anglais
+## Description complète, anglais (proposée le 26 novembre 2026)
 
 ```
 kibuo keeps your accounts on your phone: your everyday spending, your budgets, what you owe, what you are owed and your savings projects. No account to create, and it works offline.
 
-Follow your money
+Track your money
 • Accounts in several currencies, Congolese francs, dollars and more, with your own rates
 • Expenses, income and transfers, entered in a few taps with the + button
-• A photo of a receipt or an invoice attached to the transaction
-• Search and filters by month, account or category
+• Attach a photo of a receipt or an invoice
+• Search and filter by month, account or category
 
 Plan ahead
 • Budgets by category, with an alert when you get close to the limit
-• Transactions that come back (rent, salary, subscriptions) and reminders
+• Recurring transactions (rent, salary, subscriptions) with reminders
 • An alert three days before a balance runs short
 
-Debts, money owed and projects
+Debts and savings projects
 • What you owe and what you are owed, with partial repayments
 • A message ready to send to ask for a repayment
 • Savings projects and their deposits
 
 Your data stays with you
 • Everything stays on your phone, in an encrypted database
-• Lock with a PIN or your fingerprint
-• Backup to a file, password-protected if you like, and restore on another phone
+• Lock it with a PIN or your fingerprint
+• Back up to a file, password-protected if you like, and restore it on another phone
 • No account, no ads, nothing is sold
 • Anonymous statistics, only if you agree
 
