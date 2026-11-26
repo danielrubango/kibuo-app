@@ -258,8 +258,8 @@ Les captures PNG de la page « Revue de fidélité » (écran construit à côt�
 
 | Fichier | Écran | État | Code (`lib/ui/`) |
 |---|---|---|---|
-| [ApercuP2](ApercuP2.dc.html) | Retenu · ‹ période › à droite du titre, onglets Évolution, Catégories, Patrimoine | validée (date à vérifier) | pas encore construit (onglet Aperçu provisoire, phase 7) |
-| [ApercuP2Ouvert](ApercuP2Ouvert.dc.html) | Retenu · la période touchée : période, regroupement, comparaison | validée (date à vérifier) | pas encore construit (onglet Aperçu provisoire, phase 7) |
+| [ApercuP2](ApercuP2.dc.html) | Retenu · ‹ période › à droite du titre, onglets Évolution, Catégories, Patrimoine | validée (date à vérifier) | `lib/ui/overview/overview_screen.dart` |
+| [ApercuP2Ouvert](ApercuP2Ouvert.dc.html) | Retenu · la période touchée : période, regroupement, comparaison | validée (date à vérifier) | `lib/ui/overview/period_sheet.dart` |
 | [ApercuTAn](ApercuTAn.dc.html) | Points suivis · 1 an : épargne, moyenne par mois, patrimoine | retenue | pas encore construit (onglet Aperçu provisoire, phase 7) |
 | [ApercuTJour](ApercuTJour.dc.html) | Points suivis · Aujourd’hui : comparé à une journée moyenne, ce qui reste, ce qui arrive | retenue | pas encore construit (onglet Aperçu provisoire, phase 7) |
 | [ApercuTMois](ApercuTMois.dc.html) | Points suivis · 1 mois : 4 tuiles, « Voir les 4 autres » déplie le reste | retenue | pas encore construit (onglet Aperçu provisoire, phase 7) |

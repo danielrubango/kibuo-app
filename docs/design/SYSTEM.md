@@ -40,6 +40,7 @@ Thème clair seulement ; le sombre est au [backlog](../backlog/theme-sombre.md).
 | Transfert | `ink` | `transferTint` `#EEF2FA`, `transferEdge` `#C6D3EC`, `transferDash` `#9DB2DD` | Montant d'un transfert |
 | Alerte | `warningInk` `#8A5A00` | `warning` `#D99A1C`, `warningTint` `#FCEFD2`, `warningSoft` `#FFF8E8` (encre `warningSoftInk` `#6B4A00`), `warningTrack` `#F6E2B4` | Budget à 80 %, sauvegarde ancienne, notes ambre |
 | Retard, danger | `danger` `#B3321A` | `dangerTint` `#FBE3DE`, `dangerSoft` `#FFF1ED`, `dangerDeep` `#7C1F0C`, `dangerTrack` `#FFD3C8`, `dangerOnInk` `#FFB4A2` | Retard, dépassement, supprimer, refus |
+| Graphique de l'Aperçu | — | `chartIn` `#7CCFAA` (barres des entrées ; les sorties sont en `debtLine`), `chartOutAhead` `#F2E3D6` et `chartInAhead` `#DDF1E7` (ce qui n'a pas encore commencé), `chartCompared` `#7C8599` (courbe de la période comparée ; ses bâtonnets sont en `track`) | Onglet Évolution de l'Aperçu |
 
 ### Voiles et ombres
 
@@ -206,6 +207,7 @@ Un composant naît à la deuxième apparition d'un élément. Les marges restent
 | `HoldToConfirm` | `hold_button.dart` | Appui maintenu pour un geste lourd ; `dark: true` pour la restauration |
 | `ChoiceStrip`, `CountStepper` | `choice_strip.dart` | Choix côte à côte sur une bande grise, « − 2 + » |
 | `SegmentedTabs` | `segmented_tabs.dart` | Onglets sur une bande blanche |
+| `TabStrip` | `tab_strip.dart` | Choix sur une bande grise, le choisi en blanc ; un choix impossible grisé (onglets de l'Aperçu, choix de la feuille « Période ») |
 | `FilterChipButton`, `ChoiceMenu`, `ChoiceRow`… | `choice_menu.dart` | Filtres de liste et leur menu |
 | `Haptics`, `RefuseOnAppear` | `haptics.dart` | Vibrations : `tap`, `confirm`, `refuse` |
 

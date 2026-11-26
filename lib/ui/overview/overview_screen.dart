@@ -35,6 +35,7 @@ class OverviewScreen extends StatefulWidget {
     super.key,
     required this.data,
     this.refresh,
+    this.now,
     this.store,
     this.clock = DateTime.now,
   });
@@ -46,6 +47,9 @@ class OverviewScreen extends StatefulWidget {
 
   /// Fires after a save: the figures are read again.
   final Listenable? refresh;
+
+  /// Fires to come back to the current period (Accueil's month).
+  final Listenable? now;
 
   /// Keeps the « Période » choices; none in some tests.
   final OverviewStore? store;
@@ -70,6 +74,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   void initState() {
     super.initState();
     widget.refresh?.addListener(_load);
+    widget.now?.addListener(_startChanged);
     monthStartChoice.addListener(_startChanged);
     _readChoice();
     _load();
@@ -78,12 +83,23 @@ class _OverviewScreenState extends State<OverviewScreen> {
   @override
   void dispose() {
     widget.refresh?.removeListener(_load);
+    widget.now?.removeListener(_startChanged);
     monthStartChoice.removeListener(_startChanged);
     super.dispose();
   }
 
-  /// « Début du mois » changed: the periods move, back to the current one.
-  void _startChanged() => setState(() => _offset = 0);
+  /// Back to the current period: « Début du mois » changed, or Accueil's
+  /// month was touched. The period after and the current one have no
+  /// sense there: compared with the period before.
+  void _startChanged() {
+    final comparison = _choice.comparisonAt(0);
+    _show((
+      choice: comparison == _choice.comparison
+          ? _choice
+          : _choice.withComparison(comparison),
+      offset: 0,
+    ));
+  }
 
   Future<void> _readChoice() async {
     final choice = await widget.store?.read();

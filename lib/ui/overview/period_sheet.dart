@@ -89,6 +89,18 @@ class _PeriodSheetState extends State<PeriodSheet> {
         choice.custom ??
         TimeSpan.days(DateTime(today.year, today.month - 2), today);
     _set(choice.withKind(kind, custom: custom), 0);
+    // The chip touched comes to the middle, out of the fade.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final chip = _chosenChip.currentContext;
+      if (chip != null && chip.mounted) {
+        Scrollable.ensureVisible(
+          chip,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
   }
 
   Future<void> _pickFirst(TimeSpan custom) async {

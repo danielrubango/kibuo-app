@@ -190,6 +190,8 @@ Page de confidentialité du site (kibuo.app/fr/confidentialite et /en/privacy) :
 
 Livrés le 25 novembre 2026 : Plus (`Plus`, `PlusAncienne`), Réglages (`Reglages`, `ReglageLangue`) et À propos (`APropos`), avec les écarts voulus écrits dans PRODUCT. L'écran d'attente de l'Aperçu (variante B de `ApercuAttente-variantes.html`, 25 novembre 2026) : une carte blanche centrée (tuile verte de 48, titre, phrase), puis les lignes de Plus (tuile de 36, nom, ligne grise), sans flèche quand elles ne mènent nulle part, et le titre de section « En attendant » comme « Mes espaces ». Dessinés et validés, pas encore construits : l'Aperçu (`Apercu*`), l'export CSV (`ExportCSV`), Aide et support, Noter kibuo. Dans l'app, l'Aperçu est un écran d'attente.
 
+Livré le 27 novembre 2026 (version 0.2, livraison 1) : l'onglet Évolution de l'Aperçu (`ApercuP2`) et la feuille « Période » (`ApercuP2Ouvert`), sans les points suivis. Écarts : les montants sont en Plus Jakarta Sans comme partout dans l'app (Space Grotesk sur la planche) ; la feuille « Période » a, sous la rangée des périodes, deux lignes « Du » et « Au » pour une période personnalisée (décision du 27 novembre) ; la puce touchée vient au milieu de sa rangée ; Catégories et Patrimoine montrent une carte « Bientôt » (tuile d'icône, « Bientôt », ce qu'ils montreront), sur le modèle de l'écran d'attente.
+
 ## Variantes écartées et pourquoi
 
 La raison est donnée quand elle est écrite dans ce document ou dans PRODUCT ; sinon « raison non écrite ». Les planches sont dans [boards/](boards/).

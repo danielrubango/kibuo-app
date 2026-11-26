@@ -109,6 +109,9 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   /// Tells Opérations to show this month (from Accueil's month).
   final _thisMonth = ValueNotifier<int>(0);
 
+  /// Tells the Aperçu to show the current period (from Accueil's month).
+  final _overviewNow = ValueNotifier<int>(0);
+
   late final _homeRefresh = Listenable.merge([
     _saved,
     _homeShown,
@@ -136,6 +139,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     _homeShown.dispose();
     _plusShown.dispose();
     _thisMonth.dispose();
+    _overviewNow.dispose();
     DeviceBackupFiles.instance.opened.removeListener(_openedFile);
     _waitingLock?.removeListener(_whenUnlocked);
     _backupLock?.removeListener(_backupWhenUnlocked);
@@ -532,10 +536,10 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                             _openDebts(KibuoData.maybeOf(context)!, tab),
                         onOpenProjects: _openProjects,
                         onNewProject: _newProject,
-                        // The list, until the overview exists (PRODUCT).
+                        // The month's figures open the overview (PRODUCT).
                         onOpenMonth: () {
-                          _thisMonth.value++;
-                          _show(_Tab.operations);
+                          _overviewNow.value++;
+                          _show(_Tab.overview);
                         },
                       )
                     else
@@ -584,6 +588,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                         child: OverviewScreen(
                           data: data,
                           refresh: _saved,
+                          now: _overviewNow,
                           store: OverviewStore(KibuoData.maybeOf(context)!),
                         ),
                       )
