@@ -47,6 +47,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 - Le plan de publication (0.1 sur Google Play, 0.2 à 0.5, puis 1.0 stable) : [ROADMAP.md](ROADMAP.md), 25 novembre.
 - Plus, Réglages (Comptes et Catégories restés dans Plus), À propos et sa politique de confidentialité : PRODUCT, 25 novembre.
 - La mesure d'usage anonyme et les erreurs, avec accord, dans la 0.1 : [ADR 0013](adr/0013-mesure-d-usage-anonyme.md), 25 novembre.
+- La fenêtre des guides garde la même marge de 8 de chaque côté et entoure toute la carte du groupe montré ; la fenêtre et la carte du guide sont dans le kit (`GuideSpotlight`, `GuideCard`) : DIRECTION, « Guides », 26 novembre.
 
 ## Questions ouvertes (attendent le propriétaire)
 
