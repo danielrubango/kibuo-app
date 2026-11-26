@@ -45,7 +45,7 @@ Tirées de ce que kibuo fait vraiment (manifeste fusionné de la version 0.1.0, 
 | Politique de confidentialité | `https://kibuo.app/fr/confidentialite/` |
 | Annonces | Non, l'appli ne contient pas d'annonces |
 | Accès à l'appli | Toutes les fonctionnalités sont disponibles sans accès particulier (pas de compte ; le code de verrouillage est facultatif et créé par l'utilisateur) |
-| Public cible | 18 ans et plus |
+| Public cible | 16 ans et plus (16-17 ans et 18 ans et plus), réglé par le propriétaire dans la Play Console le 26 novembre 2026 ; hors des règles « Familles », qui visent les moins de 13 ans |
 | Applis d'actualités | Non |
 | Applis gouvernementales | Non |
 | Fonctionnalités financières | Lire les choix dans la Play Console ; sans case pour le budget personnel, « Mon appli ne propose aucune fonctionnalité financière » (kibuo ne déplace pas d'argent) |
