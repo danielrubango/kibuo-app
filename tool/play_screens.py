@@ -45,11 +45,12 @@ p{{margin:0;font:400 36px/48px Inter,sans-serif;color:#B9C1D1}}
 .s{{border-radius:60px;overflow:hidden;height:1812px;background:#EEF1F7}}
 .sc{{overflow:hidden;height:1736px}}
 .sc img{{display:block;width:792px;margin-top:-100px}}
-.sb{{height:76px;padding:0 44px 0 52px;display:flex;align-items:center;justify-content:space-between;background:#EEF1F7;font:600 26px Inter,sans-serif;color:#0E1320}}
+.sb{{position:relative;height:76px;padding:0 44px 0 52px;display:flex;align-items:center;justify-content:space-between;background:#EEF1F7;font:600 26px Inter,sans-serif;color:#0E1320}}
 .sb .ic{{display:flex;align-items:center;gap:12px}}
 .sb i{{display:block;height:14px;border-radius:7px;background:#B6BDCB}}
+.sb .cam{{position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#0E1320}}
 </style></head><body><div class="t"><h1>{title}</h1><p>{sub}</p></div>
-<div class="f"><div class="s"><div class="sb"><i style="width:58px"></i><span class="ic"><i style="width:26px"></i><i style="width:26px"></i><i style="width:40px"></i></span></div><div class="sc"><img src="data:image/png;base64,{img}"></div></div></div></body></html>"""
+<div class="f"><div class="s"><div class="sb"><b class="cam"></b><i style="width:58px"></i><span class="ic"><i style="width:26px"></i><i style="width:26px"></i><i style="width:40px"></i></span></div><div class="sc"><img src="data:image/png;base64,{img}"></div></div></div></body></html>"""
 
 os.makedirs(OUT, exist_ok=True)
 for name, (title, sub) in TEXTS.items():
@@ -60,7 +61,7 @@ for name, (title, sub) in TEXTS.items():
     img = base64.b64encode(open(shot, 'rb').read()).decode()
     html_path = os.path.join(OUT, name + '.html')
     open(html_path, 'w', encoding='utf-8').write(
-        PAGE.format(fonts=FONTS, title=title, sub=sub, img=img))
+        PAGE.format(fonts=FONTS, title=title.replace(', ', ',<br>'), sub=sub, img=img))
     png = os.path.abspath(os.path.join(OUT, name + '.png'))
     subprocess.run([CHROME, '--headless=new', '--disable-gpu',
                     '--hide-scrollbars', '--force-device-scale-factor=1',

@@ -18,7 +18,7 @@ Textes et images de la fiche de kibuo dans la Play Console. On avance point par 
 - **Données des captures** : un jeu de démonstration fait pour l'occasion (montants en francs congolais et en dollars, noms inventés), dans un utilisateur Android d'essai créé puis supprimé ; le profil de l'émulateur n'est pas touché.
 - **Langues** : textes en français et en anglais dès la 0.1 ; captures en français d'abord, en anglais avant la publication.
 - **Captures et image de présentation** : on commence simplement pour le test fermé ; trois styles de captures (A fond nuit, B fond clair, C écran seul) et des variantes de l'image de présentation sont à montrer sur le canvas, un point après l'autre.
-- **Style des captures** : A, fond nuit, une phrase en haut, l'écran dans un cadre de téléphone (choisi parmi A, B, C). La barre d'état du téléphone est retirée et redessinée en tirets gris, pour ne montrer ni Android ni iPhone ; sinon, on remettrait la vraie barre de chaque système.
+- **Style des captures** : A, fond nuit, une phrase en haut, l'écran dans un cadre de téléphone (choisi parmi A, B, C). La barre d'état du téléphone est retirée et redessinée en tirets gris, pour ne montrer ni Android ni iPhone ; sinon, on remettrait la vraie barre de chaque système. Un petit rond sombre au milieu figure la caméra, et un titre passe à la ligne après sa virgule (propriétaire, 26 novembre 2026).
 - **Série du test fermé** (proposée le 26 novembre 2026, à valider) : six captures, accueil, saisie d'une dépense, opérations du mois, budgets, dettes, projets, avec ces phrases :
   1. Ce que vous pouvez dépenser, d'un coup d'œil. / Votre disponible, le mois en cours et ce qui attend.
   2. Une dépense notée en quelques touches. / Le bouton + est toujours là, même sans connexion.
