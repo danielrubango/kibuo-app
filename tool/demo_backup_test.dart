@@ -238,11 +238,13 @@ Future<void> _fill(KibuoDatabase db) async {
     due: _day(12, 20),
     period: PlanPeriod.month,
   );
-  await projects.addContribution(
-    trip,
-    amount: _usd(450).minor,
-    date: _day(11, 1),
-  );
+  for (final (month, dollars) in [(9, 200), (10, 250), (11, 250)]) {
+    await projects.addContribution(
+      trip,
+      amount: _usd(dollars).minor,
+      date: _day(month, 1),
+    );
+  }
   final moto = await projects.create(
     name: 'Moto',
     icon: 'motorcycle',
@@ -251,11 +253,18 @@ Future<void> _fill(KibuoDatabase db) async {
     startedOn: _day(8, 1),
     due: _day(6, 30).add(const Duration(days: 365)),
   );
-  await projects.addContribution(
-    moto,
-    amount: _fc(180000).minor,
-    date: _day(11, 15),
-  );
+  for (final (month, francs) in [
+    (8, 250000),
+    (9, 250000),
+    (10, 300000),
+    (11, 300000),
+  ]) {
+    await projects.addContribution(
+      moto,
+      amount: _fc(francs).minor,
+      date: _day(month, 15),
+    );
+  }
   final school = await projects.create(
     name: 'Rentrée scolaire',
     icon: 'graduationCap',
