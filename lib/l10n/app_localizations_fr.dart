@@ -4407,18 +4407,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Si vous acceptez « Aider à améliorer kibuo », kibuo envoie des données d’analyse qui nous permettent d’améliorer l’application : les écrans ouverts, les actions faites (sans leur contenu), les erreurs, et une description de l’appareil (modèle, système et sa version, langue, pays, devise principale). Elles portent un numéro tiré au sort, sans lien avec vous ni avec l’appareil. Jamais vos montants, vos noms, vos notes ni votre position, et votre adresse IP n’est pas gardée.\n\nCes données sont stockées en Europe, le temps de leur analyse, un an environ. Vous pouvez arrêter à tout moment dans Réglages › Confidentialité : le numéro et ce qui attendait d’être envoyé sont alors oubliés.';
 
   @override
-  String get overviewSoonTitle => 'Vos graphiques arrivent';
-
-  @override
-  String get overviewSoonText =>
-      'Dans la prochaine version de kibuo, trois vues de votre argent :';
-
-  @override
   String get overviewEvolution => 'Évolution';
-
-  @override
-  String get overviewEvolutionText =>
-      'Vos sorties et vos entrées, jour après jour';
 
   @override
   String get overviewCategories => 'Catégories';
@@ -4434,15 +4423,118 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vos comptes, plus ce qu’on vous doit, moins vos dettes';
 
   @override
-  String get overviewMeanwhile => 'En attendant';
+  String get overviewPeriodTitle => 'Période';
 
   @override
-  String get overviewMonth => 'Le mois en chiffres';
+  String get overviewReset => 'Réinitialiser';
 
   @override
-  String get overviewMonthText =>
-      'Entrées, sorties et ce qui reste, dans Opérations';
+  String get overviewKindToday => 'Aujourd’hui';
 
   @override
-  String get overviewBudgetsText => 'Ce qui reste dans chaque catégorie';
+  String get overviewKindYesterday => 'Hier';
+
+  @override
+  String get overviewKind24h => '24 h';
+
+  @override
+  String get overviewKind7Days => '7 jours';
+
+  @override
+  String get overviewKindMonth => '1 mois';
+
+  @override
+  String get overviewKindYear => '1 an';
+
+  @override
+  String get overviewKindCustom => 'Personnalisée';
+
+  @override
+  String get overviewFrom => 'Du';
+
+  @override
+  String get overviewTo => 'Au';
+
+  @override
+  String get overviewGroupBy => 'Regrouper par';
+
+  @override
+  String get overviewByHour => 'Heure';
+
+  @override
+  String get overviewByDay => 'Jour';
+
+  @override
+  String get overviewByWeek => 'Semaine';
+
+  @override
+  String get overviewByMonth => 'Mois';
+
+  @override
+  String get overviewCompareTo => 'Comparer à';
+
+  @override
+  String get overviewComparePrevious => 'D’avant';
+
+  @override
+  String get overviewCompareNext => 'D’après';
+
+  @override
+  String get overviewCompareCurrent => 'Actuelle';
+
+  @override
+  String get overviewCompareNone => 'Aucune';
+
+  @override
+  String get overviewComparedAs => 'Période comparée en';
+
+  @override
+  String get overviewCurve => 'Courbe';
+
+  @override
+  String get overviewSticks => 'Bâtonnets';
+
+  @override
+  String get overviewSee => 'Voir';
+
+  @override
+  String get overviewExits => 'Sorties';
+
+  @override
+  String get overviewEntries => 'Entrées';
+
+  @override
+  String get overviewPreviousPeriod => 'Période précédente';
+
+  @override
+  String get overviewNextPeriod => 'Période suivante';
+
+  @override
+  String get overviewLast24h => 'Dernières 24 h';
+
+  @override
+  String overviewUntil(String day, int hour) {
+    return 'Jusqu’au $day, $hour h';
+  }
+
+  @override
+  String get overviewLast7Days => '7 derniers jours';
+
+  @override
+  String overviewRange(String first, String last) {
+    return '$first – $last';
+  }
+
+  @override
+  String overviewHourMark(int hour) {
+    return '$hour h';
+  }
+
+  @override
+  String overviewWeekMark(int week) {
+    return 'S$week';
+  }
+
+  @override
+  String get overviewSoon => 'Bientôt';
 }

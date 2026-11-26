@@ -13,6 +13,7 @@ import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/hint_store.dart';
 import 'package:kibuo/data/long_amounts_store.dart';
 import 'package:kibuo/data/month_start_store.dart';
+import 'package:kibuo/data/overview_store.dart';
 import 'package:kibuo/data/preference_store.dart';
 import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/recurring_repository.dart';
@@ -46,7 +47,7 @@ import 'package:kibuo/ui/more/plus_page.dart';
 import 'package:kibuo/ui/more/plus_summary.dart';
 import 'package:kibuo/ui/obligations/debts_screen.dart';
 import 'package:kibuo/ui/obligations/new_debt_screen.dart';
-import 'package:kibuo/ui/overview/overview_waiting.dart';
+import 'package:kibuo/ui/overview/overview_screen.dart';
 import 'package:kibuo/ui/projects/new_project_screen.dart';
 import 'package:kibuo/ui/projects/project_money.dart';
 import 'package:kibuo/ui/projects/project_screen.dart';
@@ -576,11 +577,28 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                         message: AppLocalizations.of(context)
                             .operationsPlaceholder,
                       ),
-                    OverviewWaiting(
-                      key: const ValueKey('screen-overview'),
-                      onMonth: () => _show(_Tab.operations),
-                      onBudgets: () => _openPlus(PlusEntry.budgets),
-                    ),
+                    if (_entryData(context) case final data?)
+                      TickerMode(
+                        key: const ValueKey('screen-overview'),
+                        enabled: _tab == _Tab.overview,
+                        child: OverviewScreen(
+                          data: data,
+                          refresh: _saved,
+                          store: OverviewStore(KibuoData.maybeOf(context)!),
+                        ),
+                      )
+                    else
+                      ListView(
+                        key: const ValueKey('screen-overview'),
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          TabHeader(
+                            title: TabHeader.text(
+                              AppLocalizations.of(context).tabOverview,
+                            ),
+                          ),
+                        ],
+                      ),
                     if (_entryData(context) case final data?)
                       PlusPage(
                         key: const ValueKey('screen-more'),

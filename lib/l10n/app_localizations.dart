@@ -6844,26 +6844,8 @@ abstract class AppLocalizations {
   /// Aperçu waiting screen (version 0.1).
   ///
   /// In fr, this message translates to:
-  /// **'Vos graphiques arrivent'**
-  String get overviewSoonTitle;
-
-  /// Aperçu waiting screen (version 0.1).
-  ///
-  /// In fr, this message translates to:
-  /// **'Dans la prochaine version de kibuo, trois vues de votre argent :'**
-  String get overviewSoonText;
-
-  /// Aperçu waiting screen (version 0.1).
-  ///
-  /// In fr, this message translates to:
   /// **'Évolution'**
   String get overviewEvolution;
-
-  /// Aperçu waiting screen (version 0.1).
-  ///
-  /// In fr, this message translates to:
-  /// **'Vos sorties et vos entrées, jour après jour'**
-  String get overviewEvolutionText;
 
   /// Aperçu waiting screen (version 0.1).
   ///
@@ -6889,29 +6871,221 @@ abstract class AppLocalizations {
   /// **'Vos comptes, plus ce qu’on vous doit, moins vos dettes'**
   String get overviewWorthText;
 
-  /// Aperçu waiting screen (version 0.1).
+  /// Aperçu: the period sheet's title.
   ///
   /// In fr, this message translates to:
-  /// **'En attendant'**
-  String get overviewMeanwhile;
+  /// **'Période'**
+  String get overviewPeriodTitle;
 
-  /// Aperçu waiting screen (version 0.1).
+  /// Aperçu period sheet: back to 1 month by day, compared with the period before.
   ///
   /// In fr, this message translates to:
-  /// **'Le mois en chiffres'**
-  String get overviewMonth;
+  /// **'Réinitialiser'**
+  String get overviewReset;
 
-  /// Aperçu waiting screen (version 0.1).
+  /// Aperçu period chip.
   ///
   /// In fr, this message translates to:
-  /// **'Entrées, sorties et ce qui reste, dans Opérations'**
-  String get overviewMonthText;
+  /// **'Aujourd’hui'**
+  String get overviewKindToday;
 
-  /// Aperçu waiting screen (version 0.1).
+  /// Aperçu period chip.
   ///
   /// In fr, this message translates to:
-  /// **'Ce qui reste dans chaque catégorie'**
-  String get overviewBudgetsText;
+  /// **'Hier'**
+  String get overviewKindYesterday;
+
+  /// Aperçu period chip: the last 24 hours.
+  ///
+  /// In fr, this message translates to:
+  /// **'24 h'**
+  String get overviewKind24h;
+
+  /// Aperçu period chip.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 jours'**
+  String get overviewKind7Days;
+
+  /// Aperçu period chip.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 mois'**
+  String get overviewKindMonth;
+
+  /// Aperçu period chip.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 an'**
+  String get overviewKindYear;
+
+  /// Aperçu period chip: dates chosen by the user.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnalisée'**
+  String get overviewKindCustom;
+
+  /// Aperçu period sheet: a custom period's first day.
+  ///
+  /// In fr, this message translates to:
+  /// **'Du'**
+  String get overviewFrom;
+
+  /// Aperçu period sheet: a custom period's last day.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au'**
+  String get overviewTo;
+
+  /// Aperçu period sheet: what one bar holds.
+  ///
+  /// In fr, this message translates to:
+  /// **'Regrouper par'**
+  String get overviewGroupBy;
+
+  /// Aperçu: group by hour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heure'**
+  String get overviewByHour;
+
+  /// Aperçu: group by day.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jour'**
+  String get overviewByDay;
+
+  /// Aperçu: group by week.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine'**
+  String get overviewByWeek;
+
+  /// Aperçu: group by month.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mois'**
+  String get overviewByMonth;
+
+  /// Aperçu period sheet: the compared period.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparer à'**
+  String get overviewCompareTo;
+
+  /// Aperçu: compare with the period before.
+  ///
+  /// In fr, this message translates to:
+  /// **'D’avant'**
+  String get overviewComparePrevious;
+
+  /// Aperçu: compare with the period after.
+  ///
+  /// In fr, this message translates to:
+  /// **'D’après'**
+  String get overviewCompareNext;
+
+  /// Aperçu: compare with the current period.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actuelle'**
+  String get overviewCompareCurrent;
+
+  /// Aperçu: no comparison.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune'**
+  String get overviewCompareNone;
+
+  /// Aperçu period sheet: how the compared period is drawn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Période comparée en'**
+  String get overviewComparedAs;
+
+  /// Aperçu: the compared period as a curve.
+  ///
+  /// In fr, this message translates to:
+  /// **'Courbe'**
+  String get overviewCurve;
+
+  /// Aperçu: the compared period as wide grey sticks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bâtonnets'**
+  String get overviewSticks;
+
+  /// Aperçu period sheet: closes it.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir'**
+  String get overviewSee;
+
+  /// Aperçu tile: money out.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties'**
+  String get overviewExits;
+
+  /// Aperçu tile: money in.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées'**
+  String get overviewEntries;
+
+  /// Aperçu header: ‹ for screen readers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Période précédente'**
+  String get overviewPreviousPeriod;
+
+  /// Aperçu header: › for screen readers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Période suivante'**
+  String get overviewNextPeriod;
+
+  /// Aperçu header: the current 24 hours.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernières 24 h'**
+  String get overviewLast24h;
+
+  /// Aperçu header: 24 hours ending on a past day.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jusqu’au {day}, {hour} h'**
+  String overviewUntil(String day, int hour);
+
+  /// Aperçu header: the current 7 days.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 derniers jours'**
+  String get overviewLast7Days;
+
+  /// Aperçu header: from one day to another.
+  ///
+  /// In fr, this message translates to:
+  /// **'{first} – {last}'**
+  String overviewRange(String first, String last);
+
+  /// Aperçu chart: an hour under the bars.
+  ///
+  /// In fr, this message translates to:
+  /// **'{hour} h'**
+  String overviewHourMark(int hour);
+
+  /// Aperçu chart: a week under the bars.
+  ///
+  /// In fr, this message translates to:
+  /// **'S{week}'**
+  String overviewWeekMark(int week);
+
+  /// Aperçu: a tab that comes in a later delivery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bientôt'**
+  String get overviewSoon;
 }
 
 class _AppLocalizationsDelegate

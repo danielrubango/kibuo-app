@@ -71,6 +71,14 @@ abstract final class KibuoColors {
   /// A draft transfer's dashes (its card is [transferTint]).
   static const transferDash = Color(0xFF9DB2DD);
 
+  // The Aperçu's chart (canvas ApercuP2): entries' bars, the bars of what
+  // has not begun yet, and the compared period's curve. Exits' bars are
+  // [debtLine], the compared period's sticks [track].
+  static const chartIn = Color(0xFF7CCFAA);
+  static const chartOutAhead = Color(0xFFF2E3D6);
+  static const chartInAhead = Color(0xFFDDF1E7);
+  static const chartCompared = Color(0xFF7C8599);
+
   // Meaning: warning (budget at 80 %).
   static const warning = Color(0xFFD99A1C);
   static const warningInk = Color(0xFF8A5A00);
