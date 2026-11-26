@@ -9,7 +9,7 @@ Textes et images de la fiche de kibuo dans la Play Console. On avance point par 
 
 ## Décidé le 26 novembre 2026
 
-- **Nom** : à choisir parmi les variantes proposées (Q1), 30 caractères au plus, en minuscules pour « kibuo ».
+- **Nom** : « kibuo : budget et épargne » (25 caractères), en anglais « kibuo: budget & savings » (variante D parmi cinq, choisie par le propriétaire). « kibuo : budget, projets, épargne » dépasse les 30 caractères permis (32) ; sans virgules, il tiendrait mais se lirait comme une liste de mots-clés. Le mot « projets » est dans la brève description, juste sous le nom.
 - **Brève description** (80 caractères au plus), le slogan :
   - fr : « Votre compagnon, des dépenses quotidiennes à vos projets, hors ligne. » (68)
   - en : « Your companion, from everyday spending to your plans, offline. »
