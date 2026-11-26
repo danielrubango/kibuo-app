@@ -13,6 +13,12 @@ kibuo sort tôt sur Google Play, puis s'enrichit version par version :
 - **1.0** : la version stable et complète, après quelques semaines de test des versions 0.x par de vrais utilisateurs. C'est elle que les documents appellent « la V1 » ([PRODUCT.md](PRODUCT.md), « Cadre de la V1 »).
 - **Après la 1.0** : les grands chantiers (cloud, IA, iOS…), dans cet ordre de départ, à revoir selon les retours.
 
+**Les numéros de version** (décidé le 26 novembre 2026) :
+
+- Pendant le test fermé, les paquets sont des `v0.1.0-alpha-N` ; dès qu'on y ajoute une nouveauté (par exemple l'Aperçu), ils deviennent des `v0.1.0-beta-N`. Ce qui est prêt au passage en production sort en `v0.1.0`.
+- Après la production : `v0.2.0`, `v0.3.0`… avec les nouveautés suivantes.
+- Quand kibuo est stable : `v1.0.0`, avec le site en Laravel et le Compte kibuo dans le cloud.
+
 Les phases 0 à 6 ci-dessous sont l'historique de la construction.
 
 ## Phase 0 : Fondations du projet
@@ -113,11 +119,14 @@ Ce que Google Play exige :
 - [x] Site public minimal : la politique de confidentialité, en ligne le 26 novembre 2026 à kibuo.app/fr/confidentialite/ et /en/privacy/ ([backlog/site-public.md](backlog/site-public.md))
 - [ ] Fiche Google Play : textes, captures, formulaire sur la sécurité des données, classification du contenu ([backlog/fiche-google-play.md](backlog/fiche-google-play.md))
 - [ ] Avant la production (vers fin décembre 2026) : des captures qui accompagnent l'utilisateur (flèches, parties d'écran mises en avant, chiffres), trois propositions de huit captures
-- [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE)
-- [ ] Test fermé sur Google Play (12 testeurs pendant 14 jours, en famille d'abord ; [backlog/test-ferme.md](backlog/test-ferme.md)), puis corrections
+- [ ] Parcours complets sur le Poco X3 NFC et un émulateur Android 8, dont ce qui n'est vu que par les tests (STATE) — mis de côté par le propriétaire le 26 novembre 2026 : on avance sans eux, le test fermé fera remonter ce qui coince
+- [ ] Test fermé sur Google Play (12 testeurs pendant 14 jours, en accès privé, par adresse e-mail ; [backlog/test-ferme.md](backlog/test-ferme.md)), puis corrections
 - [ ] Publication
 
 ## Version 0.2 : Aperçu
+
+Commencée pendant le test fermé (26 novembre 2026) : livrée aux testeurs en `v0.1.0-beta-N`, elle sort avec la `v0.1.0` si elle est prête au passage en production.
+
 
 - [ ] Tableaux de bord : évolution, catégories, patrimoine, points suivis (planches `Apercu…`)
 
@@ -146,6 +155,7 @@ Ce que Google Play exige :
 
 - [ ] Quelques semaines de test des versions 0.x par de vrais utilisateurs
 - [ ] Corrections issues de ces tests
+- [ ] Le site en Laravel (aujourd'hui pages fixes sur Cloudflare) et le Compte kibuo dans le cloud (décidé le 26 novembre 2026 : ils font partie de la 1.0 ; voir « Après la 1.0 », point 1, pour leur contenu)
 - [ ] Publication de la 1.0
 
 ## Après la 1.0
