@@ -6,7 +6,7 @@ labels: [google-play]
 
 # Test fermé sur Google Play
 
-En famille d'abord (décidé par le propriétaire le 26 novembre 2026). Google Play demande au moins 12 testeurs inscrits pendant 14 jours de suite avant d'ouvrir la production ([google-play.md](google-play.md)).
+Un test privé, avant la sortie publique, présenté comme un accès en avant-première (décidé par le propriétaire le 26 novembre 2026). Google Play demande au moins 12 testeurs inscrits pendant 14 jours de suite avant d'ouvrir la production ([google-play.md](google-play.md)).
 
 ## Comment les testeurs entrent
 
@@ -14,7 +14,7 @@ Le lien d'inscription (`https://play.google.com/apps/testing/app.kibuo/join`) ne
 
 **Retenu le 26 novembre 2026 : une liste d'adresses.** Chacun envoie au propriétaire l'adresse e-mail de son compte Google Play ; le propriétaire l'ajoute dans la Play Console (Tests › Test fermé › Testeurs), puis lui envoie le lien d'inscription. Un groupe Google ouvert, que chacun rejoindrait seul, reste possible si la liste grandit.
 
-## Message d'invitation (validé le 26 novembre 2026)
+## Message d'invitation (proposé le 26 novembre 2026, à valider)
 
 Ton d'un accès privé, avant la sortie : ni « en famille », ni durée annoncée (Google demande pourtant 12 testeurs inscrits pendant 14 jours de suite : le propriétaire relance si besoin).
 
