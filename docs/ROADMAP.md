@@ -136,6 +136,10 @@ Ce que Google Play exige :
 - [ ] Guide de réglage des notifications selon les marques
 - [ ] Ordre des catégories et sous-catégories ([backlog/ordre-categories.md](backlog/ordre-categories.md))
 
+## Plus tard, avant la 1.0
+
+- [ ] Page d'accueil du site kibuo.app : revoir la présentation de kibuo et le lien vers Google Play (décidé le 26 novembre 2026 : la 0.1 n'a que la page de confidentialité)
+
 ## Version 1.0 : stable
 
 - [ ] Quelques semaines de test des versions 0.x par de vrais utilisateurs
