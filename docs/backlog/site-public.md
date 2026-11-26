@@ -12,6 +12,8 @@ labels: [site, backend]
 - **Hébergement** : Cloudflare Pages, gratuit, là où le domaine `kibuo.app` est déjà géré, à partir du dépôt privé `kibuo-api`. Vercel reste une possibilité plus tard. À terme, le site rejoint l'API sur un serveur à nous (VPS), en Laravel avec Inertia.
 - **Courrier** : `contact@kibuo.app` suivi vers la boîte habituelle du propriétaire par le routage d'e-mails de Cloudflare.
 - **Design** : trois départs (A, B, C) sur un canvas, choisis avant tout code ; le passage en HTML se fait à la fin.
+- **Retenu le même jour** : la variante C1 (bandeau nuit, sommaire, date en petit sous le paragraphe), planche [SiteConfidentialite](../design/boards/SiteConfidentialite.dc.html), canvas « kibuo · Page de confidentialité », nettoyé pour ne garder qu'elle.
+- **Statistiques dans la politique** : l'outil de mesure n'est pas nommé ; le texte dit que kibuo envoie des données d'analyse qui permettent d'améliorer l'application, stockées en Europe le temps de leur analyse, un an environ (l'offre gratuite de PostHog garde un an, ADR 0013). La phrase sur l'opérateur et le fuseau horaire, que kibuo n'envoie pas, est retirée. Le texte dans l'app suivra le même.
 
 Vit dans le dépôt [danielrubango/kibuo-api](https://github.com/danielrubango/kibuo-api), avec le serveur de la [synchronisation](sync-cloud.md) qui viendra plus tard (Laravel, voir l'[ADR 0007](../adr/0007-synchro-laravel-postgresql.md)).
 
