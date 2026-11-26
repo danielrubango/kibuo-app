@@ -286,7 +286,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     }
     await usage.describe(
       language: language,
-      country: await deviceCountry(),
+      country: usageCountry(),
       currency: currency,
     );
   }

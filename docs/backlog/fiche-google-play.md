@@ -34,6 +34,50 @@ Textes et images de la fiche de kibuo dans la Play Console. On avance point par 
 
 Contraintes de Google Play pour les captures : 2 à 8 par appareil, et le grand côté ne peut pas dépasser deux fois le petit. Les captures brutes de l'émulateur (1080 × 2424) sont refusées : il faut composer des images, par exemple en 1080 × 1920.
 
+## Réponses pour la Play Console (validées le 26 novembre 2026)
+
+Tirées de ce que kibuo fait vraiment (manifeste fusionné de la version 0.1.0, `lib/domain/usage/`, ADR 0013) et des règles relevées dans [google-play.md](google-play.md). Les intitulés de la Play Console peuvent varier un peu.
+
+### Contenu de l'application
+
+| Rubrique | Réponse |
+|---|---|
+| Politique de confidentialité | `https://kibuo.app/fr/confidentialite/` |
+| Annonces | Non, l'appli ne contient pas d'annonces |
+| Accès à l'appli | Toutes les fonctionnalités sont disponibles sans accès particulier (pas de compte ; le code de verrouillage est facultatif et créé par l'utilisateur) |
+| Public cible | 16 ans et plus (16-17 ans et 18 ans et plus), réglé par le propriétaire dans la Play Console le 26 novembre 2026 ; hors des règles « Familles », qui visent les moins de 13 ans |
+| Applis d'actualités | Non |
+| Applis gouvernementales | Non |
+| Fonctionnalités financières | Lire les choix dans la Play Console ; sans case pour le budget personnel, « Mon appli ne propose aucune fonctionnalité financière » (kibuo ne déplace pas d'argent) |
+| Applis de santé | Aucune fonction de santé |
+| Identifiant publicitaire | Non : le manifeste fusionné ne contient pas l'autorisation `AD_ID` (vérifié le 26 novembre 2026) |
+| Service au premier plan | Aucun type déclaré : `SystemForegroundService` de WorkManager est dans le manifeste sans type, et kibuo ne le lance pas |
+
+### Sécurité des données
+
+- **Collecte ou partage de données** : oui (les statistiques, seulement après « Oui, partager »).
+- **Chiffrement en transit** : oui (HTTPS vers le serveur d'analyse en Europe).
+- **Comptes** : l'appli ne permet pas de créer de compte.
+- **Demande de suppression** : non. Les données ne sont reliées à personne ; arrêter les statistiques oublie le numéro tiré au sort et ce qui attendait ; le reste est effacé au bout d'un an environ.
+- **Partage** : non. Le service d'analyse traite les données pour le compte de kibuo (prestataire) ; à condition que le contrat de sous-traitance de PostHog soit signé (ADR 0013).
+- **Types de données collectés**, tous facultatifs, non partagés, non éphémères, finalité « Analyse » :
+  - Activité dans l'appli › Interactions avec l'appli (écrans ouverts, actions faites, sans leur contenu) ;
+  - Infos et performances de l'appli › Journaux de plantage (type d'erreur et endroit du code) ;
+  - Identifiants de l'appareil ou autres (le numéro tiré au sort à l'installation) ;
+  - Pas de position : depuis le 26 novembre 2026, le pays envoyé est la région choisie dans les réglages du téléphone, plus celle du réseau ou de la carte SIM (qui ne sert plus qu'à proposer une devise au premier lancement, sur le téléphone).
+- **Non collectés** (tout reste sur le téléphone) : informations personnelles, informations financières, photos et vidéos, fichiers, contacts, messages, position précise, santé, historique web, audio, agenda. Diagnostics de performance : non, kibuo n'en envoie pas.
+
+### Classification du contenu (questionnaire IARC)
+
+- **Adresse e-mail** : contact@kibuo.app.
+- **Catégorie** : toutes les autres applis (ni jeu, ni réseau social, ni divertissement).
+- **Violence, peur, sexualité, langage grossier, drogues, alcool, tabac, jeux d'argent réels ou simulés, humour cru, discrimination** : non à tout.
+- **Les utilisateurs peuvent-ils interagir ou partager du contenu entre eux** : non (le message pour réclamer un remboursement s'ouvre dans l'appli de messagerie de l'utilisateur, hors de kibuo).
+- **Partage de la position de l'utilisateur** : non.
+- **Achats numériques** : non.
+- **Accès libre à Internet (navigateur)** : non.
+- Classification attendue : tout public (PEGI 3, 3+).
+
 ## Description complète, français
 
 ```
@@ -60,42 +104,36 @@ Vos données restent chez vous
 • Verrou par code ou par empreinte
 • Sauvegarde dans un fichier, protégée par mot de passe si vous le voulez, et restauration sur un autre téléphone
 • Pas de compte, pas de publicité, rien n’est vendu
-• Des statistiques anonymes, seulement si vous l’acceptez
-
-En français et en anglais.
 
 Une question, une idée ? Écrivez-nous à contact@kibuo.app.
 ```
 
-## Description complète, anglais
+## Description complète, anglais (validée le 26 novembre 2026)
 
 ```
 kibuo keeps your accounts on your phone: your everyday spending, your budgets, what you owe, what you are owed and your savings projects. No account to create, and it works offline.
 
-Follow your money
+Track your money
 • Accounts in several currencies, Congolese francs, dollars and more, with your own rates
 • Expenses, income and transfers, entered in a few taps with the + button
-• A photo of a receipt or an invoice attached to the transaction
-• Search and filters by month, account or category
+• Attach a photo of a receipt or an invoice
+• Search and filter by month, account or category
 
 Plan ahead
 • Budgets by category, with an alert when you get close to the limit
-• Transactions that come back (rent, salary, subscriptions) and reminders
+• Recurring transactions (rent, salary, subscriptions) with reminders
 • An alert three days before a balance runs short
 
-Debts, money owed and projects
+Debts and savings projects
 • What you owe and what you are owed, with partial repayments
 • A message ready to send to ask for a repayment
 • Savings projects and their deposits
 
 Your data stays with you
 • Everything stays on your phone, in an encrypted database
-• Lock with a PIN or your fingerprint
-• Backup to a file, password-protected if you like, and restore on another phone
+• Lock it with a PIN or your fingerprint
+• Back up to a file, password-protected if you like, and restore it on another phone
 • No account, no ads, nothing is sold
-• Anonymous statistics, only if you agree
-
-In French and English.
 
 A question or an idea? Write to us at contact@kibuo.app.
 ```

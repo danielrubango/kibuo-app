@@ -10,6 +10,10 @@ Décidé le 25 novembre 2026, pour la version 0.1. kibuo envoie des statistiques
 - **Hors ligne.** Les messages attendent sur le téléphone, dans un fichier, et partent par lots (toutes les 30 secondes, à 20 en attente, et quand kibuo passe en arrière-plan) ; au plus 500 attendent, les plus anciens partent d'abord ; kibuo reste entièrement utilisable sans réseau.
 - **Notre propre envoi** (décidé le 25 novembre 2026, après essai). Le module de PostHog pour Flutter ajoutait de lui-même, depuis sa partie Android, le nom de l'opérateur, le fuseau horaire, la signature technique du téléphone (« user agent ») et son nom de code, sans moyen de les retirer depuis kibuo ; il interrogeait aussi son serveur au démarrage. kibuo n'embarque donc pas ce module : il envoie lui-même ses messages à l'adresse `/batch/` de PostHog, avec exactement les champs listés (`lib/domain/usage/usage_message.dart`, `lib/ui/usage/posthog_sender.dart`). La politique de confidentialité mentionne quand même l'opérateur, le fuseau horaire et la description technique comme possibles, pour pouvoir changer d'outil sans la réécrire.
 
+## Le pays envoyé (26 novembre 2026)
+
+Le pays des messages est la région choisie dans les réglages du téléphone (`usageCountry`, `lib/ui/device_country.dart`), et non plus celui du réseau ou de la carte SIM : ce dernier dirait où se trouve le téléphone, ce que Google Play compte comme une position approximative à déclarer. Le pays du réseau ne sert plus qu'à proposer une devise au premier lancement, sur le téléphone. Un test le vérifie (`test/usage_country_test.dart`).
+
 ## Vérifié chez PostHog le 26 novembre 2026
 
 Pages officielles de PostHog, lues ce jour-là :
