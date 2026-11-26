@@ -14,7 +14,7 @@ Le lien d'inscription (`https://play.google.com/apps/testing/app.kibuo/join`) ne
 
 **Retenu le 26 novembre 2026 : une liste d'adresses.** Chacun envoie au propriétaire l'adresse e-mail de son compte Google Play ; le propriétaire l'ajoute dans la Play Console (Tests › Test fermé › Testeurs), puis lui envoie le lien d'inscription. Un groupe Google ouvert, que chacun rejoindrait seul, reste possible si la liste grandit.
 
-## Message d'invitation (proposé le 26 novembre 2026, à valider)
+## Message d'invitation (validé le 26 novembre 2026)
 
 Ton d'un accès privé, avant la sortie : ni « en famille », ni durée annoncée (Google demande pourtant 12 testeurs inscrits pendant 14 jours de suite : le propriétaire relance si besoin).
 
