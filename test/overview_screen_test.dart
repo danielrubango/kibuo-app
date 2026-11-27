@@ -269,5 +269,23 @@ void main() {
     // transfer out and its fees.
     expect(textPlain('+1 230,00 \$'), findsOneWidget);
     expect(textPlain('−532,00 \$'), findsOneWidget);
+
+    // Its page (variant B, canvas CompteB): what M-Pesa has, what it lost
+    // this month, and the transfer it sent, fees included.
+    await tester.ensureVisible(find.text('M-Pesa'));
+    await tester.tap(find.text('M-Pesa'));
+    await tester.pumpAndSettle();
+    expect(textPlain('468,00 \$'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is RichText &&
+            plain(w.text.toPlainText()) == '−532,00 \$ ce mois-ci',
+      ),
+      findsOneWidget,
+    );
+    expect(textPlain('−532,00 \$'), findsOneWidget, reason: 'Sorties');
+    expect(textPlain('−500,00 \$'), findsOneWidget, reason: 'the taxi');
+    expect(textPlain('−32,00 \$'), findsOneWidget, reason: 'the transfer');
   });
 }

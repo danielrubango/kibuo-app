@@ -116,17 +116,25 @@ class ShareRow extends StatelessWidget {
 /// A grey tile for a line that is not a category of the lists (« Dettes et
 /// créances », « Frais de transfert », the rest folded).
 class PlainLineTile extends StatelessWidget {
-  const PlainLineTile({super.key, required this.icon, this.size = 40});
+  const PlainLineTile({
+    super.key,
+    required this.icon,
+    this.size = 40,
+    this.color,
+  });
 
   final IconData icon;
   final double size;
+
+  /// The tile's colour, the grey of a category without one by default.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) => Container(
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: categoryHue(CategoryColor.grey),
+      color: color ?? categoryHue(CategoryColor.grey),
       borderRadius: BorderRadius.circular(size * 0.32),
     ),
     child: Icon(icon, size: size * 0.6, color: KibuoColors.ink),

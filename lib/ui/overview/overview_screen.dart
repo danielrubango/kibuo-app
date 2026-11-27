@@ -602,8 +602,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
     if (main == null || data == null) return const SizedBox(height: 300);
     final startDay = monthStartChoice.value;
     final grouping = _choice.groupingFor(span);
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     return WorthTab(
       data: widget.data,
+      periodLabel: periodLabel(l, lang, _choice.kind, _offset, span),
       followed: data,
       kind: _choice.kind,
       offset: _offset,

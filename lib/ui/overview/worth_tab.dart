@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'dart:ui' show PathMetric;
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
@@ -13,6 +12,7 @@ import 'package:kibuo/domain/transactions/entry_total.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/overview/account_page.dart';
 import 'package:kibuo/ui/overview/enlarged_parts.dart';
 import 'package:kibuo/ui/overview/followed_section.dart';
 import 'package:kibuo/ui/overview/overview_labels.dart';
@@ -38,6 +38,7 @@ class WorthTab extends StatefulWidget {
     required this.now,
     required this.main,
     required this.rates,
+    required this.periodLabel,
   });
 
   final EntryData data;
@@ -51,6 +52,9 @@ class WorthTab extends StatefulWidget {
   final DateTime now;
   final CurrencyInfo main;
   final Map<String, ExchangeRate> rates;
+
+  /// Under an account's name, on its page.
+  final String periodLabel;
 
   @override
   State<WorthTab> createState() => _WorthTabState();
@@ -108,6 +112,25 @@ class _WorthTabState extends State<WorthTab> {
     if (mounted) setState(() => _planned = changes);
   }
 
+  /// An account over the period (variant B, canvas CompteB).
+  void _openAccount(String id, String name) => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => AccountPage(
+        data: widget.data,
+        accountId: id,
+        name: name,
+        periodLabel: widget.periodLabel,
+        kind: widget.kind,
+        offset: widget.offset,
+        span: widget.span,
+        bars: widget.bars,
+        grouping: widget.grouping,
+        startDay: widget.startDay,
+        now: widget.now,
+      ),
+    ),
+  );
+
   String _money(int minor, {bool signed = false}) {
     final lang = Localizations.localeOf(context).languageCode;
     final text = formatMoney(
@@ -117,24 +140,6 @@ class _WorthTabState extends State<WorthTab> {
     );
     if (!signed) return minor < 0 ? '−$text' : text;
     return minor == 0 ? text : '${minor < 0 ? '−' : '+'}$text';
-  }
-
-  /// Over which time the worth changed: « ce mois-ci », « en octobre »…
-  String _when(AppLocalizations l, String lang) {
-    final last = widget.span.lastDay;
-    return switch (widget.kind) {
-      PeriodKind.month when _running => l.worthWhen('thisMonth'),
-      PeriodKind.month => l.worthIn(
-        DateFormat.MMMM(lang).format(DateTime(last.year, last.month)),
-      ),
-      PeriodKind.year when _running => l.worthWhen('thisYear'),
-      PeriodKind.year => l.worthIn('${last.year}'),
-      PeriodKind.today when widget.offset == 0 => l.worthWhen('today'),
-      PeriodKind.today || PeriodKind.yesterday => l.worthWhen('yesterday'),
-      PeriodKind.last24Hours => l.worthWhen('day24'),
-      PeriodKind.last7Days => l.worthWhen('week'),
-      PeriodKind.custom => l.worthWhen('other'),
-    };
   }
 
   @override
@@ -262,7 +267,8 @@ class _WorthTabState extends State<WorthTab> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_money(change, signed: true)} ${_when(l, lang)}',
+                  '${_money(change, signed: true)} '
+                  '${worthWhen(l, lang, widget.kind, widget.offset, widget.span, running: _running)}',
                   style: KibuoType.caption
                       .copyWith(fontSize: 13, color: changeColor)
                       .copyWith(
@@ -339,6 +345,7 @@ class _WorthTabState extends State<WorthTab> {
                 name: data.accountNames[id] ?? '',
                 value: _money(v, signed: true),
                 ink: v < 0 ? KibuoColors.debtInk : KibuoColors.accent,
+                onTap: () => _openAccount(id, data.accountNames[id] ?? ''),
               ),
           ],
         ),
@@ -412,35 +419,43 @@ class _AccountRow extends StatelessWidget {
     required this.name,
     required this.value,
     required this.ink,
+    required this.onTap,
   });
 
   final String name;
   final String value;
   final Color ink;
 
+  /// Opens the account's page.
+  final VoidCallback onTap;
+
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-    constraints: const BoxConstraints(minHeight: 34),
-    child: Row(
-      children: [
-        Expanded(
-          child: Text(
-            name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: KibuoType.body,
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(10),
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 34),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: KibuoType.body,
+            ),
           ),
-        ),
-        Text(
-          value,
-          style: KibuoType.itemName.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            fontVariations: const [FontVariation.weight(700)],
-            color: ink,
+          Text(
+            value,
+            style: KibuoType.itemName.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              fontVariations: const [FontVariation.weight(700)],
+              color: ink,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

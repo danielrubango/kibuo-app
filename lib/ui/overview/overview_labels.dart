@@ -37,6 +37,32 @@ String tilePeriodName(
   return periodLabel(l, lang, kind, offset, span);
 }
 
+/// Over which time the worth (or an account) changed: « ce mois-ci »,
+/// « en octobre »… (PRODUCT, Patrimoine tab, 27 November 2026).
+String worthWhen(
+  AppLocalizations l,
+  String lang,
+  PeriodKind kind,
+  int offset,
+  TimeSpan span, {
+  required bool running,
+}) {
+  final last = span.lastDay;
+  return switch (kind) {
+    PeriodKind.month when running => l.worthWhen('thisMonth'),
+    PeriodKind.month => l.worthIn(
+      DateFormat.MMMM(lang).format(DateTime(last.year, last.month)),
+    ),
+    PeriodKind.year when running => l.worthWhen('thisYear'),
+    PeriodKind.year => l.worthIn('${last.year}'),
+    PeriodKind.today when offset == 0 => l.worthWhen('today'),
+    PeriodKind.today || PeriodKind.yesterday => l.worthWhen('yesterday'),
+    PeriodKind.last24Hours => l.worthWhen('day24'),
+    PeriodKind.last7Days => l.worthWhen('week'),
+    PeriodKind.custom => l.worthWhen('other'),
+  };
+}
+
 /// A chip of the « Période » sheet.
 String kindName(AppLocalizations l, PeriodKind kind) => switch (kind) {
   PeriodKind.today => l.overviewKindToday,

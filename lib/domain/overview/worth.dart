@@ -66,3 +66,23 @@ Map<String, int> accountChanges(
   }
   return out;
 }
+
+/// What came into an account and went out of it over [span], both as
+/// positive amounts: a transfer counts for the account it leaves and the
+/// one it reaches (PRODUCT, an account's page, 27 November 2026).
+({int entries, int exits}) flowsWithin(
+  TimeSpan span,
+  Iterable<WorthChange> changes,
+) {
+  var entries = 0;
+  var exits = 0;
+  for (final c in changes) {
+    if (!span.contains(c.at)) continue;
+    if (c.change > 0) {
+      entries += c.change;
+    } else {
+      exits -= c.change;
+    }
+  }
+  return (entries: entries, exits: exits);
+}

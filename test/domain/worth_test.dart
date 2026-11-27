@@ -73,4 +73,19 @@ void main() {
     final changes = accountChanges(november, moves);
     expect(changes, {'bank': 38000, 'mpesa': 4210, 'cash': 0});
   });
+
+  test("an account's page: what came in and went out over the period", () {
+    // A transfer counts for the account it leaves and the one it reaches.
+    final moves = [
+      (at: DateTime(2026, 11, 7, 17), change: -19040),
+      (at: DateTime(2026, 11, 10, 18), change: -5000),
+      (at: DateTime(2026, 11, 12, 9), change: 30000),
+      (at: DateTime(2026, 11, 20), change: 1200),
+      // October: outside.
+      (at: DateTime(2026, 10, 31, 23), change: 999),
+    ];
+    final flows = flowsWithin(november, moves);
+    expect(flows.entries, 31200);
+    expect(flows.exits, 24040);
+  });
 }
