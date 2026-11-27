@@ -21,16 +21,98 @@ import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_row.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
 
-/// A category over the Aperçu's period (variant B, canvas CatB-page, 27
-/// November 2026): its tile, name and period at the top, its total, its
-/// share of the money out (or in) and its number of operations, its
-/// subcategories with their bars, then the operations, day by day.
-class CategoryPage extends StatefulWidget {
-  const CategoryPage({
+/// What a line of the Catégories tab opens on: its tile and name, which
+/// operations of the period are its own, what each counts for, and how
+/// they group (PRODUCT, 27 November 2026).
+class LineSource {
+  const LineSource({
+    required this.name,
+    required this.tile,
+    required this.hue,
+    required this.picks,
+    required this.groupOf,
+    this.amountOf,
+    this.detailOf,
+  });
+
+  /// A category, its subcategories as groups (variant B, canvas CatB-page).
+  factory LineSource.category(
+    AppLocalizations l,
+    CategoryInfo category,
+    Map<String, CategoryInfo> categories, {
+    required bool out,
+  }) {
+    final ids = {category.id, for (final s in category.subs) s.id};
+    final kind = out ? EntryKind.expense : EntryKind.income;
+    return LineSource(
+      name: categoryName(l, category),
+      tile: CategoryTile(category: category, size: 36, colored: true),
+      hue: categoryHue(category.color),
+      picks: (t) => t.kind == kind && ids.contains(t.categoryId),
+      groupOf: (t) => categoryName(l, categories[t.categoryId] ?? category),
+    );
+  }
+
+  /// Money lent, borrowed or paid back: « Dettes » and « Créances » as
+  /// groups.
+  factory LineSource.debts(AppLocalizations l, {required bool out}) {
+    final kind = out ? EntryKind.expense : EntryKind.income;
+    return LineSource(
+      name: l.overviewDebtsLine,
+      tile: const PlainLineTile(icon: KibuoIcons.handCoins, size: 36),
+      hue: categoryHue(CategoryColor.grey),
+      picks: (t) =>
+          t.kind == kind &&
+          t.categoryId != null &&
+          isDebtCategoryId(t.categoryId!),
+      groupOf: (t) =>
+          debtOweOf(t.categoryId!.substring('default-'.length)) == true
+          ? l.followedDebts
+          : l.followedReceivables,
+    );
+  }
+
+  /// The transfers that had fees, each counting for its fees.
+  factory LineSource.fees(AppLocalizations l, String Function(Money) money) =>
+      LineSource(
+        name: l.overviewFeesLine,
+        tile: const PlainLineTile(icon: KibuoIcons.arrowsLeftRight, size: 36),
+        hue: categoryHue(CategoryColor.grey),
+        picks: (t) => t.kind == EntryKind.transfer && t.total.fees.minor > 0,
+        groupOf: (_) => null,
+        amountOf: (t) => t.total.fees,
+        detailOf: (t) => l.overviewFeesOf(money(t.total.fees)),
+      );
+
+  final String name;
+  final Widget tile;
+
+  /// The bars' colour.
+  final Color hue;
+
+  /// Whether an operation belongs to the line (the period aside).
+  final bool Function(TransactionInfo t) picks;
+
+  /// The group an operation counts in (a subcategory's name); null for
+  /// none, and then no bars.
+  final String? Function(TransactionInfo t) groupOf;
+
+  /// What an operation counts for, its total by default.
+  final Money Function(TransactionInfo t)? amountOf;
+
+  /// Said after the account, instead of the time (a transfer's fees).
+  final String Function(TransactionInfo t)? detailOf;
+}
+
+/// A line of the Catégories tab over the Aperçu's period (variant B, canvas
+/// CatB-page, 27 November 2026): its tile, name and period at the top, its
+/// total, its share of the money out (or in) and its number of operations,
+/// its groups with their bars, then the operations, day by day.
+class LinePage extends StatefulWidget {
+  const LinePage({
     super.key,
     required this.data,
-    required this.category,
-    required this.categories,
+    required this.source,
     required this.periodLabel,
     required this.span,
     required this.out,
@@ -40,24 +122,21 @@ class CategoryPage extends StatefulWidget {
   });
 
   final EntryData data;
-  final CategoryInfo category;
-
-  /// Every category by its id, subcategories included.
-  final Map<String, CategoryInfo> categories;
+  final LineSource source;
   final String periodLabel;
   final TimeSpan span;
   final bool out;
 
-  /// The period's money out (or in), for the category's share.
+  /// The period's money out (or in), for the line's share.
   final int periodTotal;
   final CurrencyInfo main;
   final Map<String, ExchangeRate> rates;
 
   @override
-  State<CategoryPage> createState() => _CategoryPageState();
+  State<LinePage> createState() => _LinePageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
+class _LinePageState extends State<LinePage> {
   List<(TransactionInfo, OperationLabels)>? _ops;
 
   @override
@@ -66,20 +145,13 @@ class _CategoryPageState extends State<CategoryPage> {
     _load();
   }
 
-  /// The saved operations of the category and its subcategories within the
-  /// period, the latest first.
+  /// The line's saved operations within the period, the latest first.
   Future<void> _load() async {
-    final ids = {
-      widget.category.id,
-      for (final s in widget.category.subs) s.id,
-    };
-    final kind = widget.out ? EntryKind.expense : EntryKind.income;
     final all = await widget.data.transactions.all();
     final mine = [
       for (final t in all)
         if (t.counts &&
-            t.kind == kind &&
-            ids.contains(t.categoryId) &&
+            widget.source.picks(t) &&
             widget.span.contains(t.date.toLocal()))
           t,
     ]..sort((a, b) => b.date.compareTo(a.date));
@@ -92,9 +164,10 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   int _inMain(TransactionInfo t) {
+    final amount = widget.source.amountOf?.call(t) ?? t.total.total;
     final flow = widget.out
-        ? MoneyFlow(outgoing: t.total.total)
-        : MoneyFlow(incoming: t.total.total);
+        ? MoneyFlow(outgoing: amount)
+        : MoneyFlow(incoming: amount);
     final totals = flowTotals(widget.main, [flow], (c) => widget.rates[c]);
     return widget.out ? totals.exits.minor : totals.entries.minor;
   }
@@ -116,7 +189,6 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final category = widget.category;
     final ops = _ops;
     return Scaffold(
       appBar: AppBar(
@@ -128,7 +200,7 @@ class _CategoryPageState extends State<CategoryPage> {
         ),
         title: Row(
           children: [
-            CategoryTile(category: category, size: 36, colored: true),
+            widget.source.tile,
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -136,7 +208,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    categoryName(l, category),
+                    widget.source.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: KibuoType.cardTitle.copyWith(fontSize: 18),
@@ -160,23 +232,29 @@ class _CategoryPageState extends State<CategoryPage> {
     );
   }
 
-  /// The total, the share and count, and the subcategories.
+  /// The total, the share and count, and the groups.
   Widget _summary(
     AppLocalizations l,
     List<(TransactionInfo, OperationLabels)> ops,
   ) {
-    final bySub = <String, int>{};
+    final byGroup = <String?, int>{};
     for (final (t, _) in ops) {
-      final id = t.categoryId ?? widget.category.id;
-      bySub[id] = (bySub[id] ?? 0) + _inMain(t);
+      final group = widget.source.groupOf(t);
+      byGroup[group] = (byGroup[group] ?? 0) + _inMain(t);
     }
-    final total = bySub.values.fold(0, (a, b) => a + b);
+    final total = byGroup.values.fold(0, (a, b) => a + b);
     final share = widget.periodTotal <= 0
         ? 0
         : (total * 100 / widget.periodTotal).round();
-    final subs = bySub.entries.toList()..sort((a, b) => b.value - a.value);
-    final most = subs.isEmpty ? 1 : subs.first.value;
-    final hue = categoryHue(widget.category.color);
+    final groups = [
+      for (final MapEntry(:key, :value) in byGroup.entries)
+        if (key != null) (name: key, amount: value),
+    ]..sort((a, b) => b.amount - a.amount);
+    final most = groups.isEmpty ? 1 : groups.first.amount;
+    // Only the line itself: no group to show.
+    final shown =
+        groups.length > 1 ||
+        (groups.isNotEmpty && groups.first.name != widget.source.name);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
@@ -200,20 +278,18 @@ class _CategoryPageState extends State<CategoryPage> {
                 : l.categoryPageIn(share, ops.length),
             style: KibuoType.caption.copyWith(fontSize: 13),
           ),
-          // Only the category itself: no subcategory to show.
-          if (subs.length > 1 ||
-              (subs.isNotEmpty && subs.first.key != widget.category.id))
-            for (final MapEntry(key: id, value: amount) in subs) ...[
+          if (shown)
+            for (final g in groups) ...[
               const SizedBox(height: 12),
               ShareRow(
-                name: categoryName(l, widget.categories[id] ?? widget.category),
+                name: g.name,
                 nameStyle: KibuoType.body.copyWith(
                   color: KibuoColors.inkSecondary,
                 ),
-                amount: '${widget.out ? '−' : '+'}${_money(amount)}',
-                percent: total <= 0 ? 0 : (amount * 100 / total).round(),
-                bar: most <= 0 ? 0 : amount / most,
-                color: hue,
+                amount: '${widget.out ? '−' : '+'}${_money(g.amount)}',
+                percent: total <= 0 ? 0 : (g.amount * 100 / total).round(),
+                bar: most <= 0 ? 0 : g.amount / most,
+                color: widget.source.hue,
               ),
             ],
         ],
@@ -228,6 +304,7 @@ class _CategoryPageState extends State<CategoryPage> {
       final d = op.$1.date.toLocal();
       (days[DateTime(d.year, d.month, d.day)] ??= []).add(op);
     }
+    final detailOf = widget.source.detailOf;
     return [
       for (final MapEntry(key: day, value: list) in days.entries) ...[
         const SizedBox(height: GroupTitle.before),
@@ -240,7 +317,7 @@ class _CategoryPageState extends State<CategoryPage> {
             title: (labels.categoryPath.split(' › ').last, null),
             subtitle: (
               '${labels.account} · '
-                  '${DateFormat.Hm(_lang).format(t.date.toLocal())}',
+                  '${detailOf?.call(t) ?? DateFormat.Hm(_lang).format(t.date.toLocal())}',
               null,
             ),
             onTap: () => _open(t),

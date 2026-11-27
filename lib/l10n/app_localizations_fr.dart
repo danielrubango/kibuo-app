@@ -4582,6 +4582,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get overviewFeesLine => 'Frais de transfert';
 
   @override
+  String overviewFeesOf(String amount) {
+    return 'frais : $amount';
+  }
+
+  @override
   String overviewOtherCategories(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

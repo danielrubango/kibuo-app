@@ -7135,6 +7135,12 @@ abstract class AppLocalizations {
   /// **'Frais de transfert'**
   String get overviewFeesLine;
 
+  /// Aperçu, the transfer fees page: a transfer's fees.
+  ///
+  /// In fr, this message translates to:
+  /// **'frais : {amount}'**
+  String overviewFeesOf(String amount);
+
   /// Aperçu, Catégories tab: the rest, folded.
   ///
   /// In fr, this message translates to:

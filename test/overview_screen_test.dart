@@ -13,6 +13,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
 import 'package:kibuo/ui/overview/enlarged_parts.dart';
 import 'package:kibuo/ui/overview/overview_screen.dart';
+import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 
@@ -228,6 +229,14 @@ void main() {
       // Its page: the taxi, its only operation.
       expect(find.text('Taxi'), findsWidgets);
       expect(find.textContaining('1 opération'), findsOneWidget);
+
+      // The fees open too: the transfer, counted for its 2 $ of fees.
+      await tester.tap(find.byIcon(KibuoIcons.caretLeft).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Frais de transfert'));
+      await tester.pumpAndSettle();
+      expect(textPlain('−2,00 \$'), findsOneWidget);
+      expect(find.textContaining('frais :'), findsOneWidget);
     },
   );
 }

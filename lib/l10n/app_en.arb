@@ -1183,6 +1183,7 @@
   "overviewTotalIn": "{amount} in",
   "overviewDebtsLine": "Debts and money owed",
   "overviewFeesLine": "Transfer fees",
+  "overviewFeesOf": "fees: {amount}",
   "overviewOtherCategories": "{count, plural, =1{1 other category} other{{count} other categories}}",
   "overviewCategoriesHelp": "Touch a category to see its details.",
   "overviewNoExitPeriod": "Nothing went out over the period",

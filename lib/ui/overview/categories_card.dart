@@ -33,8 +33,8 @@ class CategoriesCard extends StatefulWidget {
   /// An amount in the main currency, written without its sign.
   final String Function(int minor) money;
 
-  /// A category touched: its page.
-  final ValueChanged<String> onOpen;
+  /// A line touched: its page (a category, the debts, the fees).
+  final ValueChanged<CategoryLine> onOpen;
 
   @override
   State<CategoriesCard> createState() => _CategoriesCardState();
@@ -102,7 +102,7 @@ class _CategoriesCardState extends State<CategoriesCard> {
             for (final c in shown) line(c),
             if (rest.isNotEmpty) ...[
               ShareRow(
-                leading: const _PlainTile(icon: KibuoIcons.dotsThreeCircle),
+                leading: const PlainLineTile(icon: KibuoIcons.dotsThreeCircle),
                 name: l.overviewOtherCategories(rest.length),
                 amount: '${widget.out ? '−' : '+'}${widget.money(restAmount)}',
                 percent: rest.fold(0, (a, c) => a + c.share),
@@ -146,7 +146,7 @@ class _LineRow extends StatelessWidget {
   final bool out;
   final int most;
   final String Function(int minor) money;
-  final ValueChanged<String> onOpen;
+  final ValueChanged<CategoryLine> onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -158,17 +158,17 @@ class _LineRow extends StatelessWidget {
       CategoryLineKind.category when category != null => (
         CategoryTile(category: category, size: 40, colored: true) as Widget,
         categoryName(l, category),
-        () => onOpen(category.id),
+        () => onOpen(line),
       ),
       CategoryLineKind.debts => (
-        const _PlainTile(icon: KibuoIcons.handCoins) as Widget,
+        const PlainLineTile(icon: KibuoIcons.handCoins) as Widget,
         l.overviewDebtsLine,
-        null,
+        () => onOpen(line),
       ),
       _ => (
-        const _PlainTile(icon: KibuoIcons.arrowsLeftRight) as Widget,
+        const PlainLineTile(icon: KibuoIcons.arrowsLeftRight) as Widget,
         line.kind == CategoryLineKind.fees ? l.overviewFeesLine : '—',
-        null,
+        line.kind == CategoryLineKind.fees ? () => onOpen(line) : null,
       ),
     };
     return ShareRow(
@@ -183,22 +183,4 @@ class _LineRow extends StatelessWidget {
       minHeight: _lineHeight,
     );
   }
-}
-
-/// A grey tile for what is not a category of the lists.
-class _PlainTile extends StatelessWidget {
-  const _PlainTile({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      color: categoryHue(CategoryColor.grey),
-      borderRadius: BorderRadius.circular(40 * 0.32),
-    ),
-    child: Icon(icon, size: 24, color: KibuoColors.ink),
-  );
 }
