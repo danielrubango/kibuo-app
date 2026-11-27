@@ -132,7 +132,7 @@ Commencée pendant le test fermé (26 novembre 2026). Le propriétaire a décid�
   - [x] Livraison 1 : l'onglet Évolution et la feuille « Période » (27 novembre 2026)
   - [x] Livraison 2 : les points suivis et la feuille « Suivre » (27 novembre 2026)
   - [x] Livraison 3 : la tuile agrandie (27 novembre 2026)
-  - [ ] Livraison 4 : Catégories
+  - [x] Livraison 4 : Catégories, et la couleur des catégories (27 novembre 2026)
   - [ ] Livraison 5 : Patrimoine
 
 ## Version 0.3 : Vos données, ailleurs
