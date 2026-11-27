@@ -695,29 +695,18 @@ class _DebtsScreenState extends State<DebtsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(dateLine, style: KibuoType.body.weight(600)),
+          // The bar alone, the full width: the line under it says the
+          // amounts (owner, 27 November 2026: they were said twice).
           if (d.repaidShare > 0) ...[
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: d.repaidShare,
-                      minHeight: 8,
-                      color: look.bar,
-                      backgroundColor: look.track,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${context.money(paid)} / ${context.money(d.amount)}',
-                  style: KibuoType.caption
-                      .copyWith(color: KibuoColors.ink)
-                      .weight(600),
-                ),
-              ],
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: d.repaidShare,
+                minHeight: 8,
+                color: look.bar,
+                backgroundColor: look.track,
+              ),
             ),
           ],
           const SizedBox(height: 8),
