@@ -201,7 +201,11 @@ class _WorthTabState extends State<WorthTab> {
       startDay: widget.startDay,
       today: _running ? now : null,
     );
-    final at = widget.bars.length <= 1
+    // Today's date stands under its line, at the solid line's last point.
+    final points = solid.length + ahead.length;
+    final at = _running && points > 1
+        ? (solid.length - 1) / (points - 1)
+        : widget.bars.length <= 1
         ? 0.0
         : (begun.length - 1) / (widget.bars.length - 1);
 
@@ -279,9 +283,9 @@ class _WorthTabState extends State<WorthTab> {
               ],
             ),
             const SizedBox(height: 12),
-            WorthCurve(solid: solid, ahead: ahead),
+            WorthCurve(solid: solid, ahead: ahead, today: _running),
             const SizedBox(height: 6),
-            AxisLabels(axis, at: at),
+            AxisLabels(axis, at: at, strong: _running),
             if (ahead.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
