@@ -268,19 +268,7 @@ class CategoryRepository {
             _db.categories.kind.equals(kind.stored),
       );
     final position = await query.map((r) => r.read(last)).getSingle() ?? 0;
-    CategoryColor? own;
-    if (parentId == null) {
-      final siblings =
-          await (_db.select(_db.categories)..where(
-                (c) =>
-                    c.deleted.not() &
-                    c.removed.not() &
-                    c.parentId.isNull() &
-                    c.kind.equals(kind.stored),
-              ))
-              .get();
-      own = color ?? leastUsed([for (final r in siblings) _colorOf(r)]);
-    }
+    final own = parentId == null ? color ?? await nextColor(kind) : null;
     final id = const Uuid().v7();
     await _db
         .into(_db.categories)
@@ -298,6 +286,22 @@ class CategoryRepository {
           ),
         );
     return id;
+  }
+
+  /// The colour a new category of [kind] would take: the least used of its
+  /// list (ADR 0014).
+  Future<CategoryColor> nextColor(CategoryKind kind) async {
+    await _ensureProvided();
+    final siblings =
+        await (_db.select(_db.categories)..where(
+              (c) =>
+                  c.deleted.not() &
+                  c.removed.not() &
+                  c.parentId.isNull() &
+                  c.kind.equals(kind.stored),
+            ))
+            .get();
+    return leastUsed([for (final r in siblings) _colorOf(r)]);
   }
 
   /// Renames [id] (a null [name] keeps the current one, so a provided

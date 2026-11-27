@@ -1298,6 +1298,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get categoryIcon => 'Icône';
 
   @override
+  String get categoryColor => 'Couleur';
+
+  @override
+  String categoryColorName(String color) {
+    String _temp0 = intl.Intl.selectLogic(color, {
+      'peach': 'Pêche',
+      'apricot': 'Abricot',
+      'sand': 'Sable',
+      'coral': 'Corail',
+      'rose': 'Rose',
+      'lavender': 'Lavande',
+      'blue': 'Bleu',
+      'sky': 'Ciel',
+      'mint': 'Menthe',
+      'green': 'Vert',
+      'other': 'Gris',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get categoryCreate => 'Créer la catégorie';
 
   @override

@@ -363,6 +363,8 @@
   "categoryIn": "In",
   "categoryNameLabel": "Name",
   "categoryIcon": "Icon",
+  "categoryColor": "Colour",
+  "categoryColorName": "{color, select, peach{Peach} apricot{Apricot} sand{Sand} coral{Coral} rose{Rose} lavender{Lavender} blue{Blue} sky{Sky} mint{Mint} green{Green} other{Grey}}",
   "categoryCreate": "Create the category",
   "categoryCreateSub": "Create the subcategory",
   "categorySave": "Save",

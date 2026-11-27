@@ -2210,6 +2210,18 @@ abstract class AppLocalizations {
   /// **'Icône'**
   String get categoryIcon;
 
+  /// Categories: the colour row of the form (ADR 0014).
+  ///
+  /// In fr, this message translates to:
+  /// **'Couleur'**
+  String get categoryColor;
+
+  /// Categories: a colour's name, read aloud.
+  ///
+  /// In fr, this message translates to:
+  /// **'{color, select, peach{Pêche} apricot{Abricot} sand{Sable} coral{Corail} rose{Rose} lavender{Lavande} blue{Bleu} sky{Ciel} mint{Menthe} green{Vert} other{Gris}}'**
+  String categoryColorName(String color);
+
   /// Categories: categoryCreate
   ///
   /// In fr, this message translates to:
