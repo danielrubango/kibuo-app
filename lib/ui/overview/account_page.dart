@@ -22,7 +22,6 @@ import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
 import 'package:kibuo/ui/transactions/operation_row.dart';
 import 'package:kibuo/ui/transactions/operation_screens.dart';
-import 'package:kibuo/ui/transactions/overdraft_check.dart';
 
 /// An account over the Aperçu's period (variant B, canvas CompteB, 27
 /// November 2026): its balance in big, what it gained or lost, its curve,
@@ -69,6 +68,9 @@ typedef _Loaded = ({
   /// What each operation did to the account, since its opening.
   List<WorthChange> moves,
 
+  /// What each operation of the period did to it, by operation.
+  Map<String, int> changeOf,
+
   /// The period's operations, the latest first.
   List<(TransactionInfo, OperationLabels)> ops,
 });
@@ -90,18 +92,19 @@ class _AccountPageState extends State<AccountPage> {
     ].where((a) => a.id == widget.accountId).firstOrNull;
     if (account == null) return;
     final custom = await accounts.types();
+    // What counts in its balance, as the balance counts it.
     final moves = <WorthChange>[];
-    final mine = <TransactionInfo>[];
-    // As its balance does: what was saved from its opening on.
-    for (final t in await widget.data.transactions.all()) {
-      if (!t.counts || t.date.isBefore(account.openingDate)) continue;
-      final change = effectsOf(t)[account.id];
-      if (change == null) continue;
-      final at = t.date.toLocal();
-      moves.add((at: at, change: change));
-      if (widget.span.contains(at)) mine.add(t);
+    final changeOf = <String, int>{};
+    for (final m in await accounts.moves()) {
+      if (m.account != account.id) continue;
+      final at = m.at.toLocal();
+      moves.add((at: at, change: m.change));
+      if (widget.span.contains(at)) changeOf[m.transaction] = m.change;
     }
-    mine.sort((a, b) => b.date.compareTo(a.date));
+    final mine = [
+      for (final t in await widget.data.transactions.all())
+        if (changeOf.containsKey(t.id)) t,
+    ]..sort((a, b) => b.date.compareTo(a.date));
     if (!mounted) return;
     final ops = [
       for (final t in mine)
@@ -109,8 +112,13 @@ class _AccountPageState extends State<AccountPage> {
     ];
     if (!mounted) return;
     setState(
-      () =>
-          _loaded = (account: account, custom: custom, moves: moves, ops: ops),
+      () => _loaded = (
+        account: account,
+        custom: custom,
+        moves: moves,
+        changeOf: changeOf,
+        ops: ops,
+      ),
     );
   }
 
@@ -318,19 +326,18 @@ class _AccountPageState extends State<AccountPage> {
   /// The operations under their day, the latest day first. A transfer
   /// says whether it left the account or reached it.
   List<Widget> _days(_Loaded loaded) {
-    final id = loaded.account.id;
     final days = <DateTime, List<(TransactionInfo, OperationLabels)>>{};
     for (final op in loaded.ops) {
       final d = op.$1.date.toLocal();
       (days[DateTime(d.year, d.month, d.day)] ??= []).add(op);
     }
+    final code = loaded.account.currency;
     String Function(bool)? amount(TransactionInfo t) {
       if (t.kind != EntryKind.transfer) return null;
-      final leaves = t.accountId == id;
-      final m = leaves ? t.total.total : t.arrived ?? t.total.total;
+      final change = loaded.changeOf[t.id] ?? 0;
       return (short) =>
-          '${leaves ? '−' : '+'}'
-          '${formatAmount(Money(m.minor.abs(), m.currency), currencyOf(m.currency), _lang, short: short)}';
+          '${change < 0 ? '−' : '+'}'
+          '${formatAmount(Money(change.abs(), code), currencyOf(code), _lang, short: short)}';
     }
 
     return [

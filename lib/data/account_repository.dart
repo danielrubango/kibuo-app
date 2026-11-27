@@ -10,6 +10,16 @@ import 'package:uuid/uuid.dart';
 export 'package:kibuo/domain/accounts/account_type.dart';
 export 'package:kibuo/domain/accounts/overdraft.dart';
 
+/// What an operation changed in an account's balance, in the account's
+/// currency; [debt] when it lent, borrowed or paid back.
+typedef AccountMove = ({
+  String transaction,
+  String account,
+  DateTime at,
+  int change,
+  bool debt,
+});
+
 /// An account as the screens show it.
 class AccountInfo {
   const AccountInfo({
@@ -167,26 +177,49 @@ class AccountRepository {
     ];
   }
 
-  /// What the operations dated from each account's starting date changed
-  /// (drafts and ignored ones aside),
-  /// by account: income less fees, expenses plus fees, a transfer's amount
-  /// plus fees from the sending account and what arrived to the other.
+  /// What each saved operation changed in each account, from the
+  /// account's starting date on (drafts, ignored and deleted ones aside):
+  /// income less fees, expenses plus fees, a transfer's amount plus fees
+  /// from the sending account and what arrived to the other. The one rule
+  /// of what counts in an account: its balance is the sum of these, and
+  /// the Aperçu reads them (28 November 2026).
+  static const _movesSql =
+      'SELECT t.id AS tx, t.account_id AS account, t.date AS date, '
+      't.debt_id IS NOT NULL AS debt, CASE '
+      'WHEN t.kind = \'in\' THEN t.converted - t.fees '
+      'WHEN t.kind = \'move\' THEN -(t.amount + t.fees) '
+      'ELSE -(t.converted + t.fees) END AS change '
+      'FROM transactions t JOIN accounts a ON a.id = t.account_id '
+      'WHERE t.deleted = 0 AND t.status = \'done\' AND t.date >= a.opening_date '
+      'UNION ALL '
+      'SELECT t.id, t.to_account_id, t.date, 0, t.converted '
+      'FROM transactions t JOIN accounts a ON a.id = t.to_account_id '
+      'WHERE t.deleted = 0 AND t.status = \'done\' AND t.kind = \'move\' '
+      'AND t.date >= a.opening_date';
+
+  /// Every move that counts in an account, in its currency.
+  Future<List<AccountMove>> moves() async {
+    final rows = await _db
+        .customSelect(_movesSql, readsFrom: {_db.transactions, _db.accounts})
+        .get();
+    return [
+      for (final r in rows)
+        (
+          transaction: r.read<String>('tx'),
+          account: r.read<String>('account'),
+          at: r.read<DateTime>('date'),
+          change: r.read<int>('change'),
+          debt: r.read<bool>('debt'),
+        ),
+    ];
+  }
+
+  /// The sum of each account's [moves].
   Future<Map<String, int>> _balanceChanges() async {
     final rows = await _db
         .customSelect(
-          'SELECT account, SUM(change) AS change FROM ('
-          'SELECT t.account_id AS account, CASE '
-          'WHEN t.kind = \'in\' THEN t.converted - t.fees '
-          'WHEN t.kind = \'move\' THEN -(t.amount + t.fees) '
-          'ELSE -(t.converted + t.fees) END AS change '
-          'FROM transactions t JOIN accounts a ON a.id = t.account_id '
-          'WHERE t.deleted = 0 AND t.status = \'done\' AND t.date >= a.opening_date '
-          'UNION ALL '
-          'SELECT t.to_account_id AS account, t.converted AS change '
-          'FROM transactions t JOIN accounts a ON a.id = t.to_account_id '
-          'WHERE t.deleted = 0 AND t.status = \'done\' AND t.kind = \'move\' '
-          'AND t.date >= a.opening_date'
-          ') GROUP BY account',
+          'SELECT account, SUM(change) AS change FROM ($_movesSql) '
+          'GROUP BY account',
           readsFrom: {_db.transactions, _db.accounts},
         )
         .get();
