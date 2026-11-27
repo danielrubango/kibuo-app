@@ -28,6 +28,7 @@ import 'package:kibuo/ui/overview/followed_section.dart';
 import 'package:kibuo/ui/overview/followed_tile.dart';
 import 'package:kibuo/ui/overview/overview_labels.dart';
 import 'package:kibuo/ui/overview/period_sheet.dart';
+import 'package:kibuo/ui/overview/worth_tab.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -281,13 +282,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
         switch (_tab) {
           _Tab.evolution => _evolution(l, lang, now, span, label, spanAt),
           _Tab.categories => _categories(l, lang, now, span, label, spanAt),
-          _Tab.worth => _Soon(
-            icon: KibuoIcons.bank,
-            tint: KibuoColors.projectTint,
-            ink: KibuoColors.projectInk,
-            title: l.overviewSoon,
-            text: l.overviewWorthText,
-          ),
+          _Tab.worth => _worth(now, span),
         },
       ],
     );
@@ -600,6 +595,31 @@ class _OverviewScreenState extends State<OverviewScreen> {
     );
   }
 
+  /// The Patrimoine tab (canvas ApercuP2, PRODUCT, 27 November 2026).
+  Widget _worth(DateTime now, TimeSpan span) {
+    final main = _main;
+    final data = _followedData;
+    if (main == null || data == null) return const SizedBox(height: 300);
+    final startDay = monthStartChoice.value;
+    final grouping = _choice.groupingFor(span);
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    return WorthTab(
+      data: widget.data,
+      periodLabel: periodLabel(l, lang, _choice.kind, _offset, span),
+      followed: data,
+      kind: _choice.kind,
+      offset: _offset,
+      span: span,
+      bars: bucketsOf(span, grouping, startDay: startDay),
+      grouping: grouping,
+      startDay: startDay,
+      now: now,
+      main: main,
+      rates: _rates,
+    );
+  }
+
   /// « Suivre »: the budgets of the month shown and the running projects
   /// can be picked.
   void _openFollow(AppLocalizations l, BudgetBook? book) {
@@ -899,49 +919,5 @@ class _Radio extends StatelessWidget {
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           )
         : null,
-  );
-}
-
-/// A tab that comes in a later delivery: a white card, its icon, « Bientôt »
-/// and what it will show.
-class _Soon extends StatelessWidget {
-  const _Soon({
-    required this.icon,
-    required this.tint,
-    required this.ink,
-    required this.title,
-    required this.text,
-  });
-
-  final IconData icon;
-  final Color tint;
-  final Color ink;
-  final String title;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-    decoration: BoxDecoration(
-      color: KibuoColors.surface,
-      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-    ),
-    child: Column(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: tint,
-            borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
-          ),
-          child: Icon(icon, color: ink),
-        ),
-        const SizedBox(height: 12),
-        Text(title, textAlign: TextAlign.center, style: KibuoType.cardTitle),
-        const SizedBox(height: 8),
-        Text(text, textAlign: TextAlign.center, style: KibuoType.help),
-      ],
-    ),
   );
 }

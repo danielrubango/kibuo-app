@@ -319,9 +319,12 @@ class LandmarkRows extends StatelessWidget {
 
 /// The marks under a chart, spread from start to end.
 class AxisLabels extends StatelessWidget {
-  const AxisLabels(this.labels, {super.key, this.at});
+  const AxisLabels(this.labels, {super.key, this.at, this.strong = false});
 
   final List<String> labels;
+
+  /// The middle label, today's, in dark grey (J3, 27 November 2026).
+  final bool strong;
 
   /// Where the middle label stands, from 0 to 1: under the day's line. An
   /// end label it would touch gives way.
@@ -370,7 +373,16 @@ class AxisLabels extends StatelessWidget {
                 Positioned(left: 0, child: Text(labels[0], style: style)),
               Positioned(
                 left: left,
-                child: Text(labels[1], style: style),
+                child: Text(
+                  labels[1],
+                  style: strong
+                      ? style.copyWith(
+                          color: KibuoColors.inkSecondary,
+                          fontWeight: FontWeight.w600,
+                          fontVariations: const [FontVariation.weight(600)],
+                        )
+                      : style,
+                ),
               ),
               if (left + middle.width + gap <= w - last)
                 Positioned(right: 0, child: Text(labels[2], style: style)),
@@ -434,7 +446,7 @@ class ChartLegend extends StatelessWidget {
   }
 }
 
-Path _smooth(List<Offset> p, {double? low, double? high}) {
+Path smoothPath(List<Offset> p, {double? low, double? high}) {
   double clamp(double y) =>
       y.clamp(low ?? double.negativeInfinity, high ?? double.infinity);
   final path = Path()..moveTo(p.first.dx, p.first.dy);
@@ -568,7 +580,7 @@ class _LinePainter extends CustomPainter {
       // Over its own length: October's 31 days end where November's 30 do.
       final m = compared.length;
       canvas.drawPath(
-        _smooth([
+        smoothPath([
           for (final (i, v) in compared.indexed)
             Offset(i * size.width / (m - 1), y(v)),
         ]),
@@ -581,7 +593,7 @@ class _LinePainter extends CustomPainter {
     if (c.current.isEmpty) return;
     final points = [for (final (i, v) in c.current.indexed) Offset(x(i), y(v))];
     if (points.length > 1) {
-      final line = _smooth(points);
+      final line = smoothPath(points);
       final area = Path.from(line)
         ..lineTo(points.last.dx, pad + h)
         ..lineTo(0, pad + h)

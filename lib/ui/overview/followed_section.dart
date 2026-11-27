@@ -57,6 +57,9 @@ class FollowedData {
     required this.accountsTotal,
     required this.accountChanges,
     required this.worthChanges,
+    this.accountMoves = const [],
+    this.accountNames = const {},
+    this.reserved = 0,
     required this.debts,
     required this.projects,
     required this.contributions,
@@ -87,6 +90,15 @@ class FollowedData {
   /// currency.
   final List<({DateTime at, int change})> accountChanges;
   final List<({DateTime at, int change})> worthChanges;
+
+  /// Each account's moves, by its id, in the main currency (the Patrimoine
+  /// tab's « Mes comptes sur la période »), and their names.
+  final List<({String account, DateTime at, int change})> accountMoves;
+  final Map<String, String> accountNames;
+
+  /// What the running projects hold back in the accounts, in the main
+  /// currency.
+  final int reserved;
 
   /// Debts and receivables not settled.
   final List<DebtLine> debts;
@@ -142,6 +154,10 @@ Future<FollowedData> loadFollowedData(
       (at: a.openingDate.toLocal(), change: inMain(a.opening)),
   ];
   final worthChanges = [...accountChanges];
+  final accountMoves = <({String account, DateTime at, int change})>[
+    for (final a in accounts)
+      (account: a.id, at: a.openingDate.toLocal(), change: inMain(a.opening)),
+  ];
   final spends = <CategorySpend>[];
   final gains = <CategorySpend>[];
   for (final t in counted) {
@@ -157,12 +173,19 @@ Future<FollowedData> loadFollowedData(
       if (code == null || change == 0) continue;
       final moved = (at: at, change: inMain(Money(change, code)));
       accountChanges.add(moved);
+      accountMoves.add((account: account, at: at, change: moved.change));
       // A debt moves the accounts and the debt alike: no change in worth.
       if (t.debtId == null) worthChanges.add(moved);
     }
   }
 
   final projects = await data.projects?.projects() ?? const <ProjectInfo>[];
+  final held = await data.projects?.reserved() ?? const <String, int>{};
+  final reserved = held.entries.fold(
+    0,
+    (sum, e) =>
+        sum + inMain(Money(e.value, currencyOfAccount[e.key] ?? main.code)),
+  );
   final contributions = <String, List<ContributionLine>>{
     for (final p in projects) p.id: await data.projects!.contributions(p.id),
   };
@@ -213,6 +236,9 @@ Future<FollowedData> loadFollowedData(
     accountsTotal: accountsTotal,
     accountChanges: accountChanges,
     worthChanges: worthChanges,
+    accountMoves: accountMoves,
+    accountNames: {for (final a in accounts) a.id: a.name},
+    reserved: reserved,
     debts: [
       for (final d in debts)
         if (!d.settled) d,
