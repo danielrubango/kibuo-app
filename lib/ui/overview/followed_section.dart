@@ -31,7 +31,6 @@ import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_flow.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
-import 'package:kibuo/ui/transactions/overdraft_check.dart';
 
 /// The curve of Dépensé (canvas ApercuP2).
 const _spentLine = Color(0xFFC9874E);
@@ -146,7 +145,6 @@ Future<FollowedData> loadFollowedData(
 
   final accounts = await data.accounts.accounts();
   final currencyOfAccount = {for (final a in accounts) a.id: a.currency};
-  final openingOf = {for (final a in accounts) a.id: a.openingDate};
   final accountsTotal = totalIn(main, [
     for (final a in accounts) a.balance,
   ], (code) => rates[code]).amount.minor;
@@ -169,17 +167,17 @@ Future<FollowedData> loadFollowedData(
     if (t.kind == EntryKind.income && t.categoryId != null) {
       gains.add((at: at, category: t.categoryId!, amount: t.total.total));
     }
-    for (final MapEntry(key: account, value: change) in effectsOf(t).entries) {
-      final code = currencyOfAccount[account];
-      if (code == null || change == 0) continue;
-      // As in its balance: nothing dated before the account opened.
-      if (t.date.isBefore(openingOf[account]!)) continue;
-      final moved = (at: at, change: inMain(Money(change, code)));
-      accountChanges.add(moved);
-      accountMoves.add((account: account, at: at, change: moved.change));
-      // A debt moves the accounts and the debt alike: no change in worth.
-      if (t.debtId == null) worthChanges.add(moved);
-    }
+  }
+  // What counts in each balance, as the balance counts it.
+  for (final m in await data.accounts.moves()) {
+    final code = currencyOfAccount[m.account];
+    if (code == null || m.change == 0) continue;
+    final at = m.at.toLocal();
+    final moved = (at: at, change: inMain(Money(m.change, code)));
+    accountChanges.add(moved);
+    accountMoves.add((account: m.account, at: at, change: moved.change));
+    // A debt moves the accounts and the debt alike: no change in worth.
+    if (!m.debt) worthChanges.add(moved);
   }
 
   final projects = await data.projects?.projects() ?? const <ProjectInfo>[];

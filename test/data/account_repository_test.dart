@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
 
 void main() {
@@ -17,6 +18,78 @@ void main() {
     repo = AccountRepository(db);
   });
   tearDown(() => db.close());
+
+  test("an account's moves add up to its balance", () async {
+    // One rule for what counts in an account (PRODUCT, 28 November 2026):
+    // the Aperçu reads these moves, so its figures cannot leave the
+    // balance.
+    final bank = await repo.create(
+      name: 'Rawbank',
+      type: AccountType.bank,
+      opening: const Money(100000, 'USD'),
+      openingDate: day,
+    );
+    final cash = await repo.create(
+      name: 'Poche',
+      type: AccountType.cash,
+      opening: const Money(5000, 'USD'),
+      openingDate: day,
+    );
+    final ops = TransactionRepository(db);
+    Future<String> expense(String account, int minor, DateTime date) =>
+        ops.create(
+          kind: EntryKind.expense,
+          accountId: account,
+          categoryId: 'default-taxi',
+          paid: Money(minor, 'USD'),
+          fees: 0,
+          date: date,
+        );
+    final salary = await ops.create(
+      kind: EntryKind.income,
+      accountId: bank,
+      categoryId: 'default-salary',
+      paid: const Money(120000, 'USD'),
+      fees: 300,
+      date: day.add(const Duration(days: 1)),
+    );
+    final taxi = await expense(cash, 2000, day.add(const Duration(days: 2)));
+    final transfer = await ops.createTransfer(
+      fromId: bank,
+      toId: cash,
+      sent: const Money(3000, 'USD'),
+      fees: 200,
+      date: day.add(const Duration(days: 3)),
+    );
+    // Before Poche opened, set aside, deleted: none of them counts.
+    await expense(cash, 999, day.subtract(const Duration(hours: 1)));
+    await ops.ignore(
+      await expense(cash, 888, day.add(const Duration(days: 4))),
+    );
+    await ops.delete(
+      await expense(bank, 777, day.add(const Duration(days: 4))),
+    );
+
+    final moves = await repo.moves();
+    for (final a in await repo.accounts()) {
+      final sum = moves
+          .where((m) => m.account == a.id)
+          .fold(0, (total, m) => total + m.change);
+      expect(a.opening.minor + sum, a.balance.minor, reason: a.name);
+    }
+    final balances = {for (final a in await repo.accounts()) a.id: a.balance};
+    expect(balances[bank], const Money(216500, 'USD'));
+    expect(balances[cash], const Money(6000, 'USD'));
+    expect(
+      {for (final m in moves) (m.transaction, m.account): m.change},
+      {
+        (salary, bank): 119700,
+        (taxi, cash): -2000,
+        (transfer, bank): -3200,
+        (transfer, cash): 3000,
+      },
+    );
+  });
 
   test('a new account keeps its starting balance as its balance', () async {
     final id = await repo.create(
