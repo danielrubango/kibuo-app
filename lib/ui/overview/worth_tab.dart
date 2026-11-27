@@ -11,6 +11,7 @@ import 'package:kibuo/domain/overview/worth.dart';
 import 'package:kibuo/domain/transactions/entry_total.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/card_arrow.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/overview/account_page.dart';
 import 'package:kibuo/ui/overview/enlarged_parts.dart';
@@ -430,7 +431,7 @@ class _AccountRow extends StatelessWidget {
   final String value;
   final Color ink;
 
-  /// Opens the account's page.
+  /// Opens the account's page; the › says so (owner, 28 November 2026).
   final VoidCallback onTap;
 
   @override
@@ -458,6 +459,8 @@ class _AccountRow extends StatelessWidget {
               color: ink,
             ),
           ),
+          const SizedBox(width: 6),
+          const CardArrow(),
         ],
       ),
     ),
