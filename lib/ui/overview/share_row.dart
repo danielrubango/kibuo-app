@@ -1,25 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/share_bar.dart';
-import 'package:kibuo/ui/theme/kibuo_colors.dart';
-import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
-
-/// Where a row that opens something shows its arrow.
-enum ShareArrow {
-  /// No arrow: the whole row is touched.
-  none,
-
-  /// A small arrow just after the name.
-  afterName,
-
-  /// In a column of its own at the right edge (canvas ApercuP2).
-  end,
-}
 
 /// One share among others (canvas ApercuP2, CatB-page): a tile when there
 /// is one, the name and the amount, then a bar of the share and its
-/// percentage. Touched, it opens what [onTap] says. Its room around comes
-/// from [padding], set where it is used.
+/// percentage. Touched anywhere, it opens what [onTap] says, without an
+/// arrow (owner, 27 November 2026: an arrow at the edge broke the line of
+/// the amounts). Its room around comes from [padding], set where it is
+/// used.
 class ShareRow extends StatelessWidget {
   const ShareRow({
     super.key,
@@ -31,8 +19,6 @@ class ShareRow extends StatelessWidget {
     this.leading,
     this.nameStyle,
     this.onTap,
-    this.arrow = ShareArrow.none,
-    this.arrowIcon = KibuoIcons.caretRight,
     this.padding = EdgeInsets.zero,
     this.minHeight = 0,
   });
@@ -51,19 +37,12 @@ class ShareRow extends StatelessWidget {
   /// The name's style; a row's label by default.
   final TextStyle? nameStyle;
   final VoidCallback? onTap;
-  final ShareArrow arrow;
-
-  /// The arrow drawn: right for what opens a page, down or up for what
-  /// unfolds in place.
-  final IconData arrowIcon;
   final EdgeInsetsGeometry padding;
   final double minHeight;
 
   @override
   Widget build(BuildContext context) {
     final leading = this.leading;
-    final arrowShown = onTap != null ? arrow : ShareArrow.none;
-    final icon = Icon(arrowIcon, size: 16, color: KibuoColors.inkSecondary);
     final row = ConstrainedBox(
       constraints: BoxConstraints(minHeight: minHeight),
       child: Padding(
@@ -78,24 +57,13 @@ class ShareRow extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      // The name takes what the amount leaves; the arrow
-                      // follows it closely.
+                      // The name takes what the amount leaves.
                       Expanded(
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: nameStyle ?? KibuoType.rowLabel,
-                              ),
-                            ),
-                            if (arrowShown == ShareArrow.afterName) ...[
-                              const SizedBox(width: 2),
-                              icon,
-                            ],
-                          ],
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: nameStyle ?? KibuoType.rowLabel,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -128,12 +96,6 @@ class ShareRow extends StatelessWidget {
                 ],
               ),
             ),
-            // The column stays on every row, so the amounts line up.
-            if (arrow == ShareArrow.end)
-              SizedBox(
-                width: 26,
-                child: onTap == null ? null : Center(child: icon),
-              ),
           ],
         ),
       ),

@@ -40,9 +40,6 @@ class CategoriesCard extends StatefulWidget {
   State<CategoriesCard> createState() => _CategoriesCardState();
 }
 
-/// Where the lines that open something show their arrow.
-const _arrow = ShareArrow.end;
-
 /// A line's room: 64 high at least, 6 above and below.
 const _linePadding = EdgeInsets.symmetric(vertical: 6);
 const _lineHeight = 64.0;
@@ -111,10 +108,6 @@ class _CategoriesCardState extends State<CategoriesCard> {
                 percent: rest.fold(0, (a, c) => a + c.share),
                 bar: restAmount / most,
                 color: categoryHue(CategoryColor.grey),
-                arrow: _arrow,
-                arrowIcon: _restOpen
-                    ? KibuoIcons.caretUp
-                    : KibuoIcons.caretDown,
                 onTap: () => setState(() => _restOpen = !_restOpen),
                 padding: _linePadding,
                 minHeight: _lineHeight,
@@ -185,7 +178,6 @@ class _LineRow extends StatelessWidget {
       percent: line.share,
       bar: bar,
       color: categoryHue(category?.color ?? CategoryColor.grey),
-      arrow: _arrow,
       onTap: onTap,
       padding: _linePadding,
       minHeight: _lineHeight,
