@@ -265,11 +265,20 @@ List<int> runningTotal(List<int> values) {
 /// What « Suivre » keeps: the tiles on, and the budget and the project the
 /// user picked (null: the default one).
 class FollowedChoice {
-  const FollowedChoice({this.on = followedAtFirst, this.budget, this.project});
+  const FollowedChoice({
+    this.on = followedAtFirst,
+    this.budget,
+    this.project,
+    this.bars = false,
+  });
 
   final Set<Followed> on;
   final String? budget;
   final String? project;
+
+  /// Dépensé, Reçu and Épargne enlarged as bars, a bar a day, rather than
+  /// as a curve (« Affichage » in « Suivre », 27 November 2026).
+  final bool bars;
 
   /// The tiles on, in the order of the « Suivre » sheet.
   List<Followed> get shown => [
@@ -281,13 +290,17 @@ class FollowedChoice {
     on: value ? {...on, tile} : ({...on}..remove(tile)),
     budget: budget,
     project: project,
+    bars: bars,
   );
 
   FollowedChoice withBudget(String id) =>
-      FollowedChoice(on: on, budget: id, project: project);
+      FollowedChoice(on: on, budget: id, project: project, bars: bars);
 
   FollowedChoice withProject(String id) =>
-      FollowedChoice(on: on, budget: budget, project: id);
+      FollowedChoice(on: on, budget: budget, project: id, bars: bars);
+
+  FollowedChoice withBars(bool value) =>
+      FollowedChoice(on: on, budget: budget, project: project, bars: value);
 }
 
 /// A total at each of [moments]: the [current] total less every change

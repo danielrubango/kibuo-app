@@ -4,7 +4,37 @@ import 'package:kibuo/domain/overview/overview_period.dart';
 import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 
-String _cap(String t) => t.isEmpty ? t : t[0].toUpperCase() + t.substring(1);
+String _cap(String t) => capitalized(t);
+
+/// [t] with its first letter in capitals.
+String capitalized(String t) =>
+    t.isEmpty ? t : t[0].toUpperCase() + t.substring(1);
+
+/// « 1er nov. », not « 1 nov. », in French.
+String withFirst(String text, DateTime day, String lang) =>
+    lang == 'fr' && day.day == 1
+    ? text.replaceFirst(RegExp(r'(?<![0-9A-Za-z])1(?![0-9])'), '1er')
+    : text;
+
+/// The period on an enlarged tile (canvas TuileDepenseA): a month of this
+/// year by its name alone, as said inside a line (« novembre »), else as
+/// in the header.
+String tilePeriodName(
+  AppLocalizations l,
+  String lang,
+  PeriodKind kind,
+  int offset,
+  TimeSpan span, {
+  required DateTime now,
+}) {
+  if (kind == PeriodKind.month) {
+    final named = DateTime(span.lastDay.year, span.lastDay.month);
+    return named.year == now.year
+        ? DateFormat.MMMM(lang).format(named)
+        : DateFormat.yMMMM(lang).format(named);
+  }
+  return periodLabel(l, lang, kind, offset, span);
+}
 
 /// A chip of the « Période » sheet.
 String kindName(AppLocalizations l, PeriodKind kind) => switch (kind) {

@@ -4820,4 +4820,342 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get followSheetTitle => 'Followed';
+
+  @override
+  String get enlHint => 'Swipe for the next tile · touch outside to close';
+
+  @override
+  String enlAtThisDate(String period, String amount) {
+    return '$period at this date: $amount';
+  }
+
+  @override
+  String get enlWhereMost => 'Where it goes most';
+
+  @override
+  String get enlBiggestEntry => 'Biggest entry';
+
+  @override
+  String get enlWhereFrom => 'Where it comes from most';
+
+  @override
+  String get enlEntriesCount => 'Number of entries';
+
+  @override
+  String enlOfEntries(int share) {
+    return '$share % of money in';
+  }
+
+  @override
+  String get enlSavedShare => 'Share saved';
+
+  @override
+  String enlKept(int share) {
+    return '$share % kept';
+  }
+
+  @override
+  String get enlOfEntriesShort => 'of money in';
+
+  @override
+  String get enlHighest => 'The highest';
+
+  @override
+  String get enlLowest => 'The lowest';
+
+  @override
+  String get enlAboveAverage => 'Above average';
+
+  @override
+  String enlDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String enlWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weeks',
+      one: '1 week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String enlMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String enlOutOf(int count) {
+    return 'out of $count';
+  }
+
+  @override
+  String enlPeriodValue(String period, String amount) {
+    return '$period: $amount';
+  }
+
+  @override
+  String enlOfExits(String amount, int share) {
+    return '$amount · $share % of money out';
+  }
+
+  @override
+  String enlRest(int share, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count categories',
+      one: '1 category',
+    );
+    return 'The rest: $share % in $_temp0';
+  }
+
+  @override
+  String get enlSeeOperations => 'See the operations';
+
+  @override
+  String enlSeeCategory(String name) {
+    return 'See the $name operations';
+  }
+
+  @override
+  String get enlSeeBudget => 'See the budget';
+
+  @override
+  String get enlSeeProject => 'See the project';
+
+  @override
+  String get enlSeeProjects => 'See the projects';
+
+  @override
+  String get enlSeeDebts => 'See the debts';
+
+  @override
+  String get enlSeeReceivables => 'See what is owed to you';
+
+  @override
+  String get enlSeeAccounts => 'See the accounts';
+
+  @override
+  String get enlSeeRecurrences => 'See the recurring ones';
+
+  @override
+  String enlShareOfPeriod(String amount, int share, String scope) {
+    String _temp0 = intl.Intl.selectLogic(scope, {
+      'day': 'day',
+      'week': 'week',
+      'month': 'month',
+      'year': 'year',
+      'other': 'period',
+    });
+    return '$amount · $share % of the $_temp0';
+  }
+
+  @override
+  String enlAxisDay(int day) {
+    return '$day';
+  }
+
+  @override
+  String enlComparedPer(String period, String amount, String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'week': 'week',
+      'month': 'month',
+      'other': 'day',
+    });
+    return '$period: $amount a $_temp0';
+  }
+
+  @override
+  String get enlNext14Days => 'Next 14 days';
+
+  @override
+  String get enlToday => 'today';
+
+  @override
+  String enlReceivableCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count amounts owed to you',
+      one: '1 amount owed to you',
+      zero: 'nothing owed to you',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String enlAmountsIn(String symbol) {
+    return 'Amounts in $symbol · the three priciest in colour';
+  }
+
+  @override
+  String enlInDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'in $count days',
+      one: 'tomorrow',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get enlDueToday => 'today';
+
+  @override
+  String enlLateBy(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days late',
+      one: 'one day late',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get enlNoDate => 'no date';
+
+  @override
+  String enlRecurrence(String when) {
+    return '$when · recurring';
+  }
+
+  @override
+  String enlDebtDue(String when) {
+    return 'debt due · $when';
+  }
+
+  @override
+  String enlReceivableDue(String when) {
+    return 'owed to you · $when';
+  }
+
+  @override
+  String enlOn(String amount) {
+    return 'of $amount';
+  }
+
+  @override
+  String get enlLeftPerDay => 'Left per day';
+
+  @override
+  String enlUntil(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String get enlPace => 'Pace';
+
+  @override
+  String get enlAhead => 'ahead of the even pace';
+
+  @override
+  String get enlMargin => 'to spare on the even pace';
+
+  @override
+  String enlRegularPace(String amount) {
+    return 'Even pace $amount';
+  }
+
+  @override
+  String enlRepaid(int share) {
+    return '$share % already repaid';
+  }
+
+  @override
+  String enlRecovered(int share) {
+    return '$share % already recovered';
+  }
+
+  @override
+  String enlThisMonth(String amount) {
+    return '$amount this month';
+  }
+
+  @override
+  String enlOverPeriod(String amount) {
+    return '$amount over the period';
+  }
+
+  @override
+  String enlForDate(String date) {
+    return 'for $date';
+  }
+
+  @override
+  String get enlPaid => 'Put aside';
+
+  @override
+  String get enlPlanned => 'Planned saving';
+
+  @override
+  String get enlEveryWeek => 'every week';
+
+  @override
+  String get enlEveryMonth => 'every month';
+
+  @override
+  String get enlAheadPlan => 'Ahead';
+
+  @override
+  String get enlBehindPlan => 'Behind';
+
+  @override
+  String get enlOnPlan => 'on the plan';
+
+  @override
+  String enlPlanMark(String amount) {
+    return 'plan: $amount';
+  }
+
+  @override
+  String get enlLeftToSave => 'Left to put aside';
+
+  @override
+  String enlSince(String amount, String date) {
+    return '$amount since $date';
+  }
+
+  @override
+  String enlAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts',
+      one: '1 account',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get enlOwedToYou => 'owed to you';
+
+  @override
+  String get enlYouOwe => 'what you owe';
+
+  @override
+  String get enlNet => 'Net';
+
+  @override
+  String get followAffichage => 'Display';
+
+  @override
+  String get followShownAs => 'Spent, Received and Savings as';
 }

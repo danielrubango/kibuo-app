@@ -7572,6 +7572,432 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Points suivis'**
   String get followSheetTitle;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glissez pour la tuile suivante · touchez à côté pour fermer'**
+  String get enlHint;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{period} à cette date : {amount}'**
+  String enlAtThisDate(String period, String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Où ça part le plus'**
+  String get enlWhereMost;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus grosse entrée'**
+  String get enlBiggestEntry;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'D’où ça vient le plus'**
+  String get enlWhereFrom;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre d’entrées'**
+  String get enlEntriesCount;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{share} % des entrées'**
+  String enlOfEntries(int share);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Part épargnée'**
+  String get enlSavedShare;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{share} % gardés'**
+  String enlKept(int share);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'des entrées'**
+  String get enlOfEntriesShort;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'La plus haute'**
+  String get enlHighest;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'La plus basse'**
+  String get enlLowest;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Au-dessus de la moyenne'**
+  String get enlAboveAverage;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 jour} other{{count} jours}}'**
+  String enlDays(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 semaine} other{{count} semaines}}'**
+  String enlWeeks(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 mois} other{{count} mois}}'**
+  String enlMonths(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur {count}'**
+  String enlOutOf(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{period} : {amount}'**
+  String enlPeriodValue(String period, String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} · {share} % des sorties'**
+  String enlOfExits(String amount, int share);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le reste : {share} % dans {count, plural, =1{1 catégorie} other{{count} catégories}}'**
+  String enlRest(int share, int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les opérations'**
+  String get enlSeeOperations;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les opérations de {name}'**
+  String enlSeeCategory(String name);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le budget'**
+  String get enlSeeBudget;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le projet'**
+  String get enlSeeProject;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les projets'**
+  String get enlSeeProjects;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les dettes'**
+  String get enlSeeDebts;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les créances'**
+  String get enlSeeReceivables;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les comptes'**
+  String get enlSeeAccounts;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les récurrences'**
+  String get enlSeeRecurrences;
+
+  /// Aperçu, enlarged tile: the priciest day's share of the period.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} · {share} % {scope, select, day{de la journée} week{de la semaine} month{du mois} year{de l’année} other{de la période}}'**
+  String enlShareOfPeriod(String amount, int share, String scope);
+
+  /// Aperçu, enlarged tile: a day number under a chart.
+  ///
+  /// In fr, this message translates to:
+  /// **'{day, plural, =1{1er} other{{day}}}'**
+  String enlAxisDay(int day);
+
+  /// Aperçu, enlarged tile: the compared average.
+  ///
+  /// In fr, this message translates to:
+  /// **'{period} : {amount} par {unit, select, week{semaine} month{mois} other{jour}}'**
+  String enlComparedPer(String period, String amount, String unit);
+
+  /// Aperçu, enlarged tile: À venir.
+  ///
+  /// In fr, this message translates to:
+  /// **'14 prochains jours'**
+  String get enlNext14Days;
+
+  /// Aperçu, enlarged tile: what debts and net worth stand at.
+  ///
+  /// In fr, this message translates to:
+  /// **'aujourd’hui'**
+  String get enlToday;
+
+  /// Aperçu, enlarged tile: receivables.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{aucune créance} =1{1 créance} other{{count} créances}}'**
+  String enlReceivableCount(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montants en {symbol} · les trois plus chers en couleur'**
+  String enlAmountsIn(String symbol);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{demain} other{dans {count} jours}}'**
+  String enlInDays(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'aujourd’hui'**
+  String get enlDueToday;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{en retard d’un jour} other{en retard de {count} jours}}'**
+  String enlLateBy(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'sans date'**
+  String get enlNoDate;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{when} · récurrence'**
+  String enlRecurrence(String when);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'dette due · {when}'**
+  String enlDebtDue(String when);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'créance due · {when}'**
+  String enlReceivableDue(String when);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur {amount}'**
+  String enlOn(String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste par jour'**
+  String get enlLeftPerDay;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'jusqu’au {date}'**
+  String enlUntil(String date);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rythme'**
+  String get enlPace;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'d’avance sur le rythme régulier'**
+  String get enlAhead;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'de marge sur le rythme régulier'**
+  String get enlMargin;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rythme régulier {amount}'**
+  String enlRegularPace(String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{share} % déjà remboursé'**
+  String enlRepaid(int share);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{share} % déjà récupéré'**
+  String enlRecovered(int share);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} ce mois'**
+  String enlThisMonth(String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} sur la période'**
+  String enlOverPeriod(String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'pour le {date}'**
+  String enlForDate(String date);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Versé'**
+  String get enlPaid;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Versement prévu'**
+  String get enlPlanned;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'chaque semaine'**
+  String get enlEveryWeek;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'chaque mois'**
+  String get enlEveryMonth;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avance'**
+  String get enlAheadPlan;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retard'**
+  String get enlBehindPlan;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur le plan'**
+  String get enlOnPlan;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'plan : {amount}'**
+  String enlPlanMark(String amount);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reste à mettre de côté'**
+  String get enlLeftToSave;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} depuis le {date}'**
+  String enlSince(String amount, String date);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 compte} other{{count} comptes}}'**
+  String enlAccountsCount(int count);
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'ce qu’on vous doit'**
+  String get enlOwedToYou;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'ce que vous devez'**
+  String get enlYouOwe;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Net'**
+  String get enlNet;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage'**
+  String get followAffichage;
+
+  /// Aperçu, enlarged tile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépensé, Reçu et Épargne en'**
+  String get followShownAs;
 }
 
 class _AppLocalizationsDelegate

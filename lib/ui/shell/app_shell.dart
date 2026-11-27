@@ -496,6 +496,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         projects: _openProjects,
         accounts: () => _openAccounts(db),
         debts: (tab) => _openDebts(db, tab),
+        recurrences: () => _openPlus(PlusEntry.recurrences),
       );
 
   Future<void> _openAccounts(KibuoDatabase db) => Navigator.of(context)

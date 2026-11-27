@@ -316,6 +316,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
     List<FlowTotals>? comparedBars;
     FlowTotals? comparedTotals;
     String? comparedName;
+    String? comparedTileName;
+    TimeSpan? comparedWindow;
     if (comparedAt != null) {
       final compared = spanAt(comparedAt);
       comparedBars = totalsByBucket(
@@ -330,14 +332,31 @@ class _OverviewScreenState extends State<OverviewScreen> {
         now: now,
         grouping: grouping,
       );
+      comparedWindow = TimeSpan(compared.start, until);
       comparedTotals = totalsWithin(
-        TimeSpan(compared.start, until),
+        comparedWindow,
         _flows,
         main,
         (c) => _rates[c],
       );
       comparedName = periodLabel(l, lang, _choice.kind, comparedAt, compared);
+      comparedTileName = tilePeriodName(
+        l,
+        lang,
+        _choice.kind,
+        comparedAt,
+        compared,
+        now: now,
+      );
     }
+    final tileName = tilePeriodName(
+      l,
+      lang,
+      _choice.kind,
+      _offset,
+      span,
+      now: now,
+    );
 
     String money(Money m, {bool short = false}) =>
         formatAmount(m, currencyOf(m.currency), lang, short: short);
@@ -354,6 +373,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
       compared: comparedTotals,
       main: main,
       rates: _rates,
+      label: capitalized(tileName),
+      inlineLabel: tileName,
+      grouping: grouping,
+      comparedBars: comparedBars,
+      comparedName: comparedTileName,
+      comparedWindow: comparedWindow,
     );
     final month = period.budgetMonth;
     final book = _books[month];

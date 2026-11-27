@@ -5,6 +5,7 @@ import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/choice_sheet.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
+import 'package:kibuo/ui/kit/tab_strip.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -201,6 +202,39 @@ class _FollowSheetState extends State<_FollowSheet> {
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
+                  _Family(
+                    title: l.followAffichage,
+                    rows: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              l.followShownAs,
+                              style: KibuoType.rowLabel.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontVariations: const [
+                                  FontVariation.weight(600),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TabStrip<bool>(
+                              height: 40,
+                              items: [
+                                (false, l.overviewCurve),
+                                (true, l.overviewSticks),
+                              ],
+                              value: _choice.bars,
+                              onPick: (bars) => _set(_choice.withBars(bars)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                   for (final (i, (title, rows)) in families.indexed) ...[
                     if (i > 0) const SizedBox(height: 10),
                     _Family(title: title, rows: rows),
