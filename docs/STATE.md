@@ -27,12 +27,11 @@ Validés sur le canvas, absents de l'app : l'**export CSV** (0.3), Aide et suppo
 
 ## En cours ou non fusionné
 
-- `chore/v0.1.0-beta-1` (version `0.1.0-beta-1+4`, montants nuls en gris dans les tuiles, guillemets anglais, note validée) : fusion et construction repoussées au moment où tout l'Aperçu sera fini (propriétaire, 27 novembre 2026). La note doit être reproposée alors, avec tout ce qui sera entré dans la bêta 1.
 - Sur l'émulateur : plus d'utilisateur d'essai (`kibuo-essai` supprimé le 25 novembre, accord du propriétaire, pour libérer l'émulateur) ; s'il bloque encore après un redémarrage, il peut être réinitialisé.
 
 ## Prochaines étapes
 
-Version 0.2 : l'Aperçu est fini. Les livraisons 1 (Évolution), 2 (points suivis), 3 (tuile agrandie) et 4 (Catégories, couleur des catégories) sont fusionnées le 27 novembre, la 5 (Patrimoine et la page d'un compte) le 28. Prochaine : **la publication** que le propriétaire attendait pour la fin de l'Aperçu (27 novembre 2026). Le paquet de test qui portera l'Aperçu est proposé : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note française et anglaise ; il attend le « oui » du propriétaire avant d'être construit, puis le contrôle sur `Kibuo_Release` ; sa note est à reproposer avec tout l'Aperçu (tuile agrandie, Catégories, couleur des catégories, Patrimoine, page d'un compte, sélection du montant au clavier).
+Version 0.2 : l'Aperçu est fini. Les livraisons 1 (Évolution), 2 (points suivis), 3 (tuile agrandie) et 4 (Catégories, couleur des catégories) sont fusionnées le 27 novembre, la 5 (Patrimoine et la page d'un compte) le 28. Le paquet de test qui le porte : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note fusionnée avec celle de l'alpha-3 pour les nouveaux testeurs, validée le 28 novembre ; contrôlé sur `Kibuo_Release`, puis construit en AAB le 28 novembre ([releases/0.1.0.md](releases/0.1.0.md)). Prochaine : l'envoyer dans la Play Console (le propriétaire), puis la **version 0.3** (export CSV, partage d'une sauvegarde).
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
@@ -58,7 +57,6 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ## Questions ouvertes (attendent le propriétaire)
 
-- Nom et note du paquet `v0.1.0-beta-1` (proposés le 27 novembre ; la note est à reproposer, la tuile agrandie y entrant).
 - Les précisions de mise en œuvre de la tuile agrandie, notées « à confirmer » dans PRODUCT (27 novembre).
 - Les précisions de mise en œuvre des livraisons 1 et 2 de l'Aperçu, notées « à confirmer » dans PRODUCT, et les écarts de la livraison 2 notés dans DIRECTION (ordre des tuiles, couleur de Catégorie n° 1, budget sur une semaine).
 
