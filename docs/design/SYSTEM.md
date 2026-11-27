@@ -48,7 +48,7 @@ Thème clair seulement ; le sombre est au [backlog](../backlog/theme-sombre.md).
 |---|---|---|
 | `scrim` | encre à 42 % | Derrière une feuille : la page reste lisible |
 | `veil` | encre à 12 % | Derrière un menu, le choix du mois |
-| `tipScrim` | encre à 45 % | Derrière un guide de première visite |
+| `blurVeil` | encre à 32 %, sur un flou de 8 | Le fond flouté : derrière une tuile agrandie, une ligne ouverte, une astuce, un guide (27 novembre 2026) |
 | `barShadow` | encre à 18 % | Barre flottante (clavier, sélection) |
 | `fanShadow` | noir à 25 % | Choix de l'éventail du + |
 
