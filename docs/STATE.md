@@ -27,12 +27,12 @@ Validés sur le canvas, absents de l'app : dans l'**Aperçu** (version 0.2), les
 
 ## En cours ou non fusionné
 
-- `chore/v0.1.0-beta-1` (version `0.1.0-beta-1+4`, montants nuls en gris dans les tuiles, guillemets anglais, note validée) : attend le feu vert du propriétaire pour être fusionnée et construite. La note doit être reproposée, puisque la tuile agrandie entre dans la bêta 1.
+- `chore/v0.1.0-beta-1` (version `0.1.0-beta-1+4`, montants nuls en gris dans les tuiles, guillemets anglais, note validée) : fusion et construction repoussées au moment où tout l'Aperçu sera fini (propriétaire, 27 novembre 2026). La note doit être reproposée alors, avec tout ce qui sera entré dans la bêta 1.
 - Sur l'émulateur : plus d'utilisateur d'essai (`kibuo-essai` supprimé le 25 novembre, accord du propriétaire, pour libérer l'émulateur) ; s'il bloque encore après un redémarrage, il peut être réinitialisé.
 
 ## Prochaines étapes
 
-Version 0.2 en cours : les livraisons 1 (Évolution), 2 (points suivis) et 3 (tuile agrandie) de l'Aperçu sont fusionnées le 27 novembre. Prochaine : **les onglets Catégories et Patrimoine** de l'Aperçu, questions d'abord. Le paquet de test qui portera l'Aperçu est proposé : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note française et anglaise ; il attend le « oui » du propriétaire avant d'être construit, puis le contrôle sur `Kibuo_Release` ; sa note est à reproposer (tuile agrandie ajoutée).
+Version 0.2 en cours : les livraisons 1 (Évolution), 2 (points suivis) et 3 (tuile agrandie) de l'Aperçu sont fusionnées le 27 novembre. Prochaine : **l'onglet Catégories** (livraison 4), puis **Patrimoine** (livraison 5), questions d'abord. La prochaine publication attend que tout l'Aperçu soit fini (propriétaire, 27 novembre 2026). Le paquet de test qui portera l'Aperçu est proposé : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note française et anglaise ; il attend le « oui » du propriétaire avant d'être construit, puis le contrôle sur `Kibuo_Release` ; sa note est à reproposer (tuile agrandie ajoutée).
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
