@@ -231,7 +231,10 @@ class _AccountPageState extends State<AccountPage> {
       startDay: widget.startDay,
       today: running ? now : null,
     );
-    final at = widget.bars.length <= 1
+    // Today's date stands under its line, at the curve's last point.
+    final at = running && widget.bars.isNotEmpty
+        ? begun.length / widget.bars.length
+        : widget.bars.length <= 1
         ? 0.0
         : (begun.length - 1) / (widget.bars.length - 1);
     final flows = flowsWithin(widget.span, loaded.moves);
@@ -281,9 +284,10 @@ class _AccountPageState extends State<AccountPage> {
             solid: solid,
             ahead: const [],
             slots: widget.bars.length + 1,
+            today: running,
           ),
           const SizedBox(height: 6),
-          AxisLabels(axis, at: at),
+          AxisLabels(axis, at: at, strong: running),
           const SizedBox(height: 12),
           Row(
             children: [

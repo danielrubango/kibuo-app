@@ -319,9 +319,12 @@ class LandmarkRows extends StatelessWidget {
 
 /// The marks under a chart, spread from start to end.
 class AxisLabels extends StatelessWidget {
-  const AxisLabels(this.labels, {super.key, this.at});
+  const AxisLabels(this.labels, {super.key, this.at, this.strong = false});
 
   final List<String> labels;
+
+  /// The middle label, today's, in dark grey (J3, 27 November 2026).
+  final bool strong;
 
   /// Where the middle label stands, from 0 to 1: under the day's line. An
   /// end label it would touch gives way.
@@ -370,7 +373,16 @@ class AxisLabels extends StatelessWidget {
                 Positioned(left: 0, child: Text(labels[0], style: style)),
               Positioned(
                 left: left,
-                child: Text(labels[1], style: style),
+                child: Text(
+                  labels[1],
+                  style: strong
+                      ? style.copyWith(
+                          color: KibuoColors.inkSecondary,
+                          fontWeight: FontWeight.w600,
+                          fontVariations: const [FontVariation.weight(600)],
+                        )
+                      : style,
+                ),
               ),
               if (left + middle.width + gap <= w - last)
                 Positioned(right: 0, child: Text(labels[2], style: style)),

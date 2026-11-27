@@ -468,7 +468,12 @@ class WorthCurve extends StatelessWidget {
     required this.solid,
     required this.ahead,
     this.slots,
+    this.today = false,
   });
+
+  /// Marks the last point of [solid], today: a light line from top to
+  /// bottom and a dot on the curve (J3, 27 November 2026).
+  final bool today;
 
   /// From the period's start to now.
   final List<int> solid;
@@ -490,6 +495,7 @@ class WorthCurve extends StatelessWidget {
           solid,
           ahead,
           slots ?? solid.length + ahead.length,
+          today,
         ),
       ),
     ),
@@ -497,11 +503,12 @@ class WorthCurve extends StatelessWidget {
 }
 
 class _WorthPainter extends CustomPainter {
-  _WorthPainter(this.solid, this.ahead, this.slots);
+  _WorthPainter(this.solid, this.ahead, this.slots, this.today);
 
   final List<int> solid;
   final List<int> ahead;
   final int slots;
+  final bool today;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -521,8 +528,22 @@ class _WorthPainter extends CustomPainter {
     final solidPoints = [
       for (final (i, v) in solid.indexed) Offset(x(i), y(v)),
     ];
+    final now = solidPoints.last;
+    if (today) {
+      canvas.drawLine(
+        Offset(now.dx, 0),
+        Offset(now.dx, size.height),
+        Paint()
+          ..color = KibuoColors.ink.withValues(alpha: 0.14)
+          ..strokeWidth = 2,
+      );
+    }
     if (solidPoints.length > 1) {
       canvas.drawPath(smoothPath(solidPoints), line);
+    }
+    if (today) {
+      canvas.drawCircle(now, 5.5, Paint()..color = KibuoColors.surface);
+      canvas.drawCircle(now, 4.5, Paint()..color = KibuoColors.accent);
     }
     if (ahead.isEmpty) return;
     final aheadPoints = [
