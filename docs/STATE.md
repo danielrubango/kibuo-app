@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **28 novembre 2026**, branche `main` (dernière fusion : `feat/apercu-patrimoine`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **28 novembre 2026**, branche `main` (dernière fusion : `fix/patrimoine-ouverture`, après `chore/v0.1.0-beta-1`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
@@ -31,7 +31,7 @@ Validés sur le canvas, absents de l'app : l'**export CSV** (0.3), Aide et suppo
 
 ## Prochaines étapes
 
-Version 0.2 : l'Aperçu est fini. Les livraisons 1 (Évolution), 2 (points suivis), 3 (tuile agrandie) et 4 (Catégories, couleur des catégories) sont fusionnées le 27 novembre, la 5 (Patrimoine et la page d'un compte) le 28. Le paquet de test qui le porte : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note fusionnée avec celle de l'alpha-3 pour les nouveaux testeurs, validée le 28 novembre ; contrôlé sur `Kibuo_Release`, puis construit en AAB le 28 novembre ([releases/0.1.0.md](releases/0.1.0.md)). Prochaine : l'envoyer dans la Play Console (le propriétaire), puis la **version 0.3** (export CSV, partage d'une sauvegarde).
+Version 0.2 : l'Aperçu est fini. Les livraisons 1 (Évolution), 2 (points suivis), 3 (tuile agrandie) et 4 (Catégories, couleur des catégories) sont fusionnées le 27 novembre, la 5 (Patrimoine et la page d'un compte) le 28. Le paquet de test qui le porte : nom `v0.1.0-beta-1`, version `0.1.0-beta-1+4`, note fusionnée avec celle de l'alpha-3 pour les nouveaux testeurs, validée le 28 novembre ; contrôlé sur `Kibuo_Release` (lancement, Aperçu, un revenu répété : aucun arrêt ; le premier lancement n'a pas été refait, rien d'Android n'ayant changé depuis l'alpha-3), puis construit en AAB le 28 novembre, signé avec la clé d'importation (`build/app/outputs/bundle/release/app-release.aab`) ([releases/0.1.0.md](releases/0.1.0.md)). Ce contrôle a trouvé que Patrimoine comptait ce qui est daté d'avant l'ouverture d'un compte ; corrigé avant le paquet (`fix/patrimoine-ouverture`). Prochaine : l'envoyer dans la Play Console (le propriétaire), puis la **version 0.3** (export CSV, partage d'une sauvegarde).
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
@@ -78,6 +78,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ### Émulateur et Android
 
+- **Le solde d'un compte ignore ce qui est daté d'avant son ouverture** (`_balanceChanges` dans `account_repository.dart`) : tout calcul refait à partir des opérations (patrimoine, courbe d'un compte, comptes de la période) doit faire de même, sinon il contredit le solde. Trouvé au contrôle de la beta-1 sur `Kibuo_Release`, 28 novembre 2026.
 - **Version de publication qui s'arrête au lancement** (alpha-1 et alpha-2, 26-27 novembre 2026 : « kibuo s'arrête systématiquement ») : R8 compacte le code des versions de publication et avait retiré le constructeur de `WorkDatabase_Impl` que WorkManager crée par réflexion (`NoSuchMethodException … WorkDatabase_Impl.<init>` dans `adb logcat`). Règles dans `android/app/proguard-rules.pro`, icône des notifications gardée par `res/raw/keep.xml`. Les versions `--profile` ne sont pas compactées : toujours ouvrir la version `--release` sur l'émulateur `Kibuo_Release` avant un paquet ([releases/](releases/README.md)).
 
 - **Émulateur saturé** (ANR, écran de démarrage figé, une capture qui prend une minute ; au lancement, Android tue kibuo avec « failed to complete startup », et un toucher envoyé à ce moment tombe sur l'écran d'accueil d'Android ou l'app Google : attendre que `dumpsys window` montre `mCurrentFocus` sur `app.kibuo` avant de toucher ; ou l'écran reste vide alors que `uiautomator dump` voit l'app, vu le 27 novembre) : le redémarrer. `adb -s emulator-5554 emu kill`, puis `~/Library/Android/sdk/emulator/emulator -avd Pixel_10_Kibuo -no-snapshot-save &`, attendre `getprop sys.boot_completed` = 1. Deux utilisateurs Android actifs à la fois suffisent à le saturer : supprimer un utilisateur d'essai après usage (`pm remove-user <id>`). S'il bloque encore après un redémarrage : `emulator -avd Pixel_10_Kibuo -wipe-data` (accord du propriétaire du 25 novembre 2026, ses données sont perdues).
