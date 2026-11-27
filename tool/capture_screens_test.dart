@@ -13,16 +13,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kibuo/data/account_repository.dart';
 import 'package:kibuo/data/attachment_repository.dart';
+import 'package:kibuo/data/budget_repository.dart';
 import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/currency_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/data/debt_repository.dart';
 import 'package:kibuo/data/key_vault.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/accounts/accounts_screen.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/categories/categories_screen.dart';
 import 'package:kibuo/ui/kit/design_system_screen.dart';
 import 'package:kibuo/ui/lock/create_pin_screen.dart';
@@ -479,6 +483,8 @@ void main() {
       currencies: CurrencyRepository(db),
       transactions: TransactionRepository(db),
       attachments: AttachmentRepository.withFiles(db, MemoryFiles()),
+      debts: DebtRepository(db),
+      projects: ProjectRepository(db),
     );
     await data.currencies.ensurePrimaryCurrency('US');
     final mpesa = await data.accounts.create(
@@ -522,14 +528,62 @@ void main() {
         }
       }
     });
+    final taxi = await data.categories.category('default-taxi');
+    await BudgetRepository(db).create(
+      categoryId: taxi!.parentId ?? taxi.id,
+      amount: const Money(45000, 'USD'),
+      fromMonth: 202601,
+    );
+    await data.debts!.create(
+      direction: DebtDirection.owe,
+      person: 'Patrick',
+      amount: const Money(17500, 'USD'),
+      openedOn: DateTime(2026, 10),
+      due: DateTime(2026, 11, 10),
+      accountId: mpesa,
+    );
+    await data.debts!.create(
+      direction: DebtDirection.owed,
+      person: 'Grace',
+      amount: const Money(9500, 'USD'),
+      openedOn: DateTime(2026, 10, 15),
+      due: DateTime(2026, 11, 20),
+      accountId: mpesa,
+    );
+    final trip = await data.projects!.create(
+      name: 'Voyage',
+      icon: 'airplane',
+      accountId: mpesa,
+      goal: 50000,
+      startedOn: DateTime(2026, 9),
+      due: DateTime(2027, 3),
+    );
+    await data.projects!.putAside(
+      trip,
+      amount: 30000,
+      date: DateTime(2026, 11, 5),
+    );
     Future<void> open() => show(
       tester,
       Scaffold(
         body: SafeArea(
-          child: OverviewScreen(data: data, clock: () => now),
+          child: OverviewScreen(
+            data: data,
+            clock: () => now,
+            budgets: BudgetLoader(data, BudgetRepository(db)),
+          ),
         ),
       ),
     );
+    Future<void> tiles(String name) async {
+      await tester.scrollUntilVisible(find.text('Suivre'), 300);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -260));
+      await tester.pumpAndSettle();
+      await snap(tester, name);
+      await tester.drag(find.byType(ListView).first, const Offset(0, 2000));
+      await tester.pumpAndSettle();
+    }
+
     Future<void> choose(List<String> taps) async {
       await tester.tap(find.byIcon(KibuoIcons.caretDown));
       await tester.pumpAndSettle();
@@ -545,6 +599,38 @@ void main() {
 
     await open();
     await snap(tester, 'Apercu_mois');
+    await tiles('Apercu_tuiles_mois');
+    await tester.scrollUntilVisible(find.text('Suivre'), 300);
+    await tester.tap(find.text('Suivre'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_suivre');
+    for (final t in [
+      'Épargne',
+      'Moyenne',
+      'Jour ou mois le plus cher',
+      'À venir',
+      'Patrimoine net',
+    ]) {
+      await tester.scrollUntilVisible(
+        find.text(t).last,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.tap(find.text(t).last);
+      await tester.pumpAndSettle();
+    }
+    await snap(tester, 'Apercu_suivre_tout');
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.textContaining('Voir les'), 300);
+    await tester.tap(find.textContaining('Voir les'));
+    await tester.pumpAndSettle();
+    await tiles('Apercu_tuiles_mois_toutes');
+    await tester.drag(find.byType(ListView).first, const Offset(0, -900));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_tuiles_mois_bas');
+    await tester.drag(find.byType(ListView).first, const Offset(0, 2000));
+    await tester.pumpAndSettle();
     await tester.tap(find.byIcon(KibuoIcons.caretDown));
     await tester.pumpAndSettle();
     await snap(tester, 'Apercu_feuille');
@@ -560,12 +646,15 @@ void main() {
     await snap(tester, 'Apercu_semaines');
     await choose(['1 an']);
     await snap(tester, 'Apercu_an');
+    await tiles('Apercu_an_tuiles');
     await choose(['Semaine']);
     await snap(tester, 'Apercu_an_semaines');
     await choose(['7 jours']);
     await snap(tester, 'Apercu_7jours');
+    await tiles('Apercu_7jours_tuiles');
     await choose(['Aujourd’hui']);
     await snap(tester, 'Apercu_jour');
+    await tiles('Apercu_jour_tuiles');
     await choose(['24 h']);
     await snap(tester, 'Apercu_24h');
     await tester.tap(find.byIcon(KibuoIcons.caretLeft));
@@ -581,6 +670,7 @@ void main() {
     await tester.tap(find.text('Voir'));
     await tester.pumpAndSettle();
     await snap(tester, 'Apercu_perso');
+    await tiles('Apercu_perso_tuiles');
     await tester.tap(find.byIcon(KibuoIcons.caretLeft));
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(KibuoIcons.caretLeft));

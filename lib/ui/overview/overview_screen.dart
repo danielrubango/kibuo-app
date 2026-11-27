@@ -1,21 +1,27 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/overview_store.dart';
+import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
+import 'package:kibuo/domain/obligations/debt_list.dart';
+import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_choice.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
 import 'package:kibuo/domain/overview/overview_totals.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/budgets/budget_book.dart';
+import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/kit/tab_strip.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
 import 'package:kibuo/ui/overview/evolution_chart.dart';
+import 'package:kibuo/ui/overview/follow_sheet.dart';
+import 'package:kibuo/ui/overview/followed_section.dart';
+import 'package:kibuo/ui/overview/followed_tile.dart';
 import 'package:kibuo/ui/overview/overview_labels.dart';
 import 'package:kibuo/ui/overview/period_sheet.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -37,10 +43,18 @@ class OverviewScreen extends StatefulWidget {
     this.refresh,
     this.now,
     this.store,
+    this.budgets,
+    this.links = const FollowedLinks(),
     this.clock = DateTime.now,
   });
 
   final EntryData data;
+
+  /// Reads a month's budgets for « Un budget »; none in some tests.
+  final BudgetLoader? budgets;
+
+  /// Where the followed tiles lead.
+  final FollowedLinks links;
 
   /// The time now; a fixed one in the screen captures.
   final DateTime Function() clock;
@@ -69,6 +83,16 @@ class _OverviewScreenState extends State<OverviewScreen> {
   List<DatedFlow> _flows = const [];
   CurrencyInfo? _main;
   Map<String, ExchangeRate> _rates = const {};
+
+  FollowedChoice _followed = const FollowedChoice();
+  FollowedData? _followedData;
+
+  /// « Voir les autres » is open.
+  bool _allTiles = false;
+
+  /// Each month's budgets, read once per load.
+  final _books = <DateTime, BudgetBook>{};
+  final _reading = <DateTime>{};
 
   @override
   void initState() {
@@ -103,7 +127,29 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   Future<void> _readChoice() async {
     final choice = await widget.store?.read();
-    if (choice != null && mounted) setState(() => _choice = choice);
+    final followed = await widget.store?.readFollowed();
+    if (!mounted) return;
+    setState(() {
+      if (choice != null) _choice = choice;
+      if (followed != null) _followed = followed;
+    });
+  }
+
+  void _follow(FollowedChoice choice) {
+    setState(() => _followed = choice);
+    widget.store?.writeFollowed(choice);
+  }
+
+  /// Reads [month]'s budgets once, for « Un budget ».
+  void _readBook(DateTime month) {
+    final loader = widget.budgets;
+    if (loader == null || _books.containsKey(month) || !_reading.add(month)) {
+      return;
+    }
+    loader.load(month).then((book) {
+      _reading.remove(month);
+      if (mounted) setState(() => _books[month] = book);
+    });
   }
 
   /// The same operations as the month totals of Opérations (PRODUCT):
@@ -113,6 +159,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
     final data = widget.data;
     final debtsCount = await data.debts?.countInTotals() ?? true;
     final all = await data.transactions.all();
+    final debts = await data.debts?.debts() ?? const <DebtLine>[];
+    final projects = await data.projects?.projects() ?? const <ProjectInfo>[];
     final accounts = [
       ...await data.accounts.accounts(),
       ...await data.accounts.accounts(archived: true),
@@ -122,20 +170,39 @@ class _OverviewScreenState extends State<OverviewScreen> {
         (accounts.isEmpty ? 'USD' : accounts.first.currency);
     final main = await data.currencies.currency(code);
     final rates = <String, ExchangeRate>{};
-    for (final c in {for (final a in accounts) a.currency}) {
+    for (final c in {
+      for (final a in accounts) a.currency,
+      for (final d in debts) d.amount.currency,
+      for (final p in projects) p.goal.currency,
+    }) {
       if (c == code) continue;
       final info = await data.currencies.latestRate(code, c);
       if (info != null) rates[c] = info.rate;
     }
     if (!mounted) return;
+    final counted = [
+      for (final t in all)
+        if (t.counts && (debtsCount || t.debtId == null)) t,
+    ];
+    final followed = await loadFollowedData(
+      context,
+      data,
+      counted: counted,
+      debts: debts,
+      main: main,
+      rates: rates,
+      now: widget.clock(),
+    );
+    if (!mounted) return;
     setState(() {
       _flows = [
-        for (final t in all)
-          if (t.counts && (debtsCount || t.debtId == null))
-            (at: t.date.toLocal(), flow: flowOf(t)),
+        for (final t in counted) (at: t.date.toLocal(), flow: flowOf(t)),
       ];
       _main = main;
       _rates = rates;
+      _followedData = followed;
+      // Budgets may have changed: read again when shown.
+      _books.clear();
     });
   }
 
@@ -275,7 +342,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
     String money(Money m, {bool short = false}) =>
         formatAmount(m, currencyOf(m.currency), lang, short: short);
     final out = !_entries;
-    return Container(
+    final period = FollowedPeriod(
+      kind: _choice.kind,
+      offset: _offset,
+      span: span,
+      bars: bars,
+      startDay: startDay,
+      now: now,
+      flows: _flows,
+      totals: totals,
+      compared: comparedTotals,
+      main: main,
+      rates: _rates,
+    );
+    final month = period.budgetMonth;
+    final book = _books[month];
+    if (book == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _readBook(month));
+    }
+    final card = Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
@@ -359,6 +444,55 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
         ],
       ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        card,
+        const SizedBox(height: 14),
+        FollowedSection(
+          period: period,
+          periodLabel: label,
+          choice: _followed,
+          data: _followedData,
+          book: book,
+          expanded: _allTiles,
+          onExpand: () => setState(() => _allTiles = !_allTiles),
+          onFollow: () => _openFollow(l, book),
+          links: widget.links,
+        ),
+      ],
+    );
+  }
+
+  /// « Suivre »: the budgets of the month shown and the running projects
+  /// can be picked.
+  void _openFollow(AppLocalizations l, BudgetBook? book) {
+    final lines = book?.lines ?? const <BudgetLine>[];
+    final projects = [
+      for (final p in _followedData?.projects ?? const <ProjectInfo>[])
+        if (p.running) p,
+    ];
+    final budget = lines.any((b) => b.budget.id == _followed.budget)
+        ? _followed.budget
+        : nearestLimit([
+            for (final b in lines) (id: b.budget.id, percent: b.status.percent),
+          ]);
+    final project = projects.any((p) => p.id == _followed.project)
+        ? _followed.project
+        : soonestDue([
+            for (final p in projects) (id: p.id, due: p.due, running: true),
+          ]);
+    showFollowSheet(
+      context,
+      choice: _followed,
+      budgets: [
+        for (final b in lines) (b.budget.id, categoryName(l, b.category)),
+      ],
+      projects: [for (final p in projects) (p.id, p.name)],
+      budgetShown: budget,
+      projectShown: project,
+      onChanged: _follow,
     );
   }
 }
@@ -578,7 +712,7 @@ class _FlowTile extends StatelessWidget {
                             children: [
                               CustomPaint(
                                 size: const Size.square(14),
-                                painter: _TrendArrow(
+                                painter: TrendArrow(
                                   up: change.up,
                                   color: changeInk,
                                 ),
@@ -631,44 +765,6 @@ class _Radio extends StatelessWidget {
           )
         : null,
   );
-}
-
-/// The arrow leaning up or down before a change (canvas ApercuP2).
-class _TrendArrow extends CustomPainter {
-  _TrendArrow({required this.up, required this.color});
-
-  final bool up;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final s = size.width / 24;
-    final path = up
-        ? (Path()
-            ..moveTo(7 * s, 17 * s)
-            ..lineTo(17 * s, 7 * s)
-            ..moveTo(9 * s, 7 * s)
-            ..lineTo(17 * s, 7 * s)
-            ..lineTo(17 * s, 15 * s))
-        : (Path()
-            ..moveTo(7 * s, 7 * s)
-            ..lineTo(17 * s, 17 * s)
-            ..moveTo(17 * s, 9 * s)
-            ..lineTo(17 * s, 17 * s)
-            ..lineTo(9 * s, 17 * s));
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = math.max(1, 2.6 * s)
-        ..strokeCap = StrokeCap.round
-        ..strokeJoin = StrokeJoin.round,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_TrendArrow old) => old.up != up || old.color != color;
 }
 
 /// A tab that comes in a later delivery: a white card, its icon, « Bientôt »

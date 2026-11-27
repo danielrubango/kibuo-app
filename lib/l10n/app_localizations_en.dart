@@ -4494,4 +4494,330 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewSoon => 'Coming soon';
+
+  @override
+  String followedTitle(String period) {
+    return 'Followed · $period';
+  }
+
+  @override
+  String get followedThisMonth => 'This month';
+
+  @override
+  String get followedThisYear => 'This year';
+
+  @override
+  String followedDays(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get followedFollow => 'Follow';
+
+  @override
+  String followedMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show the $count others',
+      one: 'Show the other one',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followedLess => 'Show less';
+
+  @override
+  String get followedSpent => 'Spent';
+
+  @override
+  String get followedReceived => 'Received';
+
+  @override
+  String get followedSavings => 'Savings';
+
+  @override
+  String get followedSavingsYear => 'Savings this year';
+
+  @override
+  String get followedAverage => 'Average';
+
+  @override
+  String get followedAverageDay => 'Average per day';
+
+  @override
+  String get followedAverageWeek => 'Average per week';
+
+  @override
+  String get followedAverageMonth => 'Average per month';
+
+  @override
+  String get followedTopCategory => 'Top category';
+
+  @override
+  String get followedTopCategoryDay => 'Category of the day';
+
+  @override
+  String get followedPriciest => 'Priciest day or month';
+
+  @override
+  String get followedPriciestHour => 'Priciest hour';
+
+  @override
+  String get followedPriciestDay => 'Priciest day';
+
+  @override
+  String get followedPriciestMonth => 'Priciest month';
+
+  @override
+  String get followedUpcoming => 'Coming up';
+
+  @override
+  String get followedBudget => 'A budget';
+
+  @override
+  String followedBudgetNamed(String name) {
+    return '$name budget';
+  }
+
+  @override
+  String get followedLeftToday => 'Left for today';
+
+  @override
+  String get followedDebts => 'Debts';
+
+  @override
+  String get followedReceivables => 'Owed to you';
+
+  @override
+  String get followedProject => 'A project';
+
+  @override
+  String followedProjectNamed(String name) {
+    return '$name project';
+  }
+
+  @override
+  String get followedProjectsReached => 'Projects reached';
+
+  @override
+  String get followedAccounts => 'Accounts';
+
+  @override
+  String get followedNetWorth => 'Net worth';
+
+  @override
+  String followedAverageDayDetail(String amount) {
+    return 'average day: $amount';
+  }
+
+  @override
+  String followedPerDay(String amount) {
+    return 'per day: $amount';
+  }
+
+  @override
+  String followedEntriesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries',
+      one: '1 entry',
+      zero: 'no money in',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followedSavingsDetail => 'in − out';
+
+  @override
+  String followedOverDays(int count) {
+    return 'over $count days';
+  }
+
+  @override
+  String followedPriciestOf(String name) {
+    return 'priciest: $name';
+  }
+
+  @override
+  String followedAmountShare(String amount, int share) {
+    return '$amount · $share %';
+  }
+
+  @override
+  String get followedNoExit => 'Nothing out';
+
+  @override
+  String followedLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String followedOver(String amount) {
+    return '$amount over';
+  }
+
+  @override
+  String followedMonthRunning(String month) {
+    return '$month, in progress';
+  }
+
+  @override
+  String followedMonthBudget(String name) {
+    return '$name · from the month’s budget';
+  }
+
+  @override
+  String get followedNoBudget => 'No budget';
+
+  @override
+  String followedLate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count late',
+      one: '1 late',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String followedDebtCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count debts',
+      one: '1 debt',
+      zero: 'no debt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String followedRecovered(String amount) {
+    return '$amount recovered';
+  }
+
+  @override
+  String followedPutAside(String amount) {
+    return '+$amount put aside';
+  }
+
+  @override
+  String followedTakenBack(String amount) {
+    return '−$amount taken back';
+  }
+
+  @override
+  String get followedNoProject => 'No project';
+
+  @override
+  String followedReachedOf(int reached, int total) {
+    return '$reached of $total';
+  }
+
+  @override
+  String get followedNoneReached => 'none yet';
+
+  @override
+  String followedIn(String label, int days) {
+    return '$label in $days d';
+  }
+
+  @override
+  String followedToday(String label) {
+    return '$label today';
+  }
+
+  @override
+  String followedTomorrow(String label) {
+    return '$label tomorrow';
+  }
+
+  @override
+  String followedOnDay(String amount, String date) {
+    return '$amount on $date';
+  }
+
+  @override
+  String get followedNothingComing => 'Nothing coming';
+
+  @override
+  String get followedNext14Days => 'in the next 14 days';
+
+  @override
+  String get followSheetHelp =>
+      'Each tile fits the chosen period. The first 4 show; the others are under « Show the others ».';
+
+  @override
+  String get followMoney => 'Money';
+
+  @override
+  String get followMarks => 'Landmarks';
+
+  @override
+  String get followCommitments => 'Commitments';
+
+  @override
+  String get followWorth => 'Net worth';
+
+  @override
+  String get followSpentHelp =>
+      'Compared with the chosen period; for a day, with an average day';
+
+  @override
+  String get followReceivedHelp => 'Money in, with its change';
+
+  @override
+  String get followSavingsHelp => 'Money in less money out';
+
+  @override
+  String get followAverageHelp => 'Per day, per week or per month, by period';
+
+  @override
+  String get followTopCategoryHelp =>
+      'The one that weighs most over the period';
+
+  @override
+  String get followPriciestHelp => 'By the length of the period';
+
+  @override
+  String get followUpcomingHelp => 'The next due date';
+
+  @override
+  String followBudgetHelp(String name) {
+    return '$name · what is left';
+  }
+
+  @override
+  String get followDebtsHelp => 'Total and late ones';
+
+  @override
+  String get followReceivablesHelp => 'Total and repaid';
+
+  @override
+  String followProjectHelp(String name) {
+    return '$name · progress';
+  }
+
+  @override
+  String get followAccountsHelp => 'The total and its curve';
+
+  @override
+  String get followNetWorthHelp => 'Accounts + owed to you − debts';
+
+  @override
+  String get followDone => 'Done';
+
+  @override
+  String get followWhichBudget => 'Which budget to follow?';
+
+  @override
+  String get followWhichProject => 'Which project to follow?';
+
+  @override
+  String get followSheetTitle => 'Followed';
 }

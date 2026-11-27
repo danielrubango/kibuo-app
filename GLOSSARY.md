@@ -86,6 +86,9 @@ Ce que tient une barre du graphique : une heure, un jour, une semaine (7 jours d
 **Période comparée** (`Comparison`) :
 Période mise en regard de celle de l'aperçu : celle d'avant, celle d'après, l'actuelle, ou aucune.
 
+**Point suivi** (`Followed`) :
+Tuile de l'aperçu, sous le graphique, que l'utilisateur allume ou éteint dans « Suivre » (dépensé, reçu, un budget, un projet…) ; elle se lit à l'échelle de la période (`PeriodScale`).
+
 **Écart** (`Change`) :
 Différence en pourcentage avec la période comparée, vert quand c'est bon signe (moins dépensé, plus reçu), ambre sinon.
 
