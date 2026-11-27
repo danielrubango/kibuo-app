@@ -4822,9 +4822,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followSheetTitle => 'Followed';
 
   @override
-  String get enlHint => 'Swipe for the next tile · touch outside to close';
-
-  @override
   String enlAtThisDate(String period, String amount) {
     return '$period at this date: $amount';
   }

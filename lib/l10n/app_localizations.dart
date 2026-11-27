@@ -7576,12 +7576,6 @@ abstract class AppLocalizations {
   /// Aperçu, enlarged tile.
   ///
   /// In fr, this message translates to:
-  /// **'Glissez pour la tuile suivante · touchez à côté pour fermer'**
-  String get enlHint;
-
-  /// Aperçu, enlarged tile.
-  ///
-  /// In fr, this message translates to:
   /// **'{period} à cette date : {amount}'**
   String enlAtThisDate(String period, String amount);
 

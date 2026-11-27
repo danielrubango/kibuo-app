@@ -2499,8 +2499,6 @@
   "@followWhichProject": {"description": "« Suivre » sheet: choosing the project."},
   "followSheetTitle": "Points suivis",
   "@followSheetTitle": {"description": "« Suivre » sheet: its title."},
-  "enlHint": "Glissez pour la tuile suivante · touchez à côté pour fermer",
-  "@enlHint": {"description": "Aperçu, enlarged tile."},
   "enlAtThisDate": "{period} à cette date : {amount}",
   "@enlAtThisDate": {"description": "Aperçu, enlarged tile.", "placeholders": {"period": {"type": "String"}, "amount": {"type": "String"}}},
   "enlWhereMost": "Où ça part le plus",

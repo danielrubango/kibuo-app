@@ -86,7 +86,6 @@ Future<void> openEnlarged(
                 child: EnlargedPager(
                   count: tiles.length,
                   initial: initial,
-                  hint: l.enlHint,
                   card: (_, i) => build.card(tiles[i]),
                 ),
               ),

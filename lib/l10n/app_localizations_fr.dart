@@ -4865,10 +4865,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get followSheetTitle => 'Points suivis';
 
   @override
-  String get enlHint =>
-      'Glissez pour la tuile suivante · touchez à côté pour fermer';
-
-  @override
   String enlAtThisDate(String period, String amount) {
     return '$period à cette date : $amount';
   }

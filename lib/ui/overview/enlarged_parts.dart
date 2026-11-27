@@ -1290,21 +1290,20 @@ class _WaterfallPainter extends CustomPainter {
 
 /// The pager of enlarged tiles over the blurred Aperçu: the card centred
 /// across and down, the previous and next ones showing at each edge, the
-/// dots and the hint fixed at the bottom of the screen (owner, 27 November
-/// 2026); a touch beside, ✕, a swipe down or back close it (PRODUCT).
+/// dots alone in a small dark pill fixed at the bottom of the screen
+/// (owner, 27 November 2026); a touch beside, ✕, a swipe down or back close
+/// it (PRODUCT).
 class EnlargedPager extends StatefulWidget {
   const EnlargedPager({
     super.key,
     required this.count,
     required this.initial,
     required this.card,
-    required this.hint,
   });
 
   final int count;
   final int initial;
   final Widget Function(BuildContext context, int index) card;
-  final String hint;
 
   @override
   State<EnlargedPager> createState() => _EnlargedPagerState();
@@ -1315,8 +1314,8 @@ class _EnlargedPagerState extends State<EnlargedPager> {
   static const _side = 24.0;
   static const _gap = 8.0;
 
-  /// The room kept at the bottom for the dots and the hint.
-  static const _bottom = 72.0;
+  /// The room kept at the bottom for the dots' pill.
+  static const _bottom = 48.0;
 
   PageController? _pages;
   late int _index = widget.initial;
@@ -1393,12 +1392,10 @@ class _EnlargedPagerState extends State<EnlargedPager> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 16,
+              bottom: 8,
               child: IgnorePointer(
-                child: _Dots(
-                  count: widget.count,
-                  index: _index,
-                  hint: widget.hint,
+                child: Center(
+                  child: _Dots(count: widget.count, index: _index),
                 ),
               ),
             ),
@@ -1409,20 +1406,27 @@ class _EnlargedPagerState extends State<EnlargedPager> {
   }
 }
 
-/// Where one is among the tiles, and how to move on.
+/// Where one is among the tiles: the dots alone, in a small dark pill
+/// that stays readable over the bottom bar (DIRECTION, variant P3).
 class _Dots extends StatelessWidget {
-  const _Dots({required this.count, required this.index, required this.hint});
+  const _Dots({required this.count, required this.index});
 
   final int count;
   final int index;
-  final String hint;
+
+  /// Ink at 72 %.
+  static const _pill = Color(0xB80E1320);
 
   @override
-  Widget build(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: _pill,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           for (var i = 0; i < count; i++) ...[
             if (i > 0) const SizedBox(width: 6),
@@ -1440,18 +1444,7 @@ class _Dots extends StatelessWidget {
           ],
         ],
       ),
-      const SizedBox(height: 12),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          hint,
-          textAlign: TextAlign.center,
-          style: KibuoType.caption.copyWith(
-            color: KibuoColors.surface.withValues(alpha: 0.85),
-          ),
-        ),
-      ),
-    ],
+    ),
   );
 }
 
