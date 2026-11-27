@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/overview_store.dart';
 import 'package:kibuo/data/project_repository.dart';
+import 'package:kibuo/domain/categories/default_categories.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/obligations/debt_list.dart';
+import 'package:kibuo/domain/overview/category_lines.dart';
 import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_choice.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
@@ -18,6 +20,8 @@ import 'package:kibuo/ui/kit/tab_strip.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/overview/categories_card.dart';
+import 'package:kibuo/ui/overview/category_page.dart';
 import 'package:kibuo/ui/overview/evolution_chart.dart';
 import 'package:kibuo/ui/overview/follow_sheet.dart';
 import 'package:kibuo/ui/overview/followed_section.dart';
@@ -276,13 +280,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
         const SizedBox(height: 14),
         switch (_tab) {
           _Tab.evolution => _evolution(l, lang, now, span, label, spanAt),
-          _Tab.categories => _Soon(
-            icon: KibuoIcons.chartPieSlice,
-            tint: KibuoColors.accentTintStrong,
-            ink: KibuoColors.accent,
-            title: l.overviewSoon,
-            text: l.overviewCategoriesText,
-          ),
+          _Tab.categories => _categories(l, lang, now, span, label, spanAt),
           _Tab.worth => _Soon(
             icon: KibuoIcons.bank,
             tint: KibuoColors.projectTint,
@@ -394,50 +392,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _FlowTile(
-                  label: l.overviewExits,
-                  amount: totals.exits,
-                  approximate: totals.approximate,
-                  out: true,
-                  chosen: out,
-                  compared: comparedTotals != null,
-                  change: comparedTotals == null
-                      ? null
-                      : changeOf(
-                          totals.exits.minor,
-                          comparedTotals.exits.minor,
-                          lessIsBetter: true,
-                        ),
-                  money: money,
-                  onTap: () => setState(() => _entries = false),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _FlowTile(
-                  label: l.overviewEntries,
-                  amount: totals.entries,
-                  approximate: totals.approximate,
-                  out: false,
-                  chosen: !out,
-                  compared: comparedTotals != null,
-                  change: comparedTotals == null
-                      ? null
-                      : changeOf(
-                          totals.entries.minor,
-                          comparedTotals.entries.minor,
-                          lessIsBetter: false,
-                        ),
-                  money: money,
-                  onTap: () => setState(() => _entries = true),
-                ),
-              ),
-            ],
-          ),
+          _flowTiles(l, totals, comparedTotals, money),
           const SizedBox(height: 10),
           EvolutionChart(
             values: [
@@ -485,6 +440,153 @@ class _OverviewScreenState extends State<OverviewScreen> {
           onExpand: () => setState(() => _allTiles = !_allTiles),
           onFollow: () => _openFollow(l, book),
           links: widget.links,
+        ),
+      ],
+    );
+  }
+
+  /// Sorties and Entrées, each with its change; touching one shows it, in
+  /// Évolution and Catégories alike (PRODUCT, 27 November 2026).
+  Widget _flowTiles(
+    AppLocalizations l,
+    FlowTotals totals,
+    FlowTotals? comparedTotals,
+    String Function(Money m, {bool short}) money,
+  ) {
+    final out = !_entries;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _FlowTile(
+            label: l.overviewExits,
+            amount: totals.exits,
+            approximate: totals.approximate,
+            out: true,
+            chosen: out,
+            compared: comparedTotals != null,
+            change: comparedTotals == null
+                ? null
+                : changeOf(
+                    totals.exits.minor,
+                    comparedTotals.exits.minor,
+                    lessIsBetter: true,
+                  ),
+            money: money,
+            onTap: () => setState(() => _entries = false),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _FlowTile(
+            label: l.overviewEntries,
+            amount: totals.entries,
+            approximate: totals.approximate,
+            out: false,
+            chosen: !out,
+            compared: comparedTotals != null,
+            change: comparedTotals == null
+                ? null
+                : changeOf(
+                    totals.entries.minor,
+                    comparedTotals.entries.minor,
+                    lessIsBetter: false,
+                  ),
+            money: money,
+            onTap: () => setState(() => _entries = true),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// The Catégories tab: the same tiles, then where the money went (or came
+  /// from), category by category (canvas ApercuP2, PRODUCT, 27 November
+  /// 2026).
+  Widget _categories(
+    AppLocalizations l,
+    String lang,
+    DateTime now,
+    TimeSpan span,
+    String label,
+    TimeSpan Function(int offset) spanAt,
+  ) {
+    final main = _main;
+    final data = _followedData;
+    if (main == null || data == null) return const SizedBox(height: 300);
+    final grouping = _choice.groupingFor(span);
+    final totals = totalsWithin(span, _flows, main, (c) => _rates[c]);
+    FlowTotals? comparedTotals;
+    final comparedAt = comparedOffset(
+      _choice.comparisonAt(_offset),
+      offset: _offset,
+    );
+    if (comparedAt != null) {
+      final compared = spanAt(comparedAt);
+      final until = comparedUntil(
+        current: span,
+        compared: compared,
+        now: now,
+        grouping: grouping,
+      );
+      comparedTotals = totalsWithin(
+        TimeSpan(compared.start, until),
+        _flows,
+        main,
+        (c) => _rates[c],
+      );
+    }
+    String money(Money m, {bool short = false}) =>
+        formatAmount(m, currencyOf(m.currency), lang, short: short);
+    final out = !_entries;
+    final total = out ? totals.exits.minor : totals.entries.minor;
+    final lines = categoryLines(
+      span,
+      out ? data.spends : data.gains,
+      parentOf: (id) => data.parents[id] ?? id,
+      isDebt: isDebtCategoryId,
+      total: total,
+      withFees: out,
+      main: main,
+      rateFor: (c) => _rates[c],
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: KibuoColors.surface,
+            borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+          ),
+          child: _flowTiles(l, totals, comparedTotals, money),
+        ),
+        const SizedBox(height: 14),
+        CategoriesCard(
+          out: out,
+          lines: lines,
+          total: money(Money(total, main.code)),
+          categories: data.categories,
+          money: (minor) => money(Money(minor, main.code)),
+          onOpen: (id) {
+            final category = data.categories[id];
+            if (category == null) return;
+            Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => CategoryPage(
+                  data: widget.data,
+                  category: category,
+                  categories: data.categories,
+                  periodLabel: label,
+                  span: span,
+                  out: out,
+                  periodTotal: total,
+                  main: main,
+                  rates: _rates,
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

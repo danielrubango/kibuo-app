@@ -90,6 +90,10 @@ String debtCategoryId({required bool owe, required CategoryKind kind}) {
   return 'default-${c.key}';
 }
 
+/// Whether the category [id] opens or repays a debt or a receivable.
+bool isDebtCategoryId(String id) =>
+    id.startsWith('default-') && debtOweOf(id.substring(8)) != null;
+
 /// Whether a category is a debt's (true) or a receivable's (false); null
 /// for any other.
 bool? debtOweOf(String? key) => switch (key) {

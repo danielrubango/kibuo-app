@@ -42,6 +42,19 @@ Thème clair seulement ; le sombre est au [backlog](../backlog/theme-sombre.md).
 | Retard, danger | `danger` `#B3321A` | `dangerTint` `#FBE3DE`, `dangerSoft` `#FFF1ED`, `dangerDeep` `#7C1F0C`, `dangerTrack` `#FFD3C8`, `dangerOnInk` `#FFB4A2` | Retard, dépassement, supprimer, refus |
 | Graphique de l'Aperçu | — | `chartIn` `#7CCFAA` (barres des entrées ; les sorties sont en `debtLine`), `chartOutAhead` `#F2E3D6` et `chartInAhead` `#DDF1E7` (ce qui n'a pas encore commencé), `chartCompared` `#7C8599` (courbe de la période comparée ; ses bâtonnets sont en `track`) | Onglet Évolution de l'Aperçu |
 
+### Couleurs des catégories
+
+Le nom gardé dans la base, puis la teinte de la tuile et de la barre (27 novembre 2026, [ADR 0014](../adr/0014-couleur-des-categories.md)) ; l'icône reste à l'encre.
+
+| Nom | Teinte | Nom | Teinte |
+|---|---|---|---|
+| `peach` Pêche | `#E8A878` | `lavender` Lavande | `#B9A8E2` |
+| `apricot` Abricot | `#F2C48D` | `blue` Bleu | `#9DB4E0` |
+| `sand` Sable | `#DCC79A` | `sky` Ciel | `#8ED0E6` |
+| `coral` Corail | `#EE9F92` | `mint` Menthe | `#5EEAB5` |
+| `rose` Rose | `#D9A0C4` | `green` Vert | `#7FCBA8` |
+| `grey` « Autres » | `#C9CFDB` | | |
+
 ### Voiles et ombres
 
 | Jeton | Valeur | Usage |

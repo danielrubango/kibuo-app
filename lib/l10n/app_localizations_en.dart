@@ -1281,6 +1281,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryIcon => 'Icon';
 
   @override
+  String get categoryColor => 'Colour';
+
+  @override
+  String categoryColorName(String color) {
+    String _temp0 = intl.Intl.selectLogic(color, {
+      'peach': 'Peach',
+      'apricot': 'Apricot',
+      'sand': 'Sand',
+      'coral': 'Coral',
+      'rose': 'Rose',
+      'lavender': 'Lavender',
+      'blue': 'Blue',
+      'sky': 'Sky',
+      'mint': 'Mint',
+      'green': 'Green',
+      'other': 'Grey',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get categoryCreate => 'Create the category';
 
   @override
@@ -4494,6 +4515,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewSoon => 'Coming soon';
+
+  @override
+  String get overviewWhereOut => 'Where my money goes';
+
+  @override
+  String get overviewWhereIn => 'Where my money comes from';
+
+  @override
+  String overviewTotalOut(String amount) {
+    return '$amount out';
+  }
+
+  @override
+  String overviewTotalIn(String amount) {
+    return '$amount in';
+  }
+
+  @override
+  String get overviewDebtsLine => 'Debts and money owed';
+
+  @override
+  String get overviewFeesLine => 'Transfer fees';
+
+  @override
+  String overviewOtherCategories(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count other categories',
+      one: '1 other category',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get overviewCategoriesHelp => 'Touch a category to see its details.';
+
+  @override
+  String get overviewNoExitPeriod => 'Nothing went out over the period';
+
+  @override
+  String get overviewNoEntryPeriod => 'Nothing came in over the period';
+
+  @override
+  String categoryPageOut(int share, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count operations',
+      one: '1 operation',
+    );
+    return '$share % of money out · $_temp0';
+  }
+
+  @override
+  String categoryPageIn(int share, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count operations',
+      one: '1 operation',
+    );
+    return '$share % of money in · $_temp0';
+  }
 
   @override
   String followedTitle(String period) {
