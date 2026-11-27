@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
+import 'package:kibuo/ui/kit/share_bar.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -780,7 +781,10 @@ class RankedBars extends StatelessWidget {
                 children: [
                   const SizedBox(width: 20),
                   Expanded(
-                    child: Bar(share: item.share, color: colors?[i] ?? color),
+                    child: ShareBar(
+                      share: item.share,
+                      color: colors?[i] ?? color,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -797,82 +801,6 @@ class RankedBars extends StatelessWidget {
         ),
     ],
   );
-}
-
-/// A filling bar, with an optional mark (the plan of a project) and its
-/// label above.
-class Bar extends StatelessWidget {
-  const Bar({
-    super.key,
-    required this.share,
-    required this.color,
-    this.height = 6,
-    this.track = KibuoColors.background,
-    this.mark,
-    this.markLabel,
-  });
-
-  final double share;
-  final Color color;
-  final double height;
-  final Color track;
-  final double? mark;
-  final String? markLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final mark = this.mark;
-    final bar = LayoutBuilder(
-      builder: (context, box) => Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            height: height,
-            decoration: BoxDecoration(
-              color: track,
-              borderRadius: BorderRadius.circular(height / 2),
-            ),
-          ),
-          Container(
-            width: box.maxWidth * share.clamp(0, 1),
-            height: height,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(height / 2),
-            ),
-          ),
-          if (mark != null)
-            Positioned(
-              left: box.maxWidth * mark.clamp(0, 1) - 1,
-              top: -5,
-              bottom: -5,
-              child: Container(
-                width: 2,
-                decoration: BoxDecoration(
-                  color: KibuoColors.ink,
-                  borderRadius: BorderRadius.circular(1),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-    final label = markLabel;
-    if (mark == null || label == null) return bar;
-    return LayoutBuilder(
-      builder: (context, box) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Align(
-            alignment: Alignment((mark.clamp(0, 1) * 2 - 1).toDouble(), 0),
-            child: Text(label, style: KibuoType.caption.copyWith(fontSize: 10)),
-          ),
-          const SizedBox(height: 8),
-          bar,
-        ],
-      ),
-    );
-  }
 }
 
 /// The calendar of Jour le plus cher (K2): each cell its name and its

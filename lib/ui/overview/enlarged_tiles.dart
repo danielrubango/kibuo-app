@@ -20,6 +20,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/page_veil.dart';
+import 'package:kibuo/ui/kit/share_bar.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/overview/enlarged_parts.dart';
@@ -1148,7 +1149,7 @@ class EnlargedTiles {
           then(links.debts == null ? null : () => links.debts!(direction)),
       onClose: close,
       children: [
-        Bar(
+        ShareBar(
           share: share / 100,
           color: owe ? KibuoColors.debtLine : KibuoColors.accentDash,
           height: 12,
@@ -1267,7 +1268,7 @@ class EnlargedTiles {
           then(links.project == null ? null : () => links.project!(project.id)),
       onClose: close,
       children: [
-        Bar(
+        ShareBar(
           share: project.share,
           color: KibuoColors.projectLine,
           height: 12,

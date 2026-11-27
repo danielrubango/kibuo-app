@@ -3,6 +3,7 @@ import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/domain/overview/category_lines.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
+import 'package:kibuo/ui/overview/share_row.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -38,6 +39,13 @@ class CategoriesCard extends StatefulWidget {
   @override
   State<CategoriesCard> createState() => _CategoriesCardState();
 }
+
+/// Where the lines that open something show their arrow.
+const _arrow = ShareArrow.end;
+
+/// A line's room: 64 high at least, 6 above and below.
+const _linePadding = EdgeInsets.symmetric(vertical: 6);
+const _lineHeight = 64.0;
 
 class _CategoriesCardState extends State<CategoriesCard> {
   bool _restOpen = false;
@@ -96,15 +104,20 @@ class _CategoriesCardState extends State<CategoriesCard> {
           else ...[
             for (final c in shown) line(c),
             if (rest.isNotEmpty) ...[
-              _RowFrame(
-                tile: const _PlainTile(icon: KibuoIcons.dotsThreeCircle),
+              ShareRow(
+                leading: const _PlainTile(icon: KibuoIcons.dotsThreeCircle),
                 name: l.overviewOtherCategories(rest.length),
                 amount: '${widget.out ? '−' : '+'}${widget.money(restAmount)}',
-                share: rest.fold(0, (a, c) => a + c.share),
+                percent: rest.fold(0, (a, c) => a + c.share),
                 bar: restAmount / most,
-                hue: categoryHue(CategoryColor.grey),
-                caret: _restOpen ? KibuoIcons.caretUp : KibuoIcons.caretDown,
+                color: categoryHue(CategoryColor.grey),
+                arrow: _arrow,
+                arrowIcon: _restOpen
+                    ? KibuoIcons.caretUp
+                    : KibuoIcons.caretDown,
                 onTap: () => setState(() => _restOpen = !_restOpen),
+                padding: _linePadding,
+                minHeight: _lineHeight,
               ),
               if (_restOpen)
                 for (final c in rest) line(c),
@@ -148,34 +161,35 @@ class _LineRow extends StatelessWidget {
     final category = this.category;
     final amount = '${out ? '−' : '+'}${money(line.amount)}';
     final bar = most <= 0 ? 0.0 : line.amount / most;
-    return switch (line.kind) {
-      CategoryLineKind.category when category != null => _RowFrame(
-        tile: CategoryTile(category: category, size: 40, colored: true),
-        name: categoryName(l, category),
-        amount: amount,
-        share: line.share,
-        bar: bar,
-        hue: categoryHue(category.color),
-        caret: KibuoIcons.caretRight,
-        onTap: () => onOpen(category.id),
+    final (leading, name, onTap) = switch (line.kind) {
+      CategoryLineKind.category when category != null => (
+        CategoryTile(category: category, size: 40, colored: true) as Widget,
+        categoryName(l, category),
+        () => onOpen(category.id),
       ),
-      CategoryLineKind.debts => _RowFrame(
-        tile: const _PlainTile(icon: KibuoIcons.handCoins),
-        name: l.overviewDebtsLine,
-        amount: amount,
-        share: line.share,
-        bar: bar,
-        hue: categoryHue(CategoryColor.grey),
+      CategoryLineKind.debts => (
+        const _PlainTile(icon: KibuoIcons.handCoins) as Widget,
+        l.overviewDebtsLine,
+        null,
       ),
-      _ => _RowFrame(
-        tile: const _PlainTile(icon: KibuoIcons.arrowsLeftRight),
-        name: line.kind == CategoryLineKind.fees ? l.overviewFeesLine : '—',
-        amount: amount,
-        share: line.share,
-        bar: bar,
-        hue: categoryHue(CategoryColor.grey),
+      _ => (
+        const _PlainTile(icon: KibuoIcons.arrowsLeftRight) as Widget,
+        line.kind == CategoryLineKind.fees ? l.overviewFeesLine : '—',
+        null,
       ),
     };
+    return ShareRow(
+      leading: leading,
+      name: name,
+      amount: amount,
+      percent: line.share,
+      bar: bar,
+      color: categoryHue(category?.color ?? CategoryColor.grey),
+      arrow: _arrow,
+      onTap: onTap,
+      padding: _linePadding,
+      minHeight: _lineHeight,
+    );
   }
 }
 
@@ -195,124 +209,4 @@ class _PlainTile extends StatelessWidget {
     ),
     child: Icon(icon, size: 24, color: KibuoColors.ink),
   );
-}
-
-/// The tile, the name and amount, the bar and its percentage, and a caret
-/// when the line opens something.
-class _RowFrame extends StatelessWidget {
-  const _RowFrame({
-    required this.tile,
-    required this.name,
-    required this.amount,
-    required this.share,
-    required this.bar,
-    required this.hue,
-    this.caret,
-    this.onTap,
-  });
-
-  final Widget tile;
-  final String name;
-  final String amount;
-  final int share;
-
-  /// The bar's length, the biggest line's being 1.
-  final double bar;
-  final Color hue;
-  final IconData? caret;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final row = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 64),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            tile,
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: KibuoType.rowLabel,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        amount,
-                        style: KibuoType.itemName.copyWith(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          fontVariations: const [FontVariation.weight(700)],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(3),
-                          child: SizedBox(
-                            height: 6,
-                            child: Stack(
-                              children: [
-                                const Positioned.fill(
-                                  child: ColoredBox(
-                                    color: KibuoColors.background,
-                                  ),
-                                ),
-                                FractionallySizedBox(
-                                  alignment: Alignment.centerLeft,
-                                  widthFactor: bar.clamp(0.0, 1.0),
-                                  heightFactor: 1,
-                                  child: ColoredBox(color: hue),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 44,
-                        child: Text(
-                          '$share %',
-                          textAlign: TextAlign.end,
-                          style: KibuoType.caption.copyWith(fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 26,
-              child: caret == null
-                  ? null
-                  : Icon(caret, size: 18, color: KibuoColors.inkSecondary),
-            ),
-          ],
-        ),
-      ),
-    );
-    return onTap == null
-        ? row
-        : InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(KibuoTheme.radiusTile),
-            child: row,
-          );
-  }
 }

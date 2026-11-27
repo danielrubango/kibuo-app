@@ -12,6 +12,7 @@ import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/day_header.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/overview/share_row.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -204,12 +205,15 @@ class _CategoryPageState extends State<CategoryPage> {
               (subs.isNotEmpty && subs.first.key != widget.category.id))
             for (final MapEntry(key: id, value: amount) in subs) ...[
               const SizedBox(height: 12),
-              _SubRow(
+              ShareRow(
                 name: categoryName(l, widget.categories[id] ?? widget.category),
+                nameStyle: KibuoType.body.copyWith(
+                  color: KibuoColors.inkSecondary,
+                ),
                 amount: '${widget.out ? '−' : '+'}${_money(amount)}',
-                share: total <= 0 ? 0 : (amount * 100 / total).round(),
+                percent: total <= 0 ? 0 : (amount * 100 / total).round(),
                 bar: most <= 0 ? 0 : amount / most,
-                hue: hue,
+                color: hue,
               ),
             ],
         ],
@@ -245,80 +249,4 @@ class _CategoryPageState extends State<CategoryPage> {
       ],
     ];
   }
-}
-
-/// A subcategory: its name and amount, a bar of its share, the share.
-class _SubRow extends StatelessWidget {
-  const _SubRow({
-    required this.name,
-    required this.amount,
-    required this.share,
-    required this.bar,
-    required this.hue,
-  });
-
-  final String name;
-  final String amount;
-  final int share;
-  final double bar;
-  final Color hue;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Row(
-        children: [
-          Expanded(
-            child: Text(
-              name,
-              style: KibuoType.body.copyWith(color: KibuoColors.inkSecondary),
-            ),
-          ),
-          Text(
-            amount,
-            style: KibuoType.itemName.copyWith(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              fontVariations: const [FontVariation.weight(700)],
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 6),
-      Row(
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(3),
-              child: SizedBox(
-                height: 6,
-                child: Stack(
-                  children: [
-                    const Positioned.fill(
-                      child: ColoredBox(color: KibuoColors.background),
-                    ),
-                    FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: bar.clamp(0.0, 1.0),
-                      heightFactor: 1,
-                      child: ColoredBox(color: hue),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 44,
-            child: Text(
-              '$share %',
-              textAlign: TextAlign.end,
-              style: KibuoType.caption.copyWith(fontSize: 12),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
 }
