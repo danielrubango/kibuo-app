@@ -720,6 +720,13 @@ void main() {
     await tester.tap(find.text('Entrées'));
     await tester.pumpAndSettle();
     await snap(tester, 'Apercu_categories_entrees');
+    await tester.tap(find.text('Patrimoine'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_patrimoine');
+    await choose(['1 mois']);
+    await tester.tap(find.byIcon(KibuoIcons.caretRight).first);
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_patrimoine_courant');
   });
 
   testWidgets('Premier lancement', (tester) async {

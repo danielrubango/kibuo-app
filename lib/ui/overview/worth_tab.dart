@@ -276,7 +276,7 @@ class _WorthTabState extends State<WorthTab> {
             WorthCurve(solid: solid, ahead: ahead),
             const SizedBox(height: 6),
             AxisLabels(axis, at: at),
-            if (ahead.isNotEmpty && _planned.isNotEmpty) ...[
+            if (ahead.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
                 l.worthProjected,
