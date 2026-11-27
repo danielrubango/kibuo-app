@@ -629,6 +629,19 @@ void main() {
     await tester.drag(find.byType(ListView).first, const Offset(0, -900));
     await tester.pumpAndSettle();
     await snap(tester, 'Apercu_tuiles_mois_bas');
+    await tester.ensureVisible(find.text('Dépensé').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dépensé').first);
+    await tester.pumpAndSettle();
+    for (var i = 1; i <= 13; i++) {
+      await snap(tester, 'Apercu_grand_${i.toString().padLeft(2, '0')}');
+      if (i < 13) {
+        await tester.drag(find.byType(PageView), const Offset(-330, 0));
+        await tester.pumpAndSettle();
+      }
+    }
+    await tester.tapAt(const Offset(20, 820));
+    await tester.pumpAndSettle();
     await tester.drag(find.byType(ListView).first, const Offset(0, 2000));
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(KibuoIcons.caretDown));

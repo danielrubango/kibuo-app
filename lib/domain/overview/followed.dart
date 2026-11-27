@@ -132,16 +132,17 @@ int averageDay(
 /// An expense and its category, when (local time).
 typedef CategorySpend = ({DateTime at, String category, Money amount});
 
-/// The category where the most went out over [span], a subcategory counting
-/// in its parent ([parentOf]), with its share of all [exits]; null without
-/// any expense.
-({String category, int amount, int share})? topCategory(
+/// The categories where the most went out over [span], the most first (the
+/// first met when two are equal), a subcategory counting in its parent
+/// ([parentOf]), each with its share of all [exits]; at most [count].
+List<({String category, int amount, int share})> topCategories(
   TimeSpan span,
   Iterable<CategorySpend> spends, {
   required String Function(String id) parentOf,
   required int exits,
   required CurrencyInfo main,
   required ExchangeRate? Function(String code) rateFor,
+  int count = 3,
 }) {
   final byParent = <String, List<MoneyFlow>>{};
   for (final s in spends) {
@@ -150,21 +151,95 @@ typedef CategorySpend = ({DateTime at, String category, Money amount});
         .putIfAbsent(parentOf(s.category), () => [])
         .add(MoneyFlow(outgoing: s.amount));
   }
-  String? best;
-  var most = 0;
-  for (final MapEntry(:key, :value) in byParent.entries) {
-    final amount = flowTotals(main, value, rateFor).exits.minor;
-    if (amount > most) {
-      most = amount;
-      best = key;
+  final found = [
+    for (final (i, MapEntry(:key, :value)) in byParent.entries.indexed)
+      (
+        i: i,
+        category: key,
+        amount: flowTotals(main, value, rateFor).exits.minor,
+      ),
+  ]..removeWhere((c) => c.amount <= 0);
+  found.sort((a, b) => a.amount != b.amount ? b.amount - a.amount : a.i - b.i);
+  return [
+    for (final c in found.take(count))
+      (
+        category: c.category,
+        amount: c.amount,
+        share: exits <= 0 ? 0 : (c.amount * 100 / exits).round(),
+      ),
+  ];
+}
+
+/// The category where the most went out over [span]; null without any
+/// expense.
+({String category, int amount, int share})? topCategory(
+  TimeSpan span,
+  Iterable<CategorySpend> spends, {
+  required String Function(String id) parentOf,
+  required int exits,
+  required CurrencyInfo main,
+  required ExchangeRate? Function(String code) rateFor,
+}) => topCategories(
+  span,
+  spends,
+  parentOf: parentOf,
+  exits: exits,
+  main: main,
+  rateFor: rateFor,
+  count: 1,
+).firstOrNull;
+
+/// The biggest single amount of [items] within [span] (Reçu's biggest
+/// entry), in the main currency; the first one when two are equal.
+({DateTime at, String category, int amount})? biggest(
+  TimeSpan span,
+  Iterable<CategorySpend> items, {
+  required CurrencyInfo main,
+  required ExchangeRate? Function(String code) rateFor,
+}) {
+  ({DateTime at, String category, int amount})? best;
+  for (final s in items) {
+    if (!span.contains(s.at)) continue;
+    final amount = flowTotals(main, [
+      MoneyFlow(incoming: s.amount),
+    ], rateFor).entries.minor;
+    if (amount > (best?.amount ?? 0)) {
+      best = (at: s.at, category: s.category, amount: amount);
     }
   }
-  if (best == null) return null;
-  return (
-    category: best,
-    amount: most,
-    share: exits <= 0 ? 0 : (most * 100 / exits).round(),
-  );
+  return best;
+}
+
+/// What was kept of the entries, in % (below zero when more went out);
+/// null without any entry.
+int? savedShare({required int entries, required int exits}) =>
+    entries <= 0 ? null : ((entries - exits) * 100 / entries).round();
+
+/// Around the [average] of [values]: the highest, the lowest among those
+/// where something was spent (null when none), and how many are above it.
+({int highest, int? lowest, int above}) spreadOf(
+  List<int> values, {
+  required int average,
+}) {
+  var highest = 0;
+  int? lowest;
+  var above = 0;
+  for (final (i, v) in values.indexed) {
+    if (v > values[highest]) highest = i;
+    if (v > 0 && (lowest == null || v < values[lowest])) lowest = i;
+    if (v > average) above++;
+  }
+  return (highest: highest, lowest: lowest, above: above);
+}
+
+/// The [count] largest values above zero, largest first, the first one
+/// when two are equal.
+List<int> topIndexes(List<int> values, int count) {
+  final indexes = [
+    for (final (i, v) in values.indexed)
+      if (v > 0) i,
+  ]..sort((a, b) => values[a] != values[b] ? values[b] - values[a] : a - b);
+  return indexes.take(count).toList();
 }
 
 /// What a monthly budget leaves for today: what is left of it, spread over
@@ -190,11 +265,20 @@ List<int> runningTotal(List<int> values) {
 /// What « Suivre » keeps: the tiles on, and the budget and the project the
 /// user picked (null: the default one).
 class FollowedChoice {
-  const FollowedChoice({this.on = followedAtFirst, this.budget, this.project});
+  const FollowedChoice({
+    this.on = followedAtFirst,
+    this.budget,
+    this.project,
+    this.bars = false,
+  });
 
   final Set<Followed> on;
   final String? budget;
   final String? project;
+
+  /// Dépensé, Reçu and Épargne enlarged as bars, a bar a day, rather than
+  /// as a curve (« Affichage » in « Suivre », 27 November 2026).
+  final bool bars;
 
   /// The tiles on, in the order of the « Suivre » sheet.
   List<Followed> get shown => [
@@ -206,13 +290,17 @@ class FollowedChoice {
     on: value ? {...on, tile} : ({...on}..remove(tile)),
     budget: budget,
     project: project,
+    bars: bars,
   );
 
   FollowedChoice withBudget(String id) =>
-      FollowedChoice(on: on, budget: id, project: project);
+      FollowedChoice(on: on, budget: id, project: project, bars: bars);
 
   FollowedChoice withProject(String id) =>
-      FollowedChoice(on: on, budget: budget, project: id);
+      FollowedChoice(on: on, budget: budget, project: id, bars: bars);
+
+  FollowedChoice withBars(bool value) =>
+      FollowedChoice(on: on, budget: budget, project: project, bars: value);
 }
 
 /// A total at each of [moments]: the [current] total less every change

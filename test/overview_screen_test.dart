@@ -11,6 +11,7 @@ import 'package:kibuo/data/transaction_repository.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/app_language.dart';
+import 'package:kibuo/ui/overview/enlarged_parts.dart';
 import 'package:kibuo/ui/overview/overview_screen.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 import 'package:kibuo/ui/transactions/entry_screen.dart';
@@ -149,5 +150,48 @@ void main() {
     // 1 200 $ in, 500 $ of taxi and 2 $ of fees out.
     await tester.scrollUntilVisible(textPlain('+698,00 \$'), 200);
     expect(textPlain('+698,00 \$'), findsOneWidget);
+  });
+
+  testWidgets('I touch Dépensé: it opens large, the next tile follows', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.reset);
+    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: KibuoTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: appLanguages,
+        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+        home: Scaffold(body: OverviewScreen(data: data)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Dépensé').first, 200);
+    await tester.tap(find.text('Dépensé').first);
+    await tester.pumpAndSettle();
+    // The month's spending, and where it goes: the taxi, under Transport.
+    expect(find.textContaining('Dépensé · '), findsOneWidget);
+    expect(find.text('Où ça part le plus'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(EnlargedCard),
+        matching: find.text('Transport'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.drag(find.byType(PageView), const Offset(-300, 0));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Reçu · '), findsOneWidget);
+    expect(find.text('Plus grosse entrée'), findsOneWidget);
+
+    // A touch beside the card closes it.
+    await tester.tapAt(const Offset(20, 860));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Reçu · '), findsNothing);
   });
 }
