@@ -434,34 +434,41 @@ class _AccountRow extends StatelessWidget {
   /// Opens the account's page; the › says so (owner, 28 November 2026).
   final VoidCallback onTap;
 
+  // Its own button for TalkBack, its name and amount read together: without
+  // it, its touch went to the whole tab (seen on 28 November 2026).
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(10),
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 34),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: KibuoType.body,
-            ),
+  Widget build(BuildContext context) => MergeSemantics(
+    child: Semantics(
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 34),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: KibuoType.body,
+                ),
+              ),
+              Text(
+                value,
+                style: KibuoType.itemName.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  fontVariations: const [FontVariation.weight(700)],
+                  color: ink,
+                ),
+              ),
+              const SizedBox(width: 6),
+              const CardArrow(),
+            ],
           ),
-          Text(
-            value,
-            style: KibuoType.itemName.copyWith(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              fontVariations: const [FontVariation.weight(700)],
-              color: ink,
-            ),
-          ),
-          const SizedBox(width: 6),
-          const CardArrow(),
-        ],
+        ),
       ),
     ),
   );
