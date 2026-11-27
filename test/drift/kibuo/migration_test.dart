@@ -12,6 +12,7 @@ import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v13.dart' as v13;
 import 'generated/schema_v14.dart' as v14;
+import 'generated/schema_v15.dart' as v15;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -565,6 +566,66 @@ void main() {
           (await newDb.select(newDb.projects).get()).single.name,
           'Voyage',
         );
+      },
+    );
+  });
+
+  test('version 14 to 15 gives each category its colour', () async {
+    v14.CategoriesData category(
+      String id, {
+      String kind = 'out',
+      String? key,
+      String? parent,
+      String? name,
+      int position = 1,
+    }) => v14.CategoriesData(
+      id: id,
+      version: 140,
+      deviceId: 'phone-1',
+      deleted: 0,
+      kind: kind,
+      parentId: parent,
+      key: key,
+      name: name,
+      icon: 'tag',
+      position: position,
+      removed: 0,
+    );
+    final categories = [
+      category('default-housing', key: 'housing'),
+      category('default-food', key: 'food', position: 2),
+      category('default-restaurant', key: 'restaurant', parent: 'default-food'),
+      category('mine-out', name: 'Moto', position: 3),
+      category('default-debtOut', key: 'debtOut', position: 4),
+      category('default-salary', kind: 'in', key: 'salary'),
+      category('mine-in', kind: 'in', name: 'Loyers', position: 2),
+    ];
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 14,
+      newVersion: 15,
+      createOld: v14.DatabaseAtV14.new,
+      createNew: v15.DatabaseAtV15.new,
+      openTestedDatabase: _open,
+      createItems: (batch, oldDb) =>
+          batch.insertAll(oldDb.categories, categories),
+      validateItems: (newDb) async {
+        final rows = await newDb.select(newDb.categories).get();
+        final color = {for (final r in rows) r.id: r.color};
+        expect(color, {
+          'default-housing': 'peach',
+          'default-food': 'rose',
+          'default-restaurant': null,
+          // Pêche and Rose are taken among expenses: the next is Abricot.
+          'mine-out': 'apricot',
+          'default-debtOut': 'grey',
+          'default-salary': 'mint',
+          // Income counts its own colours: Pêche is still free there.
+          'mine-in': 'peach',
+        });
+        // Nothing else moved.
+        expect(rows.firstWhere((r) => r.id == 'mine-out').name, 'Moto');
+        expect(rows.every((r) => r.version == 140), isTrue);
       },
     );
   });
