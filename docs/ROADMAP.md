@@ -128,12 +128,12 @@ Ce que Google Play exige :
 Commencée pendant le test fermé (26 novembre 2026). Le propriétaire a décidé le 27 novembre 2026 de repousser la prochaine publication (le paquet `v0.1.0-beta-1`) au moment où tout l'Aperçu sera fini : Catégories et Patrimoine compris.
 
 
-- [ ] Tableaux de bord : évolution, catégories, patrimoine, points suivis (planches `Apercu…`)
+- [x] Tableaux de bord : évolution, catégories, patrimoine, points suivis (planches `Apercu…`, 28 novembre 2026)
   - [x] Livraison 1 : l'onglet Évolution et la feuille « Période » (27 novembre 2026)
   - [x] Livraison 2 : les points suivis et la feuille « Suivre » (27 novembre 2026)
   - [x] Livraison 3 : la tuile agrandie (27 novembre 2026)
   - [x] Livraison 4 : Catégories, et la couleur des catégories (27 novembre 2026)
-  - [ ] Livraison 5 : Patrimoine
+  - [x] Livraison 5 : Patrimoine, et la page d'un compte (28 novembre 2026)
 
 ## Version 0.3 : Vos données, ailleurs
 
