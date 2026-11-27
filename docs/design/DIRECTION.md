@@ -210,6 +210,8 @@ Livré le 27 novembre 2026 (version 0.2, livraison 1) : l'onglet Évolution de l
 
 Livré le 27 novembre 2026 (version 0.2, livraison 2) : les points suivis (`ApercuTMois`, `ApercuTJour`, `ApercuTAn`, `ApercuTPerso`) et la feuille « Suivre » (`ApercuTSuivre`) ; la tuile agrandie (`ApercuTuile`) reste à faire. Écarts : l'ordre des tuiles est celui de la feuille « Suivre » (décision du 27 novembre), donc sur un mois Catégorie n° 1 et le budget viennent avant le projet ; les catégories n'ayant pas de couleur propre dans l'app, la barre de Catégorie n° 1 est pêche ; la barre d'un budget prend les couleurs de la page Budgets ; sur une semaine, la tuile du budget montre le budget suivi (la planche montrait « Budgets · 1 dépassé ») ; une épargne négative est en pêche ; « Reste pour aujourd'hui » dépassé passe sa barre en pêche.
 
+Livré le 27 novembre 2026 (version 0.2, livraison 3) : la tuile agrandie (`ApercuTuile`, mise à jour le même jour : carte centrée, voisines des deux côtés, points seuls en bas) et ses treize cartes (`TuileDepenseA`, `TuileDepenseA3-cas1` et `-cas2`, `TuileRecuA`, `TuileEpargneE3`, `TuileMoyenneA`, `TuileCategorieA`, `TuilePlusCherK2` et ses variantes jour, semaine, année, `TuileAVenirAB`, `TuileBudgetAB`, `TuileDettesAC`, `TuileCreancesAC`, `TuileProjetA`, `TuileComptesB`, `TuilePatrimoineA`), la carte « Affichage » de « Suivre » (`TuileRecuR3`). Écarts : ceux validés le 27 novembre (voir les tuiles agrandies plus haut) ; les précisions de mise en œuvre de PRODUCT, à confirmer.
+
 ## Variantes écartées et pourquoi
 
 La raison est donnée quand elle est écrite dans ce document ou dans PRODUCT ; sinon « raison non écrite ». Les planches sont dans [boards/](boards/).
