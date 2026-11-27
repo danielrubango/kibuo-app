@@ -12,7 +12,6 @@ import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
-import 'package:kibuo/ui/kit/blurred_veil.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/choice_menu.dart';
 import 'package:kibuo/ui/kit/day_header.dart';
@@ -20,6 +19,7 @@ import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/month_picker.dart';
+import 'package:kibuo/ui/kit/page_veil.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
@@ -1287,7 +1287,7 @@ class _SwipeTipState extends State<_SwipeTip>
     final l = AppLocalizations.of(context);
     return Stack(
       children: [
-        Positioned.fill(child: BlurredVeil(onTap: widget.onDone)),
+        Positioned.fill(child: PageVeil(onTap: widget.onDone)),
         Positioned(
           left: 16,
           right: 16,

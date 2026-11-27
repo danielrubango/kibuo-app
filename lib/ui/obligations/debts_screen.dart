@@ -10,13 +10,13 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
-import 'package:kibuo/ui/kit/blurred_veil.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/guide.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
+import 'package:kibuo/ui/kit/page_veil.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/obligations/debt_screen.dart';
@@ -464,20 +464,19 @@ class _DebtsScreenState extends State<DebtsScreen> {
     return Stack(
       children: [
         page,
-        // Behind the open line, the whole screen under the blurred
-        // background, edge to edge, its bar too; the card holding the line
-        // stays white above it, in its place (owner, 23 and 27 November).
+        // Behind the open line, the whole screen under the + sheet's veil,
+        // edge to edge, its bar too; the card holding the line stays white
+        // above it, in its place (owner, 23 and 27 November).
         if (_lifted != null) ...[
           // Only what appears reacts: the veil holds the page behind,
           // which neither scrolls nor moves, and a touch on it closes the
-          // line (owner, 23 November). The blur comes at once, only the
-          // veil fades.
+          // line (owner, 23 November). The veil fades in and out.
           Positioned.fill(
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: dim ? 1 : 0),
               duration: dim ? _opening : _closing,
               builder: (context, veil, _) =>
-                  BlurredVeil(veil: veil, onTap: _close),
+                  PageVeil(veil: veil, onTap: _close),
             ),
           ),
           for (final lines in [

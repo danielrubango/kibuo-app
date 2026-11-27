@@ -17,7 +17,7 @@ import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
-import 'package:kibuo/ui/kit/blurred_veil.dart';
+import 'package:kibuo/ui/kit/page_veil.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/overview/enlarged_parts.dart';
@@ -67,14 +67,16 @@ Future<void> openEnlarged(
           close: close,
           then: then,
         );
-        // The blurred background comes at once, only its veil and the
-        // cards fade (DIRECTION « Fond flouté »).
+        // Behind the tiles, the screen blurred: the blur comes at once,
+        // only its veil and the cards fade (DIRECTION « Derrière ce qui
+        // passe devant »).
         return Stack(
           children: [
             Positioned.fill(
               child: AnimatedBuilder(
                 animation: animation,
-                builder: (_, _) => BlurredVeil(veil: animation.value),
+                builder: (_, _) =>
+                    PageVeil(veil: animation.value, blurred: true),
               ),
             ),
             FadeTransition(
