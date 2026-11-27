@@ -1184,7 +1184,7 @@
   "overviewDebtsLine": "Debts and money owed",
   "overviewFeesLine": "Transfer fees",
   "overviewOtherCategories": "{count, plural, =1{1 other category} other{{count} other categories}}",
-  "overviewCategoriesHelp": "Touch a category to see its subcategories and operations.",
+  "overviewCategoriesHelp": "Touch a category to see its details.",
   "overviewNoExitPeriod": "Nothing went out over the period",
   "overviewNoEntryPeriod": "Nothing came in over the period",
   "categoryPageOut": "{share} % of money out · {count, plural, =1{1 operation} other{{count} operations}}",

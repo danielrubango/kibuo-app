@@ -4594,7 +4594,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get overviewCategoriesHelp =>
-      'Touchez une catégorie pour voir ses sous-catégories et ses opérations.';
+      'Touchez une catégorie pour voir son détail.';
 
   @override
   String get overviewNoExitPeriod => 'Aucune sortie sur la période';

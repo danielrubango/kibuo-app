@@ -4550,8 +4550,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get overviewCategoriesHelp =>
-      'Touch a category to see its subcategories and operations.';
+  String get overviewCategoriesHelp => 'Touch a category to see its details.';
 
   @override
   String get overviewNoExitPeriod => 'Nothing went out over the period';

@@ -7144,7 +7144,7 @@ abstract class AppLocalizations {
   /// Aperçu, Catégories tab.
   ///
   /// In fr, this message translates to:
-  /// **'Touchez une catégorie pour voir ses sous-catégories et ses opérations.'**
+  /// **'Touchez une catégorie pour voir son détail.'**
   String get overviewCategoriesHelp;
 
   /// Aperçu, Catégories tab: nothing went out.
