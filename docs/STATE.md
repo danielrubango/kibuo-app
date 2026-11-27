@@ -1,6 +1,6 @@
 # État du projet
 
-Photographie au **28 novembre 2026**, branche `main` (dernière fusion : `refactor/regle-de-solde`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
+Photographie au **28 novembre 2026**, branche `main` (dernière fusion : `chore/outils-canvas`). À tenir à jour à chaque fusion. Les cases de la roadmap sont dans [ROADMAP.md](ROADMAP.md) ; ce qui suit ajoute les dates, ce qui reste ouvert et les pièges connus.
 
 ## Livré
 
