@@ -4390,15 +4390,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewCategories => 'Categories';
 
   @override
-  String get overviewCategoriesText =>
-      'Where your money goes, where it comes from';
-
-  @override
   String get overviewWorth => 'Net worth';
-
-  @override
-  String get overviewWorthText =>
-      'Your accounts, plus what you are owed, less your debts';
 
   @override
   String get overviewPeriodTitle => 'Period';
@@ -4514,7 +4506,42 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get overviewSoon => 'Coming soon';
+  String get worthWhat => 'What I have · accounts + owed to me − debts';
+
+  @override
+  String worthWhen(String when) {
+    String _temp0 = intl.Intl.selectLogic(when, {
+      'thisMonth': 'this month',
+      'thisYear': 'this year',
+      'today': 'today',
+      'yesterday': 'yesterday',
+      'day24': 'over 24 h',
+      'week': 'over 7 days',
+      'other': 'over the period',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String worthIn(String name) {
+    return 'in $name';
+  }
+
+  @override
+  String get worthProjected =>
+      'Dotted: what is planned until the end of the period.';
+
+  @override
+  String get worthMadeOf => 'What it is made of';
+
+  @override
+  String get worthMadeOfToday => 'What it is made of · today';
+
+  @override
+  String get worthAccounts => 'My accounts over the period';
+
+  @override
+  String get worthNoMove => 'No account moved over the period.';
 
   @override
   String get overviewWhereOut => 'Where my money goes';

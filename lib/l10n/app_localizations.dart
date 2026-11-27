@@ -6868,20 +6868,8 @@ abstract class AppLocalizations {
   /// Aperçu waiting screen (version 0.1).
   ///
   /// In fr, this message translates to:
-  /// **'Où part votre argent, d’où il vient'**
-  String get overviewCategoriesText;
-
-  /// Aperçu waiting screen (version 0.1).
-  ///
-  /// In fr, this message translates to:
   /// **'Patrimoine'**
   String get overviewWorth;
-
-  /// Aperçu waiting screen (version 0.1).
-  ///
-  /// In fr, this message translates to:
-  /// **'Vos comptes, plus ce qu’on vous doit, moins vos dettes'**
-  String get overviewWorthText;
 
   /// Aperçu: the period sheet's title.
   ///
@@ -7093,11 +7081,53 @@ abstract class AppLocalizations {
   /// **'S{week}'**
   String overviewWeekMark(int week);
 
-  /// Aperçu: a tab that comes in a later delivery.
+  /// Aperçu, Patrimoine tab: the first card's caption.
   ///
   /// In fr, this message translates to:
-  /// **'Bientôt'**
-  String get overviewSoon;
+  /// **'Ce que j’ai · comptes + créances − dettes'**
+  String get worthWhat;
+
+  /// Aperçu, Patrimoine tab: over which time the worth changed.
+  ///
+  /// In fr, this message translates to:
+  /// **'{when, select, thisMonth{ce mois-ci} thisYear{cette année} today{aujourd’hui} yesterday{hier} day24{sur 24 h} week{sur 7 jours} other{sur la période}}'**
+  String worthWhen(String when);
+
+  /// Aperçu, Patrimoine tab: over a month or a year gone by.
+  ///
+  /// In fr, this message translates to:
+  /// **'en {name}'**
+  String worthIn(String name);
+
+  /// Aperçu, Patrimoine tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'En pointillés : ce qui est prévu jusqu’à la fin de la période.'**
+  String get worthProjected;
+
+  /// Aperçu, Patrimoine tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'De quoi c’est fait'**
+  String get worthMadeOf;
+
+  /// Aperçu, Patrimoine tab, for a period gone by.
+  ///
+  /// In fr, this message translates to:
+  /// **'De quoi c’est fait · aujourd’hui'**
+  String get worthMadeOfToday;
+
+  /// Aperçu, Patrimoine tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes comptes sur la période'**
+  String get worthAccounts;
+
+  /// Aperçu, Patrimoine tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun compte n’a bougé sur la période.'**
+  String get worthNoMove;
 
   /// Aperçu, Catégories tab: the card's title for money out.
   ///

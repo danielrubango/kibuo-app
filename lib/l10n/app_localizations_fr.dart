@@ -4434,14 +4434,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get overviewCategories => 'Catégories';
 
   @override
-  String get overviewCategoriesText => 'Où part votre argent, d’où il vient';
-
-  @override
   String get overviewWorth => 'Patrimoine';
-
-  @override
-  String get overviewWorthText =>
-      'Vos comptes, plus ce qu’on vous doit, moins vos dettes';
 
   @override
   String get overviewPeriodTitle => 'Période';
@@ -4557,7 +4550,42 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get overviewSoon => 'Bientôt';
+  String get worthWhat => 'Ce que j’ai · comptes + créances − dettes';
+
+  @override
+  String worthWhen(String when) {
+    String _temp0 = intl.Intl.selectLogic(when, {
+      'thisMonth': 'ce mois-ci',
+      'thisYear': 'cette année',
+      'today': 'aujourd’hui',
+      'yesterday': 'hier',
+      'day24': 'sur 24 h',
+      'week': 'sur 7 jours',
+      'other': 'sur la période',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String worthIn(String name) {
+    return 'en $name';
+  }
+
+  @override
+  String get worthProjected =>
+      'En pointillés : ce qui est prévu jusqu’à la fin de la période.';
+
+  @override
+  String get worthMadeOf => 'De quoi c’est fait';
+
+  @override
+  String get worthMadeOfToday => 'De quoi c’est fait · aujourd’hui';
+
+  @override
+  String get worthAccounts => 'Mes comptes sur la période';
+
+  @override
+  String get worthNoMove => 'Aucun compte n’a bougé sur la période.';
 
   @override
   String get overviewWhereOut => 'Où part mon argent';

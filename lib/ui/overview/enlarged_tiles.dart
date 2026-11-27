@@ -197,40 +197,17 @@ class EnlargedTiles {
       ? l.overviewHourMark(_reached.hour)
       : _day(_reached);
 
-  /// Days under a curve: « 1er · 12 nov. · 30 » while it runs, « 1er ·
-  /// 30 nov. » once over (canvas TuileDepenseA, TuileDepenseA3).
-  List<String> _dayAxis(DateTime first, DateTime last, DateTime? today) {
-    final middle =
-        today != null &&
-        calendarDays(first, today) > 0 &&
-        calendarDays(today, last) > 0;
-    final same = first.year == last.year && first.month == last.month;
-    return [
-      same ? l.enlAxisDay(first.day) : _day(first),
-      if (middle) _day(today),
-      same && middle ? '${last.day}' : _day(last),
-    ];
-  }
+  List<String> _dayAxis(DateTime first, DateTime last, DateTime? today) =>
+      dayAxis(l, lang, first, last, today);
 
-  List<String> get _axis {
-    final first = p.bars.first.start;
-    final last = p.bars.last.start;
-    final today = p.running ? p.now : null;
-    if (p.grouping == Grouping.day) return _dayAxis(first, last, today);
-    String mark(DateTime d) => switch (p.grouping) {
-      Grouping.hour => l.overviewHourMark(d.hour),
-      Grouping.month => DateFormat.MMM(
-        lang,
-      ).format(BudgetPeriod.containing(d, startDay: p.startDay).month),
-      _ => _day(d),
-    };
-    final at = today == null ? -1 : p.bars.indexWhere((b) => b.contains(today));
-    return [
-      mark(first),
-      if (at > 0 && at < p.bars.length - 1) mark(today!),
-      mark(last),
-    ];
-  }
+  List<String> get _axis => curveAxis(
+    l,
+    lang,
+    p.bars,
+    p.grouping,
+    startDay: p.startDay,
+    today: p.running ? p.now : null,
+  );
 
   /// The change line under the figure, or a note.
   Widget? _change(

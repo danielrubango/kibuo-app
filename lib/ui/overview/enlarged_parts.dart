@@ -434,7 +434,7 @@ class ChartLegend extends StatelessWidget {
   }
 }
 
-Path _smooth(List<Offset> p, {double? low, double? high}) {
+Path smoothPath(List<Offset> p, {double? low, double? high}) {
   double clamp(double y) =>
       y.clamp(low ?? double.negativeInfinity, high ?? double.infinity);
   final path = Path()..moveTo(p.first.dx, p.first.dy);
@@ -568,7 +568,7 @@ class _LinePainter extends CustomPainter {
       // Over its own length: October's 31 days end where November's 30 do.
       final m = compared.length;
       canvas.drawPath(
-        _smooth([
+        smoothPath([
           for (final (i, v) in compared.indexed)
             Offset(i * size.width / (m - 1), y(v)),
         ]),
@@ -581,7 +581,7 @@ class _LinePainter extends CustomPainter {
     if (c.current.isEmpty) return;
     final points = [for (final (i, v) in c.current.indexed) Offset(x(i), y(v))];
     if (points.length > 1) {
-      final line = _smooth(points);
+      final line = smoothPath(points);
       final area = Path.from(line)
         ..lineTo(points.last.dx, pad + h)
         ..lineTo(0, pad + h)

@@ -239,4 +239,35 @@ void main() {
       expect(find.textContaining('frais :'), findsOneWidget);
     },
   );
+
+  testWidgets('I open Patrimoine: what I have, and what each account did', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.reset);
+    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: KibuoTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: appLanguages,
+        localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+        home: Scaffold(body: OverviewScreen(data: data)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Patrimoine'));
+    await tester.pumpAndSettle();
+    // 2 × 1 000 $ opened, +1 200 $ of salary, −500 $ of taxi, −2 $ of fees.
+    // The total, and all of it available: no project, no debt.
+    expect(textPlain('2 698,00 \$'), findsNWidgets(2));
+    expect(find.textContaining('+698,00'), findsOneWidget);
+    expect(find.textContaining('ce mois-ci'), findsOneWidget);
+    // Rawbank: the salary and the transfer in; M-Pesa: the taxi, the
+    // transfer out and its fees.
+    expect(textPlain('+1 230,00 \$'), findsOneWidget);
+    expect(textPlain('−532,00 \$'), findsOneWidget);
+  });
 }
