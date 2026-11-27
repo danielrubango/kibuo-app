@@ -26,6 +26,7 @@ class OperationRow extends StatelessWidget {
     required this.onTap,
     this.amountMarked = false,
     this.tag,
+    this.amount,
   });
 
   final TransactionInfo t;
@@ -33,6 +34,10 @@ class OperationRow extends StatelessWidget {
   final Marked title;
   final Marked subtitle;
   final VoidCallback onTap;
+
+  /// Said instead of its signed total, shorter when [short] (on an
+  /// account's page, a transfer leaving or reaching it).
+  final String Function(bool short)? amount;
 
   /// The searched amount is this one.
   final bool amountMarked;
@@ -87,6 +92,7 @@ class OperationRow extends StatelessWidget {
                   : null,
               subtitle: subtitle,
               amountMarked: amountMarked,
+              amount: amount,
               tag: owe == null ? tag : (owe ? l.debtTagOwe : l.debtTagOwed),
               tagInk: debtInk,
               tagTint: debtTint,
@@ -263,7 +269,10 @@ class _RowBody extends StatelessWidget {
     this.tagTint,
     this.shortTitle,
     this.muted = false,
+    this.amount,
   });
+
+  final String Function(bool short)? amount;
 
   /// Said shorter when [title] does not fit.
   final String? shortTitle;
@@ -380,8 +389,10 @@ class _RowBody extends StatelessWidget {
               decoration: t.isIgnored ? TextDecoration.lineThrough : null,
               decorationColor: amountColor,
             ),
-            span: (short) =>
-                TextSpan(text: signedTotal(context, t, short: short)),
+            span: (short) => TextSpan(
+              text:
+                  amount?.call(short) ?? signedTotal(context, t, short: short),
+            ),
           ),
         ),
       ],

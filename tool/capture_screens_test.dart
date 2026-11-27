@@ -33,6 +33,7 @@ import 'package:kibuo/ui/lock/create_pin_screen.dart';
 import 'package:kibuo/ui/lock/lock_controller.dart';
 import 'package:kibuo/ui/lock/recovery_screens.dart';
 import 'package:kibuo/ui/lock/unlock_screen.dart';
+import 'package:kibuo/ui/overview/categories_card.dart';
 import 'package:kibuo/ui/overview/overview_screen.dart';
 import 'package:kibuo/ui/settings/currency_screens.dart';
 import 'package:kibuo/ui/settings/security_screens.dart';
@@ -629,6 +630,19 @@ void main() {
     await tester.drag(find.byType(ListView).first, const Offset(0, -900));
     await tester.pumpAndSettle();
     await snap(tester, 'Apercu_tuiles_mois_bas');
+    await tester.ensureVisible(find.text('Dépensé').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dépensé').first);
+    await tester.pumpAndSettle();
+    for (var i = 1; i <= 13; i++) {
+      await snap(tester, 'Apercu_grand_${i.toString().padLeft(2, '0')}');
+      if (i < 13) {
+        await tester.drag(find.byType(PageView), const Offset(-330, 0));
+        await tester.pumpAndSettle();
+      }
+    }
+    await tester.tapAt(const Offset(20, 820));
+    await tester.pumpAndSettle();
     await tester.drag(find.byType(ListView).first, const Offset(0, 2000));
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(KibuoIcons.caretDown));
@@ -683,6 +697,36 @@ void main() {
     await tester.tap(find.text('Catégories'));
     await tester.pumpAndSettle();
     await snap(tester, 'Apercu_categories');
+    final rest = find.textContaining('autres catégories');
+    if (rest.evaluate().isNotEmpty) {
+      await tester.ensureVisible(rest);
+      await tester.pumpAndSettle();
+      await tester.tap(rest);
+      await tester.pumpAndSettle();
+      await snap(tester, 'Apercu_categories_autres');
+    }
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byType(CategoriesCard),
+            matching: find.byType(InkWell),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_categorie_page');
+    await tester.tap(find.byIcon(KibuoIcons.caretLeft).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Entrées'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_categories_entrees');
+    await tester.tap(find.text('Patrimoine'));
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_patrimoine');
+    await choose(['1 mois']);
+    await tester.tap(find.byIcon(KibuoIcons.caretRight).first);
+    await tester.pumpAndSettle();
+    await snap(tester, 'Apercu_patrimoine_courant');
   });
 
   testWidgets('Premier lancement', (tester) async {

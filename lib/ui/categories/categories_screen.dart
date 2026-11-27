@@ -178,7 +178,7 @@ class _CategoryRow extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
                 child: Row(
                   children: [
-                    CategoryTile(category: category),
+                    CategoryTile(category: category, colored: true),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(

@@ -2963,6 +2963,15 @@ class $CategoriesTable extends Categories
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
+  @override
+  late final GeneratedColumn<String> color = GeneratedColumn<String>(
+    'color',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2976,6 +2985,7 @@ class $CategoriesTable extends Categories
     icon,
     position,
     removed,
+    color,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3064,6 +3074,12 @@ class $CategoriesTable extends Categories
         removed.isAcceptableOrUnknown(data['removed']!, _removedMeta),
       );
     }
+    if (data.containsKey('color')) {
+      context.handle(
+        _colorMeta,
+        color.isAcceptableOrUnknown(data['color']!, _colorMeta),
+      );
+    }
     return context;
   }
 
@@ -3117,6 +3133,10 @@ class $CategoriesTable extends Categories
         DriftSqlType.bool,
         data['${effectivePrefix}removed'],
       )!,
+      color: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}color'],
+      ),
     );
   }
 
@@ -3153,6 +3173,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
 
   /// Out of the choices; its operations keep it.
   final bool removed;
+
+  /// Its colour's name (« rose »), ADR 0014; null for a subcategory, which
+  /// shows its category's.
+  final String? color;
   const CategoryRow({
     required this.id,
     required this.version,
@@ -3165,6 +3189,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     required this.icon,
     required this.position,
     required this.removed,
+    this.color,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3186,6 +3211,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     map['icon'] = Variable<String>(icon);
     map['position'] = Variable<int>(position);
     map['removed'] = Variable<bool>(removed);
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<String>(color);
+    }
     return map;
   }
 
@@ -3204,6 +3232,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       icon: Value(icon),
       position: Value(position),
       removed: Value(removed),
+      color: color == null && nullToAbsent
+          ? const Value.absent()
+          : Value(color),
     );
   }
 
@@ -3224,6 +3255,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       icon: serializer.fromJson<String>(json['icon']),
       position: serializer.fromJson<int>(json['position']),
       removed: serializer.fromJson<bool>(json['removed']),
+      color: serializer.fromJson<String?>(json['color']),
     );
   }
   @override
@@ -3241,6 +3273,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'icon': serializer.toJson<String>(icon),
       'position': serializer.toJson<int>(position),
       'removed': serializer.toJson<bool>(removed),
+      'color': serializer.toJson<String?>(color),
     };
   }
 
@@ -3256,6 +3289,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     String? icon,
     int? position,
     bool? removed,
+    Value<String?> color = const Value.absent(),
   }) => CategoryRow(
     id: id ?? this.id,
     version: version ?? this.version,
@@ -3268,6 +3302,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     icon: icon ?? this.icon,
     position: position ?? this.position,
     removed: removed ?? this.removed,
+    color: color.present ? color.value : this.color,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
     return CategoryRow(
@@ -3282,6 +3317,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       icon: data.icon.present ? data.icon.value : this.icon,
       position: data.position.present ? data.position.value : this.position,
       removed: data.removed.present ? data.removed.value : this.removed,
+      color: data.color.present ? data.color.value : this.color,
     );
   }
 
@@ -3298,7 +3334,8 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write('name: $name, ')
           ..write('icon: $icon, ')
           ..write('position: $position, ')
-          ..write('removed: $removed')
+          ..write('removed: $removed, ')
+          ..write('color: $color')
           ..write(')'))
         .toString();
   }
@@ -3316,6 +3353,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     icon,
     position,
     removed,
+    color,
   );
   @override
   bool operator ==(Object other) =>
@@ -3331,7 +3369,8 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.name == this.name &&
           other.icon == this.icon &&
           other.position == this.position &&
-          other.removed == this.removed);
+          other.removed == this.removed &&
+          other.color == this.color);
 }
 
 class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
@@ -3346,6 +3385,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<String> icon;
   final Value<int> position;
   final Value<bool> removed;
+  final Value<String?> color;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.id = const Value.absent(),
@@ -3359,6 +3399,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.icon = const Value.absent(),
     this.position = const Value.absent(),
     this.removed = const Value.absent(),
+    this.color = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
@@ -3373,6 +3414,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     required String icon,
     required int position,
     this.removed = const Value.absent(),
+    this.color = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        version = Value(version),
@@ -3392,6 +3434,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<String>? icon,
     Expression<int>? position,
     Expression<bool>? removed,
+    Expression<String>? color,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3406,6 +3449,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (icon != null) 'icon': icon,
       if (position != null) 'position': position,
       if (removed != null) 'removed': removed,
+      if (color != null) 'color': color,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3422,6 +3466,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<String>? icon,
     Value<int>? position,
     Value<bool>? removed,
+    Value<String?>? color,
     Value<int>? rowid,
   }) {
     return CategoriesCompanion(
@@ -3436,6 +3481,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       icon: icon ?? this.icon,
       position: position ?? this.position,
       removed: removed ?? this.removed,
+      color: color ?? this.color,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3476,6 +3522,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     if (removed.present) {
       map['removed'] = Variable<bool>(removed.value);
     }
+    if (color.present) {
+      map['color'] = Variable<String>(color.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3496,6 +3545,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write('icon: $icon, ')
           ..write('position: $position, ')
           ..write('removed: $removed, ')
+          ..write('color: $color, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -11100,6 +11150,7 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required String icon,
   required int position,
   Value<bool> removed,
+  Value<String?> color,
   Value<int> rowid,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
@@ -11114,6 +11165,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String> icon,
   Value<int> position,
   Value<bool> removed,
+  Value<String?> color,
   Value<int> rowid,
 });
 
@@ -11178,6 +11230,11 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<bool> get removed => $composableBuilder(
     column: $table.removed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get color => $composableBuilder(
+    column: $table.color,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -11245,6 +11302,11 @@ class $$CategoriesTableOrderingComposer
     column: $table.removed,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get color => $composableBuilder(
+    column: $table.color,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -11288,6 +11350,9 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<bool> get removed =>
       $composableBuilder(column: $table.removed, builder: (column) => column);
+
+  GeneratedColumn<String> get color =>
+      $composableBuilder(column: $table.color, builder: (column) => column);
 }
 
 class $$CategoriesTableTableManager
@@ -11332,6 +11397,7 @@ class $$CategoriesTableTableManager
                 Value<String> icon = const Value.absent(),
                 Value<int> position = const Value.absent(),
                 Value<bool> removed = const Value.absent(),
+                Value<String?> color = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
@@ -11345,6 +11411,7 @@ class $$CategoriesTableTableManager
                 icon: icon,
                 position: position,
                 removed: removed,
+                color: color,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -11360,6 +11427,7 @@ class $$CategoriesTableTableManager
                 required String icon,
                 required int position,
                 Value<bool> removed = const Value.absent(),
+                Value<String?> color = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
@@ -11373,6 +11441,7 @@ class $$CategoriesTableTableManager
                 icon: icon,
                 position: position,
                 removed: removed,
+                color: color,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

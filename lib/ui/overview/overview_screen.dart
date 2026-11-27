@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kibuo/data/overview_store.dart';
 import 'package:kibuo/data/project_repository.dart';
+import 'package:kibuo/domain/categories/default_categories.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/obligations/debt_list.dart';
+import 'package:kibuo/domain/overview/category_lines.dart';
 import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_choice.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
@@ -18,12 +20,15 @@ import 'package:kibuo/ui/kit/tab_strip.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/month_start.dart';
+import 'package:kibuo/ui/overview/categories_card.dart';
+import 'package:kibuo/ui/overview/category_page.dart';
 import 'package:kibuo/ui/overview/evolution_chart.dart';
 import 'package:kibuo/ui/overview/follow_sheet.dart';
 import 'package:kibuo/ui/overview/followed_section.dart';
 import 'package:kibuo/ui/overview/followed_tile.dart';
 import 'package:kibuo/ui/overview/overview_labels.dart';
 import 'package:kibuo/ui/overview/period_sheet.dart';
+import 'package:kibuo/ui/overview/worth_tab.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
@@ -276,20 +281,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
         const SizedBox(height: 14),
         switch (_tab) {
           _Tab.evolution => _evolution(l, lang, now, span, label, spanAt),
-          _Tab.categories => _Soon(
-            icon: KibuoIcons.chartPieSlice,
-            tint: KibuoColors.accentTintStrong,
-            ink: KibuoColors.accent,
-            title: l.overviewSoon,
-            text: l.overviewCategoriesText,
-          ),
-          _Tab.worth => _Soon(
-            icon: KibuoIcons.bank,
-            tint: KibuoColors.projectTint,
-            ink: KibuoColors.projectInk,
-            title: l.overviewSoon,
-            text: l.overviewWorthText,
-          ),
+          _Tab.categories => _categories(l, lang, now, span, label, spanAt),
+          _Tab.worth => _worth(now, span),
         },
       ],
     );
@@ -316,6 +309,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
     List<FlowTotals>? comparedBars;
     FlowTotals? comparedTotals;
     String? comparedName;
+    String? comparedTileName;
+    TimeSpan? comparedWindow;
     if (comparedAt != null) {
       final compared = spanAt(comparedAt);
       comparedBars = totalsByBucket(
@@ -330,14 +325,31 @@ class _OverviewScreenState extends State<OverviewScreen> {
         now: now,
         grouping: grouping,
       );
+      comparedWindow = TimeSpan(compared.start, until);
       comparedTotals = totalsWithin(
-        TimeSpan(compared.start, until),
+        comparedWindow,
         _flows,
         main,
         (c) => _rates[c],
       );
       comparedName = periodLabel(l, lang, _choice.kind, comparedAt, compared);
+      comparedTileName = tilePeriodName(
+        l,
+        lang,
+        _choice.kind,
+        comparedAt,
+        compared,
+        now: now,
+      );
     }
+    final tileName = tilePeriodName(
+      l,
+      lang,
+      _choice.kind,
+      _offset,
+      span,
+      now: now,
+    );
 
     String money(Money m, {bool short = false}) =>
         formatAmount(m, currencyOf(m.currency), lang, short: short);
@@ -354,6 +366,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
       compared: comparedTotals,
       main: main,
       rates: _rates,
+      label: capitalized(tileName),
+      inlineLabel: tileName,
+      grouping: grouping,
+      comparedBars: comparedBars,
+      comparedName: comparedTileName,
+      comparedWindow: comparedWindow,
     );
     final month = period.budgetMonth;
     final book = _books[month];
@@ -369,50 +387,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _FlowTile(
-                  label: l.overviewExits,
-                  amount: totals.exits,
-                  approximate: totals.approximate,
-                  out: true,
-                  chosen: out,
-                  compared: comparedTotals != null,
-                  change: comparedTotals == null
-                      ? null
-                      : changeOf(
-                          totals.exits.minor,
-                          comparedTotals.exits.minor,
-                          lessIsBetter: true,
-                        ),
-                  money: money,
-                  onTap: () => setState(() => _entries = false),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _FlowTile(
-                  label: l.overviewEntries,
-                  amount: totals.entries,
-                  approximate: totals.approximate,
-                  out: false,
-                  chosen: !out,
-                  compared: comparedTotals != null,
-                  change: comparedTotals == null
-                      ? null
-                      : changeOf(
-                          totals.entries.minor,
-                          comparedTotals.entries.minor,
-                          lessIsBetter: false,
-                        ),
-                  money: money,
-                  onTap: () => setState(() => _entries = true),
-                ),
-              ),
-            ],
-          ),
+          _flowTiles(l, totals, comparedTotals, money),
           const SizedBox(height: 10),
           EvolutionChart(
             values: [
@@ -462,6 +437,186 @@ class _OverviewScreenState extends State<OverviewScreen> {
           links: widget.links,
         ),
       ],
+    );
+  }
+
+  /// Sorties and Entrées, each with its change; touching one shows it, in
+  /// Évolution and Catégories alike (PRODUCT, 27 November 2026).
+  Widget _flowTiles(
+    AppLocalizations l,
+    FlowTotals totals,
+    FlowTotals? comparedTotals,
+    String Function(Money m, {bool short}) money,
+  ) {
+    final out = !_entries;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _FlowTile(
+            label: l.overviewExits,
+            amount: totals.exits,
+            approximate: totals.approximate,
+            out: true,
+            chosen: out,
+            compared: comparedTotals != null,
+            change: comparedTotals == null
+                ? null
+                : changeOf(
+                    totals.exits.minor,
+                    comparedTotals.exits.minor,
+                    lessIsBetter: true,
+                  ),
+            money: money,
+            onTap: () => setState(() => _entries = false),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _FlowTile(
+            label: l.overviewEntries,
+            amount: totals.entries,
+            approximate: totals.approximate,
+            out: false,
+            chosen: !out,
+            compared: comparedTotals != null,
+            change: comparedTotals == null
+                ? null
+                : changeOf(
+                    totals.entries.minor,
+                    comparedTotals.entries.minor,
+                    lessIsBetter: false,
+                  ),
+            money: money,
+            onTap: () => setState(() => _entries = true),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// The Catégories tab: the same tiles, then where the money went (or came
+  /// from), category by category (canvas ApercuP2, PRODUCT, 27 November
+  /// 2026).
+  Widget _categories(
+    AppLocalizations l,
+    String lang,
+    DateTime now,
+    TimeSpan span,
+    String label,
+    TimeSpan Function(int offset) spanAt,
+  ) {
+    final main = _main;
+    final data = _followedData;
+    if (main == null || data == null) return const SizedBox(height: 300);
+    final grouping = _choice.groupingFor(span);
+    final totals = totalsWithin(span, _flows, main, (c) => _rates[c]);
+    FlowTotals? comparedTotals;
+    final comparedAt = comparedOffset(
+      _choice.comparisonAt(_offset),
+      offset: _offset,
+    );
+    if (comparedAt != null) {
+      final compared = spanAt(comparedAt);
+      final until = comparedUntil(
+        current: span,
+        compared: compared,
+        now: now,
+        grouping: grouping,
+      );
+      comparedTotals = totalsWithin(
+        TimeSpan(compared.start, until),
+        _flows,
+        main,
+        (c) => _rates[c],
+      );
+    }
+    String money(Money m, {bool short = false}) =>
+        formatAmount(m, currencyOf(m.currency), lang, short: short);
+    final out = !_entries;
+    final total = out ? totals.exits.minor : totals.entries.minor;
+    final lines = categoryLines(
+      span,
+      out ? data.spends : data.gains,
+      parentOf: (id) => data.parents[id] ?? id,
+      isDebt: isDebtCategoryId,
+      total: total,
+      withFees: out,
+      main: main,
+      rateFor: (c) => _rates[c],
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: KibuoColors.surface,
+            borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
+          ),
+          child: _flowTiles(l, totals, comparedTotals, money),
+        ),
+        const SizedBox(height: 14),
+        CategoriesCard(
+          out: out,
+          lines: lines,
+          total: money(Money(total, main.code)),
+          categories: data.categories,
+          money: (minor) => money(Money(minor, main.code)),
+          onOpen: (line) {
+            final category = line.category == null
+                ? null
+                : data.categories[line.category];
+            final source = switch (line.kind) {
+              CategoryLineKind.category when category != null =>
+                LineSource.category(l, category, data.categories, out: out),
+              CategoryLineKind.debts => LineSource.debts(l, out: out),
+              CategoryLineKind.fees => LineSource.fees(l, money),
+              _ => null,
+            };
+            if (source == null) return;
+            Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => LinePage(
+                  data: widget.data,
+                  source: source,
+                  periodLabel: label,
+                  span: span,
+                  out: out,
+                  periodTotal: total,
+                  main: main,
+                  rates: _rates,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  /// The Patrimoine tab (canvas ApercuP2, PRODUCT, 27 November 2026).
+  Widget _worth(DateTime now, TimeSpan span) {
+    final main = _main;
+    final data = _followedData;
+    if (main == null || data == null) return const SizedBox(height: 300);
+    final startDay = monthStartChoice.value;
+    final grouping = _choice.groupingFor(span);
+    final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    return WorthTab(
+      data: widget.data,
+      periodLabel: periodLabel(l, lang, _choice.kind, _offset, span),
+      followed: data,
+      kind: _choice.kind,
+      offset: _offset,
+      span: span,
+      bars: bucketsOf(span, grouping, startDay: startDay),
+      grouping: grouping,
+      startDay: startDay,
+      now: now,
+      main: main,
+      rates: _rates,
     );
   }
 
@@ -764,49 +919,5 @@ class _Radio extends StatelessWidget {
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           )
         : null,
-  );
-}
-
-/// A tab that comes in a later delivery: a white card, its icon, « Bientôt »
-/// and what it will show.
-class _Soon extends StatelessWidget {
-  const _Soon({
-    required this.icon,
-    required this.tint,
-    required this.ink,
-    required this.title,
-    required this.text,
-  });
-
-  final IconData icon;
-  final Color tint;
-  final Color ink;
-  final String title;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-    decoration: BoxDecoration(
-      color: KibuoColors.surface,
-      borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
-    ),
-    child: Column(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: tint,
-            borderRadius: BorderRadius.circular(KibuoTheme.radiusField),
-          ),
-          child: Icon(icon, color: ink),
-        ),
-        const SizedBox(height: 12),
-        Text(title, textAlign: TextAlign.center, style: KibuoType.cardTitle),
-        const SizedBox(height: 8),
-        Text(text, textAlign: TextAlign.center, style: KibuoType.help),
-      ],
-    ),
   );
 }

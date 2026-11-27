@@ -42,13 +42,26 @@ Thème clair seulement ; le sombre est au [backlog](../backlog/theme-sombre.md).
 | Retard, danger | `danger` `#B3321A` | `dangerTint` `#FBE3DE`, `dangerSoft` `#FFF1ED`, `dangerDeep` `#7C1F0C`, `dangerTrack` `#FFD3C8`, `dangerOnInk` `#FFB4A2` | Retard, dépassement, supprimer, refus |
 | Graphique de l'Aperçu | — | `chartIn` `#7CCFAA` (barres des entrées ; les sorties sont en `debtLine`), `chartOutAhead` `#F2E3D6` et `chartInAhead` `#DDF1E7` (ce qui n'a pas encore commencé), `chartCompared` `#7C8599` (courbe de la période comparée ; ses bâtonnets sont en `track`) | Onglet Évolution de l'Aperçu |
 
+### Couleurs des catégories
+
+Le nom gardé dans la base, puis la teinte de la tuile et de la barre (27 novembre 2026, [ADR 0014](../adr/0014-couleur-des-categories.md)) ; l'icône reste à l'encre.
+
+| Nom | Teinte | Nom | Teinte |
+|---|---|---|---|
+| `peach` Pêche | `#E8A878` | `lavender` Lavande | `#B9A8E2` |
+| `apricot` Abricot | `#F2C48D` | `blue` Bleu | `#9DB4E0` |
+| `sand` Sable | `#DCC79A` | `sky` Ciel | `#8ED0E6` |
+| `coral` Corail | `#EE9F92` | `mint` Menthe | `#5EEAB5` |
+| `rose` Rose | `#D9A0C4` | `green` Vert | `#7FCBA8` |
+| `grey` « Autres » | `#C9CFDB` | | |
+
 ### Voiles et ombres
 
 | Jeton | Valeur | Usage |
 |---|---|---|
-| `scrim` | encre à 42 % | Derrière une feuille : la page reste lisible |
+| `scrim` | encre à 42 % | Derrière une feuille, une ligne ouverte, une astuce, un guide : la page reste lisible (27 novembre 2026) |
 | `veil` | encre à 12 % | Derrière un menu, le choix du mois |
-| `tipScrim` | encre à 45 % | Derrière un guide de première visite |
+| `blurVeil` | encre à 32 %, sur un flou de 8 | Le fond flouté, derrière une tuile agrandie seulement (27 novembre 2026) |
 | `barShadow` | encre à 18 % | Barre flottante (clavier, sélection) |
 | `fanShadow` | noir à 25 % | Choix de l'éventail du + |
 
@@ -144,6 +157,7 @@ Un composant naît à la deuxième apparition d'un élément. Les marges restent
 | `confirmRemoval`, `RemovalSummary` | `sheet.dart` | Confirmer une suppression : ce qui est concerné, la conséquence, le bouton rouge |
 | `showConfirmSheet`, `ConfirmAction`, `SavedLine` | `confirm_sheet.dart` | Confirmation qui se ferme seule (« Remboursement enregistré », « Mis de côté »), avec « Annuler » |
 | `GuideSpotlight`, `GuideCard`, `guideGap` | `guide.dart` | Guide de première visite : la page voilée sauf une fenêtre autour de l'élément montré, 8 de marge de chaque côté ; la carte blanche « 1 sur 2 », titre, mots, « Passer » et l'action menthe |
+| `PageVeil` | `page_veil.dart` | Ce qui reste derrière ce qui passe devant, bord à bord : le voile de la feuille du + (encre à 42 %) derrière une ligne ouverte, une astuce, un guide (avec sa fenêtre) ; flouté (flou de 8, encre à 32 %) derrière une tuile agrandie. Seul le voile apparaît en fondu (27 novembre 2026) |
 | `AutoClose` | `auto_close.dart` | La barre menthe qui se vide sous une confirmation |
 | `showKibuoToast` | `toast.dart` | Message court au-dessus de la barre d'onglets (« Reporté à demain », avec « Annuler ») ; jamais sur une fiche qui a un bouton en bas |
 

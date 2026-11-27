@@ -12,6 +12,7 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/obligations/debt_list.dart';
+import 'package:kibuo/domain/overview/category_lines.dart';
 import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
 import 'package:kibuo/domain/overview/overview_totals.dart';
@@ -22,6 +23,7 @@ import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/money_format.dart';
+import 'package:kibuo/ui/overview/enlarged_tiles.dart';
 import 'package:kibuo/ui/overview/followed_tile.dart';
 import 'package:kibuo/ui/recurrences/planned_operation.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
@@ -48,11 +50,16 @@ typedef Coming = ({
 class FollowedData {
   const FollowedData({
     required this.spends,
+    required this.gains,
+    required this.accounts,
     required this.parents,
     required this.categories,
     required this.accountsTotal,
     required this.accountChanges,
     required this.worthChanges,
+    this.accountMoves = const [],
+    this.accountNames = const {},
+    this.reserved = 0,
     required this.debts,
     required this.projects,
     required this.contributions,
@@ -62,10 +69,17 @@ class FollowedData {
   /// Expenses with their category.
   final List<CategorySpend> spends;
 
+  /// Incomes with their category.
+  final List<CategorySpend> gains;
+
+  /// Each open account and its balance in the main currency, the largest
+  /// first.
+  final List<({String name, int balance})> accounts;
+
   /// A subcategory's parent, by id.
   final Map<String, String> parents;
 
-  /// Expense categories by id, subcategories included.
+  /// Categories by id, subcategories included.
   final Map<String, CategoryInfo> categories;
 
   /// The accounts' total today, in the main currency (Accueil's « Total »).
@@ -76,6 +90,15 @@ class FollowedData {
   /// currency.
   final List<({DateTime at, int change})> accountChanges;
   final List<({DateTime at, int change})> worthChanges;
+
+  /// Each account's moves, by its id, in the main currency (the Patrimoine
+  /// tab's « Mes comptes sur la période »), and their names.
+  final List<({String account, DateTime at, int change})> accountMoves;
+  final Map<String, String> accountNames;
+
+  /// What the running projects hold back in the accounts, in the main
+  /// currency.
+  final int reserved;
 
   /// Debts and receivables not settled.
   final List<DebtLine> debts;
@@ -107,7 +130,10 @@ Future<FollowedData> loadFollowedData(
         rate.convert(Money(m.minor.abs(), m.currency), to: main).minor;
   }
 
-  final tops = await data.categories.categories(CategoryKind.out);
+  final tops = [
+    ...await data.categories.categories(CategoryKind.out),
+    ...await data.categories.categories(CategoryKind.into),
+  ];
   final parents = <String, String>{};
   final categories = <String, CategoryInfo>{};
   for (final c in tops) {
@@ -128,23 +154,38 @@ Future<FollowedData> loadFollowedData(
       (at: a.openingDate.toLocal(), change: inMain(a.opening)),
   ];
   final worthChanges = [...accountChanges];
+  final accountMoves = <({String account, DateTime at, int change})>[
+    for (final a in accounts)
+      (account: a.id, at: a.openingDate.toLocal(), change: inMain(a.opening)),
+  ];
   final spends = <CategorySpend>[];
+  final gains = <CategorySpend>[];
   for (final t in counted) {
     final at = t.date.toLocal();
     if (t.kind == EntryKind.expense && t.categoryId != null) {
       spends.add((at: at, category: t.categoryId!, amount: t.total.total));
+    }
+    if (t.kind == EntryKind.income && t.categoryId != null) {
+      gains.add((at: at, category: t.categoryId!, amount: t.total.total));
     }
     for (final MapEntry(key: account, value: change) in effectsOf(t).entries) {
       final code = currencyOfAccount[account];
       if (code == null || change == 0) continue;
       final moved = (at: at, change: inMain(Money(change, code)));
       accountChanges.add(moved);
+      accountMoves.add((account: account, at: at, change: moved.change));
       // A debt moves the accounts and the debt alike: no change in worth.
       if (t.debtId == null) worthChanges.add(moved);
     }
   }
 
   final projects = await data.projects?.projects() ?? const <ProjectInfo>[];
+  final held = await data.projects?.reserved() ?? const <String, int>{};
+  final reserved = held.entries.fold(
+    0,
+    (sum, e) =>
+        sum + inMain(Money(e.value, currencyOfAccount[e.key] ?? main.code)),
+  );
   final contributions = <String, List<ContributionLine>>{
     for (final p in projects) p.id: await data.projects!.contributions(p.id),
   };
@@ -183,13 +224,21 @@ Future<FollowedData> loadFollowedData(
   }
   coming.sort((a, b) => a.day.compareTo(b.day));
 
+  final balances = [
+    for (final a in accounts) (name: a.name, balance: inMain(a.balance)),
+  ]..sort((a, b) => b.balance - a.balance);
   return FollowedData(
     spends: spends,
+    gains: gains,
+    accounts: balances,
     parents: parents,
     categories: categories,
     accountsTotal: accountsTotal,
     accountChanges: accountChanges,
     worthChanges: worthChanges,
+    accountMoves: accountMoves,
+    accountNames: {for (final a in accounts) a.id: a.name},
+    reserved: reserved,
     debts: [
       for (final d in debts)
         if (!d.settled) d,
@@ -211,6 +260,7 @@ class FollowedLinks {
     this.projects,
     this.accounts,
     this.debts,
+    this.recurrences,
   });
 
   /// Opérations on a month, filtered on a category or not.
@@ -221,6 +271,9 @@ class FollowedLinks {
   final VoidCallback? projects;
   final VoidCallback? accounts;
   final void Function(DebtDirection tab)? debts;
+
+  /// The recurrences (À venir's action).
+  final VoidCallback? recurrences;
 }
 
 /// The period the tiles look at, with what the chart already summed.
@@ -237,7 +290,28 @@ class FollowedPeriod {
     required this.compared,
     required this.main,
     required this.rates,
+    this.label = '',
+    this.inlineLabel = '',
+    this.grouping = Grouping.day,
+    this.comparedBars,
+    this.comparedName,
+    this.comparedWindow,
   });
+
+  /// The period's name on an enlarged tile (« Novembre »), and as said
+  /// inside a line (« novembre »).
+  final String label;
+  final String inlineLabel;
+
+  /// How [bars] cut the period.
+  final Grouping grouping;
+
+  /// The compared period's bars, its name as said inside a line
+  /// (« octobre »), and its stretch up to the same date; null without
+  /// comparison.
+  final List<FlowTotals>? comparedBars;
+  final String? comparedName;
+  final TimeSpan? comparedWindow;
 
   final PeriodKind kind;
   final int offset;
@@ -313,7 +387,19 @@ class FollowedSection extends StatelessWidget {
         ? const <Widget>[]
         : [
             for (final f in expanded ? shown : shown.take(4))
-              _Tiles(l, lang, period, data!, book, choice, links).tile(f),
+              _Tiles(l, lang, period, data!, book, choice, links).tile(
+                f,
+                open: () => openEnlarged(
+                  context,
+                  tiles: shown,
+                  initial: shown.indexOf(f),
+                  period: period,
+                  data: data!,
+                  book: book,
+                  choice: choice,
+                  links: links,
+                ),
+              ),
           ];
     final title = switch (period.kind) {
       _ when period.offset != 0 => periodLabel,
@@ -474,7 +560,23 @@ class _Tiles {
     return () => open(p.budgetMonth, category);
   }
 
-  Widget tile(Followed f) => switch (f) {
+  /// The tile; touching it opens the tiles enlarged on it.
+  Widget tile(Followed f, {VoidCallback? open}) {
+    final made = _made(f);
+    if (open == null || made is! FollowedTile) return made;
+    return FollowedTile(
+      name: made.name,
+      value: made.value,
+      valueColor: made.valueColor,
+      visual: made.visual,
+      detail: made.detail,
+      detailColor: made.detailColor,
+      arrowUp: made.arrowUp,
+      onTap: open,
+    );
+  }
+
+  Widget _made(Followed f) => switch (f) {
     Followed.spent => _spent(),
     Followed.received => _received(),
     Followed.savings => _savings(),
@@ -679,19 +781,23 @@ class _Tiles {
           .format(BudgetPeriod.containing(start, startDay: p.startDay).month);
 
   Widget _topCategory() {
-    final top = topCategory(
+    final top = categoryLines(
       p.span,
       data.spends,
       parentOf: (id) => data.parents[id] ?? id,
-      exits: p.totals.exits.minor,
+      isDebt: isDebtCategoryId,
+      total: p.totals.exits.minor,
+      withFees: true,
       main: main,
       rateFor: p.rateFor,
-    );
+    ).firstOrNull;
     final name = p.scale == PeriodScale.day
         ? l.followedTopCategoryDay
         : l.followedTopCategory;
-    final category = top == null ? null : data.categories[top.category];
-    if (top == null || category == null) {
+    final category = top?.category == null
+        ? null
+        : data.categories[top!.category];
+    if (top == null) {
       return FollowedTile(
         name: name,
         value: l.followedNoExit,
@@ -702,8 +808,15 @@ class _Tiles {
     }
     return FollowedTile(
       name: name,
-      value: categoryName(l, category),
-      visual: TileBar(top.share / 100, KibuoColors.debtLine),
+      value: category != null
+          ? categoryName(l, category)
+          : top.kind == CategoryLineKind.debts
+          ? l.overviewDebtsLine
+          : l.overviewFeesLine,
+      visual: TileBar(
+        top.share / 100,
+        categoryHue(category?.color ?? CategoryColor.grey),
+      ),
       detail: l.followedAmountShare(money(top.amount), top.share),
       onTap: _toOperations(top.category),
     );

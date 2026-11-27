@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
+import 'package:kibuo/ui/kit/share_bar.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -104,7 +105,7 @@ class FollowedTile extends StatelessWidget {
                 child: switch (visual) {
                   null => null,
                   TileBar(:final share, :final color) => Center(
-                    child: _Bar(share: share, color: color),
+                    child: ShareBar(share: share, color: color),
                   ),
                   final TileVisual v => CustomPaint(painter: _VisualPainter(v)),
                 },
@@ -139,32 +140,6 @@ class FollowedTile extends StatelessWidget {
       ),
     );
   }
-}
-
-class _Bar extends StatelessWidget {
-  const _Bar({required this.share, required this.color});
-
-  final double share;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    height: 6,
-    decoration: BoxDecoration(
-      color: KibuoColors.background,
-      borderRadius: BorderRadius.circular(3),
-    ),
-    alignment: Alignment.centerLeft,
-    child: FractionallySizedBox(
-      widthFactor: share.clamp(0, 1).toDouble(),
-      child: Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(3),
-        ),
-      ),
-    ),
-  );
 }
 
 /// The curve and the columns, drawn as the canvas does in a 120 × 30 box

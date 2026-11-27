@@ -4,6 +4,7 @@ import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
+import 'package:kibuo/ui/kit/color_grid.dart';
 import 'package:kibuo/ui/kit/fields.dart';
 import 'package:kibuo/ui/kit/form_top_bar.dart';
 import 'package:kibuo/ui/kit/icon_grid.dart';
@@ -38,6 +39,11 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   final _name = TextEditingController();
   late String _icon = widget.category?.icon ?? categoryIcons.keys.first;
   late final String _firstIcon = _icon;
+
+  /// A category's colour; a new one starts with the least used of its list
+  /// (ADR 0014). A subcategory has none.
+  CategoryColor? _color;
+  CategoryColor? _firstColor;
   final _nameKey = GlobalKey();
 
   /// Saving touched without a name: it shows in red.
@@ -45,7 +51,10 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
 
   /// Something typed or chosen (DIRECTION, 25 November 2026).
   bool get _touched =>
-      _name.text.trim().isNotEmpty || _icon != _firstIcon || _editing;
+      _name.text.trim().isNotEmpty ||
+      _icon != _firstIcon ||
+      _color != _firstColor ||
+      _editing;
 
   void _trySave() {
     if (_name.text.trim().isNotEmpty) {
@@ -65,6 +74,16 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   void initState() {
     super.initState();
     _name.addListener(() => setState(() {}));
+    if (!_isSub) {
+      final own = widget.category?.color;
+      if (own != null) {
+        _color = _firstColor = own;
+      } else {
+        widget.categories.nextColor(widget.kind).then((c) {
+          if (mounted) setState(() => _color = _firstColor = c);
+        });
+      }
+    }
   }
 
   @override
@@ -91,6 +110,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
         name: _name.text,
         icon: _icon,
         parentId: widget.parent?.id,
+        color: _color,
       );
     } else {
       // An untouched provided name keeps following the app's language.
@@ -99,6 +119,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
         category.id,
         name: renamed || category.name != null ? _name.text : null,
         icon: _icon,
+        color: _isSub ? null : _color,
       );
     }
     if (mounted) Navigator.of(context).pop(true);
@@ -173,6 +194,22 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                     chosen: _icon,
                     onPick: (name) => setState(() => _icon = name),
                   ),
+                  if (_color case final color?) ...[
+                    const SizedBox(height: 16),
+                    FieldLabel(l.categoryColor),
+                    ColorGrid<CategoryColor>(
+                      colors: [
+                        for (final c in CategoryColor.choosable)
+                          (
+                            value: c,
+                            hue: categoryHue(c),
+                            name: l.categoryColorName(c.name),
+                          ),
+                      ],
+                      chosen: color,
+                      onPick: (c) => setState(() => _color = c),
+                    ),
+                  ],
                   if (_editing) ...[
                     const SizedBox(height: 24),
                     SettingsCard(
@@ -230,7 +267,7 @@ class _ParentRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CategoryTile(category: parent),
+          CategoryTile(category: parent, colored: true),
           const SizedBox(width: 8),
           Expanded(
             child: Text(name, style: KibuoType.body.copyWith(fontSize: 16)),

@@ -1,5 +1,3 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/category_repository.dart';
@@ -21,6 +19,7 @@ import 'package:kibuo/ui/kit/empty_card.dart';
 import 'package:kibuo/ui/kit/fading_row.dart';
 import 'package:kibuo/ui/kit/group_title.dart';
 import 'package:kibuo/ui/kit/month_picker.dart';
+import 'package:kibuo/ui/kit/page_veil.dart';
 import 'package:kibuo/ui/kit/sheet.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/fit_amount.dart';
@@ -1288,18 +1287,7 @@ class _SwipeTipState extends State<_SwipeTip>
     final l = AppLocalizations.of(context);
     return Stack(
       children: [
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: widget.onDone,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                child: const ColoredBox(color: KibuoColors.tipScrim),
-              ),
-            ),
-          ),
-        ),
+        Positioned.fill(child: PageVeil(onTap: widget.onDone)),
         Positioned(
           left: 16,
           right: 16,

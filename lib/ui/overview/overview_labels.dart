@@ -1,10 +1,67 @@
 import 'package:intl/intl.dart';
+import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/overview/overview_choice.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
 import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 
-String _cap(String t) => t.isEmpty ? t : t[0].toUpperCase() + t.substring(1);
+String _cap(String t) => capitalized(t);
+
+/// [t] with its first letter in capitals.
+String capitalized(String t) =>
+    t.isEmpty ? t : t[0].toUpperCase() + t.substring(1);
+
+/// « 1er nov. », not « 1 nov. », in French.
+String withFirst(String text, DateTime day, String lang) =>
+    lang == 'fr' && day.day == 1
+    ? text.replaceFirst(RegExp(r'(?<![0-9A-Za-z])1(?![0-9])'), '1er')
+    : text;
+
+/// The period on an enlarged tile (canvas TuileDepenseA): a month of this
+/// year by its name alone, as said inside a line (« novembre »), else as
+/// in the header.
+String tilePeriodName(
+  AppLocalizations l,
+  String lang,
+  PeriodKind kind,
+  int offset,
+  TimeSpan span, {
+  required DateTime now,
+}) {
+  if (kind == PeriodKind.month) {
+    final named = DateTime(span.lastDay.year, span.lastDay.month);
+    return named.year == now.year
+        ? DateFormat.MMMM(lang).format(named)
+        : DateFormat.yMMMM(lang).format(named);
+  }
+  return periodLabel(l, lang, kind, offset, span);
+}
+
+/// Over which time the worth (or an account) changed: « ce mois-ci »,
+/// « en octobre »… (PRODUCT, Patrimoine tab, 27 November 2026).
+String worthWhen(
+  AppLocalizations l,
+  String lang,
+  PeriodKind kind,
+  int offset,
+  TimeSpan span, {
+  required bool running,
+}) {
+  final last = span.lastDay;
+  return switch (kind) {
+    PeriodKind.month when running => l.worthWhen('thisMonth'),
+    PeriodKind.month => l.worthIn(
+      DateFormat.MMMM(lang).format(DateTime(last.year, last.month)),
+    ),
+    PeriodKind.year when running => l.worthWhen('thisYear'),
+    PeriodKind.year => l.worthIn('${last.year}'),
+    PeriodKind.today when offset == 0 => l.worthWhen('today'),
+    PeriodKind.today || PeriodKind.yesterday => l.worthWhen('yesterday'),
+    PeriodKind.last24Hours => l.worthWhen('day24'),
+    PeriodKind.last7Days => l.worthWhen('week'),
+    PeriodKind.custom => l.worthWhen('other'),
+  };
+}
 
 /// A chip of the « Période » sheet.
 String kindName(AppLocalizations l, PeriodKind kind) => switch (kind) {
@@ -119,4 +176,54 @@ String? barMark(
       final step = n <= 6 ? 1 : (n / 6).ceil();
       return i % step == 0 ? DateFormat.MMM(lang).format(named) : null;
   }
+}
+
+/// Days under a curve: « 1er · 12 nov. · 30 » while it runs, « 1er ·
+/// 30 nov. » once over (canvas TuileDepenseA, TuileDepenseA3).
+List<String> dayAxis(
+  AppLocalizations l,
+  String lang,
+  DateTime first,
+  DateTime last,
+  DateTime? today,
+) {
+  String day(DateTime d) => withFirst(DateFormat.MMMd(lang).format(d), d, lang);
+  final middle =
+      today != null &&
+      calendarDays(first, today) > 0 &&
+      calendarDays(today, last) > 0;
+  final same = first.year == last.year && first.month == last.month;
+  return [
+    same ? l.enlAxisDay(first.day) : day(first),
+    if (middle) day(today),
+    same && middle ? '${last.day}' : day(last),
+  ];
+}
+
+/// The marks under a curve of [bars]: its start, [today] while it runs, its
+/// end, as hours, days or months by [grouping].
+List<String> curveAxis(
+  AppLocalizations l,
+  String lang,
+  List<TimeSpan> bars,
+  Grouping grouping, {
+  required int startDay,
+  DateTime? today,
+}) {
+  final first = bars.first.start;
+  final last = bars.last.start;
+  if (grouping == Grouping.day) return dayAxis(l, lang, first, last, today);
+  String mark(DateTime d) => switch (grouping) {
+    Grouping.hour => l.overviewHourMark(d.hour),
+    Grouping.month => DateFormat.MMM(
+      lang,
+    ).format(BudgetPeriod.containing(d, startDay: startDay).month),
+    _ => withFirst(DateFormat.MMMd(lang).format(d), d, lang),
+  };
+  final at = today == null ? -1 : bars.indexWhere((b) => b.contains(today));
+  return [
+    mark(first),
+    if (at > 0 && at < bars.length - 1) mark(today!),
+    mark(last),
+  ];
 }

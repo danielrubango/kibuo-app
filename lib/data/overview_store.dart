@@ -73,6 +73,7 @@ class OverviewStore {
         on: {for (final n in json['on'] as List<Object?>) ?names[n]},
         budget: json['budget'] as String?,
         project: json['project'] as String?,
+        bars: json['bars'] == true,
       );
     } on FormatException {
       return const FollowedChoice();
@@ -87,6 +88,7 @@ class OverviewStore {
       'on': [for (final f in choice.shown) f.name],
       'budget': choice.budget,
       'project': choice.project,
+      'bars': choice.bars,
     }),
   );
 }

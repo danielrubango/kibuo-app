@@ -79,19 +79,23 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
     return Money.fromMajor(typed.endsWith('.') ? '${typed}0' : typed, _main);
   }
 
-  void _key(String k) => setState(
-    () => _typed = typeKey(
-      _typed,
+  /// The amount the keypad opened on, shown selected: the first key
+  /// replaces it (PRODUCT, 27 November 2026).
+  late bool _selected = _keypad && _typed.isNotEmpty;
+
+  void _key(String k) => setState(() {
+    _typed = typeKey(
+      _selected ? '' : _typed,
       k,
       decimals: _main.usesDecimals ? _main.digits : 0,
-    ),
-  );
+    );
+    _selected = false;
+  });
 
-  void _delete() => setState(
-    () => _typed = _typed.isEmpty
-        ? _typed
-        : _typed.substring(0, _typed.length - 1),
-  );
+  void _delete() => setState(() {
+    _typed = eraseKey(_typed, selected: _selected);
+    _selected = false;
+  });
 
   Future<void> _pickCategory() async {
     final l = AppLocalizations.of(context);
@@ -199,9 +203,26 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
                     value: shownTyped(context, _typed),
                     unit: _main.symbol,
                     focused: _keypad,
+                    selected: _keypad && _selected,
+                    onSelect: () {
+                      setState(() {
+                        _keypad = true;
+                        _selected = _typed.isNotEmpty;
+                      });
+                      revealAboveKeypad(_amountKey);
+                    },
                     missing: _tried && _amount.minor <= 0,
                     onTap: () {
-                      setState(() => _keypad = true);
+                      // Touched again while typing: kept, the keys follow
+                      // on.
+                      if (_keypad) {
+                        setState(() => _selected = false);
+                        return;
+                      }
+                      setState(() {
+                        _keypad = true;
+                        _selected = _typed.isNotEmpty;
+                      });
                       revealAboveKeypad(_amountKey);
                     },
                   ),

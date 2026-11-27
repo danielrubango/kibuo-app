@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:kibuo/data/database.steps.dart';
-
+import 'package:kibuo/domain/categories/category_color.dart';
 import 'package:kibuo/domain/sync/hybrid_clock.dart';
 
 part 'database.g.dart';
@@ -116,6 +116,10 @@ class Categories extends Table with SyncColumns {
 
   /// Out of the choices; its operations keep it.
   BoolColumn get removed => boolean().withDefault(const Constant(false))();
+
+  /// Its colour's name (« rose »), ADR 0014; null for a subcategory, which
+  /// shows its category's.
+  TextColumn get color => text().nullable()();
 }
 
 /// Expenses and income (GLOSSARY: Opération). Amounts are positive, in
@@ -353,7 +357,7 @@ class KibuoDatabase extends _$KibuoDatabase {
 
   /// The tables' version this kibuo reads; a backup above it is refused.
   /// Bump with every change to the tables, and add the step to [migration].
-  static const currentSchema = 14;
+  static const currentSchema = 15;
 
   @override
   int get schemaVersion => currentSchema;
@@ -430,12 +434,43 @@ class KibuoDatabase extends _$KibuoDatabase {
           schema.contributions.fromAccountId,
         );
       },
+      from14To15: (m, schema) async {
+        await m.addColumn(schema.categories, schema.categories.color);
+        await _colourCategories();
+      },
     ),
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
       if (details.versionNow >= 11) await _repairDebts();
     },
   );
+
+  /// Gives every category its starting colour (ADR 0014), written straight
+  /// in, without a new version: each phone reaches the same colours for
+  /// the provided categories.
+  Future<void> _colourCategories() async {
+    final rows = await customSelect(
+      'SELECT id, kind, key, parent_id, position, color FROM categories',
+    ).get();
+    final colors = startColors([
+      for (final r in rows)
+        (
+          id: r.read<String>('id'),
+          kind: r.read<String>('kind'),
+          key: r.readNullable<String>('key'),
+          parentId: r.readNullable<String>('parent_id'),
+          position: r.read<int>('position'),
+          color: CategoryColor.named(r.readNullable<String>('color')),
+        ),
+    ]);
+    for (final MapEntry(key: id, value: color) in colors.entries) {
+      await customUpdate(
+        'UPDATE categories SET color = ? WHERE id = ?',
+        variables: [Variable.withString(color.name), Variable.withString(id)],
+        updates: {categories},
+      );
+    }
+  }
 
   /// A trial build once took some data to version 11 without the debts:
   /// what is missing is added, nothing is removed.

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart' show kDoubleTapTimeout;
 import 'package:flutter/material.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -268,10 +269,19 @@ class ValueField extends StatelessWidget {
     this.note,
     this.fill = KibuoColors.surface,
     this.missing = false,
+    this.selected = false,
+    this.onSelect,
   });
 
   /// Required and left empty: outlined in red, nothing written.
   final bool missing;
+
+  /// The amount the keypad opened on, on a pale green ground, without the
+  /// caret: the first key replaces it (DIRECTION « Champs »).
+  final bool selected;
+
+  /// A double touch or a long press: the whole amount selected again.
+  final VoidCallback? onSelect;
 
   final String value;
   final String? label;
@@ -298,9 +308,9 @@ class ValueField extends StatelessWidget {
         : fill;
     final empty = value.isEmpty;
     // The label is part of the field: touching it opens the keypad too.
-    return GestureDetector(
+    return SelectTaps(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
+      onSelect: onSelect,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -336,16 +346,20 @@ class ValueField extends StatelessWidget {
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            empty ? placeholder : value,
-                            maxLines: 1,
-                            style: KibuoType.enteredValue.copyWith(
-                              color: empty ? KibuoColors.inkMuted : null,
+                          child: SelectedValue(
+                            selected: selected && !empty,
+                            child: Text(
+                              empty ? placeholder : value,
+                              maxLines: 1,
+                              style: KibuoType.enteredValue.copyWith(
+                                color: empty ? KibuoColors.inkMuted : null,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      if (focused) const BlinkingCaret(),
+                      if (focused && !(selected && !empty))
+                        const BlinkingCaret(),
                     ],
                   ),
                 ),
@@ -382,10 +396,14 @@ class OperationAmountField extends StatelessWidget {
     this.onUnitTap,
     this.focused = true,
     this.missing = false,
+    this.selected = false,
   });
 
   /// No amount yet when saving: outlined in red.
   final bool missing;
+
+  /// The amount the keypad opened on, shown selected (as [ValueField]).
+  final bool selected;
 
   final String value;
   final String unit;
@@ -422,15 +440,21 @@ class OperationAmountField extends StatelessWidget {
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          value.isEmpty ? '0' : value,
-                          style: KibuoType.bigAmount.copyWith(
-                            color: value.isEmpty ? KibuoColors.inkMuted : null,
+                        child: SelectedValue(
+                          selected: selected && value.isNotEmpty,
+                          child: Text(
+                            value.isEmpty ? '0' : value,
+                            style: KibuoType.bigAmount.copyWith(
+                              color: value.isEmpty
+                                  ? KibuoColors.inkMuted
+                                  : null,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    if (focused) const BlinkingCaret(height: 30),
+                    if (focused && !(selected && value.isNotEmpty))
+                      const BlinkingCaret(height: 30),
                   ],
                 ),
               ),
@@ -458,6 +482,70 @@ class OperationAmountField extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A touch, and a second touch soon after or a long press for [onSelect]:
+/// the first touch is never held back, unlike a double tap listened to by
+/// Flutter, which would delay every touch (and the currency pill's).
+class SelectTaps extends StatefulWidget {
+  const SelectTaps({super.key, required this.child, this.onTap, this.onSelect});
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onSelect;
+
+  @override
+  State<SelectTaps> createState() => _SelectTapsState();
+}
+
+class _SelectTapsState extends State<SelectTaps> {
+  DateTime? _last;
+
+  void _tap() {
+    final now = DateTime.now();
+    final last = _last;
+    _last = now;
+    final select = widget.onSelect;
+    if (select != null &&
+        last != null &&
+        now.difference(last) < kDoubleTapTimeout) {
+      _last = null;
+      select();
+      return;
+    }
+    widget.onTap?.call();
+  }
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: widget.onTap == null && widget.onSelect == null ? null : _tap,
+    onLongPress: widget.onSelect,
+    child: widget.child,
+  );
+}
+
+/// A value shown selected, like a selected text: a pale green ground
+/// behind it.
+class SelectedValue extends StatelessWidget {
+  const SelectedValue({super.key, required this.selected, required this.child});
+
+  final bool selected;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => selected
+      ? DecoratedBox(
+          decoration: BoxDecoration(
+            color: KibuoColors.accentTintStrong,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: child,
+          ),
+        )
+      : child;
 }
 
 /// The green caret of a field typed on the Kibuo keypad. It blinks for a few

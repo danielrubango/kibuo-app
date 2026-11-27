@@ -86,6 +86,10 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   late bool _overdraft = widget.account?.overdraft.allowed ?? false;
   String _limit = '';
   _Typing _typing = _Typing.opening;
+
+  /// The value the keypad opened on, shown selected: the first key
+  /// replaces it (PRODUCT, 27 November 2026).
+  bool _selected = false;
   bool get _typingLimit => _typing == _Typing.limit;
 
   // « Solde actuel » (canvas RegulFormA): today's balance, typed again.
@@ -146,36 +150,61 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     if (c == null) return;
     // The keypad shows « , » with cents, « 000 » without (PRODUCT).
     final decimals = c.usesDecimals ? c.digits : 0;
+    String typed(String was) =>
+        typeKey(_selected ? '' : was, k, decimals: decimals);
     switch (_typing) {
       case _Typing.opening:
-        _typed = typeKey(_typed, k, decimals: decimals);
+        _typed = typed(_typed);
       case _Typing.limit:
-        _limit = typeKey(_limit, k, decimals: decimals);
+        _limit = typed(_limit);
       case _Typing.current:
-        _current = typeKey(_current, k, decimals: decimals);
+        _current = typed(_current);
     }
+    _selected = false;
   });
-
-  String _erase(String s) => s.isEmpty ? s : s.substring(0, s.length - 1);
 
   void _delete() => setState(() {
     switch (_typing) {
       case _Typing.opening:
-        _typed = _erase(_typed);
+        _typed = eraseKey(_typed, selected: _selected);
       case _Typing.limit:
-        _limit = _erase(_limit);
+        _limit = eraseKey(_limit, selected: _selected);
       case _Typing.current:
-        _current = _erase(_current);
+        _current = eraseKey(_current, selected: _selected);
     }
+    _selected = false;
   });
+
+  /// A double touch or a long press on [typing]: its whole value selected
+  /// again, the keypad open on it.
+  void _select(_Typing typing) {
+    _openKeypad(typing);
+    setState(() {
+      _selected = switch (typing) {
+        _Typing.opening => _typed,
+        _Typing.limit => _limit,
+        _Typing.current => _current,
+      }.isNotEmpty;
+    });
+  }
 
   /// Opens Kibuo's keypad on one of the form's values.
   void _openKeypad(_Typing typing) {
+    // Touched again while typing it: kept, the keys follow on.
+    if (_keypad && _typing == typing) {
+      setState(() => _selected = false);
+      return;
+    }
     // The phone's keyboard gives way to Kibuo's.
     FocusScope.of(context).unfocus();
     setState(() {
       _keypad = true;
       _typing = typing;
+      _selected = switch (typing) {
+        _Typing.opening => _typed,
+        _Typing.limit => _limit,
+        _Typing.current => _current,
+      }.isNotEmpty;
     });
     revealAboveKeypad(switch (typing) {
       _Typing.opening => _openingKey,
@@ -480,7 +509,9 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                 unit: currency.code,
                 fill: KibuoColors.background,
                 focused: _keypad && _typingLimit,
+                selected: _keypad && _typingLimit && _selected,
                 onTap: () => _openKeypad(_Typing.limit),
+                onSelect: () => _select(_Typing.limit),
                 note: l.overdraftNoLimitHelp,
               ),
             ),
@@ -584,7 +615,10 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                           '${shownTyped(context, _current)}',
                       unit: currency.code,
                       focused: _keypad && _typing == _Typing.current,
+                      selected:
+                          _keypad && _typing == _Typing.current && _selected,
                       onTap: () => _openKeypad(_Typing.current),
+                      onSelect: () => _select(_Typing.current),
                       // While typing it with overdraft allowed, how to make
                       // it negative (canvas SigneD); nothing about it
                       // otherwise.
@@ -622,7 +656,10 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       unit: currency.code,
                       onUnitTap: _pickCurrency,
                       focused: _keypad && _typing == _Typing.opening,
+                      selected:
+                          _keypad && _typing == _Typing.opening && _selected,
                       onTap: () => _openKeypad(_Typing.opening),
+                      onSelect: () => _select(_Typing.opening),
                       note: l.accountCurrencyNote(
                         currencyName(context, currency),
                         currency.code,

@@ -241,4 +241,79 @@ void main() {
     expect(soonestDue([(id: 'someday', due: null, running: true)]), 'someday');
     expect(soonestDue(const []), isNull);
   });
+
+  group('the enlarged tiles', () {
+    final november = TimeSpan(DateTime(2026, 11), DateTime(2026, 12));
+    CategorySpend spend(int day, String category, int minor) => (
+      at: DateTime(2026, 11, day, 12),
+      category: category,
+      amount: Money(minor, 'USD'),
+    );
+
+    test('the first three categories, each with its share of all exits', () {
+      final top = topCategories(
+        november,
+        [
+          spend(2, 'food-restaurant', 3000),
+          spend(3, 'food', 2000),
+          spend(4, 'rent', 4000),
+          spend(5, 'taxi', 500),
+          spend(6, 'fun', 500),
+        ],
+        parentOf: (id) => id == 'food-restaurant' ? 'food' : id,
+        exits: 10000,
+        main: usd,
+        rateFor: rateFor,
+      );
+      expect([for (final t in top) t.category], ['food', 'rent', 'taxi']);
+      expect([for (final t in top) t.share], [50, 40, 5]);
+    });
+
+    test('the biggest entry of the period', () {
+      final big = biggest(
+        november,
+        [
+          spend(1, 'salary', 30000),
+          spend(11, 'sales', 5000),
+          (
+            at: DateTime(2026, 10, 30),
+            category: 'salary',
+            amount: const Money(99900, 'USD'),
+          ),
+        ],
+        main: usd,
+        rateFor: rateFor,
+      )!;
+      expect(big.category, 'salary');
+      expect(big.amount, 30000);
+      expect(big.at, DateTime(2026, 11, 1, 12));
+      expect(biggest(november, const [], main: usd, rateFor: rateFor), isNull);
+    });
+
+    test('the share saved: what is left of the entries', () {
+      expect(savedShare(entries: 37400, exits: 27300), 27);
+      expect(savedShare(entries: 10000, exits: 12000), -20);
+      expect(savedShare(entries: 0, exits: 500), isNull);
+    });
+
+    test(
+      'around the average: the highest, the lowest spent, the days above',
+      () {
+        final s = spreadOf([4100, 0, 350, 6400, 2550], average: 2680);
+        expect(s.highest, 3);
+        expect(
+          s.lowest,
+          2,
+          reason: 'a day with nothing spent is not the lowest',
+        );
+        expect(s.above, 2);
+        expect(spreadOf([0, 0], average: 0).lowest, isNull);
+      },
+    );
+
+    test('the three priciest, in order, the first one when equal', () {
+      expect(topIndexes([5, 9, 0, 9, 3, 7], 3), [1, 3, 5]);
+      expect(topIndexes([0, 0, 2], 3), [2]);
+    });
+  });
 }
