@@ -265,26 +265,26 @@ Les captures PNG de la page « Revue de fidélité » (écran construit à côt�
 | [ApercuTMois](ApercuTMois.dc.html) | Points suivis · 1 mois : 4 tuiles, « Voir les 4 autres » déplie le reste | retenue | `lib/ui/overview/followed_section.dart` |
 | [ApercuTPerso](ApercuTPerso.dc.html) | Points suivis · période personnalisée (73 jours) : se règle sur sa longueur | retenue | `lib/ui/overview/followed_section.dart` |
 | [ApercuTSuivre](ApercuTSuivre.dc.html) | Points suivis · « Suivre » : choisir ses tuiles, dont celles de l’écran 4 | retenue | `lib/ui/overview/follow_sheet.dart` |
-| [ApercuTuile](ApercuTuile.dc.html) | Une tuile agrandie : carte au centre, fond flouté, la suivante dépasse | retenue | pas encore construit (onglet Aperçu provisoire, phase 7) |
-| [TuileDepenseA](TuileDepenseA.dc.html) | Tuile agrandie · Dépensé : courbes cumulées, trait du jour, repères en lignes | validée le 27 novembre 2026 | pas encore construit |
-| [TuileDepenseA3-cas1](TuileDepenseA3-cas1.dc.html) | Dépensé · le trait du jour le 30, au bord droit | validée le 27 novembre 2026 | pas encore construit |
-| [TuileDepenseA3-cas2](TuileDepenseA3-cas2.dc.html) | Dépensé · le trait du jour le 2, en bas à gauche | validée le 27 novembre 2026 | pas encore construit |
-| [TuileRecuA](TuileRecuA.dc.html) | Tuile agrandie · Reçu : courbes cumulées, repères en lignes | validée le 27 novembre 2026 | pas encore construit |
-| [TuileRecuR3](TuileRecuR3.dc.html) | « Suivre » · carte Affichage : Dépensé, Reçu et Épargne en Courbe ou Bâtonnets | validée le 27 novembre 2026 | pas encore construit |
-| [TuileEpargneE3](TuileEpargneE3.dc.html) | Tuile agrandie · Épargne : courbe et zéro, pastille « 27 % gardés » | validée le 27 novembre 2026 | pas encore construit |
-| [TuileMoyenneA](TuileMoyenneA.dc.html) | Tuile agrandie · Moyenne : barres par jour, moyenne en pointillé | validée le 27 novembre 2026 | pas encore construit |
-| [TuileCategorieA](TuileCategorieA.dc.html) | Tuile agrandie · Catégorie n° 1 : les trois premières en barres | validée le 27 novembre 2026 | pas encore construit |
-| [TuilePlusCherK2](TuilePlusCherK2.dc.html) | Tuile agrandie · Jour le plus cher : le mois en calendrier, montants dans les cases | validée le 27 novembre 2026 | pas encore construit |
-| [TuilePlusCherK2-jour](TuilePlusCherK2-jour.dc.html) | Jour le plus cher sur un jour : les 24 heures | validée le 27 novembre 2026 | pas encore construit |
-| [TuilePlusCherK2-semaine](TuilePlusCherK2-semaine.dc.html) | Jour le plus cher sur une semaine : les 7 jours | validée le 27 novembre 2026 | pas encore construit |
-| [TuilePlusCherK2-annee](TuilePlusCherK2-annee.dc.html) | Mois le plus cher sur une année : une case par mois | validée le 27 novembre 2026 | pas encore construit |
-| [TuileAVenirAB](TuileAVenirAB.dc.html) | Tuile agrandie · À venir : ruban des 14 jours, liste datée | validée le 27 novembre 2026 | pas encore construit |
-| [TuileBudgetAB](TuileBudgetAB.dc.html) | Tuile agrandie · Un budget : au fil du mois, repères en lignes | validée le 27 novembre 2026 | pas encore construit |
-| [TuileDettesAC](TuileDettesAC.dc.html) | Tuile agrandie · Dettes : barre du remboursé, date d’échéance en carré gris | validée le 27 novembre 2026 | pas encore construit |
-| [TuileCreancesAC](TuileCreancesAC.dc.html) | Tuile agrandie · Créances : comme Dettes, en vert | validée le 27 novembre 2026 | pas encore construit |
-| [TuileProjetA](TuileProjetA.dc.html) | Tuile agrandie · Un projet : barre et repère du plan | validée le 27 novembre 2026 | pas encore construit |
-| [TuileComptesB](TuileComptesB.dc.html) | Tuile agrandie · Comptes : barre découpée par compte | validée le 27 novembre 2026 | pas encore construit |
-| [TuilePatrimoineA](TuilePatrimoineA.dc.html) | Tuile agrandie · Patrimoine net : en cascade | validée le 27 novembre 2026 | pas encore construit |
+| [ApercuTuile](ApercuTuile.dc.html) | Une tuile agrandie : carte au centre, fond flouté, la suivante dépasse | retenue | `lib/ui/overview/enlarged_tiles.dart`, `lib/ui/overview/enlarged_parts.dart` |
+| [TuileDepenseA](TuileDepenseA.dc.html) | Tuile agrandie · Dépensé : courbes cumulées, trait du jour, repères en lignes | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileDepenseA3-cas1](TuileDepenseA3-cas1.dc.html) | Dépensé · le trait du jour le 30, au bord droit | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileDepenseA3-cas2](TuileDepenseA3-cas2.dc.html) | Dépensé · le trait du jour le 2, en bas à gauche | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileRecuA](TuileRecuA.dc.html) | Tuile agrandie · Reçu : courbes cumulées, repères en lignes | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileRecuR3](TuileRecuR3.dc.html) | « Suivre » · carte Affichage : Dépensé, Reçu et Épargne en Courbe ou Bâtonnets | validée le 27 novembre 2026 | `lib/ui/overview/follow_sheet.dart` |
+| [TuileEpargneE3](TuileEpargneE3.dc.html) | Tuile agrandie · Épargne : courbe et zéro, pastille « 27 % gardés » | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileMoyenneA](TuileMoyenneA.dc.html) | Tuile agrandie · Moyenne : barres par jour, moyenne en pointillé | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileCategorieA](TuileCategorieA.dc.html) | Tuile agrandie · Catégorie n° 1 : les trois premières en barres | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuilePlusCherK2](TuilePlusCherK2.dc.html) | Tuile agrandie · Jour le plus cher : le mois en calendrier, montants dans les cases | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuilePlusCherK2-jour](TuilePlusCherK2-jour.dc.html) | Jour le plus cher sur un jour : les 24 heures | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuilePlusCherK2-semaine](TuilePlusCherK2-semaine.dc.html) | Jour le plus cher sur une semaine : les 7 jours | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuilePlusCherK2-annee](TuilePlusCherK2-annee.dc.html) | Mois le plus cher sur une année : une case par mois | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileAVenirAB](TuileAVenirAB.dc.html) | Tuile agrandie · À venir : ruban des 14 jours, liste datée | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileBudgetAB](TuileBudgetAB.dc.html) | Tuile agrandie · Un budget : au fil du mois, repères en lignes | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileDettesAC](TuileDettesAC.dc.html) | Tuile agrandie · Dettes : barre du remboursé, date d’échéance en carré gris | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileCreancesAC](TuileCreancesAC.dc.html) | Tuile agrandie · Créances : comme Dettes, en vert | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileProjetA](TuileProjetA.dc.html) | Tuile agrandie · Un projet : barre et repère du plan | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuileComptesB](TuileComptesB.dc.html) | Tuile agrandie · Comptes : barre découpée par compte | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
+| [TuilePatrimoineA](TuilePatrimoineA.dc.html) | Tuile agrandie · Patrimoine net : en cascade | validée le 27 novembre 2026 | `lib/ui/overview/enlarged_tiles.dart` |
 
 ### Budgets (7)
 
