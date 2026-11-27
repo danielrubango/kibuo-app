@@ -32,7 +32,7 @@ Validés sur le canvas, absents de l'app : dans l'**Aperçu** (version 0.2), la 
 
 ## Prochaines étapes
 
-Version 0.2 en cours : les livraisons 1 (Évolution) et 2 (points suivis) de l'Aperçu sont fusionnées le 27 novembre. Prochaine : **la tuile agrandie** (`ApercuTuile`), questions d'abord. Puis Catégories et Patrimoine. Le paquet de test qui porte l'Aperçu : nom `v0.1.0-beta-1` validé le 27 novembre (passage en beta), version `0.1.0-beta-1+4` ; sa note, mise à jour avec les points suivis, attend le « oui » du propriétaire avant la construction de l'AAB ([releases/0.1.0.md](releases/0.1.0.md)).
+Version 0.2 en cours : les livraisons 1 (Évolution) et 2 (points suivis) de l'Aperçu sont fusionnées le 27 novembre. Prochaine : **la tuile agrandie** (`ApercuTuile`), questions d'abord. Puis Catégories et Patrimoine. Le paquet de test qui porte l'Aperçu : nom `v0.1.0-beta-1` validé le 27 novembre (passage en beta), version `0.1.0-beta-1+4` ; sa note est validée le 27 novembre ; l'AAB attend que le propriétaire dise quand le construire, après les travaux suivants de l'Aperçu ([releases/0.1.0.md](releases/0.1.0.md)).
 
 Le plan a été réorganisé le 25 novembre 2026 pour publier tôt : une version **0.1** sur Google Play, puis une nouveauté par version (0.2 Aperçu, 0.3 export CSV et partage d'une sauvegarde, 0.4 thème sombre, 0.5 accompagnement), et la **1.0** stable après quelques semaines de test. Le détail et l'ordre des grands chantiers d'après (cloud, IA, iOS…) sont dans [ROADMAP.md](ROADMAP.md).
 
@@ -54,7 +54,7 @@ Toutes les décisions prises avec le propriétaire jusqu'au 24 novembre sont éc
 
 ## Questions ouvertes (attendent le propriétaire)
 
-- La note du paquet `v0.1.0-beta-1` (proposée le 27 novembre, avec les points suivis).
+- Quand construire le paquet `v0.1.0-beta-1` (le propriétaire le dira).
 - Les précisions de mise en œuvre des livraisons 1 et 2 de l'Aperçu, notées « à confirmer » dans PRODUCT, et les écarts de la livraison 2 notés dans DIRECTION (ordre des tuiles, couleur de Catégorie n° 1, budget sur une semaine).
 
 ## Défauts connus et dettes
