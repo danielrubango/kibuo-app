@@ -2351,6 +2351,8 @@
   "overviewDebtsLine": "Dettes et créances",
   "@overviewDebtsLine": {"description": "Aperçu, Catégories tab: money lent, borrowed or paid back."},
   "overviewFeesLine": "Frais de transfert",
+  "overviewFeesOf": "frais : {amount}",
+  "@overviewFeesOf": {"description": "Aperçu, the transfer fees page: a transfer's fees.", "placeholders": {"amount": {"type": "String"}}},
   "@overviewFeesLine": {"description": "Aperçu, Catégories tab: what no category explains."},
   "overviewOtherCategories": "{count, plural, =1{1 autre catégorie} other{{count} autres catégories}}",
   "@overviewOtherCategories": {"description": "Aperçu, Catégories tab: the rest, folded.", "placeholders": {"count": {"type": "int"}}},

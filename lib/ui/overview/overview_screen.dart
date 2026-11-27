@@ -568,15 +568,23 @@ class _OverviewScreenState extends State<OverviewScreen> {
           total: money(Money(total, main.code)),
           categories: data.categories,
           money: (minor) => money(Money(minor, main.code)),
-          onOpen: (id) {
-            final category = data.categories[id];
-            if (category == null) return;
+          onOpen: (line) {
+            final category = line.category == null
+                ? null
+                : data.categories[line.category];
+            final source = switch (line.kind) {
+              CategoryLineKind.category when category != null =>
+                LineSource.category(l, category, data.categories, out: out),
+              CategoryLineKind.debts => LineSource.debts(l, out: out),
+              CategoryLineKind.fees => LineSource.fees(l, money),
+              _ => null,
+            };
+            if (source == null) return;
             Navigator.of(context).push<void>(
               MaterialPageRoute(
-                builder: (_) => CategoryPage(
+                builder: (_) => LinePage(
                   data: widget.data,
-                  category: category,
-                  categories: data.categories,
+                  source: source,
                   periodLabel: label,
                   span: span,
                   out: out,

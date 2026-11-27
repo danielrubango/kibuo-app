@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/data/category_repository.dart';
+import 'package:kibuo/ui/categories/category_labels.dart';
 import 'package:kibuo/ui/kit/share_bar.dart';
+import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
 /// One share among others (canvas ApercuP2, CatB-page): a tile when there
@@ -108,4 +111,24 @@ class ShareRow extends StatelessWidget {
             child: row,
           );
   }
+}
+
+/// A grey tile for a line that is not a category of the lists (« Dettes et
+/// créances », « Frais de transfert », the rest folded).
+class PlainLineTile extends StatelessWidget {
+  const PlainLineTile({super.key, required this.icon, this.size = 40});
+
+  final IconData icon;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: categoryHue(CategoryColor.grey),
+      borderRadius: BorderRadius.circular(size * 0.32),
+    ),
+    child: Icon(icon, size: size * 0.6, color: KibuoColors.ink),
+  );
 }
