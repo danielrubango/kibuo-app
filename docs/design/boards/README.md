@@ -1,6 +1,6 @@
 # Planches du canvas « Kibuo - Identité et directions »
 
-Export du 24 novembre 2026 : les **258 planches** `.dc.html` du canvas de design, son plan (`canvas.json` : pages, titres, positions, tailles) et des captures PNG des planches principales (`captures/`). Le canvas lui-même est un artifact privé de claude.ai : https://claude.ai/code/artifact/5ee02d0b-b510-42a6-8ec9-dca67745523c. La méthode de travail sur un canvas (variantes, page « En cours », nettoyage) est dans [WORKING.md](../../WORKING.md#le-canvas-de-design) ; les règles tirées des planches sont dans [DIRECTION.md](../DIRECTION.md) et les valeurs dans [SYSTEM.md](../SYSTEM.md).
+Export du 24 novembre 2026 : les **258 planches** `.dc.html` du canvas de design, son plan (`canvas.json` : pages, titres, positions, tailles) et des captures PNG des planches principales (`captures/`). Ce canvas est un artifact privé de claude.ai (https://claude.ai/code/artifact/5ee02d0b-b510-42a6-8ec9-dca67745523c), dans une autre organisation : il ne s'ouvre plus depuis ce compte. On dessine maintenant sur un autre canvas, et les planches retenues s'ajoutent ici : le lien et l'outil de dessin sont dans [tool/boards/README.md](../../../tool/boards/README.md). La méthode de travail sur un canvas (variantes, page « En cours », nettoyage) est dans [WORKING.md](../../WORKING.md#le-canvas-de-design) ; les règles tirées des planches sont dans [DIRECTION.md](../DIRECTION.md) et les valeurs dans [SYSTEM.md](../SYSTEM.md).
 
 ## Ouvrir et mesurer une planche
 

@@ -39,7 +39,7 @@ Les grosses étapes se livrent en plusieurs **livraisons** validées l'une aprè
 
 ## Le canvas de design
 
-Le design se fait sur un artifact « Design » de claude.ai (« Kibuo - Identité et directions »), exporté dans [design/boards/](design/boards/). Un autre agent sans ce canvas reprend la méthode dans un nouveau canvas :
+Le design se fait sur un artifact « Design » de claude.ai, `https://claude.ai/artifact/1W89dFz4aodFsKmmKeJj9R` (l'ancien, « Kibuo - Identité et directions », est dans une autre organisation et ne s'ouvre plus) ; les planches retenues sont copiées dans [design/boards/](design/boards/). Récupérer, dessiner, regarder et publier une planche : [tool/boards/README.md](../tool/boards/README.md). Un autre agent sans ce canvas reprend la méthode dans un nouveau canvas :
 
 - Il demande **2 ou 3 variantes nommées** (A, B, C), côte à côte. Il en choisit une, souvent avec des variantes de la variante (A1, A2…). Garder les variantes non retenues jusqu'à ce qu'il dise « nettoyer ».
 - Le travail en cours vit sur la page **« En cours »** ; une planche validée part sur la page de son domaine (Accueil, Opérations, Réglages…).
