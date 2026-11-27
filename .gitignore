@@ -10,3 +10,6 @@ build/
 
 # Screen captures for design reviews (tool/capture_screens_test.dart).
 tool/screens_out/
+
+# Python caches of tool/ scripts
+__pycache__/
