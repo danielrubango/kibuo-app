@@ -155,6 +155,10 @@ class _EntryScreenState extends State<EntryScreen> {
   CurrencyInfo? _toCurrency;
   ExchangeRate? _today;
   String _typed = '';
+
+  /// The amount the keypad opened on, shown selected: the first key
+  /// replaces it (PRODUCT, 27 November 2026).
+  bool _selected = false;
   String _fees = '';
   bool _rateTyped = false;
   String _rateText = '';
@@ -1073,10 +1077,28 @@ class _EntryScreenState extends State<EntryScreen> {
                     value: shownTyped(context, _typed),
                     unit: _paidCurrency?.symbol ?? '',
                     focused: _keypad,
+                    selected: _keypad && _selected,
+                    onSelect: () {
+                      if (!_keypad) FocusScope.of(context).unfocus();
+                      setState(() {
+                        _keypad = true;
+                        _selected = _typed.isNotEmpty;
+                      });
+                      revealAboveKeypad(_amountKey);
+                    },
                     onTap: () {
+                      // Touched again while typing: the amount is kept, the
+                      // keys follow on.
+                      if (_keypad) {
+                        setState(() => _selected = false);
+                        return;
+                      }
                       // The phone's keyboard gives way to Kibuo's.
                       FocusScope.of(context).unfocus();
-                      setState(() => _keypad = true);
+                      setState(() {
+                        _keypad = true;
+                        _selected = _typed.isNotEmpty;
+                      });
                       revealAboveKeypad(_amountKey);
                     },
                     // A transfer is sent in its account's currency.
@@ -1267,15 +1289,15 @@ class _EntryScreenState extends State<EntryScreen> {
                     final c = _paidCurrency;
                     if (c == null) return;
                     _typed = typeKey(
-                      _typed,
+                      _selected ? '' : _typed,
                       k,
                       decimals: c.usesDecimals ? c.digits : 0,
                     );
+                    _selected = false;
                   }),
                   onDelete: () => setState(() {
-                    if (_typed.isNotEmpty) {
-                      _typed = _typed.substring(0, _typed.length - 1);
-                    }
+                    _typed = eraseKey(_typed, selected: _selected);
+                    _selected = false;
                   }),
                   allowDecimal: _paidCurrency?.usesDecimals ?? true,
                   decimalSeparator: NumberFormat.decimalPattern(_lang)
@@ -1316,7 +1338,9 @@ class _AmountCard extends StatelessWidget {
     required this.value,
     required this.unit,
     required this.focused,
+    this.selected = false,
     required this.onTap,
+    this.onSelect,
     required this.onUnitTap,
     required this.footLabel,
     required this.footValue,
@@ -1333,7 +1357,13 @@ class _AmountCard extends StatelessWidget {
   final String value;
   final String unit;
   final bool focused;
+
+  /// The amount the keypad opened on, on a pale green ground.
+  final bool selected;
   final VoidCallback onTap;
+
+  /// A double touch or a long press: the whole amount selected again.
+  final VoidCallback? onSelect;
 
   /// None when the currency can't change (a transfer).
   final VoidCallback? onUnitTap;
@@ -1367,9 +1397,9 @@ class _AmountCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          GestureDetector(
+          SelectTaps(
             onTap: onTap,
-            behavior: HitTestBehavior.opaque,
+            onSelect: onSelect,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
               child: Row(
@@ -1381,17 +1411,21 @@ class _AmountCard extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              '$sign${value.isEmpty ? '0' : value}',
-                              style: KibuoType.bigAmount.copyWith(
-                                color: value.isEmpty
-                                    ? KibuoColors.inkMuted
-                                    : null,
+                            child: SelectedValue(
+                              selected: selected && value.isNotEmpty,
+                              child: Text(
+                                '$sign${value.isEmpty ? '0' : value}',
+                                style: KibuoType.bigAmount.copyWith(
+                                  color: value.isEmpty
+                                      ? KibuoColors.inkMuted
+                                      : null,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        if (focused) const BlinkingCaret(height: 30),
+                        if (focused && !(selected && value.isNotEmpty))
+                          const BlinkingCaret(height: 30),
                       ],
                     ),
                   ),
