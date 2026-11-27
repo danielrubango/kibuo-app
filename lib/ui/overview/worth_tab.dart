@@ -463,7 +463,12 @@ class _AccountRow extends StatelessWidget {
 /// The worth over the period: a green line up to now, then dotted ahead
 /// (canvas ApercuP2).
 class WorthCurve extends StatelessWidget {
-  const WorthCurve({super.key, required this.solid, required this.ahead});
+  const WorthCurve({
+    super.key,
+    required this.solid,
+    required this.ahead,
+    this.slots,
+  });
 
   /// From the period's start to now.
   final List<int> solid;
@@ -471,20 +476,32 @@ class WorthCurve extends StatelessWidget {
   /// From now to the period's end, planned.
   final List<int> ahead;
 
+  /// How many points the whole width holds, the period's start and each
+  /// bar's end; by default, the points given. Without [ahead], the line
+  /// stops under today.
+  final int? slots;
+
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
     child: SizedBox(
       height: 96,
-      child: CustomPaint(painter: _WorthPainter(solid, ahead)),
+      child: CustomPaint(
+        painter: _WorthPainter(
+          solid,
+          ahead,
+          slots ?? solid.length + ahead.length,
+        ),
+      ),
     ),
   );
 }
 
 class _WorthPainter extends CustomPainter {
-  _WorthPainter(this.solid, this.ahead);
+  _WorthPainter(this.solid, this.ahead, this.slots);
 
   final List<int> solid;
   final List<int> ahead;
+  final int slots;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -493,7 +510,7 @@ class _WorthPainter extends CustomPainter {
     final top = all.reduce(math.max);
     final low = all.reduce(math.min);
     final span = math.max(1, top - low);
-    final n = math.max(2, all.length);
+    final n = math.max(2, math.max(slots, all.length));
     double x(int i) => i * size.width / (n - 1);
     double y(int v) => 6 + (size.height - 12) * (1 - (v - low) / span);
     final line = Paint()

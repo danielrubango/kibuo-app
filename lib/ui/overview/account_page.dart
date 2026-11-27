@@ -277,7 +277,11 @@ class _AccountPageState extends State<AccountPage> {
                 ),
           ),
           const SizedBox(height: 12),
-          WorthCurve(solid: solid, ahead: const []),
+          WorthCurve(
+            solid: solid,
+            ahead: const [],
+            slots: widget.bars.length + 1,
+          ),
           const SizedBox(height: 6),
           AxisLabels(axis, at: at),
           const SizedBox(height: 12),
