@@ -243,6 +243,22 @@ void main() {
   testWidgets('I open Patrimoine: what I have, and what each account did', (
     tester,
   ) async {
+    // Cash opens just after midnight: what it paid earlier that night is
+    // not in its balance, so not in the worth nor among the accounts.
+    final cash = await data.accounts.create(
+      name: 'Cash',
+      type: AccountType.cash,
+      opening: const Money(0, 'USD'),
+      openingDate: today.add(const Duration(minutes: 1)).toUtc(),
+    );
+    await data.transactions.create(
+      kind: EntryKind.expense,
+      accountId: cash,
+      categoryId: 'default-taxi',
+      paid: const Money(1000, 'USD'),
+      fees: 0,
+      date: today,
+    );
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.reset);
@@ -260,6 +276,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Patrimoine'));
     await tester.pumpAndSettle();
+    expect(find.text('Cash'), findsNothing);
     // 2 × 1 000 $ opened, +1 200 $ of salary, −500 $ of taxi, −2 $ of fees.
     // The total, and all of it available: no project, no debt.
     expect(textPlain('2 698,00 \$'), findsNWidgets(2));

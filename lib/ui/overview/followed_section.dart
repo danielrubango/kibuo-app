@@ -146,6 +146,7 @@ Future<FollowedData> loadFollowedData(
 
   final accounts = await data.accounts.accounts();
   final currencyOfAccount = {for (final a in accounts) a.id: a.currency};
+  final openingOf = {for (final a in accounts) a.id: a.openingDate};
   final accountsTotal = totalIn(main, [
     for (final a in accounts) a.balance,
   ], (code) => rates[code]).amount.minor;
@@ -171,6 +172,8 @@ Future<FollowedData> loadFollowedData(
     for (final MapEntry(key: account, value: change) in effectsOf(t).entries) {
       final code = currencyOfAccount[account];
       if (code == null || change == 0) continue;
+      // As in its balance: nothing dated before the account opened.
+      if (t.date.isBefore(openingOf[account]!)) continue;
       final moved = (at: at, change: inMain(Money(change, code)));
       accountChanges.add(moved);
       accountMoves.add((account: account, at: at, change: moved.change));
