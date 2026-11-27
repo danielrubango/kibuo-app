@@ -319,24 +319,67 @@ class LandmarkRows extends StatelessWidget {
 
 /// The marks under a chart, spread from start to end.
 class AxisLabels extends StatelessWidget {
-  const AxisLabels(this.labels, {super.key});
+  const AxisLabels(this.labels, {super.key, this.at});
 
   final List<String> labels;
 
+  /// Where the middle label stands, from 0 to 1: under the day's line. An
+  /// end label it would touch gives way.
+  final double? at;
+
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      for (final l in labels)
-        Text(
-          l,
-          style: KibuoType.caption.copyWith(
-            fontSize: 11,
-            color: KibuoColors.inkMuted,
+  Widget build(BuildContext context) {
+    final style = KibuoType.caption.copyWith(
+      fontSize: 11,
+      color: KibuoColors.inkMuted,
+    );
+    final at = this.at;
+    if (at == null || labels.length != 3) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [for (final l in labels) Text(l, style: style)],
+      );
+    }
+    final scaler = MediaQuery.textScalerOf(context);
+    Size sizeOf(String text) {
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: TextDirection.ltr,
+        textScaler: scaler,
+      )..layout();
+      final size = painter.size;
+      painter.dispose();
+      return size;
+    }
+
+    return LayoutBuilder(
+      builder: (context, box) {
+        const gap = 6.0;
+        final w = box.maxWidth;
+        final first = sizeOf(labels[0]).width;
+        final middle = sizeOf(labels[1]);
+        final last = sizeOf(labels[2]).width;
+        final left = (at * w - middle.width / 2)
+            .clamp(0.0, math.max(0.0, w - middle.width))
+            .toDouble();
+        return SizedBox(
+          height: middle.height,
+          child: Stack(
+            children: [
+              if (left >= first + gap)
+                Positioned(left: 0, child: Text(labels[0], style: style)),
+              Positioned(
+                left: left,
+                child: Text(labels[1], style: style),
+              ),
+              if (left + middle.width + gap <= w - last)
+                Positioned(right: 0, child: Text(labels[2], style: style)),
+            ],
           ),
-        ),
-    ],
-  );
+        );
+      },
+    );
+  }
 }
 
 /// The period's colour and the compared line, with their names.
@@ -400,11 +443,16 @@ Path _smooth(List<Offset> p, {double? low, double? high}) {
     final p1 = p[i];
     final p2 = p[i + 1];
     final p3 = p[math.min(i + 2, p.length - 1)];
+    // Each handle stays between its two points, so a sudden expense does
+    // not dip the curve below the day before.
+    final lo = math.min(p1.dy, p2.dy);
+    final hi = math.max(p1.dy, p2.dy);
+    double inside(double y) => clamp(y.clamp(lo, hi));
     path.cubicTo(
       p1.dx + (p2.dx - p0.dx) / 6,
-      clamp(p1.dy + (p2.dy - p0.dy) / 6),
+      inside(p1.dy + (p2.dy - p0.dy) / 6),
       p2.dx - (p3.dx - p1.dx) / 6,
-      clamp(p2.dy - (p3.dy - p1.dy) / 6),
+      inside(p2.dy - (p3.dy - p1.dy) / 6),
       p2.dx,
       p2.dy,
     );

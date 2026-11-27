@@ -180,6 +180,10 @@ class EnlargedTiles {
   DateTime get _reached =>
       p.running ? p.now : p.span.end.subtract(const Duration(seconds: 1));
 
+  /// Where the day's line stands on a curve of the period, from 0 to 1.
+  double get _dayAt =>
+      p.bars.length <= 1 ? 0 : (p.begun.length - 1) / (p.bars.length - 1);
+
   /// The day the curve has reached, on its label.
   String get _reachedMark => p.grouping == Grouping.hour
       ? l.overviewHourMark(_reached.hour)
@@ -303,11 +307,22 @@ class EnlargedTiles {
             pick(t),
         ],
         ahead: [for (final b in p.bars) b.start.isAfter(p.now)],
-        marks: [for (final _ in p.bars) null],
+        marks: [
+          for (var i = 0; i < p.bars.length; i++)
+            barMark(
+              l,
+              lang,
+              p.kind,
+              p.grouping,
+              p.bars,
+              i,
+              startDay: p.startDay,
+            ),
+        ],
         out: out,
         currentName: p.label,
         compared: compared == null ? null : [for (final t in compared) pick(t)],
-        comparedName: p.comparedName,
+        comparedName: p.comparedName == null ? null : _cap(p.comparedName!),
         comparedAs: ComparedAs.sticks,
       );
     } else {
@@ -327,7 +342,7 @@ class EnlargedTiles {
             pillInk: out ? KibuoColors.debtInk : KibuoColors.accent,
           ),
           const SizedBox(height: 6),
-          AxisLabels(_axis),
+          AxisLabels(_axis, at: _dayAt),
           const SizedBox(height: 8),
           ChartLegend(
             color: color,
@@ -481,7 +496,7 @@ class EnlargedTiles {
                 pillInk: KibuoColors.accent,
               ),
               const SizedBox(height: 6),
-              AxisLabels(_axis),
+              AxisLabels(_axis, at: _dayAt),
               const SizedBox(height: 8),
               ChartLegend(
                 color: KibuoColors.accent,
@@ -997,6 +1012,11 @@ class EnlargedTiles {
       _ => KibuoColors.fillSoft,
     };
     final name = categoryName(l, line.category);
+    // Calm, the bar is grey like the regular pace: the curve takes the ink
+    // so the two lines stay apart.
+    final curve = level.bar == KibuoColors.inkMuted
+        ? KibuoColors.ink
+        : level.bar;
     return EnlargedCard(
       title: '${l.followedBudgetNamed(name)} · ${p.label}',
       figure: '${status.percent} %',
@@ -1028,7 +1048,7 @@ class EnlargedTiles {
                   days <= 1 ? amount : (amount * i / (days - 1)).round(),
               ],
               points: days,
-              color: level.bar,
+              color: curve,
               tint: tint,
               dayLabel:
                   '${_day(running ? p.now : period.last)} · ${roundUnsigned(status.spent.minor)}',
@@ -1036,10 +1056,13 @@ class EnlargedTiles {
               pillInk: level.ink,
             ),
             const SizedBox(height: 6),
-            AxisLabels(_dayAxis(first, period.last, running ? p.now : null)),
+            AxisLabels(
+              _dayAxis(first, period.last, running ? p.now : null),
+              at: days <= 1 ? 0 : (reached - 1) / (days - 1),
+            ),
             const SizedBox(height: 8),
             ChartLegend(
-              color: level.bar,
+              color: curve,
               name: l.followedSpent,
               comparedName: l.enlRegularPace(roundUnsigned(amount)),
             ),
