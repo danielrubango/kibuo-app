@@ -542,7 +542,7 @@ class _Tiles {
       return FollowedTile(
         name: l.followedSpent,
         value: value,
-        valueColor: KibuoColors.debtInk,
+        valueColor: exits == 0 ? KibuoColors.inkMuted : KibuoColors.debtInk,
         visual: visual,
         detail: l.followedAverageDayDetail(money(day)),
         onTap: _toOperations(),
@@ -559,7 +559,7 @@ class _Tiles {
     return _withChange(
       name: l.followedSpent,
       value: value,
-      valueColor: KibuoColors.debtInk,
+      valueColor: exits == 0 ? KibuoColors.inkMuted : KibuoColors.debtInk,
       visual: visual,
       figure: exits,
       compared: p.compared?.exits.minor,
@@ -579,7 +579,7 @@ class _Tiles {
     return _withChange(
       name: l.followedReceived,
       value: entries == 0 ? money(0) : '+${money(entries)}',
-      valueColor: KibuoColors.accent,
+      valueColor: entries == 0 ? KibuoColors.inkMuted : KibuoColors.accent,
       visual: TileCurve(
         runningTotal(_begunExits(entries: true)),
         KibuoColors.accent,
@@ -629,7 +629,7 @@ class _Tiles {
       return FollowedTile(
         name: l.followedAverageDay,
         value: value == 0 ? money(0) : '−${money(value)}',
-        valueColor: KibuoColors.debtInk,
+        valueColor: value == 0 ? KibuoColors.inkMuted : KibuoColors.debtInk,
         visual: top == null
             ? null
             : TileColumns(top.values, top.index, KibuoColors.debtLine),
@@ -663,7 +663,7 @@ class _Tiles {
         _ => l.followedAverageDay,
       },
       value: avg.amount == 0 ? money(0) : '−${money(avg.amount)}',
-      valueColor: KibuoColors.debtInk,
+      valueColor: avg.amount == 0 ? KibuoColors.inkMuted : KibuoColors.debtInk,
       visual: top == null
           ? null
           : TileColumns(top.values, top.index, KibuoColors.debtLine),

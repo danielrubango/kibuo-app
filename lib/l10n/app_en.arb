@@ -1234,7 +1234,7 @@
   "followedOnDay": "{amount} on {date}",
   "followedNothingComing": "Nothing coming",
   "followedNext14Days": "in the next 14 days",
-  "followSheetHelp": "Each tile fits the chosen period. The first 4 show; the others are under « Show the others ».",
+  "followSheetHelp": "Each tile fits the chosen period. The first 4 show; the others are under “Show the others”.",
   "followMoney": "Money",
   "followMarks": "Landmarks",
   "followCommitments": "Commitments",

@@ -4750,7 +4750,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get followSheetHelp =>
-      'Each tile fits the chosen period. The first 4 show; the others are under « Show the others ».';
+      'Each tile fits the chosen period. The first 4 show; the others are under “Show the others”.';
 
   @override
   String get followMoney => 'Money';
