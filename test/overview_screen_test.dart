@@ -194,4 +194,40 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Reçu · '), findsNothing);
   });
+
+  testWidgets(
+    'I open Catégories: Transport and the fees make the total, then its page',
+    (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.75;
+      addTearDown(tester.view.reset);
+      tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: KibuoTheme.light(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: appLanguages,
+          localeListResolutionCallback: (phone, _) => resolveAppLanguage(phone),
+          home: Scaffold(body: OverviewScreen(data: data)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Catégories'));
+      await tester.pumpAndSettle();
+      // 502 $ out: 500 $ of taxi, under Transport, and 2 $ of a transfer's
+      // fees.
+      expect(find.text('Où part mon argent'), findsOneWidget);
+      expect(find.text('Transport'), findsOneWidget);
+      expect(textPlain('−500,00 \$'), findsOneWidget);
+      expect(find.text('Frais de transfert'), findsOneWidget);
+      expect(textPlain('−2,00 \$'), findsOneWidget);
+
+      await tester.tap(find.text('Transport'));
+      await tester.pumpAndSettle();
+      // Its page: the taxi, its only operation.
+      expect(find.text('Taxi'), findsWidgets);
+      expect(find.textContaining('1 opération'), findsOneWidget);
+    },
+  );
 }

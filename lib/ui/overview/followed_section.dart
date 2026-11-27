@@ -12,6 +12,7 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/obligations/debt_list.dart';
+import 'package:kibuo/domain/overview/category_lines.dart';
 import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
 import 'package:kibuo/domain/overview/overview_totals.dart';
@@ -754,19 +755,23 @@ class _Tiles {
           .format(BudgetPeriod.containing(start, startDay: p.startDay).month);
 
   Widget _topCategory() {
-    final top = topCategory(
+    final top = categoryLines(
       p.span,
       data.spends,
       parentOf: (id) => data.parents[id] ?? id,
-      exits: p.totals.exits.minor,
+      isDebt: isDebtCategoryId,
+      total: p.totals.exits.minor,
+      withFees: true,
       main: main,
       rateFor: p.rateFor,
-    );
+    ).firstOrNull;
     final name = p.scale == PeriodScale.day
         ? l.followedTopCategoryDay
         : l.followedTopCategory;
-    final category = top == null ? null : data.categories[top.category];
-    if (top == null || category == null) {
+    final category = top?.category == null
+        ? null
+        : data.categories[top!.category];
+    if (top == null) {
       return FollowedTile(
         name: name,
         value: l.followedNoExit,
@@ -777,8 +782,15 @@ class _Tiles {
     }
     return FollowedTile(
       name: name,
-      value: categoryName(l, category),
-      visual: TileBar(top.share / 100, KibuoColors.debtLine),
+      value: category != null
+          ? categoryName(l, category)
+          : top.kind == CategoryLineKind.debts
+          ? l.overviewDebtsLine
+          : l.overviewFeesLine,
+      visual: TileBar(
+        top.share / 100,
+        categoryHue(category?.color ?? CategoryColor.grey),
+      ),
       detail: l.followedAmountShare(money(top.amount), top.share),
       onTap: _toOperations(top.category),
     );

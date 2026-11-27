@@ -7099,6 +7099,78 @@ abstract class AppLocalizations {
   /// **'Bientôt'**
   String get overviewSoon;
 
+  /// Aperçu, Catégories tab: the card's title for money out.
+  ///
+  /// In fr, this message translates to:
+  /// **'Où part mon argent'**
+  String get overviewWhereOut;
+
+  /// Aperçu, Catégories tab: the card's title for money in.
+  ///
+  /// In fr, this message translates to:
+  /// **'D’où vient mon argent'**
+  String get overviewWhereIn;
+
+  /// Aperçu, Catégories tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} sortis'**
+  String overviewTotalOut(String amount);
+
+  /// Aperçu, Catégories tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'{amount} entrés'**
+  String overviewTotalIn(String amount);
+
+  /// Aperçu, Catégories tab: money lent, borrowed or paid back.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dettes et créances'**
+  String get overviewDebtsLine;
+
+  /// Aperçu, Catégories tab: what no category explains.
+  ///
+  /// In fr, this message translates to:
+  /// **'Frais de transfert'**
+  String get overviewFeesLine;
+
+  /// Aperçu, Catégories tab: the rest, folded.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 autre catégorie} other{{count} autres catégories}}'**
+  String overviewOtherCategories(int count);
+
+  /// Aperçu, Catégories tab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez une catégorie pour voir ses sous-catégories et ses opérations.'**
+  String get overviewCategoriesHelp;
+
+  /// Aperçu, Catégories tab: nothing went out.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sortie sur la période'**
+  String get overviewNoExitPeriod;
+
+  /// Aperçu, Catégories tab: nothing came in.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune entrée sur la période'**
+  String get overviewNoEntryPeriod;
+
+  /// Aperçu, a category's page.
+  ///
+  /// In fr, this message translates to:
+  /// **'{share} % des sorties · {count, plural, =1{1 opération} other{{count} opérations}}'**
+  String categoryPageOut(int share, int count);
+
+  /// Aperçu, a category's page.
+  ///
+  /// In fr, this message translates to:
+  /// **'{share} % des entrées · {count, plural, =1{1 opération} other{{count} opérations}}'**
+  String categoryPageIn(int share, int count);
+
   /// Aperçu: the followed tiles' title.
   ///
   /// In fr, this message translates to:

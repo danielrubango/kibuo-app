@@ -2,12 +2,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kibuo/data/category_repository.dart';
 import 'package:kibuo/data/project_repository.dart';
 import 'package:kibuo/domain/budgets/budget_curve.dart';
 import 'package:kibuo/domain/calendar.dart';
 import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/obligations/debt_list.dart';
+import 'package:kibuo/domain/overview/category_lines.dart';
 import 'package:kibuo/domain/overview/followed.dart';
 import 'package:kibuo/domain/overview/overview_choice.dart';
 import 'package:kibuo/domain/overview/overview_period.dart';
@@ -676,43 +678,56 @@ class EnlargedTiles {
 
   Widget _categories() {
     final exits = p.totals.exits.minor;
-    final all = topCategories(
+    final all = categoryLines(
       p.span,
       data.spends,
       parentOf: (id) => data.parents[id] ?? id,
-      exits: exits,
+      isDebt: isDebtCategoryId,
+      total: exits,
+      withFees: true,
       main: p.main,
       rateFor: p.rateFor,
-      count: 1000,
     );
     final top = all.take(3).toList();
-    final first = top.isEmpty ? null : data.categories[top.first.category];
+    String nameOf(CategoryLine c) => switch (c.kind) {
+      CategoryLineKind.debts => l.overviewDebtsLine,
+      CategoryLineKind.fees => l.overviewFeesLine,
+      CategoryLineKind.category =>
+        data.categories[c.category] == null
+            ? '—'
+            : categoryName(l, data.categories[c.category]!),
+    };
+    Color hueOf(CategoryLine c) =>
+        categoryHue(data.categories[c.category]?.color ?? CategoryColor.grey);
+    final first = top.firstOrNull;
+    final firstCategory = first?.category == null
+        ? null
+        : data.categories[first!.category];
     final restShare = 100 - top.fold<int>(0, (a, c) => a + c.share);
     final restCount = all.length - top.length;
     return EnlargedCard(
       title:
           '${p.scale == PeriodScale.day ? l.followedTopCategoryDay : l.followedTopCategory}'
           ' · ${p.label}',
-      figure: first == null ? l.followedNoExit : categoryName(l, first),
+      figure: first == null ? l.followedNoExit : nameOf(first),
       figureColor: first == null ? KibuoColors.inkMuted : KibuoColors.ink,
-      line: top.isEmpty
+      line: first == null
           ? null
-          : CardNote(l.enlOfExits(signed(-top.first.amount), top.first.share)),
-      action: first == null
+          : CardNote(l.enlOfExits(signed(-first.amount), first.share)),
+      action: firstCategory == null
           ? l.enlSeeOperations
-          : l.enlSeeCategory(categoryName(l, first)),
-      onAction: _operations(top.isEmpty ? null : top.first.category),
+          : l.enlSeeCategory(categoryName(l, firstCategory)),
+      onAction: _operations(firstCategory?.id),
       onClose: close,
       children: [
         if (top.isNotEmpty)
           RankedBars(
             color: KibuoColors.debtLine,
+            colors: [for (final c in top) hueOf(c)],
             items: [
               for (final c in top)
                 (
-                  name: data.categories[c.category] == null
-                      ? '—'
-                      : categoryName(l, data.categories[c.category]!),
+                  name: nameOf(c),
                   value: signed(-c.amount),
                   sub: '${c.share} %',
                   share: top.first.amount == 0

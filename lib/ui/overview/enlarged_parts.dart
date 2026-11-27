@@ -713,10 +713,19 @@ class _AveragePainter extends CustomPainter {
 
 /// The first ones in order: rank, name, amount, a bar of their share.
 class RankedBars extends StatelessWidget {
-  const RankedBars({super.key, required this.items, required this.color});
+  const RankedBars({
+    super.key,
+    required this.items,
+    required this.color,
+    this.colors,
+  });
 
   final List<({String name, String value, String sub, double share})> items;
+
+  /// The amounts' tone, and the bars' colour unless [colors] gives each
+  /// bar its own (a category's, ADR 0014).
   final Color color;
+  final List<Color>? colors;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -771,7 +780,7 @@ class RankedBars extends StatelessWidget {
                 children: [
                   const SizedBox(width: 20),
                   Expanded(
-                    child: Bar(share: item.share, color: color),
+                    child: Bar(share: item.share, color: colors?[i] ?? color),
                   ),
                   const SizedBox(width: 8),
                   Text(
