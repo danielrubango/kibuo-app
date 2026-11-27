@@ -294,6 +294,10 @@ class _RateSheetState extends State<_RateSheet> {
   late bool _typed = widget.current.typed || widget.today == null;
   late String _value = widget.current.typed ? widget.current.value ?? '' : '';
 
+  /// The rate the keypad opened on, shown selected: the first key replaces
+  /// it (PRODUCT, 27 November 2026).
+  late bool _selected = _value.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     final l = widget.l;
@@ -343,14 +347,19 @@ class _RateSheetState extends State<_RateSheet> {
           ValueField(
             prefix: '1 ${currencyOf(widget.base).symbol} =',
             value: shownTyped(context, _value),
+            selected: _selected,
+            onTap: () => setState(() => _selected = false),
             placeholder: '',
             unit: currencyOf(widget.quote).symbol,
           ),
           const SizedBox(height: 12),
           KibuoKeypad(
-            onKey: (k) =>
-                setState(() => _value = typeKey(_value, k, decimals: 6)),
+            onKey: (k) => setState(() {
+              _value = typeKey(_selected ? '' : _value, k, decimals: 6);
+              _selected = false;
+            }),
             onDelete: () => setState(() {
+              _selected = false;
               if (_value.isNotEmpty) {
                 _value = _value.substring(0, _value.length - 1);
               }
@@ -408,23 +417,34 @@ class _FeesSheet extends StatefulWidget {
 class _FeesSheetState extends State<_FeesSheet> {
   late String _value = widget.current;
 
+  /// The fees the keypad opened on, shown selected: the first key replaces
+  /// them (PRODUCT, 27 November 2026).
+  late bool _selected = _value.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     final c = widget.account;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ValueField(value: shownTyped(context, _value), unit: c.symbol),
+        ValueField(
+          value: shownTyped(context, _value),
+          selected: _selected,
+          onTap: () => setState(() => _selected = false),
+          unit: c.symbol,
+        ),
         const SizedBox(height: 12),
         KibuoKeypad(
-          onKey: (k) => setState(
-            () => _value = typeKey(
-              _value,
+          onKey: (k) => setState(() {
+            _value = typeKey(
+              _selected ? '' : _value,
               k,
               decimals: c.usesDecimals ? c.digits : 0,
-            ),
-          ),
+            );
+            _selected = false;
+          }),
           onDelete: () => setState(() {
+            _selected = false;
             if (_value.isNotEmpty) {
               _value = _value.substring(0, _value.length - 1);
             }

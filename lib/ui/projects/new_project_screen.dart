@@ -83,6 +83,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   late String _icon = widget.editing?.icon ?? projectIcons.first;
   String _typed = '';
   bool _keypad = false;
+
+  /// The goal the keypad opened on, shown selected: the first key
+  /// replaces it (PRODUCT, 27 November 2026).
+  bool _selected = false;
   bool _tried = false;
   bool _saving = false;
   List<AccountInfo> _accounts = const [];
@@ -138,8 +142,16 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   Money get _goal => typedMoney(_typed, _currency!);
 
   void _openKeypad() {
+    // Touched again while typing: kept, the keys follow on.
+    if (_keypad) {
+      setState(() => _selected = false);
+      return;
+    }
     _nameFocus.unfocus();
-    setState(() => _keypad = true);
+    setState(() {
+      _keypad = true;
+      _selected = _typed.isNotEmpty;
+    });
     revealAboveKeypad(_goalKey);
   }
 
@@ -482,6 +494,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       value: shownTyped(context, _typed),
                       unit: currency.code,
                       focused: _keypad,
+                      selected: _keypad && _selected,
                       onTap: _openKeypad,
                       missing: _tried && _goal.minor <= 0,
                     ),
@@ -619,14 +632,16 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             if (_keypad && currency != null)
               KeypadPanel(
                 keypad: KibuoKeypad(
-                  onKey: (k) => setState(
-                    () => _typed = typeKey(
-                      _typed,
+                  onKey: (k) => setState(() {
+                    _typed = typeKey(
+                      _selected ? '' : _typed,
                       k,
                       decimals: currency.usesDecimals ? currency.digits : 0,
-                    ),
-                  ),
+                    );
+                    _selected = false;
+                  }),
                   onDelete: () => setState(() {
+                    _selected = false;
                     if (_typed.isNotEmpty) {
                       _typed = _typed.substring(0, _typed.length - 1);
                     }

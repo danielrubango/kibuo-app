@@ -148,20 +148,36 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
 
   Money get _amount => typedMoney(_typed, currencyOf(_currency!));
 
+  /// The amount the keypad opened on, shown selected: the first key
+  /// replaces it (PRODUCT, 27 November 2026).
+  bool _selected = false;
+
   void _key(String k) => setState(() {
     final c = currencyOf(_currency!);
-    _typed = typeKey(_typed, k, decimals: c.usesDecimals ? c.digits : 0);
+    _typed = typeKey(
+      _selected ? '' : _typed,
+      k,
+      decimals: c.usesDecimals ? c.digits : 0,
+    );
+    _selected = false;
   });
 
   void _delete() => setState(() {
+    _selected = false;
     if (_typed.isNotEmpty) _typed = _typed.substring(0, _typed.length - 1);
   });
 
   void _openKeypad() {
+    // Touched again while typing: kept, the keys follow on.
+    if (_keypad) {
+      setState(() => _selected = false);
+      return;
+    }
     FocusScope.of(context).unfocus();
     setState(() {
       _keypad = true;
       _typingName = false;
+      _selected = _typed.isNotEmpty;
     });
     revealAboveKeypad(_amountKey);
   }
@@ -366,6 +382,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                       unit: currency,
                       onUnitTap: _pickCurrency,
                       focused: _keypad,
+                      selected: _keypad && _selected,
                       onTap: _openKeypad,
                       missing: _tried && _amount.minor <= 0,
                     ),

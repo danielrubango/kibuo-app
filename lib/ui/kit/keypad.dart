@@ -217,6 +217,33 @@ String typeKey(String typed, String k, {required int decimals}) {
   return typed == '0' ? (add == '000' ? typed : add) : '$typed$add';
 }
 
+/// What kibuo's keypad types into. An amount already there when it opens
+/// (proposed, or to change) is [selected]: the first key replaces it, « ← »
+/// takes its last digit off and keeps the rest, and [keep] (the field
+/// touched) lets the keys follow on (PRODUCT, 27 November 2026).
+class KeypadText {
+  KeypadText(String start) : text = start, selected = start.isNotEmpty;
+
+  String text;
+
+  /// Still the amount the keypad opened on, shown selected.
+  bool selected;
+
+  /// Key [k], as [typeKey] says, on a fresh amount while [selected].
+  void key(String k, {required int decimals}) {
+    text = typeKey(selected ? '' : text, k, decimals: decimals);
+    selected = false;
+  }
+
+  void delete() {
+    selected = false;
+    if (text.isNotEmpty) text = text.substring(0, text.length - 1);
+  }
+
+  /// The amount kept: the keys follow on.
+  void keep() => selected = false;
+}
+
 /// Once Kibuo's keypad is laid out, scrolls the field of [key] just enough
 /// to sit above it: the keypad takes the bottom of the screen, and nothing
 /// else would bring the field back into view.

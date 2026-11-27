@@ -268,10 +268,15 @@ class ValueField extends StatelessWidget {
     this.note,
     this.fill = KibuoColors.surface,
     this.missing = false,
+    this.selected = false,
   });
 
   /// Required and left empty: outlined in red, nothing written.
   final bool missing;
+
+  /// The amount the keypad opened on, on a pale green ground, without the
+  /// caret: the first key replaces it (DIRECTION « Champs »).
+  final bool selected;
 
   final String value;
   final String? label;
@@ -336,16 +341,20 @@ class ValueField extends StatelessWidget {
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            empty ? placeholder : value,
-                            maxLines: 1,
-                            style: KibuoType.enteredValue.copyWith(
-                              color: empty ? KibuoColors.inkMuted : null,
+                          child: SelectedValue(
+                            selected: selected && !empty,
+                            child: Text(
+                              empty ? placeholder : value,
+                              maxLines: 1,
+                              style: KibuoType.enteredValue.copyWith(
+                                color: empty ? KibuoColors.inkMuted : null,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      if (focused) const BlinkingCaret(),
+                      if (focused && !(selected && !empty))
+                        const BlinkingCaret(),
                     ],
                   ),
                 ),
@@ -382,10 +391,14 @@ class OperationAmountField extends StatelessWidget {
     this.onUnitTap,
     this.focused = true,
     this.missing = false,
+    this.selected = false,
   });
 
   /// No amount yet when saving: outlined in red.
   final bool missing;
+
+  /// The amount the keypad opened on, shown selected (as [ValueField]).
+  final bool selected;
 
   final String value;
   final String unit;
@@ -422,15 +435,21 @@ class OperationAmountField extends StatelessWidget {
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          value.isEmpty ? '0' : value,
-                          style: KibuoType.bigAmount.copyWith(
-                            color: value.isEmpty ? KibuoColors.inkMuted : null,
+                        child: SelectedValue(
+                          selected: selected && value.isNotEmpty,
+                          child: Text(
+                            value.isEmpty ? '0' : value,
+                            style: KibuoType.bigAmount.copyWith(
+                              color: value.isEmpty
+                                  ? KibuoColors.inkMuted
+                                  : null,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    if (focused) const BlinkingCaret(height: 30),
+                    if (focused && !(selected && value.isNotEmpty))
+                      const BlinkingCaret(height: 30),
                   ],
                 ),
               ),
@@ -458,6 +477,29 @@ class OperationAmountField extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A value shown selected, like a selected text: a pale green ground
+/// behind it.
+class SelectedValue extends StatelessWidget {
+  const SelectedValue({super.key, required this.selected, required this.child});
+
+  final bool selected;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => selected
+      ? DecoratedBox(
+          decoration: BoxDecoration(
+            color: KibuoColors.accentTintStrong,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: child,
+          ),
+        )
+      : child;
 }
 
 /// The green caret of a field typed on the Kibuo keypad. It blinks for a few

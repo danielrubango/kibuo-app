@@ -38,9 +38,11 @@ class _AmountSheet extends StatefulWidget {
 
 class _AmountSheetState extends State<_AmountSheet> {
   late final _currency = currencyOf(widget.start.currency);
-  late String _typed = typedFrom(widget.start, _currency);
 
-  Money get _amount => typedMoney(_typed, _currency);
+  /// The proposed amount, selected: the first key replaces it.
+  late final _typed = KeypadText(typedFrom(widget.start, _currency));
+
+  Money get _amount => typedMoney(_typed.text, _currency);
 
   bool get _over => widget.most != null && _amount.minor > widget.most!.minor;
 
@@ -52,7 +54,9 @@ class _AmountSheetState extends State<_AmountSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ValueField(
-          value: shownTyped(context, _typed),
+          value: shownTyped(context, _typed.text),
+          selected: _typed.selected,
+          onTap: () => setState(_typed.keep),
           unit: _currency.code,
           error: _over && widget.cap != null
               ? widget.cap!(formatMoney(widget.most!, _currency, lang))
@@ -63,8 +67,7 @@ class _AmountSheetState extends State<_AmountSheet> {
           onKey: (k) {
             final was = _over;
             setState(
-              () => _typed = typeKey(
-                _typed,
+              () => _typed.key(
                 k,
                 decimals: _currency.usesDecimals ? _currency.digits : 0,
               ),
@@ -72,11 +75,7 @@ class _AmountSheetState extends State<_AmountSheet> {
             // Above what is left: refused, and felt.
             if (!was && _over) Haptics.refuse();
           },
-          onDelete: () => setState(() {
-            if (_typed.isNotEmpty) {
-              _typed = _typed.substring(0, _typed.length - 1);
-            }
-          }),
+          onDelete: () => setState(_typed.delete),
           allowDecimal: _currency.usesDecimals,
           decimalSeparator: NumberFormat.decimalPattern(lang)
               .symbols
