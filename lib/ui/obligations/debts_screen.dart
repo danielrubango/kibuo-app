@@ -618,9 +618,10 @@ class _DebtsScreenState extends State<DebtsScreen> {
     final card = AnimatedContainer(
       duration: _open != null ? _opening : _closing,
       curve: Curves.easeOutCubic,
-      // With the line's block 6 around its words: 12 to the card's edge,
-      // and 8 on each side of a divider, as before.
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      // The line's block 8 from the card on every side, as across (owner,
+      // 27 November): with its 6 around the words, 14 to the card's edge;
+      // 8 on each side of a divider, as before.
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: KibuoColors.surface,
         borderRadius: BorderRadius.circular(KibuoTheme.radiusCard),
