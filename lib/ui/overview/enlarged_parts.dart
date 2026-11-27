@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:kibuo/ui/kit/haptics.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_icons.dart';
@@ -1289,10 +1288,10 @@ class _WaterfallPainter extends CustomPainter {
   bool shouldRepaint(_WaterfallPainter old) => true;
 }
 
-/// The pager of enlarged tiles over the blurred Aperçu (canvas
-/// ApercuTuile): the card 16 from the left, the next one showing at the
-/// right edge, the dots and the hint just under the card; a touch beside,
-/// ✕, a swipe down or back close it (PRODUCT, 27 November 2026).
+/// The pager of enlarged tiles over the blurred Aperçu: the card centred
+/// across and down, the previous and next ones showing at each edge, the
+/// dots and the hint fixed at the bottom of the screen (owner, 27 November
+/// 2026); a touch beside, ✕, a swipe down or back close it (PRODUCT).
 class EnlargedPager extends StatefulWidget {
   const EnlargedPager({
     super.key,
@@ -1312,24 +1311,26 @@ class EnlargedPager extends StatefulWidget {
 }
 
 class _EnlargedPagerState extends State<EnlargedPager> {
-  static const _side = 16.0;
-  static const _gap = 18.0;
-  static const _top = 16.0;
+  /// Each side of the card, and between two cards.
+  static const _side = 24.0;
+  static const _gap = 8.0;
+
+  /// The room kept at the bottom for the dots and the hint.
+  static const _bottom = 72.0;
 
   PageController? _pages;
   late int _index = widget.initial;
-  final _heights = <int, double>{};
   double _drag = 0;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // A page is the card and the gap after it; centred, it leaves the
-    // card 16 from the left and the next one showing 16 at the right.
+    // A page is the card and half a gap on each side: centred, it leaves
+    // the card 24 from each edge and its neighbours showing 16.
     final width = MediaQuery.sizeOf(context).width;
     _pages ??= PageController(
       initialPage: widget.initial,
-      viewportFraction: (width - 2 * _side) / width,
+      viewportFraction: (width - 2 * _side + _gap) / width,
     );
   }
 
@@ -1341,29 +1342,8 @@ class _EnlargedPagerState extends State<EnlargedPager> {
 
   void _close() => Navigator.of(context).maybePop();
 
-  void _measured(int i, double height) {
-    if (!mounted || _heights[i] == height) return;
-    setState(() => _heights[i] = height);
-  }
-
-  /// The height of the card under the dots, between two cards while
-  /// swiping.
-  double? _cardHeight() {
-    final pages = _pages!;
-    final page = pages.hasClients && pages.position.hasContentDimensions
-        ? pages.page ?? _index.toDouble()
-        : _index.toDouble();
-    final a = page.floor().clamp(0, widget.count - 1);
-    final b = (a + 1).clamp(0, widget.count - 1);
-    final ha = _heights[a];
-    if (ha == null) return null;
-    final hb = _heights[b] ?? ha;
-    return ha + (hb - ha) * (page - a);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final pages = _pages!;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _close,
@@ -1376,59 +1356,53 @@ class _EnlargedPagerState extends State<EnlargedPager> {
         _drag = 0;
       },
       child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, box) => Stack(
-            children: [
-              Positioned.fill(
-                top: _top,
-                child: PageView.builder(
-                  controller: pages,
-                  clipBehavior: Clip.none,
-                  itemCount: widget.count,
-                  onPageChanged: (i) => setState(() => _index = i),
-                  itemBuilder: (context, i) => Padding(
-                    padding: const EdgeInsets.only(right: _gap),
-                    child: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              bottom: _bottom,
+              child: PageView.builder(
+                controller: _pages,
+                clipBehavior: Clip.none,
+                itemCount: widget.count,
+                onPageChanged: (i) => setState(() => _index = i),
+                itemBuilder: (context, i) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: _gap / 2),
+                  child: LayoutBuilder(
+                    // In the middle of the room; a taller card starts at
+                    // the top and scrolls.
+                    builder: (context, box) => SingleChildScrollView(
                       clipBehavior: Clip.none,
-                      padding: const EdgeInsets.only(bottom: 72),
-                      child: _Measured(
-                        onHeight: (h) => _measured(i, h),
-                        child: GestureDetector(
-                          // A touch on the card does not close it.
-                          onTap: () {},
-                          child: widget.card(context, i),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: math.max(0, box.maxHeight - 32),
+                        ),
+                        child: Center(
+                          child: GestureDetector(
+                            // A touch on the card does not close it.
+                            onTap: () {},
+                            child: widget.card(context, i),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-              AnimatedBuilder(
-                animation: pages,
-                builder: (context, _) {
-                  final height = _cardHeight();
-                  final top = height == null
-                      ? box.maxHeight - 56
-                      : math.min(_top + height + 14, box.maxHeight - 56);
-                  return Positioned(
-                    left: 0,
-                    right: 0,
-                    top: top,
-                    child: IgnorePointer(
-                      child: Opacity(
-                        opacity: height == null ? 0 : 1,
-                        child: _Dots(
-                          count: widget.count,
-                          index: _index,
-                          hint: widget.hint,
-                        ),
-                      ),
-                    ),
-                  );
-                },
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 16,
+              child: IgnorePointer(
+                child: _Dots(
+                  count: widget.count,
+                  index: _index,
+                  hint: widget.hint,
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -1479,37 +1453,6 @@ class _Dots extends StatelessWidget {
       ),
     ],
   );
-}
-
-/// Tells its child's height once laid out, so the dots can sit under it.
-class _Measured extends SingleChildRenderObjectWidget {
-  const _Measured({required this.onHeight, required super.child});
-
-  final ValueChanged<double> onHeight;
-
-  @override
-  RenderObject createRenderObject(BuildContext context) =>
-      _RenderMeasured(onHeight);
-
-  @override
-  void updateRenderObject(BuildContext context, _RenderMeasured render) =>
-      render.onHeight = onHeight;
-}
-
-class _RenderMeasured extends RenderProxyBox {
-  _RenderMeasured(this.onHeight);
-
-  ValueChanged<double> onHeight;
-  double? _told;
-
-  @override
-  void performLayout() {
-    super.performLayout();
-    final height = size.height;
-    if (height == _told) return;
-    _told = height;
-    WidgetsBinding.instance.addPostFrameCallback((_) => onHeight(height));
-  }
 }
 
 /// A small ring of a share, in mint (Épargne's « Part épargnée »).

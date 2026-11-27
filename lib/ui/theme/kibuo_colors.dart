@@ -116,8 +116,9 @@ abstract final class KibuoColors {
   /// The light veil behind a menu or the month picker: ink at 12 %.
   static const veil = Color(0x1F0E1320);
 
-  /// Behind a first-visit tip: ink at 45 %, with a light blur.
-  static const tipScrim = Color(0x730E1320);
+  /// The blurred background's darkness: ink at 32 %, over a blur of 8
+  /// (DIRECTION « Fond flouté », 27 November 2026).
+  static const blurVeil = Color(0x520E1320);
 
   /// The shadow of a bar floating over the content (keypad, selection).
   static const barShadow = Color(0x2E0E1320);

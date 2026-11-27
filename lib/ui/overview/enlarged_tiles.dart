@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +17,7 @@ import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/budgets/budget_book.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
+import 'package:kibuo/ui/kit/blurred_veil.dart';
 import 'package:kibuo/ui/kit/spent_bar.dart';
 import 'package:kibuo/ui/money/money_format.dart';
 import 'package:kibuo/ui/overview/enlarged_parts.dart';
@@ -48,7 +48,7 @@ Future<void> openEnlarged(
       barrierDismissible: true,
       transitionDuration: const Duration(milliseconds: 220),
       reverseTransitionDuration: const Duration(milliseconds: 180),
-      pageBuilder: (routeContext, _, _) {
+      pageBuilder: (routeContext, animation, _) {
         void close() => Navigator.of(routeContext).maybePop();
         void then(VoidCallback? go) {
           if (go == null) return;
@@ -67,28 +67,32 @@ Future<void> openEnlarged(
           close: close,
           then: then,
         );
+        // The blurred background comes at once, only its veil and the
+        // cards fade (DIRECTION « Fond flouté »).
         return Stack(
           children: [
             Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: const ColoredBox(color: Color(0x520E1320)),
+              child: AnimatedBuilder(
+                animation: animation,
+                builder: (_, _) => BlurredVeil(veil: animation.value),
               ),
             ),
-            Material(
-              type: MaterialType.transparency,
-              child: EnlargedPager(
-                count: tiles.length,
-                initial: initial,
-                hint: l.enlHint,
-                card: (_, i) => build.card(tiles[i]),
+            FadeTransition(
+              opacity: animation,
+              child: Material(
+                type: MaterialType.transparency,
+                child: EnlargedPager(
+                  count: tiles.length,
+                  initial: initial,
+                  hint: l.enlHint,
+                  card: (_, i) => build.card(tiles[i]),
+                ),
               ),
             ),
           ],
         );
       },
-      transitionsBuilder: (_, animation, _, child) =>
-          FadeTransition(opacity: animation, child: child),
+      transitionsBuilder: (_, _, _, child) => child,
     ),
   );
 }

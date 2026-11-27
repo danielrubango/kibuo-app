@@ -1,4 +1,4 @@
-import 'dart:ui' show ImageFilter, PathMetric;
+import 'dart:ui' show PathMetric;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +10,7 @@ import 'package:kibuo/domain/money/currency.dart';
 import 'package:kibuo/domain/money/exchange_rate.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
+import 'package:kibuo/ui/kit/blurred_veil.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/cards.dart';
 import 'package:kibuo/ui/kit/empty_card.dart';
@@ -393,17 +394,13 @@ class _DebtsScreenState extends State<DebtsScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
                 children: [
-                  _Dimmed(
-                    on: dim,
-                    child: Row(
-                      children: [
-                        for (final d in DebtDirection.values) ...[
-                          if (d == DebtDirection.owed)
-                            const SizedBox(width: 10),
-                          Expanded(child: _tabCard(l, d, lines, now)),
-                        ],
+                  Row(
+                    children: [
+                      for (final d in DebtDirection.values) ...[
+                        if (d == DebtDirection.owed) const SizedBox(width: 10),
+                        Expanded(child: _tabCard(l, d, lines, now)),
                       ],
-                    ),
+                    ],
                   ),
                   if (listing.groups.isEmpty && listing.paid.isEmpty) ...[
                     const SizedBox(height: 16),
@@ -419,36 +416,30 @@ class _DebtsScreenState extends State<DebtsScreen> {
                   ],
                   for (final g in listing.groups) ...[
                     const SizedBox(height: GroupTitle.before),
-                    _Dimmed(
-                      on: dim,
-                      child: GroupTitle(
-                        title: _groupTitle(l, g.key),
-                        leading: g.key.isLate ? const _LateDot() : null,
-                        trailing:
-                            [
-                                  for (final d in g.lines)
-                                    if (!d.settled) d,
-                                ].length >
-                                1
-                            ? GroupNote(_total(g.lines) ?? '')
-                            : null,
-                      ),
+                    GroupTitle(
+                      title: _groupTitle(l, g.key),
+                      leading: g.key.isLate ? const _LateDot() : null,
+                      trailing:
+                          [
+                                for (final d in g.lines)
+                                  if (!d.settled) d,
+                              ].length >
+                              1
+                          ? GroupNote(_total(g.lines) ?? '')
+                          : null,
                     ),
                     _card(l, g.lines, now),
                   ],
                   if (listing.paid.isNotEmpty) ...[
                     const SizedBox(height: GroupTitle.gap),
-                    _Dimmed(
-                      on: dim && !listing.paid.any((d) => d.id == _open),
-                      child: _PaidToggle(
-                        label: _tab == DebtDirection.owe
-                            ? l.debtSettledOwe(listing.paid.length)
-                            : l.debtSettledOwed(listing.paid.length),
-                        open: _paidShown,
-                        onTap: _open != null
-                            ? _close
-                            : () => setState(() => _paidShown = !_paidShown),
-                      ),
+                    _PaidToggle(
+                      label: _tab == DebtDirection.owe
+                          ? l.debtSettledOwe(listing.paid.length)
+                          : l.debtSettledOwed(listing.paid.length),
+                      open: _paidShown,
+                      onTap: _open != null
+                          ? _close
+                          : () => setState(() => _paidShown = !_paidShown),
                     ),
                     if (_paidShown) ...[
                       const SizedBox(height: 8),
@@ -458,16 +449,13 @@ class _DebtsScreenState extends State<DebtsScreen> {
                   // Like « Nouveau compte » and « Nouveau budget »: dashed, at
                   // the end of the list.
                   const SizedBox(height: 16),
-                  _Dimmed(
-                    on: dim,
-                    child: KibuoButton(
-                      label: _tab == DebtDirection.owe
-                          ? l.debtNewOwe
-                          : l.debtNewOwed,
-                      kind: ButtonKind.create,
-                      icon: KibuoIcons.plusBold,
-                      onPressed: dim ? _close : _add,
-                    ),
+                  KibuoButton(
+                    label: _tab == DebtDirection.owe
+                        ? l.debtNewOwe
+                        : l.debtNewOwed,
+                    kind: ButtonKind.create,
+                    icon: KibuoIcons.plusBold,
+                    onPressed: dim ? _close : _add,
                   ),
                 ],
               ),
@@ -476,22 +464,20 @@ class _DebtsScreenState extends State<DebtsScreen> {
     return Stack(
       children: [
         page,
-        // Behind the open line, faded and lightly blurred, a light grey
-        // veil over the whole screen, its bar too; the card holding the
-        // line stays white above it, in its place (owner, 23 November).
+        // Behind the open line, the whole screen under the blurred
+        // background, edge to edge, its bar too; the card holding the line
+        // stays white above it, in its place (owner, 23 and 27 November).
         if (_lifted != null) ...[
           // Only what appears reacts: the veil holds the page behind,
           // which neither scrolls nor moves, and a touch on it closes the
-          // line (owner, 23 November).
+          // line (owner, 23 November). The blur comes at once, only the
+          // veil fades.
           Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _close,
-              child: AnimatedOpacity(
-                duration: dim ? _opening : _closing,
-                opacity: dim ? 1 : 0,
-                child: const ColoredBox(color: KibuoColors.veil),
-              ),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: dim ? 1 : 0),
+              duration: dim ? _opening : _closing,
+              builder: (context, veil, _) =>
+                  BlurredVeil(veil: veil, onTap: _close),
             ),
           ),
           for (final lines in [
@@ -655,9 +641,9 @@ class _DebtsScreenState extends State<DebtsScreen> {
                       : KibuoColors.background,
                 ),
               ),
-            _Dimmed(
-              on: _open != null && (!above || d.id != _open),
-              blur: !above,
+            // In the card above the veil, its other lines pale.
+            _Paled(
+              on: above && _open != null && d.id != _open,
               child: _row(l, d, now, live: above),
             ),
           ],
@@ -1110,26 +1096,19 @@ class _RingPainter extends CustomPainter {
       old.share != share || old.look != look;
 }
 
-/// Lines and blocks behind an open line: faded, lightly blurred.
-class _Dimmed extends StatelessWidget {
-  const _Dimmed({required this.on, required this.child, this.blur = true});
+/// The other lines of the open line's card, above the veil: faded.
+class _Paled extends StatelessWidget {
+  const _Paled({required this.on, required this.child});
 
   final bool on;
-  final bool blur;
   final Widget child;
 
-  // The blur comes at once, only the fading moves: a blur that grows
-  // spreads the edges, and the page seemed to move (owner, 23 November).
   @override
-  Widget build(BuildContext context) => ImageFiltered(
-    enabled: blur && on,
-    imageFilter: ImageFilter.blur(sigmaX: 1.2, sigmaY: 1.2),
-    child: AnimatedOpacity(
-      duration: on ? _DebtsScreenState._opening : _DebtsScreenState._closing,
-      curve: Curves.easeOutCubic,
-      opacity: on ? 0.6 : 1,
-      child: child,
-    ),
+  Widget build(BuildContext context) => AnimatedOpacity(
+    duration: on ? _DebtsScreenState._opening : _DebtsScreenState._closing,
+    curve: Curves.easeOutCubic,
+    opacity: on ? 0.6 : 1,
+    child: child,
   );
 }
 

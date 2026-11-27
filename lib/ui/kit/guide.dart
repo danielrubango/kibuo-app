@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kibuo/ui/kit/blurred_veil.dart';
 import 'package:kibuo/ui/theme/kibuo_colors.dart';
 import 'package:kibuo/ui/theme/kibuo_theme.dart';
 
@@ -6,9 +7,10 @@ import 'package:kibuo/ui/theme/kibuo_theme.dart';
 /// (DIRECTION « Guides », 26 November 2026).
 const guideGap = 8.0;
 
-/// A guide's page (DIRECTION « Guides »): everything darkened but for a
-/// window around [target], [gap] wider on every side, and [card] under it.
-/// Touches on the veil do nothing: only the card answers.
+/// A guide's page (DIRECTION « Guides »): everything under the blurred
+/// background but for a window around [target], [gap] wider on every side,
+/// and [card] under it. Touches on the veil do nothing: only the card
+/// answers.
 class GuideSpotlight extends StatefulWidget {
   const GuideSpotlight({
     super.key,
@@ -61,17 +63,11 @@ class _GuideSpotlightState extends State<GuideSpotlight> {
     return Stack(
       children: [
         Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: CustomPaint(
-              painter: _VeilPainter(
-                window,
-                // Concentric with a card's corners, so the band around it
-                // keeps its width in the turns.
-                radius: KibuoTheme.radiusCard + widget.gap,
-              ),
-            ),
+          child: BlurredVeil(
+            window: window,
+            // Concentric with a card's corners, so the band around it keeps
+            // its width in the turns.
+            radius: KibuoTheme.radiusCard + widget.gap,
           ),
         ),
         Positioned(
@@ -83,27 +79,6 @@ class _GuideSpotlightState extends State<GuideSpotlight> {
       ],
     );
   }
-}
-
-/// The veil, open around [window].
-class _VeilPainter extends CustomPainter {
-  _VeilPainter(this.window, {required this.radius});
-
-  final Rect window;
-  final double radius;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..fillType = PathFillType.evenOdd
-      ..addRect(Offset.zero & size)
-      ..addRRect(RRect.fromRectAndRadius(window, Radius.circular(radius)));
-    canvas.drawPath(path, Paint()..color = KibuoColors.tipScrim);
-  }
-
-  @override
-  bool shouldRepaint(_VeilPainter old) =>
-      old.window != window || old.radius != radius;
 }
 
 /// A guide's white card (canvas DettesListeDois): its point towards the

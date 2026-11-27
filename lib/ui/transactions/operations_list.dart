@@ -1,5 +1,3 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kibuo/data/category_repository.dart';
@@ -14,6 +12,7 @@ import 'package:kibuo/domain/transactions/budget_period.dart';
 import 'package:kibuo/domain/transactions/flow_totals.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/categories/category_labels.dart';
+import 'package:kibuo/ui/kit/blurred_veil.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
 import 'package:kibuo/ui/kit/choice_menu.dart';
 import 'package:kibuo/ui/kit/day_header.dart';
@@ -1288,18 +1287,7 @@ class _SwipeTipState extends State<_SwipeTip>
     final l = AppLocalizations.of(context);
     return Stack(
       children: [
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: widget.onDone,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                child: const ColoredBox(color: KibuoColors.tipScrim),
-              ),
-            ),
-          ),
-        ),
+        Positioned.fill(child: BlurredVeil(onTap: widget.onDone)),
         Positioned(
           left: 16,
           right: 16,
