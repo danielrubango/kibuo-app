@@ -150,4 +150,68 @@ void main() {
     expect(both[0].length, both[1].length);
     expect((await repo.categories(CategoryKind.out)).length, both[0].length);
   });
+
+  group('colours (ADR 0014)', () {
+    test('the provided categories come with their colour', () async {
+      final out = await repo.categories(CategoryKind.out);
+      final food = out.firstWhere((c) => c.key == 'food');
+      expect(food.color, CategoryColor.rose);
+      expect(
+        out.firstWhere((c) => c.key == 'otherExpense').color,
+        CategoryColor.grey,
+      );
+      // A subcategory shows its category's colour.
+      expect(food.subs.first.color, CategoryColor.rose);
+      final income = await repo.categories(CategoryKind.into);
+      expect(
+        income.firstWhere((c) => c.key == 'salary').color,
+        CategoryColor.mint,
+      );
+    });
+
+    test('a new category takes the least used colour of its list', () async {
+      final id = await repo.create(
+        kind: CategoryKind.out,
+        name: 'Moto',
+        icon: 'motorcycle',
+      );
+      final out = await repo.categories(CategoryKind.out);
+      final used = [
+        for (final c in out)
+          if (c.id != id) c.color,
+      ];
+      expect((await repo.category(id))!.color, leastUsed(used));
+    });
+
+    test('a new category can be given its colour', () async {
+      final id = await repo.create(
+        kind: CategoryKind.into,
+        name: 'Loyers',
+        icon: 'house',
+        color: CategoryColor.lavender,
+      );
+      expect((await repo.category(id))!.color, CategoryColor.lavender);
+    });
+
+    test('a subcategory, read alone, shows its category\'s colour', () async {
+      await repo.categories(CategoryKind.out);
+      expect(
+        (await repo.category('default-restaurant'))!.color,
+        CategoryColor.rose,
+      );
+    });
+
+    test('changing the colour keeps the name and the icon', () async {
+      await repo.categories(CategoryKind.out);
+      await repo.update(
+        'default-food',
+        icon: 'forkKnife',
+        color: CategoryColor.sky,
+      );
+      final food = (await repo.category('default-food'))!;
+      expect(food.color, CategoryColor.sky);
+      expect(food.icon, 'forkKnife');
+      expect(food.name, isNull);
+    });
+  });
 }

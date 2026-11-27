@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:kibuo/data/budget_repository.dart';
 import 'package:kibuo/data/database.dart';
+import 'package:kibuo/domain/categories/category_color.dart';
 import 'package:kibuo/domain/categories/default_categories.dart';
 import 'package:kibuo/domain/money/money.dart';
 import 'package:kibuo/domain/sync/hybrid_clock.dart';
 import 'package:uuid/uuid.dart';
 
+export 'package:kibuo/domain/categories/category_color.dart';
 export 'package:kibuo/domain/categories/default_categories.dart';
 
 /// A category as the screens show it, with its subcategories.
@@ -18,6 +20,7 @@ class CategoryInfo {
     this.parentId,
     this.key,
     this.name,
+    this.color = CategoryColor.grey,
     this.subs = const [],
   });
 
@@ -31,6 +34,9 @@ class CategoryInfo {
   final String? name;
   final String icon;
   final bool removed;
+
+  /// Its colour, or its category's for a subcategory (ADR 0014).
+  final CategoryColor color;
   final List<CategoryInfo> subs;
 }
 
@@ -91,6 +97,7 @@ class CategoryRepository {
                 key: Value(c.key),
                 icon: c.icon,
                 position: position,
+                color: Value(parent == null ? providedColor(c.key).name : null),
               ),
             );
         for (final (i, sub) in c.subs.indexed) {
@@ -157,6 +164,7 @@ class CategoryRepository {
                 key: Value(c.key),
                 icon: c.icon,
                 position: position + 1,
+                color: Value(CategoryColor.grey.name),
               ),
               mode: InsertMode.insertOrIgnore,
             );
@@ -193,26 +201,39 @@ class CategoryRepository {
     final top = rows.where((r) => r.parentId == null);
     return [
       for (final r in top)
-        _info(r, [
-          for (final s in rows)
-            if (s.parentId == r.id) _info(s),
-        ]),
+        _info(
+          r,
+          subs: [
+            for (final s in rows)
+              if (s.parentId == r.id) _info(s, color: _colorOf(r)),
+          ],
+        ),
     ];
   }
+
+  /// A category's own colour; one older than its column falls back on its
+  /// starting colour.
+  static CategoryColor _colorOf(CategoryRow r) =>
+      CategoryColor.named(r.color) ??
+      (r.key == null ? CategoryColor.grey : providedColor(r.key!));
 
   /// One category, removed or not (old operations keep showing it).
   Future<CategoryInfo?> category(String id) async {
     await _ensureProvided();
-    final row = await (_db.select(
+    Future<CategoryRow?> read(String id) => (_db.select(
       _db.categories,
     )..where((c) => c.id.equals(id))).getSingleOrNull();
-    return row == null ? null : _info(row);
+    final row = await read(id);
+    if (row == null) return null;
+    final parent = row.parentId == null ? null : await read(row.parentId!);
+    return _info(row, color: _colorOf(parent ?? row));
   }
 
   static CategoryInfo _info(
-    CategoryRow r, [
+    CategoryRow r, {
+    CategoryColor? color,
     List<CategoryInfo> subs = const [],
-  ]) => CategoryInfo(
+  }) => CategoryInfo(
     id: r.id,
     kind: CategoryKind.fromStored(r.kind),
     parentId: r.parentId,
@@ -220,16 +241,19 @@ class CategoryRepository {
     name: r.name,
     icon: r.icon,
     removed: r.removed,
+    color: color ?? _colorOf(r),
     subs: subs,
   );
 
   /// Adds a category, last of its siblings; under [parentId] for a
-  /// subcategory. Returns its id.
+  /// subcategory, which takes no colour. Without [color], a category takes
+  /// the least used of its list (ADR 0014). Returns its id.
   Future<String> create({
     required CategoryKind kind,
     required String name,
     required String icon,
     String? parentId,
+    CategoryColor? color,
   }) async {
     final clean = _cleanName(name);
     await _ensureProvided();
@@ -244,6 +268,19 @@ class CategoryRepository {
             _db.categories.kind.equals(kind.stored),
       );
     final position = await query.map((r) => r.read(last)).getSingle() ?? 0;
+    CategoryColor? own;
+    if (parentId == null) {
+      final siblings =
+          await (_db.select(_db.categories)..where(
+                (c) =>
+                    c.deleted.not() &
+                    c.removed.not() &
+                    c.parentId.isNull() &
+                    c.kind.equals(kind.stored),
+              ))
+              .get();
+      own = color ?? leastUsed([for (final r in siblings) _colorOf(r)]);
+    }
     final id = const Uuid().v7();
     await _db
         .into(_db.categories)
@@ -257,21 +294,28 @@ class CategoryRepository {
             name: Value(clean),
             icon: icon,
             position: position + 1,
+            color: Value(own?.name),
           ),
         );
     return id;
   }
 
   /// Renames [id] (a null [name] keeps the current one, so a provided
-  /// category keeps following the app's language) and sets its icon.
-  Future<void> update(String id, {String? name, required String icon}) =>
-      _write(
-        _db.categories.id.equals(id),
-        CategoriesCompanion(
-          name: name == null ? const Value.absent() : Value(_cleanName(name)),
-          icon: Value(icon),
-        ),
-      );
+  /// category keeps following the app's language), sets its icon and, when
+  /// given, its colour.
+  Future<void> update(
+    String id, {
+    String? name,
+    required String icon,
+    CategoryColor? color,
+  }) => _write(
+    _db.categories.id.equals(id),
+    CategoriesCompanion(
+      name: name == null ? const Value.absent() : Value(_cleanName(name)),
+      icon: Value(icon),
+      color: color == null ? const Value.absent() : Value(color.name),
+    ),
+  );
 
   /// Takes the category, and its subcategories, out of the choices. Their
   /// operations keep them.
