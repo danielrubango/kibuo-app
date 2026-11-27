@@ -163,9 +163,15 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
   });
 
   void _delete() => setState(() {
+    _typed = eraseKey(_typed, selected: _selected);
     _selected = false;
-    if (_typed.isNotEmpty) _typed = _typed.substring(0, _typed.length - 1);
   });
+
+  /// A double touch or a long press: the whole amount selected again.
+  void _select() {
+    _openKeypad();
+    setState(() => _selected = _typed.isNotEmpty);
+  }
 
   void _openKeypad() {
     // Touched again while typing: kept, the keys follow on.
@@ -384,6 +390,7 @@ class _NewDebtScreenState extends State<NewDebtScreen> {
                       focused: _keypad,
                       selected: _keypad && _selected,
                       onTap: _openKeypad,
+                      onSelect: _select,
                       missing: _tried && _amount.minor <= 0,
                     ),
                   ],

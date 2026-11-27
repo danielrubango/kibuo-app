@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart' show kDoubleTapTimeout;
 import 'package:flutter/material.dart';
 import 'package:kibuo/l10n/app_localizations.dart';
 import 'package:kibuo/ui/kit/buttons.dart';
@@ -269,6 +270,7 @@ class ValueField extends StatelessWidget {
     this.fill = KibuoColors.surface,
     this.missing = false,
     this.selected = false,
+    this.onSelect,
   });
 
   /// Required and left empty: outlined in red, nothing written.
@@ -277,6 +279,9 @@ class ValueField extends StatelessWidget {
   /// The amount the keypad opened on, on a pale green ground, without the
   /// caret: the first key replaces it (DIRECTION « Champs »).
   final bool selected;
+
+  /// A double touch or a long press: the whole amount selected again.
+  final VoidCallback? onSelect;
 
   final String value;
   final String? label;
@@ -303,9 +308,9 @@ class ValueField extends StatelessWidget {
         : fill;
     final empty = value.isEmpty;
     // The label is part of the field: touching it opens the keypad too.
-    return GestureDetector(
+    return SelectTaps(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
+      onSelect: onSelect,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -477,6 +482,47 @@ class OperationAmountField extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A touch, and a second touch soon after or a long press for [onSelect]:
+/// the first touch is never held back, unlike a double tap listened to by
+/// Flutter, which would delay every touch (and the currency pill's).
+class SelectTaps extends StatefulWidget {
+  const SelectTaps({super.key, required this.child, this.onTap, this.onSelect});
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onSelect;
+
+  @override
+  State<SelectTaps> createState() => _SelectTapsState();
+}
+
+class _SelectTapsState extends State<SelectTaps> {
+  DateTime? _last;
+
+  void _tap() {
+    final now = DateTime.now();
+    final last = _last;
+    _last = now;
+    final select = widget.onSelect;
+    if (select != null &&
+        last != null &&
+        now.difference(last) < kDoubleTapTimeout) {
+      _last = null;
+      select();
+      return;
+    }
+    widget.onTap?.call();
+  }
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: widget.onTap == null && widget.onSelect == null ? null : _tap,
+    onLongPress: widget.onSelect,
+    child: widget.child,
+  );
 }
 
 /// A value shown selected, like a selected text: a pale green ground

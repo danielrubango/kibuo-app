@@ -57,6 +57,7 @@ class _AmountSheetState extends State<_AmountSheet> {
           value: shownTyped(context, _typed.text),
           selected: _typed.selected,
           onTap: () => setState(_typed.keep),
+          onSelect: () => setState(_typed.select),
           unit: _currency.code,
           error: _over && widget.cap != null
               ? widget.cap!(formatMoney(widget.most!, _currency, lang))

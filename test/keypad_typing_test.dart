@@ -46,12 +46,27 @@ void main() {
       expect(typed.text, '0,');
     });
 
-    test('« ← » takes the last digit off and keeps the rest', () {
+    test('« ← » clears a selected amount', () {
       final typed = KeypadText('40000')..delete();
-      expect(typed.text, '4000');
+      expect(typed.text, '');
       expect(typed.selected, isFalse);
-      typed.key('5', decimals: 0);
-      expect(typed.text, '40005');
+    });
+
+    test('once typing, « ← » takes the last digit off', () {
+      final typed = KeypadText('40000')
+        ..keep()
+        ..delete();
+      expect(typed.text, '4000');
+    });
+
+    test('selected again (double touch, long press): cleared at once', () {
+      final typed = KeypadText('40000')
+        ..key('5', decimals: 0)
+        ..key('0', decimals: 0)
+        ..select();
+      expect(typed.selected, isTrue);
+      typed.delete();
+      expect(typed.text, '');
     });
 
     test('touching the amount keeps it, the keys follow on', () {

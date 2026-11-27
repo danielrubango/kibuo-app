@@ -496,6 +496,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                       focused: _keypad,
                       selected: _keypad && _selected,
                       onTap: _openKeypad,
+                      onSelect: () {
+                        _openKeypad();
+                        setState(() => _selected = _typed.isNotEmpty);
+                      },
                       missing: _tried && _goal.minor <= 0,
                     ),
                   ],
@@ -641,10 +645,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                     _selected = false;
                   }),
                   onDelete: () => setState(() {
+                    _typed = eraseKey(_typed, selected: _selected);
                     _selected = false;
-                    if (_typed.isNotEmpty) {
-                      _typed = _typed.substring(0, _typed.length - 1);
-                    }
                   }),
                   allowDecimal: currency.usesDecimals,
                   decimalSeparator: NumberFormat.decimalPattern(_lang)

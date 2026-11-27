@@ -163,19 +163,30 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     _selected = false;
   });
 
-  String _erase(String s) => s.isEmpty ? s : s.substring(0, s.length - 1);
-
   void _delete() => setState(() {
-    _selected = false;
     switch (_typing) {
       case _Typing.opening:
-        _typed = _erase(_typed);
+        _typed = eraseKey(_typed, selected: _selected);
       case _Typing.limit:
-        _limit = _erase(_limit);
+        _limit = eraseKey(_limit, selected: _selected);
       case _Typing.current:
-        _current = _erase(_current);
+        _current = eraseKey(_current, selected: _selected);
     }
+    _selected = false;
   });
+
+  /// A double touch or a long press on [typing]: its whole value selected
+  /// again, the keypad open on it.
+  void _select(_Typing typing) {
+    _openKeypad(typing);
+    setState(() {
+      _selected = switch (typing) {
+        _Typing.opening => _typed,
+        _Typing.limit => _limit,
+        _Typing.current => _current,
+      }.isNotEmpty;
+    });
+  }
 
   /// Opens Kibuo's keypad on one of the form's values.
   void _openKeypad(_Typing typing) {
@@ -500,6 +511,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                 focused: _keypad && _typingLimit,
                 selected: _keypad && _typingLimit && _selected,
                 onTap: () => _openKeypad(_Typing.limit),
+                onSelect: () => _select(_Typing.limit),
                 note: l.overdraftNoLimitHelp,
               ),
             ),
@@ -606,6 +618,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       selected:
                           _keypad && _typing == _Typing.current && _selected,
                       onTap: () => _openKeypad(_Typing.current),
+                      onSelect: () => _select(_Typing.current),
                       // While typing it with overdraft allowed, how to make
                       // it negative (canvas SigneD); nothing about it
                       // otherwise.
@@ -646,6 +659,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       selected:
                           _keypad && _typing == _Typing.opening && _selected,
                       onTap: () => _openKeypad(_Typing.opening),
+                      onSelect: () => _select(_Typing.opening),
                       note: l.accountCurrencyNote(
                         currencyName(context, currency),
                         currency.code,

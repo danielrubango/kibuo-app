@@ -349,6 +349,7 @@ class _RateSheetState extends State<_RateSheet> {
             value: shownTyped(context, _value),
             selected: _selected,
             onTap: () => setState(() => _selected = false),
+            onSelect: () => setState(() => _selected = _value.isNotEmpty),
             placeholder: '',
             unit: currencyOf(widget.quote).symbol,
           ),
@@ -359,10 +360,8 @@ class _RateSheetState extends State<_RateSheet> {
               _selected = false;
             }),
             onDelete: () => setState(() {
+              _value = eraseKey(_value, selected: _selected);
               _selected = false;
-              if (_value.isNotEmpty) {
-                _value = _value.substring(0, _value.length - 1);
-              }
             }),
             decimalSeparator: NumberFormat.decimalPattern(_lang(context))
                 .symbols
@@ -431,6 +430,7 @@ class _FeesSheetState extends State<_FeesSheet> {
           value: shownTyped(context, _value),
           selected: _selected,
           onTap: () => setState(() => _selected = false),
+          onSelect: () => setState(() => _selected = _value.isNotEmpty),
           unit: c.symbol,
         ),
         const SizedBox(height: 12),
@@ -444,10 +444,8 @@ class _FeesSheetState extends State<_FeesSheet> {
             _selected = false;
           }),
           onDelete: () => setState(() {
+            _value = eraseKey(_value, selected: _selected);
             _selected = false;
-            if (_value.isNotEmpty) {
-              _value = _value.substring(0, _value.length - 1);
-            }
           }),
           allowDecimal: c.usesDecimals,
           decimalSeparator: NumberFormat.decimalPattern(_lang(context))

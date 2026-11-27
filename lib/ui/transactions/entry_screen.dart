@@ -1078,6 +1078,14 @@ class _EntryScreenState extends State<EntryScreen> {
                     unit: _paidCurrency?.symbol ?? '',
                     focused: _keypad,
                     selected: _keypad && _selected,
+                    onSelect: () {
+                      if (!_keypad) FocusScope.of(context).unfocus();
+                      setState(() {
+                        _keypad = true;
+                        _selected = _typed.isNotEmpty;
+                      });
+                      revealAboveKeypad(_amountKey);
+                    },
                     onTap: () {
                       // Touched again while typing: the amount is kept, the
                       // keys follow on.
@@ -1288,10 +1296,8 @@ class _EntryScreenState extends State<EntryScreen> {
                     _selected = false;
                   }),
                   onDelete: () => setState(() {
+                    _typed = eraseKey(_typed, selected: _selected);
                     _selected = false;
-                    if (_typed.isNotEmpty) {
-                      _typed = _typed.substring(0, _typed.length - 1);
-                    }
                   }),
                   allowDecimal: _paidCurrency?.usesDecimals ?? true,
                   decimalSeparator: NumberFormat.decimalPattern(_lang)
@@ -1334,6 +1340,7 @@ class _AmountCard extends StatelessWidget {
     required this.focused,
     this.selected = false,
     required this.onTap,
+    this.onSelect,
     required this.onUnitTap,
     required this.footLabel,
     required this.footValue,
@@ -1354,6 +1361,9 @@ class _AmountCard extends StatelessWidget {
   /// The amount the keypad opened on, on a pale green ground.
   final bool selected;
   final VoidCallback onTap;
+
+  /// A double touch or a long press: the whole amount selected again.
+  final VoidCallback? onSelect;
 
   /// None when the currency can't change (a transfer).
   final VoidCallback? onUnitTap;
@@ -1387,9 +1397,9 @@ class _AmountCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          GestureDetector(
+          SelectTaps(
             onTap: onTap,
-            behavior: HitTestBehavior.opaque,
+            onSelect: onSelect,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
               child: Row(

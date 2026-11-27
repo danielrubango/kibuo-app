@@ -93,8 +93,8 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
   });
 
   void _delete() => setState(() {
+    _typed = eraseKey(_typed, selected: _selected);
     _selected = false;
-    if (_typed.isNotEmpty) _typed = _typed.substring(0, _typed.length - 1);
   });
 
   Future<void> _pickCategory() async {
@@ -204,6 +204,13 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
                     unit: _main.symbol,
                     focused: _keypad,
                     selected: _keypad && _selected,
+                    onSelect: () {
+                      setState(() {
+                        _keypad = true;
+                        _selected = _typed.isNotEmpty;
+                      });
+                      revealAboveKeypad(_amountKey);
+                    },
                     missing: _tried && _amount.minor <= 0,
                     onTap: () {
                       // Touched again while typing: kept, the keys follow
